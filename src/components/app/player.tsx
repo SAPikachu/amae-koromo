@@ -1,12 +1,11 @@
 import React from "react";
-import { memo } from "react";
 
 import { getLevelTag } from "../../utils";
 import { GameRecord, PlayerRecord } from "../../utils/dataSource";
 
 const encodeAccountId = (t: number) => 1358437 + ((7 * t + 1117113) ^ 86216345);
 
-export const Player = memo(function({
+export const Player = function({
   player: { nickname, level, score, accountId },
   game: { uuid },
   isTop,
@@ -22,4 +21,4 @@ export const Player = memo(function({
       </a>
     </div>
   );
-});
+};

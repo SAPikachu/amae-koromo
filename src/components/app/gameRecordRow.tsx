@@ -1,11 +1,10 @@
 import React from "react";
-import { memo } from "react";
 import moment from "moment";
 
 import { Player } from "./player";
 import { GameMode, GameRecord } from "../../utils/dataSource";
 
-export const GameRecordRow = memo(function({ game }: { game: GameRecord }) {
+export const GameRecordRow = function({ game }: { game: GameRecord }) {
   const topScore = Math.max(...game.players.map(x => x.score));
   return (
     <tr>
@@ -23,4 +22,4 @@ export const GameRecordRow = memo(function({ game }: { game: GameRecord }) {
       <td>{moment.unix(game.endTime).format("HH:mm")}</td>
     </tr>
   );
-});
+};
