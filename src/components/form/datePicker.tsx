@@ -5,7 +5,7 @@ import { useReducer, useEffect } from "react";
 import { eventTargetReducer } from "../../utils";
 
 export function DatePicker({
-  initialDate = undefined as Date,
+  initialDate = undefined as Date | undefined,
   onChange = (_: Date) => {},
   className = "",
   min = undefined as moment.MomentInput,

@@ -1,10 +1,14 @@
 import { useState, useEffect, ReactNode } from "react";
 import React from "react";
 
-export function SteppingListRenderer({ batchSize = 50, renderInterval = 100, children = undefined as ReactNode[] }) {
+export function SteppingListRenderer({
+  batchSize = 50,
+  renderInterval = 100,
+  children = undefined as ReactNode[] | undefined,
+}) {
   const [numItems, setNumItems] = useState(0);
   useEffect(() => {
-    let timeoutToken = null;
+    let timeoutToken: ReturnType<typeof setTimeout> | null = null;
     if (children && children.length) {
       let numItems = 0;
       const count = children.length;
