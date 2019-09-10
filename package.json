@@ -1,6 +1,7 @@
 {
   "name": "amae-koromo",
   "version": "1.0.0",
+  "homepage" : "https://sapikachu.github.io/amae-koromo",
   "description": "",
   "keywords": [],
   "main": "src/index.tsx",
