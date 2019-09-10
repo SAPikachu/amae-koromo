@@ -16,7 +16,7 @@ const MODE_CHECKBOXES = Object.keys(GameMode)
 
 const getKeySet = (items: CheckboxItem[]) => new Set(items.map(x => x.key));
 
-export function GameRecords({ initialDate = undefined as Date }) {
+export function GameRecords({ initialDate = undefined as Date | undefined }) {
   [initialDate] = useState(() => initialDate || new Date()); // Set default value and remember
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([] as GameRecord[]);
