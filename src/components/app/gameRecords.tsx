@@ -8,9 +8,9 @@ import { fetchGameRecords, GameMode, GameRecord } from "../../utils/dataSource";
 import { eventTargetReducer } from "../../utils";
 
 const MODE_CHECKBOXES = Object.keys(GameMode)
-  .filter(x => typeof GameMode[x] !== "string")
+  .filter(x => typeof GameMode[x as keyof typeof GameMode] !== "string")
   .map(x => ({
-    key: String(GameMode[x]),
+    key: String(GameMode[x as keyof typeof GameMode]),
     label: x,
   }));
 
@@ -60,12 +60,7 @@ export function GameRecords({ initialDate = undefined as Date }) {
   return (
     <React.Fragment>
       <FormRow title="日期">
-        <DatePicker
-          min="2019-08-23"
-          className="form-control"
-          initialDate={initialDate}
-          onChange={setDate}
-        />
+        <DatePicker min="2019-08-23" className="form-control" initialDate={initialDate} onChange={setDate} />
       </FormRow>
       <FormRow title="查找玩家">
         <input type="text" className="form-control" onChange={eventTargetReducer(updateSearchTextFromEvent)} />

@@ -7,11 +7,19 @@
         "moduleResolution": "node",
         "target": "es2017",
         "strict": true,
+        "allowJs": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "esnext",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "preserve",
         "lib": [
             "dom",
             "es2015",
             "es2017"
-        ],
-        "jsx": "react"
+        ]
     }
 }
