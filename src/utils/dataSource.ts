@@ -2,7 +2,7 @@ import moment from "moment";
 
 import { DATA_ROOT } from "./constants";
 
-export const PlayerRanks = "初士杰豪圣魂";
+export const PLAYER_RANKS = "初士杰豪圣魂";
 
 export enum GameMode {
   王座 = 16,
@@ -22,16 +22,6 @@ export interface GameRecord {
   players: PlayerRecord[];
 }
 
-// Fix error on CodeSandbox
-declare global {
-  interface ObjectConstructor {
-    values<T>(o: { [s: string]: T }): T[];
-    values(o: any): any[];
-    entries<T>(o: { [s: string]: T }): [string, T][];
-    entries(o: any): [string, any][];
-  }
-}
-
 const DATA_CACHE_MS = 120000;
 export async function fetchGameRecords(date: moment.MomentInput): Promise<GameRecord[]> {
   const dateString = moment(date).format("YYMMDD");
@@ -49,7 +39,7 @@ export async function fetchGameRecords(date: moment.MomentInput): Promise<GameRe
   }
   try {
     const resp = await fetch(`${DATA_ROOT}records/${dateString}.json?t=${cacheTag}`);
-    const ret = Object.values(await resp.json());
+    const ret = Object.values(await resp.json()) as GameRecord[];
     ret.sort((a, b) => b.endTime - a.endTime);
     const cacheData = JSON.stringify(ret);
     try {

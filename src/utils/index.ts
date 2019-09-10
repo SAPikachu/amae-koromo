@@ -1,12 +1,12 @@
-import { PlayerRanks } from "./dataSource";
+import { PLAYER_RANKS } from "./dataSource";
 import { SyntheticEvent } from "react";
 
 export function getLevelTag(levelId: number) {
   const realId = levelId % 10000;
   const majorRank = Math.floor(realId / 100);
   const minorRank = realId % 100;
-  const label = PlayerRanks[majorRank - 1];
-  if (majorRank === PlayerRanks.length) {
+  const label = PLAYER_RANKS[majorRank - 1];
+  if (majorRank === PLAYER_RANKS.length) {
     return label;
   }
   return label + minorRank;

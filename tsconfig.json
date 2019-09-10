@@ -3,6 +3,8 @@
         "./src/*"
     ],
     "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
         "target": "es2017",
         "strict": true,
         "lib": [
