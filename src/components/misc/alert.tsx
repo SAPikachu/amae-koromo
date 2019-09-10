@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import React from "react";
 import { ReactComponentLike } from "prop-types";
 
-export function Alert({ className = "", type = "info", container = React.Fragment as ReactComponentLike, stateName = "", children }) {
+export function Alert({ className = "", type = "info", container = React.Fragment as ReactComponentLike, stateName = "", children = undefined as ReactNode }) {
   const stateKey = `alertState_${stateName}`;
   const [closed, setClosed] = useState(() => stateName && !!localStorage.getItem(stateKey));
   useEffect(() => {
