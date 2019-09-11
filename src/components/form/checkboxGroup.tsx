@@ -1,7 +1,7 @@
 import { useState } from "react";
 import React from "react";
 
-export type CheckboxItem = {
+export interface CheckboxItem {
   key: string;
   label: string;
 };
