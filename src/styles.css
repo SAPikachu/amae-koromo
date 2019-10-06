@@ -5,3 +5,13 @@ body {
   background-position: center;
   background-attachment: fixed;
 }
+.ReactVirtualized__Table__row:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.ReactVirtualized__Table__headerRow,
+.ReactVirtualized__Table__row {
+  border-top: 1px solid #dee2e6;
+}
+.ReactVirtualized__Table__headerRow span {
+  display: block;
+}
