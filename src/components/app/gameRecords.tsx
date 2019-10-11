@@ -12,7 +12,7 @@ import { GameRecordDataController } from "./gameRecordDataController";
 import { GameRecord, GameMode } from "../../utils/dataSource";
 import { Player } from "./player";
 
-const formatTime = (x: number) => moment.unix(x).format("HH:mm");
+const formatTime = (x: number) => (x ? moment.unix(x).format("HH:mm") : null);
 
 const renderPlayers = (game: GameRecord) => (
   <div className="row no-gutters">
@@ -51,7 +51,7 @@ export function GameRecords({
               rowCount={data.length}
               rowGetter={({ index }) => data[index]}
               rowHeight={
-                window.matchMedia("(min-width: 720px)").matches ? 70 : 140
+                window.matchMedia("(min-width: 768px)").matches ? 70 : 140
               }
               headerHeight={50}
               width={width}
