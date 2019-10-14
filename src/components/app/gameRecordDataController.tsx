@@ -1,8 +1,8 @@
-import { useState, useEffect, useReducer, useCallback } from "react";
+import { useState, useEffect, useReducer } from "react";
 import React from "react";
 
 import { FormRow, DatePicker, CheckboxGroup, CheckboxItem } from "../form";
-import { fetchGameRecords, GameMode, GameRecord, DataProvider } from "../../utils/dataSource";
+import { GameMode, GameRecord, DataProvider } from "../../utils/dataSource";
 import { eventTargetReducer } from "../../utils";
 import moment from "moment";
 
