@@ -1,0 +1,33 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "process",
+      "label": "Run dev server",
+      "command": "/home/sapikachu/.nvm/versions/node/v10.12.0/bin/node",
+      "args": [
+        "/home/sapikachu/.nvm/versions/node/v10.12.0/bin/npm",
+        "--scripts-prepend-node-path",
+        "true",
+        "run",
+        "start"
+      ],
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "owner": "custom",
+          "pattern": {
+            "regexp": ".*"
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Compiling...",
+            "endsPattern": "Compiled .*"
+          }
+        }
+      ]
+    }
+  ]
+}
