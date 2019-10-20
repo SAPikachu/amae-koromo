@@ -5,7 +5,7 @@ body {
   background-position: center;
   background-attachment: fixed;
 }
-.ReactVirtualized__Table__row:nth-of-type(odd) {
+.ReactVirtualized__Table__row.even {
   background-color: rgba(0, 0, 0, 0.05);
 }
 .ReactVirtualized__Table__headerRow,

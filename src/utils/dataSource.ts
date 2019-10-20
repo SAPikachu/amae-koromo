@@ -1,13 +1,12 @@
 import moment from "moment";
 
 import { DATA_ROOT, API_ROOT } from "./constants";
+import GameMode from "./gameMode";
+
+export { default as GameMode, NUMBER_OF_GAME_MODE } from "./gameMode";
 
 export const PLAYER_RANKS = "初士杰豪圣魂";
 
-export enum GameMode {
-  王座 = 16,
-  玉 = 12,
-}
 export interface PlayerRecord {
   accountId: number;
   nickname: string;
@@ -63,7 +62,7 @@ export async function fetchGameRecords(date: moment.MomentInput): Promise<GameRe
     return [];
   }
 }
-type FilterPredicate = ((record: GameRecord) => boolean) | null;
+export type FilterPredicate = ((record: GameRecord) => boolean) | null;
 export class DataProvider {
   _date: moment.Moment;
   _count: number | Promise<number> | null;
@@ -90,6 +89,9 @@ export class DataProvider {
     return (await resp.json()) as T;
   }
   setFilterPredicate(predicate: FilterPredicate) {
+    if (this._filterPredicate === predicate) {
+      return;
+    }
     this._filterPredicate = predicate;
     this._filterResultCache = {};
     this.updateFilteredIndices();
@@ -104,6 +106,7 @@ export class DataProvider {
       return;
     }
     let numShownItems = 0;
+    let numLoadedItems = 0;
     const indices = [];
     for (let i = 0; i < count; i++) {
       const chunk = this._chunks[Math.floor(i / this._itemsPerChunk)];
@@ -111,6 +114,7 @@ export class DataProvider {
         indices.push(i);
         continue;
       }
+      numLoadedItems++;
       const game = chunk[i % this._itemsPerChunk];
       let result = this._filterResultCache[game.uuid];
       if (result === undefined) {
@@ -122,7 +126,7 @@ export class DataProvider {
       }
     }
     this._filteredIndices = indices;
-    if (numShownItems < 10) {
+    if (numShownItems < 10 && numLoadedItems >= this._itemsPerChunk) {
       this._triggerFullLoad();
     }
   }

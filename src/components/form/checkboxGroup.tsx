@@ -1,33 +1,31 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import React from "react";
 
 export interface CheckboxItem {
   key: string;
   label: string;
-};
+}
 
 export function CheckboxGroup({
   items = [] as CheckboxItem[],
-  checkedItems = [] as CheckboxItem[],
+  selectedItemKeys = null as Set<string> | null,
   groupKey = "default",
-  onChange = (selectedItems: CheckboxItem[]) => {},
+  onChange = (selectedItemKeys: Set<string>) => {}
 }) {
-  const [selectedItemKeys, setSelectedItemKeys] = useState(() => new Set(checkedItems.map(x => x.key)));
   const setSelected = function(key: string, isSelected: boolean) {
-    if (isSelected && selectedItemKeys.has(key)) {
+    if (isSelected && (!selectedItemKeys || selectedItemKeys.has(key))) {
       return;
     }
-    if (!isSelected && !selectedItemKeys.has(key)) {
+    if (!isSelected && selectedItemKeys && !selectedItemKeys.has(key)) {
       return;
     }
-    const newSet = new Set(selectedItemKeys);
+    const newSet = new Set(selectedItemKeys || items.map(x => x.key));
     if (isSelected) {
       newSet.add(key);
     } else {
       newSet.delete(key);
     }
-    setSelectedItemKeys(newSet);
-    onChange(items.filter(x => newSet.has(x.key)));
+    onChange(newSet);
   };
   return (
     <React.Fragment>
@@ -38,8 +36,8 @@ export function CheckboxGroup({
             type="checkbox"
             id={`CG_${groupKey}_${item.key}`}
             value={item.key}
-            checked={selectedItemKeys.has(item.key)}
-            onChange={event => setSelected(item.key, event.target.checked)}
+            checked={!selectedItemKeys || selectedItemKeys.has(item.key)}
+            onChange={event => setSelected(item.key, event.currentTarget.checked)}
           />
           <label className="form-check-label" htmlFor={`CG_${groupKey}_${item.key}`}>
             {item.label}

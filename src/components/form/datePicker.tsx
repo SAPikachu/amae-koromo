@@ -1,18 +1,20 @@
 import React from "react";
 
 import moment from "moment";
-import { useReducer, useEffect } from "react";
-import { eventTargetReducer } from "../../utils";
+import { useCallback } from "react";
+import { MomentInput } from "moment";
 
 export function DatePicker({
-  initialDate = undefined as Date | undefined,
-  onChange = (_: Date) => {},
+  date = moment() as MomentInput,
+  onChange = (_: MomentInput) => {},
   className = "",
-  min = undefined as moment.MomentInput,
-  max = moment() as moment.MomentInput,
+  min = undefined as MomentInput,
+  max = moment() as MomentInput
 }) {
-  const [date, handleChange] = useReducer((_, target: HTMLInputElement) => moment(target.value, "YYYY-MM-DD").toDate(), initialDate || new Date());
-  useEffect(() => onChange(date), [date, onChange]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => onChange(moment(e.currentTarget.value, "YYYY-MM-DD")),
+    [onChange]
+  );
   return (
     <input
       className={className}
@@ -20,7 +22,7 @@ export function DatePicker({
       value={moment(date).format("YYYY-MM-DD")}
       min={min ? moment(min).format("YYYY-MM-DD") : undefined}
       max={max ? moment(max).format("YYYY-MM-DD") : undefined}
-      onChange={eventTargetReducer(handleChange)}
+      onChange={handleChange}
     />
   );
 }
