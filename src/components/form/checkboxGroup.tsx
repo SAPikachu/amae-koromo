@@ -1,4 +1,3 @@
-import { useState, useCallback } from "react";
 import React from "react";
 
 export interface CheckboxItem {

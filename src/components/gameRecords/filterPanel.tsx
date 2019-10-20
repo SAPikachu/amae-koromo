@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import React from "react";
 
-import { FormRow, DatePicker, CheckboxGroup, CheckboxItem } from "../form";
+import { FormRow, DatePicker, CheckboxGroup } from "../form";
 import { GameMode } from "../../utils/dataSource";
 import { useModel } from "./model";
 import { MomentInput } from "moment";
@@ -13,8 +13,6 @@ export const MODE_CHECKBOXES = Object.keys(GameMode)
     key: String(GameMode[x as keyof typeof GameMode]),
     label: x
   }));
-
-const getKeySet = (items: CheckboxItem[]) => new Set(items.map(x => x.key));
 
 const DEFAULT_DATE = moment().startOf("day");
 
