@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Column, AutoSizer } from "react-virtualized";
+import { Table, Column, AutoSizer, TableCellProps, Index } from "react-virtualized";
 import moment from "moment";
 import clsx from "clsx";
 
@@ -7,6 +7,7 @@ import { GameRecord, GameMode } from "../../utils/dataSource";
 import { Player } from "./player";
 import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";
+import { useCallback } from "react";
 
 const formatTime = (x: number) => (x ? moment.unix(x).format("HH:mm") : null);
 
@@ -20,10 +21,24 @@ const Players = React.memo(({ game }: { game: GameRecord }) => (
   </div>
 ));
 
+const cellFormatTime = ({ cellData }: TableCellProps) => formatTime(cellData);
+const cellFormatGameMode = ({ cellData }: TableCellProps) => GameMode[cellData];
+const cellRenderPlayer = ({ rowData }: TableCellProps) =>
+  rowData && rowData.players ? <Players game={rowData} /> : null;
+
 export function GameRecordTable() {
   const data = useDataAdapter();
   const scrollerProps = useScrollerProps();
   const { isScrolling, onChildScroll, scrollTop, height } = scrollerProps;
+  const rowGetter = useCallback(({ index }: Index) => data.getItem(index), [data]);
+  const getRowClassName = useCallback(
+    ({ index }: Index) => (index >= 0 ? clsx({ loading: !data.isItemLoaded(index), even: (index & 1) === 0 }) : ""),
+    [data]
+  );
+  const getNoRowsRenderer = useCallback(
+    () => (data.getUnfilteredCount() ? null : <p className="text-center">加载中...</p>),
+    [data]
+  );
   return (
     <div ref={scrollerProps.registerChild as any}>
       <AutoSizer disableHeight>
@@ -31,7 +46,7 @@ export function GameRecordTable() {
           <Table
             autoHeight
             rowCount={data.getCount()}
-            rowGetter={({ index }) => data.getItem(index)}
+            rowGetter={rowGetter}
             rowHeight={window.matchMedia("(min-width: 768px)").matches ? 70 : 140}
             headerHeight={50}
             width={width}
@@ -39,21 +54,13 @@ export function GameRecordTable() {
             isScrolling={isScrolling}
             onScroll={onChildScroll}
             scrollTop={scrollTop}
-            rowClassName={({ index }) =>
-              index >= 0 ? clsx({ loading: !data.isItemLoaded(index), even: (index & 1) === 0 }) : ""
-            }
-            noRowsRenderer={() => (data.getUnfilteredCount() ? null : <p className="text-center">加载中...</p>)}
+            rowClassName={getRowClassName}
+            noRowsRenderer={getNoRowsRenderer}
           >
-            <Column dataKey="modeId" label="等级" cellRenderer={({ cellData }) => GameMode[cellData]} width={40} />
-            <Column
-              dataKey="players"
-              label="玩家"
-              cellRenderer={({ rowData }) => (rowData && rowData.players ? <Players game={rowData} /> : null)}
-              width={120}
-              flexGrow={1}
-            />
-            <Column dataKey="startTime" label="开始" cellRenderer={({ cellData }) => formatTime(cellData)} width={40} />
-            <Column dataKey="endTime" label="结束" cellRenderer={({ cellData }) => formatTime(cellData)} width={40} />
+            <Column dataKey="modeId" label="等级" cellRenderer={cellFormatGameMode} width={40} />
+            <Column dataKey="players" label="玩家" cellRenderer={cellRenderPlayer} width={120} flexGrow={1} />
+            <Column dataKey="startTime" label="开始" cellRenderer={cellFormatTime} width={40} />
+            <Column dataKey="endTime" label="结束" cellRenderer={cellFormatTime} width={40} />
           </Table>
         )}
       </AutoSizer>
