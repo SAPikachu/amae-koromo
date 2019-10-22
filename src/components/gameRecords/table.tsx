@@ -29,18 +29,18 @@ const cellRenderPlayer = ({ rowData }: TableCellProps) =>
 export function GameRecordTable() {
   const data = useDataAdapter();
   const scrollerProps = useScrollerProps();
-  const { isScrolling, onChildScroll, scrollTop, height } = scrollerProps;
+  const { isScrolling, onChildScroll, scrollTop, height, registerChild } = scrollerProps;
   const rowGetter = useCallback(({ index }: Index) => data.getItem(index), [data]);
   const getRowClassName = useCallback(
     ({ index }: Index) => (index >= 0 ? clsx({ loading: !data.isItemLoaded(index), even: (index & 1) === 0 }) : ""),
     [data]
   );
-  const getNoRowsRenderer = useCallback(
+  const noRowsRenderer = useCallback(
     () => (data.getUnfilteredCount() ? null : <p className="text-center">加载中...</p>),
     [data]
   );
   return (
-    <div ref={scrollerProps.registerChild as any}>
+    <div ref={registerChild as any}>
       <AutoSizer disableHeight>
         {({ width }) => (
           <Table
@@ -55,7 +55,7 @@ export function GameRecordTable() {
             onScroll={onChildScroll}
             scrollTop={scrollTop}
             rowClassName={getRowClassName}
-            noRowsRenderer={getNoRowsRenderer}
+            noRowsRenderer={noRowsRenderer}
           >
             <Column dataKey="modeId" label="等级" cellRenderer={cellFormatGameMode} width={40} />
             <Column dataKey="players" label="玩家" cellRenderer={cellRenderPlayer} width={120} flexGrow={1} />
