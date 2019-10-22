@@ -18,6 +18,9 @@ const DEFAULT_DATE = moment().startOf("day");
 
 export function FilterPanel() {
   const [model, updateModel] = useModel();
+  if (model.type !== undefined) {
+    return null;
+  }
   const updateSearchTextFromEvent = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ searchText: e.currentTarget.value }),
     [updateModel]

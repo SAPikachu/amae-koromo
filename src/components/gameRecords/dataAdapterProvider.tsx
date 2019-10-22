@@ -2,14 +2,14 @@ import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import React, { ReactChild } from "react";
 import moment from "moment";
 
-import { DataProvider, GameRecord, NUMBER_OF_GAME_MODE, FilterPredicate } from "../../utils/dataSource";
-import { useModel } from "./model";
-
-const dateToProviderKey = (date: moment.MomentInput) =>
-  moment(date)
-    .startOf("day")
-    .valueOf()
-    .toString();
+import {
+  DataProvider,
+  GameRecord,
+  NUMBER_OF_GAME_MODE,
+  FilterPredicate,
+  ListingDataProvider
+} from "../../utils/dataSource";
+import { useModel, Model } from "./model";
 
 interface ItemLoadingPlaceholder {
   loading: boolean;
@@ -102,33 +102,59 @@ const DataAdapterContext = React.createContext(DUMMY_DATA_ADAPTER);
 export const useDataAdapter = () => useContext(DataAdapterContext);
 export const DataAdapterConsumer = DataAdapterContext.Consumer;
 
-export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {
-  const [model] = useModel();
-  const date = model.date || moment();
-  const [dataProviders] = useState(() => ({ [dateToProviderKey(date)]: new DataProvider(date) }));
-  const searchText = (model.searchText || "").trim();
-  const searchPredicate: FilterPredicate = useMemo(
+function getProviderKey(model: Model): string {
+  if (model.type === undefined) {
+    return moment(model.date || moment())
+      .startOf("day")
+      .valueOf()
+      .toString();
+  } else if (model.type === "player") {
+    return `player-${model.playerId}`;
+  }
+  throw new Error("Unknown model type");
+}
+
+function createProvider(model: Model): DataProvider {
+  if (model.type === undefined) {
+    return ListingDataProvider.create(model.date || moment().startOf("day"));
+  }
+  throw new Error("Not implemented");
+}
+
+function usePredicate(model: Model): FilterPredicate {
+  if (model.type !== undefined) {
+    return useMemo(() => null, [null, ""]);
+  }
+  const searchText = (model.searchText || "").trim() || "";
+  const needPredicate = searchText || (model.selectedModes && model.selectedModes.size < NUMBER_OF_GAME_MODE);
+  return useMemo(
     () =>
-      searchText || (model.selectedModes && model.selectedModes.size < NUMBER_OF_GAME_MODE)
+      needPredicate
         ? game => {
             if (model.selectedModes && !model.selectedModes.has(game.modeId.toString())) {
               return false;
             }
-            if (searchText && !game.players.some(player => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
+            if (!game.players.some(player => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
               return false;
             }
             return true;
           }
         : null,
-    [model.selectedModes, searchText]
+    [(model.type === undefined && model.selectedModes) || null, searchText]
   );
+}
+
+export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {
+  const [model] = useModel();
+  const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
+  const searchPredicate = usePredicate(model);
   const dataProvider = useMemo(() => {
-    const key = dateToProviderKey(date);
+    const key = getProviderKey(model);
     if (!dataProviders[key]) {
-      dataProviders[key] = new DataProvider(date);
+      dataProviders[key] = createProvider(model);
     }
     return dataProviders[key];
-  }, [date, dataProviders]);
+  }, [model, dataProviders]);
   const [dataAdapter, setDataAdapter] = useState(() => DUMMY_DATA_ADAPTER);
   const refreshDataAdapter = useCallback(() => {
     dataProvider.setFilterPredicate(searchPredicate);

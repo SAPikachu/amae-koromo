@@ -21,31 +21,65 @@ export interface GameRecord {
   players: PlayerRecord[];
 }
 
-export type FilterPredicate = ((record: GameRecord) => boolean) | null;
-export class DataProvider {
+async function ApiGet<T>(path: string) {
+  const resp = await fetch(API_ROOT + path);
+  if (!resp.ok) {
+    throw resp;
+  }
+  return (await resp.json()) as T;
+}
+
+type Metadata = {
+  count: number;
+};
+interface DataLoader<T extends Metadata> {
+  getMetadata(): Promise<T>;
+  getRecords(skip: number, limit: number, cacheTag?: string): Promise<GameRecord[]>;
+}
+
+class ListingDataLoader implements DataLoader<Metadata> {
   _date: moment.Moment;
-  _count: number | Promise<number> | null;
+  constructor(date: moment.MomentInput) {
+    this._date = moment(date).startOf("day");
+  }
+  async getMetadata(): Promise<Metadata> {
+    return await ApiGet<Metadata>(`count/${this._date.valueOf()}`);
+  }
+  async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
+    return await ApiGet<GameRecord[]>(`games/${this._date.valueOf()}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);
+  }
+}
+
+export type FilterPredicate = ((record: GameRecord) => boolean) | null;
+export type ListingDataProvider = _DataProvider<ListingDataLoader>;
+export const ListingDataProvider = Object.freeze({
+  create(date: moment.MomentInput): ListingDataProvider {
+    return new _DataProvider<ListingDataLoader>(new ListingDataLoader(date));
+  }
+});
+export type DataProvider = ListingDataProvider;
+class _DataProvider<
+  TLoader extends DataLoader<TMetadata>,
+  TMetadata extends Metadata = TLoader extends DataLoader<infer T> ? T : Metadata
+> {
+  _loader: TLoader;
+  _metadata: TMetadata | Promise<TMetadata> | null;
+  _countPromise: Promise<number> | null;
   _chunks: (GameRecord[] | Promise<GameRecord[]>)[];
   _itemsPerChunk: number;
   _filterPredicate: FilterPredicate;
   _filteredIndices: number[] | null;
   _filterResultCache: { [uuid: string]: boolean };
 
-  constructor(date: moment.MomentInput, itemsPerChunk = 100) {
-    this._date = moment(date).startOf("day");
-    this._count = null;
+  constructor(loader: TLoader, itemsPerChunk = 100) {
+    this._loader = loader;
+    this._metadata = null;
+    this._countPromise = null;
     this._chunks = [];
     this._itemsPerChunk = itemsPerChunk;
     this._filterPredicate = null;
     this._filteredIndices = null;
     this._filterResultCache = {};
-  }
-  async _apiGet<T>(path: string) {
-    const resp = await fetch(API_ROOT + path);
-    if (!resp.ok) {
-      throw resp;
-    }
-    return (await resp.json()) as T;
   }
   setFilterPredicate(predicate: FilterPredicate) {
     if (this._filterPredicate === predicate) {
@@ -60,10 +94,11 @@ export class DataProvider {
     if (!this._filterPredicate) {
       return;
     }
-    const count = this._count;
-    if (typeof count !== "number") {
+    const metadata = this.getMetadataSync();
+    if (!metadata) {
       return;
     }
+    const count = metadata.count;
     let numShownItems = 0;
     let numLoadedItems = 0;
     const indices = [];
@@ -89,28 +124,41 @@ export class DataProvider {
       this._triggerFullLoad();
     }
   }
+  getMetadataSync(): TMetadata | null {
+    return this._metadata && !(this._metadata instanceof Promise) ? this._metadata : null;
+  }
   getCountMaybeSync(): number | Promise<number> {
-    if (this._count === null) {
-      return this.getCount();
+    let metadata = this.getMetadataSync();
+    if (metadata) {
+      return this._filteredIndices ? this._filteredIndices.length : metadata.count;
     }
-    return this._filteredIndices ? this._filteredIndices.length : this._count;
+    return this.getCount();
   }
   async getCount(): Promise<number> {
-    if (this._count === null) {
-      this._count = (async () => {
-        const resp = await this._apiGet<{ count: number }>(`count/${this._date.valueOf()}`);
-        this._count = resp.count;
-        this.updateFilteredIndices();
-        return this.getCountMaybeSync();
-      })();
+    let metadata = this.getMetadataSync();
+    if (metadata) {
+      return this.getCountMaybeSync();
     }
-    return this.getCountMaybeSync();
+    if (this._countPromise) {
+      return this._countPromise;
+    }
+    if (!this._metadata) {
+      this._metadata = this._loader.getMetadata().then(metadata => {
+        this._metadata = metadata;
+        this.updateFilteredIndices();
+        this._countPromise = null;
+        return metadata;
+      });
+    }
+    this._countPromise = Promise.resolve(this._metadata).then(() => this.getCountMaybeSync());
+    return this._countPromise;
   }
   getUnfilteredCountSync(): number | null {
-    if (typeof this._count !== "number") {
+    const metadata = this.getMetadataSync();
+    if (!metadata) {
       return null;
     }
-    return this._count;
+    return metadata.count;
   }
   isItemLoaded(index: number): boolean {
     const mappedIndex = this._mapItemIndex(index);
@@ -187,13 +235,13 @@ export class DataProvider {
       return [];
     }
     if (chunkIndex >= numChunks) {
-      console.warn(`Loading out-of-index chunk: ${chunkIndex}, number of items: ${this._count}`);
+      console.warn(`Loading out-of-index chunk: ${chunkIndex}, number of items: ${count}`);
       return [];
     }
-    const chunk = await this._apiGet<GameRecord[]>(
-      `games/${this._date.valueOf()}?skip=${this._itemsPerChunk * chunkIndex}&limit=${this._itemsPerChunk}&tag=${
-        chunkIndex === numChunks - 1 ? count : ""
-      }`
+    const chunk = await this._loader.getRecords(
+      this._itemsPerChunk * chunkIndex,
+      this._itemsPerChunk,
+      chunkIndex === numChunks - 1 ? count.toString() : ""
     );
     if (chunk.length < this._itemsPerChunk && chunkIndex < numChunks - 1) {
       console.warn("Unexpected number of items in chunk:", chunk.length);
