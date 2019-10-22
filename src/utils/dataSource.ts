@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import { DATA_ROOT, API_ROOT } from "./constants";
+import { API_ROOT } from "./constants";
 import GameMode from "./gameMode";
 
 export { default as GameMode, NUMBER_OF_GAME_MODE } from "./gameMode";
@@ -20,48 +20,7 @@ export interface GameRecord {
   endTime: number;
   players: PlayerRecord[];
 }
-interface CouchDbViewRow<T> {
-  id: string;
-  key: any;
-  value: T;
-}
-interface CouchDbViewResponse<T> {
-  total_rows: number;
-  offset: number;
-  rows: CouchDbViewRow<T>[];
-}
 
-const DATA_CACHE_MS = 120000;
-export async function fetchGameRecords(date: moment.MomentInput): Promise<GameRecord[]> {
-  const dateString = moment(date).format("YYMMDD");
-  const isToday = moment(date).isSame(moment(), "day");
-  const cacheTag = `gameRecord${isToday ? "Today" : dateString}`;
-  const timestamp = new Date().getTime();
-  const lastUpdateTimestamp = parseInt(sessionStorage.lastUpdateTimestamp || "0", 10);
-  const cacheExpired = isToday && timestamp > lastUpdateTimestamp + DATA_CACHE_MS;
-  if (cacheExpired) {
-    sessionStorage.removeItem(cacheTag);
-    sessionStorage.setItem("lastUpdateTimestamp", timestamp.toString());
-  }
-  if (sessionStorage[cacheTag]) {
-    return Promise.resolve(JSON.parse(sessionStorage[cacheTag]));
-  }
-  try {
-    const resp = await fetch(`${DATA_ROOT}records/${dateString}.json?t=${cacheTag}`);
-    const ret = Object.values(await resp.json()) as GameRecord[];
-    ret.sort((a, b) => b.endTime - a.endTime);
-    const cacheData = JSON.stringify(ret);
-    try {
-      sessionStorage.setItem(cacheTag, cacheData);
-    } catch (e) {
-      sessionStorage.clear();
-      sessionStorage.setItem(cacheTag, cacheData);
-    }
-    return ret;
-  } catch (e) {
-    return [];
-  }
-}
 export type FilterPredicate = ((record: GameRecord) => boolean) | null;
 export class DataProvider {
   _date: moment.Moment;
@@ -234,7 +193,7 @@ export class DataProvider {
     const chunk = await this._apiGet<GameRecord[]>(
       `games/${this._date.valueOf()}?skip=${this._itemsPerChunk * chunkIndex}&limit=${this._itemsPerChunk}&tag=${
         chunkIndex === numChunks - 1 ? count : ""
-      }`,
+      }`
     );
     if (chunk.length < this._itemsPerChunk && chunkIndex < numChunks - 1) {
       console.warn("Unexpected number of items in chunk:", chunk.length);
