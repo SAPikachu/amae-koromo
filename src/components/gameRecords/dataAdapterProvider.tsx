@@ -7,7 +7,8 @@ import {
   GameRecord,
   NUMBER_OF_GAME_MODE,
   FilterPredicate,
-  ListingDataProvider
+  ListingDataProvider,
+  PlayerDataProvider
 } from "../../utils/dataSource";
 import { useModel, Model } from "./model";
 
@@ -117,6 +118,9 @@ function getProviderKey(model: Model): string {
 function createProvider(model: Model): DataProvider {
   if (model.type === undefined) {
     return ListingDataProvider.create(model.date || moment().startOf("day"));
+  }
+  if (model.type === "player") {
+    return PlayerDataProvider.create(model.playerId);
   }
   throw new Error("Not implemented");
 }

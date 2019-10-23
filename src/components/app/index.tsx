@@ -14,14 +14,7 @@ function App() {
       <Scroller>
         <AppHeader />
         <Container>
-          <Switch>
-            <Route exact path={["/", "/:date(\\d{4}-\\d{2}-\\d{2})/:modes([0-9.]+)?/:search?"]}>
-              <GameRecords />
-            </Route>
-            <Route>
-              <Redirect to="/" />
-            </Route>
-          </Switch>
+          <GameRecords />
         </Container>
       </Scroller>
     </Router>

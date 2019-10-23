@@ -50,6 +50,19 @@ class ListingDataLoader implements DataLoader<Metadata> {
   }
 }
 
+class PlayerDataLoader implements DataLoader<Metadata> {
+  _playerId: string;
+  constructor(playerId: string) {
+    this._playerId = playerId;
+  }
+  async getMetadata(): Promise<Metadata> {
+    return await ApiGet<Metadata>(`player_stats/${this._playerId}`);
+  }
+  async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
+    return await ApiGet<GameRecord[]>(`player_records/${this._playerId}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);
+  }
+}
+
 export type FilterPredicate = ((record: GameRecord) => boolean) | null;
 export type ListingDataProvider = _DataProvider<ListingDataLoader>;
 export const ListingDataProvider = Object.freeze({
@@ -57,7 +70,13 @@ export const ListingDataProvider = Object.freeze({
     return new _DataProvider<ListingDataLoader>(new ListingDataLoader(date));
   }
 });
-export type DataProvider = ListingDataProvider;
+export type PlayerDataProvider = _DataProvider<PlayerDataLoader>;
+export const PlayerDataProvider = Object.freeze({
+  create(playerId: string): PlayerDataProvider {
+    return new _DataProvider<PlayerDataLoader>(new PlayerDataLoader(playerId));
+  }
+});
+export type DataProvider = ListingDataProvider | PlayerDataProvider;
 class _DataProvider<
   TLoader extends DataLoader<TMetadata>,
   TMetadata extends Metadata = TLoader extends DataLoader<infer T> ? T : Metadata

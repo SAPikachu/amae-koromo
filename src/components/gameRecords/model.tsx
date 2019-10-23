@@ -5,8 +5,9 @@ import { useMemo } from "react";
 import { NUMBER_OF_GAME_MODE } from "../../utils/gameMode";
 import { useLocation } from "react-router";
 
-interface WithVersion {
+interface WithRuntimeInfo {
   version: number;
+  pendingRouteUpdate?: boolean;
 }
 export interface ListingModel {
   type?: undefined;
@@ -18,15 +19,15 @@ export interface PlayerModel {
   type: "player";
   playerId: string;
 }
-export type Model = (ListingModel | PlayerModel) & WithVersion;
+export type Model = (ListingModel | PlayerModel) & WithRuntimeInfo;
 interface ListingModelPlain {
   type?: undefined;
   date: number | null;
   selectedModes: string[] | null;
   searchText: string;
 }
-export type ModelPlain = (ListingModelPlain | PlayerModel) & WithVersion;
-export const ModelUtils = Object.freeze({
+export type ModelPlain = (ListingModelPlain | PlayerModel) & WithRuntimeInfo;
+export const Model = Object.freeze({
   toPlain: function(model: Model): ModelPlain {
     if (model.type === "player") {
       return model;
@@ -56,7 +57,10 @@ type ModelUpdate = Partial<ListingModel> | PlayerModel;
 type DispatchModelUpdate = (props: ModelUpdate) => void;
 
 const DEFAULT_MODEL: ListingModel = { date: null, selectedModes: null, searchText: "" };
-const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([{...DEFAULT_MODEL, version: 0}, () => {}]);
+const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([
+  { ...DEFAULT_MODEL, version: 0 },
+  () => {}
+]);
 export const useModel = () => useContext(ModelContext);
 
 function isSameSet<T>(set: Set<T>, other: Set<T>) {
@@ -123,12 +127,17 @@ export function ModelProvider({ children }: { children: ReactChild | ReactChild[
   const [model, updateModel] = useReducer(
     (oldModel: Model, newProps: ModelUpdate): Model =>
       isChanged(oldModel, newProps)
-        ? { ...oldModel, ...normalizeUpdate(newProps), version: oldModel.version + 1 }
+        ? {
+            ...((oldModel.type === newProps.type ? oldModel : {}) as Model),
+            ...normalizeUpdate(newProps),
+            version: oldModel.version + 1,
+            pendingRouteUpdate: true
+          }
         : oldModel,
     null,
     (): Model => ({
       ...DEFAULT_MODEL,
-      ...ModelUtils.fromPlain((location.state || {}).model || {}),
+      ...Model.fromPlain((location.state || {}).model || {}),
       version: new Date().getTime()
     })
   );

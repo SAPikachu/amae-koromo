@@ -18,9 +18,6 @@ const DEFAULT_DATE = moment().startOf("day");
 
 export function FilterPanel() {
   const [model, updateModel] = useModel();
-  if (model.type !== undefined) {
-    return null;
-  }
   const updateSearchTextFromEvent = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ searchText: e.currentTarget.value }),
     [updateModel]
@@ -30,6 +27,9 @@ export function FilterPanel() {
     [updateModel]
   );
   const setDate = useCallback((date: MomentInput) => updateModel({ date }), [updateModel]);
+  if (model.type !== undefined) {
+    return null;
+  }
   return (
     <React.Fragment>
       <FormRow title="日期">

@@ -29,11 +29,15 @@ export function generatePath(model: Model): string {
 function Routes() {
   return (
     <ModelProvider>
-      <RouteSync />
-      <FilterPanel />
       <DataAdapterProvider>
         <Switch>
+          <Route exact path={PLAYER_PATH}>
+            <RouteSync view="player" />
+            <GameRecordTable />
+          </Route>
           <Route exact path={["/", PATH]}>
+            <RouteSync view="listing" />
+            <FilterPanel />
             <GameRecordTable />
           </Route>
           <Route>
