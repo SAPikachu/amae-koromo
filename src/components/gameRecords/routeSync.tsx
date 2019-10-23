@@ -12,7 +12,6 @@ type ListingRouteParams = {
 };
 
 type HistoryState = {
-  path: string;
   model: ModelPlain;
 };
 
@@ -69,15 +68,15 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
     updateModel(newModel);
     return (
       <Redirect
-        to={{ pathname: location.pathname, state: { path: location.pathname, model: Model.toPlain(newModel) } }}
+        to={{ pathname: location.pathname, state: { model: Model.toPlain(newModel) } }}
       />
     );
   }
-  const newPath = generatePath(model);
   if (model.pendingRouteUpdate) {
     // Model updated
+    const newPath = generatePath(model);
     delete (model as Model).pendingRouteUpdate; // Do not trigger update
-    return <Redirect to={{ pathname: newPath, state: { path: newPath, model: Model.toPlain(model) } }} />;
+    return <Redirect to={{ pathname: newPath, state: { model: Model.toPlain(model) } }} />;
   } else {
     const restoredModel = Model.fromPlain(state.model);
     updateModel(restoredModel);
