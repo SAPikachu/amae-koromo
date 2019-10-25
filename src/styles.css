@@ -48,10 +48,10 @@ h1 a:hover {
 .recharts-pie-label-text {
   font-weight: bold;
 }
-.active-player {
-  color: black;
+.with-active-player .player:not(.active-player) {
+  color: #aaa;
 }
-.active-player a {
+.with-active-player .player:not(.active-player) a {
   color: inherit;
 }
 .player-chart-tooltip {

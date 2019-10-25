@@ -4,7 +4,7 @@ import { Table, Column, AutoSizer, TableCellProps, Index } from "react-virtualiz
 import moment from "moment";
 import clsx from "clsx";
 
-import { GameRecord, GameMode } from '../../utils/dataSource';
+import { GameRecord, GameMode } from "../../utils/dataSource";
 import { Player } from "./player";
 import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";
@@ -66,6 +66,7 @@ export function GameRecordTable({ showStartEnd = true, showFullTime = false } = 
         {({ width }) => (
           <Table
             autoHeight
+            className={activePlayerId ? "with-active-player" : ""}
             rowCount={data.getCount()}
             rowGetter={rowGetter}
             rowHeight={window.matchMedia("(min-width: 768px)").matches ? 70 : 140}
