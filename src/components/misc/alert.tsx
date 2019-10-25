@@ -1,6 +1,7 @@
 import { useState, useEffect, ReactNode } from "react";
 import React from "react";
 import { ReactComponentLike } from "prop-types";
+import { triggerRelayout } from '../../utils/index';
 
 export function Alert({
   className = "",
@@ -37,9 +38,7 @@ export function Alert({
           onClick={event => {
             event.preventDefault();
             setClosed(true);
-            setTimeout(function() {
-              window.dispatchEvent(new UIEvent("resize"));
-            }, 1000);
+            triggerRelayout();
           }}
         >
           <span aria-hidden="true">×</span>

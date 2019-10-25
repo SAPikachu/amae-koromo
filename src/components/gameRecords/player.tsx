@@ -2,29 +2,32 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { IoMdBook } from "react-icons/io";
 
-import { getLevelTag } from "../../utils";
-import { GameRecord, PlayerRecord } from "../../utils/dataSource";
+import { GameRecord, PlayerRecord, getLevelTag } from "../../utils/dataSource";
 import { generatePath } from "./routes";
 
-const encodeAccountId = (t: number) => 1358437 + ((7 * t + 1117113) ^ 86216345);
-
 export const Player = function({
-  player: { nickname, level, score, accountId },
-  game: { uuid },
-  isTop
+  player,
+  game,
+  isActive,
+  hideDetailLink
 }: {
   player: PlayerRecord;
   game: GameRecord;
-  isTop: boolean;
+  isActive: boolean;
+  hideDetailLink?: boolean;
 }) {
+  const { nickname, level, score, accountId } = player;
+  const isTop = GameRecord.getRankIndexByPlayer(game, player) === 0;
   return (
-    <div className={`player ${isTop && "font-weight-bold"}`}>
-      <a href={`https://www.majsoul.com/1/?paipu=${uuid}_a${encodeAccountId(accountId)}`} title="查看牌谱" target="_blank">
+    <span className={`player ${isTop && "font-weight-bold"} ${isActive && "active-player"}`}>
+      <a href={GameRecord.getRecordLink(game, player)} title="查看牌谱" target="_blank">
         [{getLevelTag(level)}] {nickname} {score !== undefined && `[${score}]`}
       </a>{" "}
-      <Link title="玩家记录" to={generatePath({ type: "player", playerId: accountId.toString(), version: 0 })}>
-        <IoMdBook />
-      </Link>
-    </div>
+      {hideDetailLink || isActive ? null : (
+        <Link title="玩家记录" to={generatePath({ type: "player", playerId: accountId.toString(), version: 0 })}>
+          <IoMdBook />
+        </Link>
+      )}
+    </span>
   );
 };

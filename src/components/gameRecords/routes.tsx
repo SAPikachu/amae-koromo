@@ -8,6 +8,7 @@ import { RouteSync } from "./routeSync";
 import { DataAdapterProvider } from "./dataAdapterProvider";
 import { GameRecordTable } from "./table";
 import { FilterPanel } from "./filterPanel";
+import { PlayerDetails } from "./playerDetails";
 
 const PLAYER_PATH = "/player/:id";
 const PATH = "/:date(\\d{4}-\\d{2}-\\d{2})/:modes([0-9.]+)?/:search?";
@@ -33,7 +34,8 @@ function Routes() {
         <Switch>
           <Route exact path={PLAYER_PATH}>
             <RouteSync view="player" />
-            <GameRecordTable />
+            <PlayerDetails />
+            <GameRecordTable showFullTime showStartEnd={false} />
           </Route>
           <Route exact path={["/", PATH]}>
             <RouteSync view="listing" />

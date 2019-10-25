@@ -4,6 +4,8 @@ import moment from "moment";
 import { useParams, useLocation, Redirect } from "react-router";
 import { useModel, Model, ModelPlain } from "./model";
 import { generatePath } from "./routes";
+import { useEffect } from "react";
+import { scrollToTop, triggerRelayout } from "../../utils/index";
 
 type ListingRouteParams = {
   date?: string;
@@ -49,6 +51,7 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
   const params = useParams();
   const [model, updateModel] = useModel();
   const location = useLocation<HistoryState>();
+  useEffect(triggerRelayout, [model.type]);
   const state = location.state;
   // console.log(params, model, location, state);
   if (state && state.model.version === model.version) {
@@ -66,11 +69,8 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
       version: model.version
     };
     updateModel(newModel);
-    return (
-      <Redirect
-        to={{ pathname: location.pathname, state: { model: Model.toPlain(newModel) } }}
-      />
-    );
+    scrollToTop();
+    return <Redirect to={{ pathname: location.pathname, state: { model: Model.toPlain(newModel) } }} />;
   }
   if (model.pendingRouteUpdate) {
     // Model updated

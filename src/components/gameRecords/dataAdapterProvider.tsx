@@ -11,6 +11,7 @@ import {
   PlayerDataProvider
 } from "../../utils/dataSource";
 import { useModel, Model } from "./model";
+import { Metadata } from "../../utils/dataSource";
 
 interface ItemLoadingPlaceholder {
   loading: boolean;
@@ -21,6 +22,7 @@ const loadingPlaceholder = { loading: true };
 export interface IDataAdapter {
   getCount(): number;
   getUnfilteredCount(): number;
+  getMetadata<T extends Metadata>(): T | null;
   getItem(index: number): GameRecord | ItemLoadingPlaceholder;
   isItemLoaded(index: number): boolean;
 }
@@ -31,6 +33,9 @@ class _DummyDataAdapter implements IDataAdapter {
   }
   getUnfilteredCount(): number {
     return 0;
+  }
+  getMetadata<T extends Metadata>(): T | null {
+    return null;
   }
   getItem(index: number): GameRecord | ItemLoadingPlaceholder {
     return loadingPlaceholder;
@@ -74,6 +79,9 @@ class DataAdapter implements IDataAdapter {
   }
   getUnfilteredCount(): number {
     return this._provider.getUnfilteredCountSync() || 0;
+  }
+  getMetadata<T extends Metadata>(): T | null {
+    return this._provider.getMetadataSync() as T | null;
   }
   getItem(index: number): GameRecord | ItemLoadingPlaceholder {
     if (this._provider.isItemLoaded(index)) {

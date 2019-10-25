@@ -1,25 +1,10 @@
 import moment from "moment";
 
 import { API_ROOT } from "./constants";
-import GameMode from "./gameMode";
+import { GameRecord, Metadata, PlayerMetadata } from "./dataTypes";
 
 export { default as GameMode, NUMBER_OF_GAME_MODE } from "./gameMode";
-
-export const PLAYER_RANKS = "初士杰豪圣魂";
-
-export interface PlayerRecord {
-  accountId: number;
-  nickname: string;
-  level: number;
-  score: number;
-}
-export interface GameRecord {
-  modeId: GameMode;
-  uuid: string;
-  startTime: number;
-  endTime: number;
-  players: PlayerRecord[];
-}
+export * from "./dataTypes";
 
 async function ApiGet<T>(path: string) {
   const resp = await fetch(API_ROOT + path);
@@ -29,9 +14,6 @@ async function ApiGet<T>(path: string) {
   return (await resp.json()) as T;
 }
 
-type Metadata = {
-  count: number;
-};
 interface DataLoader<T extends Metadata> {
   getMetadata(): Promise<T>;
   getRecords(skip: number, limit: number, cacheTag?: string): Promise<GameRecord[]>;
@@ -50,13 +32,13 @@ class ListingDataLoader implements DataLoader<Metadata> {
   }
 }
 
-class PlayerDataLoader implements DataLoader<Metadata> {
+class PlayerDataLoader implements DataLoader<PlayerMetadata> {
   _playerId: string;
   constructor(playerId: string) {
     this._playerId = playerId;
   }
-  async getMetadata(): Promise<Metadata> {
-    return await ApiGet<Metadata>(`player_stats/${this._playerId}`);
+  async getMetadata(): Promise<PlayerMetadata> {
+    return await ApiGet<PlayerMetadata>(`player_stats/${this._playerId}`);
   }
   async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
     return await ApiGet<GameRecord[]>(`player_records/${this._playerId}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);

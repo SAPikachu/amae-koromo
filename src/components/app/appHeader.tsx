@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import { Container } from "../layout";
 import { Alert } from "../misc/alert";
@@ -7,7 +8,9 @@ export function AppHeader() {
   return (
     <React.Fragment>
       <Container>
-        <h1>雀魂牌谱屋</h1>
+        <h1>
+          <Link to="/">雀魂牌谱屋</Link>
+        </h1>
       </Container>
       <Alert container={Container} stateName="topNote">
         <h4>说明</h4>
