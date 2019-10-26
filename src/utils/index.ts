@@ -8,3 +8,4 @@ export function scrollToTop() {
   window.scrollTo(0, 0);
   requestAnimationFrame(() => window.scrollTo(0, 0));
 }
+export const formatPercent = (x: any) => (x > 0 ? `${(x * 100).toFixed(2)}%` : "");

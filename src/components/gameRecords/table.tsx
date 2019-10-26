@@ -12,6 +12,7 @@ import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";
 import { triggerRelayout } from "../../utils/index";
 import { useModel } from "./model";
+import Loadable from "react-loadable";
 
 const formatTime = (x: number) => (x ? moment.unix(x).format("HH:mm") : null);
 
@@ -61,7 +62,13 @@ export function GameRecordTable({ showStartEnd = true, showFullTime = false } = 
       rowData && rowData.players ? <Players game={rowData} activePlayerId={activePlayerId} /> : null,
     [activePlayerId]
   );
-  useEffect(triggerRelayout, [!!data.getUnfilteredCount()]);
+  const unfilteredCount = data.getUnfilteredCount();
+  useEffect(() => {
+    triggerRelayout();
+    if (unfilteredCount) {
+      Loadable.preloadAll();
+    }
+  }, [!!unfilteredCount]);
   return (
     <div ref={registerChild as any}>
       <AutoSizer disableHeight>
