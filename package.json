@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && cp build/index.html build/404.html",
+    "build": "react-scripts build && cp build/index.html build/404.html && node generatePreloadHeaders.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
