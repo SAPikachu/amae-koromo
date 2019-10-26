@@ -1,6 +1,7 @@
 import React, { ReactChild, useContext } from "react";
 
-import { WindowScroller, WindowScrollerChildProps } from "react-virtualized";
+import { WindowScrollerChildProps } from "react-virtualized";
+import { WindowScroller } from "react-virtualized/dist/es/WindowScroller";
 
 const ScrollerContext = React.createContext<WindowScrollerChildProps>({} as any);
 

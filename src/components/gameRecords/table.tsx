@@ -1,6 +1,8 @@
 import React from "react";
 import { useCallback, useEffect } from "react";
-import { Table, Column, AutoSizer, TableCellProps, Index } from "react-virtualized";
+import { TableCellProps, Index } from "react-virtualized";
+import { Table, Column } from "react-virtualized/dist/es/Table";
+import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import moment from "moment";
 import clsx from "clsx";
 
