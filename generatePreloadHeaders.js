@@ -14,7 +14,7 @@ links.forEach(link => {
   if (/\.css$/.test(link)) {
     fileType = 'stylesheet';
   }
-  preloadLines.push(`  Link: ${link}; rel=preload; as=${fileType}`);
+  preloadLines.push(`  Link: <${link}>; rel=preload; as=${fileType}`);
 });
 
 const headerTemplate = `
