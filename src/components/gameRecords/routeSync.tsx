@@ -15,6 +15,7 @@ type ListingRouteParams = {
 
 type HistoryState = {
   model: ModelPlain;
+  pathname: string;
 };
 
 const ModelBuilders = {
@@ -56,6 +57,9 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
   // console.log(params, model, location, state);
   if (state && state.model.version === model.version) {
     delete (model as Model).pendingRouteUpdate;
+    if (location.pathname !== state.pathname) {
+      return <Redirect to={{ pathname: state.pathname, state }} />;
+    }
     return <></>;
   }
   if (!state) {
@@ -70,13 +74,17 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
     };
     updateModel(newModel);
     scrollToTop();
-    return <Redirect to={{ pathname: location.pathname, state: { model: Model.toPlain(newModel) } }} />;
+    return (
+      <Redirect
+        to={{ pathname: location.pathname, state: { pathname: location.pathname, model: Model.toPlain(newModel) } }}
+      />
+    );
   }
   if (model.pendingRouteUpdate) {
     // Model updated
     const newPath = generatePath(model);
     delete (model as Model).pendingRouteUpdate; // Do not trigger update
-    return <Redirect to={{ pathname: newPath, state: { model: Model.toPlain(model) } }} />;
+    return <Redirect to={{ pathname: newPath, state: { pathname: newPath, model: Model.toPlain(model) } }} />;
   } else {
     const restoredModel = Model.fromPlain(state.model);
     updateModel(restoredModel);
