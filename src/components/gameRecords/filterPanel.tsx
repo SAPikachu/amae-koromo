@@ -4,8 +4,7 @@ import React from "react";
 import { FormRow, DatePicker, CheckboxGroup } from "../form";
 import { GameMode } from "../../utils/dataSource";
 import { useModel } from "./model";
-import { MomentInput } from "moment";
-import moment from "moment";
+import dayjs from "dayjs";
 
 export const MODE_CHECKBOXES = Object.keys(GameMode)
   .filter(x => typeof GameMode[x as keyof typeof GameMode] !== "string")
@@ -14,7 +13,7 @@ export const MODE_CHECKBOXES = Object.keys(GameMode)
     label: x
   }));
 
-const DEFAULT_DATE = moment().startOf("day");
+const DEFAULT_DATE = dayjs().startOf("day");
 
 export function FilterPanel() {
   const [model, updateModel] = useModel();
@@ -26,7 +25,7 @@ export function FilterPanel() {
     (selectedItemKeys: Set<string>) => updateModel({ selectedModes: selectedItemKeys }),
     [updateModel]
   );
-  const setDate = useCallback((date: MomentInput) => updateModel({ date }), [updateModel]);
+  const setDate = useCallback((date: dayjs.ConfigType) => updateModel({ date }), [updateModel]);
   if (model.type !== undefined) {
     return null;
   }

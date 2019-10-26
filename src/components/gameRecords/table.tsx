@@ -3,7 +3,7 @@ import { useCallback, useEffect } from "react";
 import { TableCellProps, Index } from "react-virtualized";
 import { Table, Column } from "react-virtualized/dist/es/Table";
 import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
-import moment from "moment";
+import dayjs from "dayjs";
 import clsx from "clsx";
 
 import { GameRecord, GameMode } from "../../utils/dataSource";
@@ -14,7 +14,7 @@ import { triggerRelayout } from "../../utils/index";
 import { useModel } from "./model";
 import Loadable from "react-loadable";
 
-const formatTime = (x: number) => (x ? moment.unix(x).format("HH:mm") : null);
+const formatTime = (x: number) => (x ? dayjs.unix(x).format("HH:mm") : null);
 
 const Players = React.memo(({ game, activePlayerId }: { game: GameRecord; activePlayerId?: string }) => (
   <div className="row no-gutters">

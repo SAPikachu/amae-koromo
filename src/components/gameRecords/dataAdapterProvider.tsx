@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import React, { ReactChild } from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 
 import {
   DataProvider,
@@ -113,7 +113,7 @@ export const DataAdapterConsumer = DataAdapterContext.Consumer;
 
 function getProviderKey(model: Model): string {
   if (model.type === undefined) {
-    return moment(model.date || moment())
+    return dayjs(model.date || dayjs())
       .startOf("day")
       .valueOf()
       .toString();
@@ -125,7 +125,7 @@ function getProviderKey(model: Model): string {
 
 function createProvider(model: Model): DataProvider {
   if (model.type === undefined) {
-    return ListingDataProvider.create(model.date || moment().startOf("day"));
+    return ListingDataProvider.create(model.date || dayjs().startOf("day"));
   }
   if (model.type === "player") {
     return PlayerDataProvider.create(model.playerId);

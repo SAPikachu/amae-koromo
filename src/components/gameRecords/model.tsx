@@ -1,5 +1,4 @@
-import { MomentInput } from "moment";
-import moment from "moment";
+import dayjs from "dayjs";
 import React, { useReducer, useContext, ReactChild } from "react";
 import { useMemo } from "react";
 import { NUMBER_OF_GAME_MODE } from "../../utils/gameMode";
@@ -11,7 +10,7 @@ interface WithRuntimeInfo {
 }
 export interface ListingModel {
   type?: undefined;
-  date: MomentInput | null;
+  date: dayjs.ConfigType | null;
   selectedModes: Set<string> | null;
   searchText: string;
 }
@@ -34,7 +33,7 @@ export const Model = Object.freeze({
     }
     return {
       ...model,
-      date: model.date ? moment(model.date).valueOf() : null,
+      date: model.date ? dayjs(model.date).valueOf() : null,
       selectedModes: model.selectedModes ? Array.from(model.selectedModes) : null
     };
   },
@@ -78,7 +77,7 @@ function isSameSet<T>(set: Set<T>, other: Set<T>) {
 function normalizeUpdate(newProps: ModelUpdate): ModelUpdate {
   if (newProps.type === undefined) {
     if (newProps.date) {
-      newProps.date = moment(newProps.date).valueOf();
+      newProps.date = dayjs(newProps.date).valueOf();
     }
     if (newProps.selectedModes && newProps.selectedModes.size >= NUMBER_OF_GAME_MODE) {
       newProps.selectedModes = null;
@@ -94,7 +93,7 @@ function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
     if (
       newProps.date !== undefined &&
       newProps.date !== oldModel.date &&
-      (!newProps.date || !oldModel.date || !moment(newProps.date).isSame(oldModel.date, "day"))
+      (!newProps.date || !oldModel.date || !dayjs(newProps.date).isSame(oldModel.date, "day"))
     ) {
       return true;
     }

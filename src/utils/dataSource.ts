@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
 import { API_ROOT } from "./constants";
 import { GameRecord, Metadata, PlayerMetadata } from "./dataTypes";
@@ -20,9 +20,9 @@ interface DataLoader<T extends Metadata> {
 }
 
 class ListingDataLoader implements DataLoader<Metadata> {
-  _date: moment.Moment;
-  constructor(date: moment.MomentInput) {
-    this._date = moment(date).startOf("day");
+  _date: dayjs.Dayjs;
+  constructor(date: dayjs.ConfigType) {
+    this._date = dayjs(date).startOf("day");
   }
   async getMetadata(): Promise<Metadata> {
     return await ApiGet<Metadata>(`count/${this._date.valueOf()}`);
@@ -48,7 +48,7 @@ class PlayerDataLoader implements DataLoader<PlayerMetadata> {
 export type FilterPredicate = ((record: GameRecord) => boolean) | null;
 export type ListingDataProvider = _DataProvider<ListingDataLoader>;
 export const ListingDataProvider = Object.freeze({
-  create(date: moment.MomentInput): ListingDataProvider {
+  create(date: dayjs.ConfigType): ListingDataProvider {
     return new _DataProvider<ListingDataLoader>(new ListingDataLoader(date));
   }
 });

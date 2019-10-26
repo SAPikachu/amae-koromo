@@ -1,5 +1,5 @@
 import React from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 
 import { useParams, useLocation, Redirect } from "react-router";
 import { useModel, Model, ModelPlain } from "./model";
@@ -27,7 +27,7 @@ const ModelBuilders = {
     };
   },
   listing: function(params: ListingRouteParams): Model | string {
-    const date = params.date ? moment(params.date, "YYYY-MM-DD") : null;
+    const date = params.date ? dayjs(params.date, "YYYY-MM-DD") : null;
     if (date && !date.isValid()) {
       return "/";
     }

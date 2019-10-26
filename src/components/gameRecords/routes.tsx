@@ -3,7 +3,7 @@ import React from "react";
 import { Switch, Route, Redirect, generatePath as genPath } from "react-router-dom";
 
 import { Model, ModelProvider } from "./model";
-import moment from "moment";
+import dayjs from "dayjs";
 import { RouteSync } from "./routeSync";
 import { DataAdapterProvider } from "./dataAdapterProvider";
 import { GameRecordTable } from "./table";
@@ -21,7 +21,7 @@ export function generatePath(model: Model): string {
     return "/";
   }
   return genPath(PATH, {
-    date: moment(model.date || new Date()).format("YYYY-MM-DD"),
+    date: dayjs(model.date || new Date()).format("YYYY-MM-DD"),
     modes: model.selectedModes && model.selectedModes.size ? Array.from(model.selectedModes).join(".") : undefined,
     search: model.searchText || undefined
   });
