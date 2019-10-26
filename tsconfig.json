@@ -1,5 +1,7 @@
 {
-  "include": ["./src/**/*"],
+  "include": [
+    "./src/**/*"
+  ],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
@@ -11,9 +13,13 @@
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "resolveJsonModule": true,
-    "isolatedModules": false,
+    "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "lib": ["dom", "es2015", "es2017"]
+    "lib": [
+      "dom",
+      "es2015",
+      "es2017"
+    ]
   }
 }
