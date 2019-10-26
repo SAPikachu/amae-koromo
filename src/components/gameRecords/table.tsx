@@ -42,7 +42,7 @@ const cellFormatRank = ({ rowData, columnData }: TableCellProps) =>
   );
 const cellFormatGameMode = ({ cellData }: TableCellProps) => GameMode[cellData];
 
-export function GameRecordTable({ showStartEnd = true, showFullTime = false } = {}) {
+export default function GameRecordTable({ showStartEnd = true, showFullTime = false } = {}) {
   const data = useDataAdapter();
   const [model] = useModel();
   const scrollerProps = useScrollerProps();

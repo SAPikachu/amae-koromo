@@ -6,9 +6,16 @@ import { Model, ModelProvider } from "./model";
 import dayjs from "dayjs";
 import { RouteSync } from "./routeSync";
 import { DataAdapterProvider } from "./dataAdapterProvider";
-import { GameRecordTable } from "./table";
 import { FilterPanel } from "./filterPanel";
-import { PlayerDetails } from "./playerDetails";
+import Loadable from "react-loadable";
+const PlayerDetails = Loadable({
+  loader: () => import("./playerDetails"),
+  loading: () => <></>
+});
+const GameRecordTable = Loadable({
+  loader: () => import("./table"),
+  loading: () => <></>
+});
 
 const PLAYER_PATH = "/player/:id";
 const PATH = "/:date(\\d{4}-\\d{2}-\\d{2})/:modes([0-9.]+)?/:search?";

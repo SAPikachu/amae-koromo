@@ -1,11 +1,13 @@
 import React from "react";
 import Loadable from "react-loadable";
+import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "./dataAdapterProvider";
 import { PlayerMetadata } from "../../utils/dataSource";
 import { useEffect } from "react";
 import { triggerRelayout, formatPercent } from "../../utils/index";
 import { LevelWithDelta } from "../../utils/dataTypes";
+import { TITLE_PREFIX } from "../../utils/constants";
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
   loading: () => <></>
@@ -15,7 +17,7 @@ const RecentRankChart = Loadable({
   loading: () => <></>
 });
 
-export function PlayerDetails() {
+export default function PlayerDetails() {
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
   useEffect(triggerRelayout, [!!metadata]);
@@ -24,6 +26,11 @@ export function PlayerDetails() {
   }
   return (
     <div>
+      <Helmet>
+        <title>
+          {TITLE_PREFIX} - {metadata.nickname}
+        </title>
+      </Helmet>
       <h2 className="text-center">玩家：{metadata.nickname}</h2>
       <div className="row mt-4">
         <div className="col-md-8">

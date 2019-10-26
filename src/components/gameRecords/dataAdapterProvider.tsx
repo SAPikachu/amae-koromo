@@ -186,5 +186,8 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
       adapter.setUpdateHook(refreshDataAdapter);
     }
   }, [dataAdapter, refreshDataAdapter]);
+  useEffect(() => {
+    dataProvider.getCountMaybeSync(); // Preload metadata
+  }, [dataProvider]);
   return <DataAdapterContext.Provider value={dataAdapter}>{children}</DataAdapterContext.Provider>;
 }

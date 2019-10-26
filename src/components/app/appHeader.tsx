@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 
 import { Container } from "../layout";
 import { Alert } from "../misc/alert";
+import { TITLE_PREFIX } from "../../utils/constants";
 
 export function AppHeader() {
   return (
     <React.Fragment>
       <Container>
         <h1>
-          <Link to="/">雀魂牌谱屋</Link>
+          <Link to="/">{TITLE_PREFIX}</Link>
         </h1>
       </Container>
       <Alert container={Container} stateName="topNote">
