@@ -5,7 +5,7 @@ import { IoMdBook } from "react-icons/io";
 import { GameRecord, PlayerRecord, getLevelTag } from "../../utils/dataSource";
 import { generatePath } from "./routes";
 
-export const Player = function({
+export const Player = React.memo(function({
   player,
   game,
   isActive,
@@ -30,4 +30,4 @@ export const Player = function({
       )}
     </span>
   );
-};
+});
