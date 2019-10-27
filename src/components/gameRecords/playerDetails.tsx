@@ -8,13 +8,14 @@ import { useEffect } from "react";
 import { triggerRelayout, formatPercent } from "../../utils/index";
 import { LevelWithDelta } from "../../utils/dataTypes";
 import { TITLE_PREFIX } from "../../utils/constants";
+import Loading from "../misc/loading";
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
-  loading: () => <></>
+  loading: () => <Loading />
 });
 const RecentRankChart = Loadable({
   loader: () => import("./charts/recentRank"),
-  loading: () => <></>
+  loading: () => <Loading />
 });
 
 export default function PlayerDetails() {
@@ -22,7 +23,7 @@ export default function PlayerDetails() {
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
   useEffect(triggerRelayout, [!!metadata]);
   if (!metadata || !metadata.nickname) {
-    return null;
+    return <Loading />;
   }
   return (
     <div>

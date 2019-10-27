@@ -13,6 +13,7 @@ import { useDataAdapter } from "./dataAdapterProvider";
 import { triggerRelayout } from "../../utils/index";
 import { useModel } from "./model";
 import Loadable from "react-loadable";
+import Loading from "../misc/loading";
 
 const formatTime = (x: number) => (x ? dayjs.unix(x).format("HH:mm") : null);
 
@@ -52,10 +53,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
     ({ index }: Index) => (index >= 0 ? clsx({ loading: !data.isItemLoaded(index), even: (index & 1) === 0 }) : ""),
     [data]
   );
-  const noRowsRenderer = useCallback(
-    () => (data.getUnfilteredCount() ? null : <p className="text-center">加载中...</p>),
-    [data]
-  );
+  const noRowsRenderer = useCallback(() => (data.getUnfilteredCount() ? null : <Loading />), [data]);
   const activePlayerId = model.type === "player" ? model.playerId : undefined;
   const cellRenderPlayer = useCallback(
     ({ rowData }: TableCellProps) =>

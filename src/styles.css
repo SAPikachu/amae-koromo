@@ -6,6 +6,10 @@ body {
   background-attachment: fixed;
   font-family: "Microsoft YaHei", "Meiryo", "Segoe UI", sans-serif;
 }
+.page-loading {
+  height: 100vh;
+  align-items: center;
+}
 h1 a,
 h1 a:hover {
   color: inherit;

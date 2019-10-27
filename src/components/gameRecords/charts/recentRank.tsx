@@ -6,6 +6,7 @@ import { GameRecord, RANK_LABELS, RANK_COLORS } from "../../../utils/dataSource"
 import { useMemo } from "react";
 import GameMode from "../../../utils/gameMode";
 import { Player } from "../player";
+import Loading from "../../misc/loading";
 
 declare module "recharts" {
   interface DotProps {
@@ -81,6 +82,9 @@ export default function RecentRankChart({
     }
     return result;
   }, [dataAdapter]);
+  if (!dataPoints.length) {
+    return <Loading />;
+  }
   return (
     <ResponsiveContainer width="100%" aspect={aspect} height="auto">
       <LineChart data={dataPoints} margin={{ top: 15, right: 15, bottom: 15, left: 15 }}>
