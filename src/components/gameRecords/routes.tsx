@@ -8,13 +8,14 @@ import { RouteSync } from "./routeSync";
 import { DataAdapterProvider } from "./dataAdapterProvider";
 import { FilterPanel } from "./filterPanel";
 import Loadable from "react-loadable";
+import Loading from "../misc/loading";
 const PlayerDetails = Loadable({
   loader: () => import("./playerDetails"),
-  loading: () => <></>
+  loading: () => <Loading />
 });
 const GameRecordTable = Loadable({
   loader: () => import("./table"),
-  loading: () => <></>
+  loading: () => <Loading />
 });
 
 const PLAYER_PATH = "/player/:id";
