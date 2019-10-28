@@ -14,22 +14,26 @@ links.forEach(link => {
   if (/\.css$/.test(link)) {
     fileType = 'style';
   }
-  preloadLines.push(`  Link: <${link}>; rel=preload; as=${fileType}`);
+  preloadLines.push(`Link: <${link}>; rel=preload; as=${fileType}`);
 });
 
 const mediaFiles = fs.readdirSync("build/static/media/");
 for (const file of mediaFiles) {
   if (file.includes(".preload.")) {
-    preloadLines.push(`  Link: </static/media/${file}>; rel=preload; as=image`);
+    preloadLines.push(`Link: </static/media/${file}>; rel=preload; as=image`);
   }
 }
 
 const headerTemplate = `
 /static/*
   Cache-Control: public, immutable, max-age=604800, s-maxage=604800
-  Link:
-
-/*
 `;
 
-fs.writeFileSync(pathToHeaders, headerTemplate + preloadLines.join("\n") + "\n");
+const paths = ["/", "/:a", "/:a/:b"];
+const cacheHeader = "Cache-Control: public, max-age=0, stale-while-revalidate=600";
+
+fs.writeFileSync(pathToHeaders, headerTemplate + paths.map(path => `
+${path}
+  ${cacheHeader}
+  ${preloadLines.join("\n  ")}
+`).join(""));
