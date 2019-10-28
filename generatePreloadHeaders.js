@@ -17,9 +17,17 @@ links.forEach(link => {
   preloadLines.push(`  Link: <${link}>; rel=preload; as=${fileType}`);
 });
 
+const mediaFiles = fs.readdirSync("build/static/media/");
+for (const file of mediaFiles) {
+  if (file.includes(".preload.")) {
+    preloadLines.push(`  Link: </static/media/${file}>; rel=preload; as=image`);
+  }
+}
+
 const headerTemplate = `
 /static/*
-  Cache-Control: max-age=86400
+  Cache-Control: public, immutable, max-age=604800, s-maxage=604800
+  Link:
 
 /*
 `;
