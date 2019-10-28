@@ -12,7 +12,7 @@ links.forEach(link => {
   let fileType = 'script';
 
   if (/\.css$/.test(link)) {
-    fileType = 'stylesheet';
+    fileType = 'style';
   }
   preloadLines.push(`  Link: <${link}>; rel=preload; as=${fileType}`);
 });
