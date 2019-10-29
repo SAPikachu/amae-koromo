@@ -9,6 +9,7 @@ import { DataAdapterProvider } from "./dataAdapterProvider";
 import { FilterPanel } from "./filterPanel";
 import Loadable from "react-loadable";
 import Loading from "../misc/loading";
+import { PlayerSearch } from "./playerSearch";
 const PlayerDetails = Loadable({
   loader: () => import("./playerDetails"),
   loading: () => <Loading />
@@ -47,7 +48,10 @@ function Routes() {
           </Route>
           <Route exact path={["/", PATH]}>
             <RouteSync view="listing" />
-            <FilterPanel />
+            <div className="row">
+              <FilterPanel className="col" />
+              <PlayerSearch className="col-12 col-sm-6 col-md-4" />
+            </div>
             <GameRecordTable />
           </Route>
           <Route>

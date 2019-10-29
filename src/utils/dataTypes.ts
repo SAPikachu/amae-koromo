@@ -133,10 +133,12 @@ export const LevelWithDelta = Object.freeze({
 export interface Metadata {
   count: number;
 }
-export interface PlayerMetadata extends Metadata {
+export interface PlayerMetadataLite extends Metadata {
   id: number;
   nickname: string;
   level: LevelWithDelta;
+}
+export interface PlayerMetadata extends PlayerMetadataLite {
   rank_rates: [number, number, number, number];
   avg_rank: number;
   negative_rate: number;

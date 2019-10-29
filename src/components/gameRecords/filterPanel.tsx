@@ -15,7 +15,7 @@ export const MODE_CHECKBOXES = Object.keys(GameMode)
 
 const DEFAULT_DATE = dayjs().startOf("day");
 
-export function FilterPanel() {
+export function FilterPanel({ className = "" }) {
   const [model, updateModel] = useModel();
   const updateSearchTextFromEvent = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ searchText: e.currentTarget.value }),
@@ -30,7 +30,7 @@ export function FilterPanel() {
     return null;
   }
   return (
-    <React.Fragment>
+    <div className={className}>
       <FormRow title="日期">
         <DatePicker min="2019-08-23" date={model.date || DEFAULT_DATE} onChange={setDate} className="form-control" />
       </FormRow>
@@ -40,6 +40,6 @@ export function FilterPanel() {
       <FormRow>
         <CheckboxGroup items={MODE_CHECKBOXES} selectedItemKeys={model.selectedModes} onChange={setSelectedItems} />
       </FormRow>
-    </React.Fragment>
+    </div>
   );
 }

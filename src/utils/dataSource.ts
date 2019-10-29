@@ -1,17 +1,25 @@
 import dayjs from "dayjs";
 
 import { API_ROOT } from "./constants";
-import { GameRecord, Metadata, PlayerMetadata } from "./dataTypes";
+import { GameRecord, Metadata, PlayerMetadata, PlayerMetadataLite } from "./dataTypes";
 
 export { default as GameMode, NUMBER_OF_GAME_MODE } from "./gameMode";
 export * from "./dataTypes";
 
-async function ApiGet<T>(path: string) {
+async function apiGet<T>(path: string) {
   const resp = await fetch(API_ROOT + path);
   if (!resp.ok) {
     throw resp;
   }
   return (await resp.json()) as T;
+}
+
+export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMetadataLite[]> {
+  prefix = prefix.trim();
+  if (!prefix) {
+    return [];
+  }
+  return apiGet<PlayerMetadataLite[]>(`search_player/${encodeURIComponent(prefix)}?limit=${limit}`);
 }
 
 interface DataLoader<T extends Metadata> {
@@ -25,10 +33,10 @@ class ListingDataLoader implements DataLoader<Metadata> {
     this._date = dayjs(date).startOf("day");
   }
   async getMetadata(): Promise<Metadata> {
-    return await ApiGet<Metadata>(`count/${this._date.valueOf()}`);
+    return await apiGet<Metadata>(`count/${this._date.valueOf()}`);
   }
   async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
-    return await ApiGet<GameRecord[]>(`games/${this._date.valueOf()}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);
+    return await apiGet<GameRecord[]>(`games/${this._date.valueOf()}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);
   }
 }
 
@@ -38,10 +46,10 @@ class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     this._playerId = playerId;
   }
   async getMetadata(): Promise<PlayerMetadata> {
-    return await ApiGet<PlayerMetadata>(`player_stats/${this._playerId}`);
+    return await apiGet<PlayerMetadata>(`player_stats/${this._playerId}`);
   }
   async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
-    return await ApiGet<GameRecord[]>(`player_records/${this._playerId}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);
+    return await apiGet<GameRecord[]>(`player_records/${this._playerId}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);
   }
 }
 
