@@ -29,10 +29,10 @@ export function AppHeader() {
           </li>
         </ul>
       </Alert>
-      <Alert container={Container} stateName="changeLog20191025">
-        <h4>最近更新（2019-10-25）</h4>
-        <ul>
-          <li>新增玩家信息页面</li>
+      <Alert container={Container} stateName="changeLog20191029">
+        <h4>最近更新（2019-10-29）</h4>
+        <ul className="mt-3 mb-2">
+          <li>支持按前缀搜索玩家</li>
         </ul>
       </Alert>
     </React.Fragment>
