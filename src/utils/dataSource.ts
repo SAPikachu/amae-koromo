@@ -148,18 +148,24 @@ class _DataProvider<
     if (metadata) {
       return this.getCountMaybeSync();
     }
-    if (this._countPromise) {
-      return this._countPromise;
-    }
     if (!this._metadata) {
       this._metadata = this._loader.getMetadata().then(metadata => {
+        if (!metadata) {
+          console.log("No metadata returned");
+          throw new Error("No metadata returned");
+        }
         this._metadata = metadata;
         this.updateFilteredIndices();
         this._countPromise = null;
         return metadata;
       });
     }
-    this._countPromise = Promise.resolve(this._metadata).then(() => this.getCountMaybeSync());
+    if (this._countPromise) {
+      return this._countPromise;
+    }
+    this._countPromise = Promise.resolve(this._metadata)
+      .then(() => new Promise(resolve => setTimeout(resolve, 100)))
+      .then(() => this.getCountMaybeSync());
     return this._countPromise;
   }
   getUnfilteredCountSync(): number | null {
@@ -177,10 +183,15 @@ class _DataProvider<
     const chunkNumber = Math.floor(mappedIndex / this._itemsPerChunk);
     return !!this._chunks[chunkNumber] && !(this._chunks[chunkNumber] instanceof Promise);
   }
-  getItem(index: number, skipPreload = false): GameRecord | Promise<GameRecord> {
+  getItem(index: number, skipPreload = false): GameRecord | Promise<GameRecord | null> {
     const mappedIndex = this._mapItemIndex(index);
     if (mappedIndex === null) {
-      return this.getCount().then(() => this.getItem(index));
+      return this.getCount().then(count => {
+        if (index > count - 1 || this._mapItemIndex(index) === null) {
+          return null;
+        }
+        return this.getItem(index);
+      });
     }
     const chunkNumber = Math.floor(mappedIndex / this._itemsPerChunk);
     const innerIndex = mappedIndex % this._itemsPerChunk;

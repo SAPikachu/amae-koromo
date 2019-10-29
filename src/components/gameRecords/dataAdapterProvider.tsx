@@ -84,6 +84,9 @@ class DataAdapter implements IDataAdapter {
     return this._provider.getMetadataSync() as T | null;
   }
   getItem(index: number): GameRecord | ItemLoadingPlaceholder {
+    if (index >= this.getCount()) {
+      return loadingPlaceholder;
+    }
     if (this._provider.isItemLoaded(index)) {
       return this._provider.getItem(index) as GameRecord;
     }
