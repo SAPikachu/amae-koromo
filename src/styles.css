@@ -5,6 +5,7 @@ body {
   background-position: center;
   background-attachment: fixed;
   font-family: "Microsoft YaHei", "Meiryo", "Segoe UI", sans-serif;
+  overflow-y: scroll;
 }
 .page-loading {
   height: 100vh;
