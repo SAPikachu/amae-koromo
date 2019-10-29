@@ -21,6 +21,37 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>雀魂牌谱屋</title>
+    <style type="text/css">
+      .page-loading {
+        display: flex;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+      }
+      @-webkit-keyframes spinner-border {
+        to {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes spinner-border {
+        to {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+      .spinner-border {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        vertical-align: text-bottom;
+        border: 0.25em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        -webkit-animation: spinner-border 0.75s linear infinite;
+        animation: spinner-border 0.75s linear infinite;
+      }
+    </style>
   </head>
 
   <body>
@@ -29,9 +60,7 @@
     </noscript>
     <div id="root">
       <div class="d-flex justify-content-center page-loading">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
+        <div class="spinner-border" role="status" aria-label="Loading"></div>
       </div>
     </div>
     <!--
