@@ -33,7 +33,7 @@ function findRawResultFromCache(prefix: string): { result: PlayerMetadataLite[];
 
 function PlayerSearchResult({ searchText }: { searchText: string }) {
   const [version, setVersion] = useState(0);
-  const [players, isLoading] = useMemo(() => {
+  const [players, isLoading, mayHaveMore] = useMemo(() => {
     const cachedResult = findRawResultFromCache(searchText);
     if (!cachedResult) {
       return [[], true];
@@ -52,7 +52,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
         mayHaveMore = false;
       }
     });
-    return [filteredPlayers, mayHaveMore];
+    return [filteredPlayers, mayHaveMore && filteredPlayers.length < NUM_RESULTS_SHOWN, mayHaveMore];
   }, [searchText, version]);
   useEffect(() => {
     const prefix = normalizeName(searchText);
@@ -101,7 +101,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
         ))}
       </ul>
       {(isLoading && <Loading size="small" />) ||
-        (players.length > NUM_RESULTS_SHOWN && (
+        ((players.length > NUM_RESULTS_SHOWN || mayHaveMore) && (
           <small className="d-block text-center text-muted">（输入更长名字显示其它结果）</small>
         ))}
     </>
