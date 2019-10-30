@@ -27,7 +27,7 @@ enum DateRangeOptions {
   Last4Weeks = "最近四周",
   Custom = "自定义"
 }
-const DateRangeBoxes = Object.keys(DateRangeOptions).map((key: string) => ({
+const DATE_RANGE_ITEMS = Object.keys(DateRangeOptions).map((key: string) => ({
   key: DateRangeOptions[key as keyof typeof DateRangeOptions],
   label: DateRangeOptions[key as keyof typeof DateRangeOptions]
 }));
@@ -91,7 +91,7 @@ function PlayerDetailsDateRangeSelector() {
       <CheckboxGroup
         type="radio"
         selectedItemKey={mode}
-        items={DateRangeBoxes}
+        items={DATE_RANGE_ITEMS}
         groupKey="PlayerDetailsDateRangeSelector"
         onChange={setMode as (x: string) => void}
       />
