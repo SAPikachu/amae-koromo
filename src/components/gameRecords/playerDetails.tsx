@@ -4,11 +4,15 @@ import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "./dataAdapterProvider";
 import { PlayerMetadata } from "../../utils/dataSource";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { triggerRelayout, formatPercent } from "../../utils/index";
 import { LevelWithDelta } from "../../utils/dataTypes";
-import { TITLE_PREFIX } from "../../utils/constants";
+import { TITLE_PREFIX, DATE_MIN } from "../../utils/constants";
 import Loading from "../misc/loading";
+import { FormRow } from "../form/formRow";
+import { useModel } from "./model";
+import { CheckboxGroup, DatePicker } from "../form";
+import dayjs from "dayjs";
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
   loading: () => <Loading />
@@ -17,6 +21,89 @@ const RecentRankChart = Loadable({
   loader: () => import("./charts/recentRank"),
   loading: () => <Loading />
 });
+
+enum DateRangeOptions {
+  All = "全部",
+  Last4Weeks = "最近四周",
+  Custom = "自定义"
+}
+const DateRangeBoxes = Object.keys(DateRangeOptions).map((key: string) => ({
+  key: DateRangeOptions[key as keyof typeof DateRangeOptions],
+  label: DateRangeOptions[key as keyof typeof DateRangeOptions]
+}));
+
+function PlayerDetailsDateRangeSelector() {
+  const [model, updateModel] = useModel();
+  const [mode, setMode] = useState(() => {
+    if (model.type !== "player") {
+      return DateRangeOptions.All;
+    }
+    if (!model.startDate) {
+      return DateRangeOptions.All;
+    }
+    if (
+      (!model.endDate || dayjs(model.endDate).isSame(dayjs(), "day")) &&
+      dayjs(model.startDate).isSame(dayjs().subtract(28, "day"), "day")
+    ) {
+      return DateRangeOptions.Last4Weeks;
+    }
+    return DateRangeOptions.Custom;
+  });
+  const [customDateFrom, setCustomDateFrom] = useState(() =>
+    model.type === "player" && model.startDate ? model.startDate : DATE_MIN
+  );
+  const [customDateTo, setCustomDateTo] = useState(() =>
+    model.type === "player" && model.endDate ? model.endDate : dayjs()
+  );
+  useEffect(() => {
+    if (model.type !== "player") {
+      return;
+    }
+    switch (mode) {
+      case DateRangeOptions.All:
+        updateModel({
+          type: "player",
+          playerId: model.playerId,
+          startDate: undefined,
+          endDate: undefined
+        });
+        break;
+      case DateRangeOptions.Last4Weeks:
+        updateModel({
+          type: "player",
+          playerId: model.playerId,
+          startDate: dayjs().subtract(28, "day"),
+          endDate: undefined
+        });
+        break;
+      case DateRangeOptions.Custom:
+        updateModel({
+          type: "player",
+          playerId: model.playerId,
+          startDate: customDateFrom,
+          endDate: customDateTo
+        });
+        break;
+    }
+  }, [model, mode, customDateFrom, customDateTo]);
+  return (
+    <FormRow title="数据范围" inline={true}>
+      <CheckboxGroup
+        type="radio"
+        selectedItemKey={mode}
+        items={DateRangeBoxes}
+        groupKey="PlayerDetailsDateRangeSelector"
+        onChange={setMode as (x: string) => void}
+      />
+      {mode === DateRangeOptions.Custom ? (
+        <>
+          <DatePicker min={DATE_MIN} onChange={setCustomDateFrom} date={customDateFrom} className="form-control" />
+          <DatePicker min={DATE_MIN} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
+        </>
+      ) : null}
+    </FormRow>
+  );
+}
 
 export default function PlayerDetails() {
   const dataAdapter = useDataAdapter();
@@ -54,6 +141,7 @@ export default function PlayerDetails() {
           <RankRateChart metadata={metadata} />
         </div>
       </div>
+      <PlayerDetailsDateRangeSelector />
     </div>
   );
 }

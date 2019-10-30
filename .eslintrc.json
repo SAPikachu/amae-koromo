@@ -11,11 +11,18 @@
   },
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "browser": true
+  },
+  "settings": {
+    "version": "detect"
   },
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:react/recommended"],
   "plugins": ["@typescript-eslint", "react"],
   "rules": {
+    "@typescript-eslint/explicit-function-return-type": ["off"],
+    "react/prop-types": ["off"],
+    "react/display-name": ["off"],
     "curly": 2,
     "eqeqeq": [2, "smart"],
     "no-labels": 2,
@@ -35,14 +42,19 @@
     "comma-style": [2, "last"],
     "comma-dangle": 0,
     "computed-property-spacing": [2, "never"],
-    "indent": [2, 2],
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1,
+        "ignoredNodes": ["ConditionalExpression > *"]
+      }
+    ],
     "key-spacing": [2, { "afterColon": true }],
     "no-mixed-spaces-and-tabs": 2,
     "no-trailing-spaces": 2,
     "quotes": [2, "double", "avoid-escape"],
     "semi": [2, "always"],
-    "space-before-blocks": [2, "always"],
-    "space-before-function-paren": 2,
     "strict": [2, "global"],
     "keyword-spacing": 2,
     "no-var": 2,

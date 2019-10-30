@@ -35,12 +35,12 @@ export interface PlayerModelPlain {
 }
 export type ModelPlain = (ListingModelPlain | PlayerModelPlain) & WithRuntimeInfo;
 export const Model = Object.freeze({
-  toPlain: function(model: Model): ModelPlain {
+  toPlain(model: Model): ModelPlain {
     if (model.type === "player") {
       return {
         ...model,
         startDate: model.startDate ? dayjs(model.startDate).valueOf() : undefined,
-        endDate: model.endDate ? dayjs(model.endDate).valueOf() : undefined,
+        endDate: model.endDate ? dayjs(model.endDate).valueOf() : undefined
       };
     }
     return {
@@ -49,7 +49,7 @@ export const Model = Object.freeze({
       selectedModes: model.selectedModes ? Array.from(model.selectedModes) : null
     };
   },
-  fromPlain: function(model: ModelPlain): ListingModel | PlayerModel {
+  fromPlain(model: ModelPlain): ListingModel | PlayerModel {
     if (model.type === "player") {
       return model;
     }
@@ -61,6 +61,7 @@ export const Model = Object.freeze({
       };
     }
     console.warn("Unknown model data from location state:", model);
+    // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
     return DEFAULT_MODEL;
   }
 });
@@ -97,16 +98,21 @@ function normalizeUpdate(newProps: ModelUpdate): ModelUpdate {
   }
   return newProps;
 }
+function isSameDateValue(d1?: dayjs.ConfigType | null, d2?: dayjs.ConfigType | null): boolean {
+  if (d1 === d2) {
+    return true;
+  }
+  if (!d1 || !d2) {
+    return false;
+  }
+  return dayjs(d1).isSame(d2, "day");
+}
 function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
   if (oldModel.type !== newProps.type) {
     return true;
   }
   if (oldModel.type === undefined && newProps.type === oldModel.type) {
-    if (
-      newProps.date !== undefined &&
-      newProps.date !== oldModel.date &&
-      (!newProps.date || !oldModel.date || !dayjs(newProps.date).isSame(oldModel.date, "day"))
-    ) {
+    if (newProps.date !== undefined && !isSameDateValue(newProps.date, oldModel.date)) {
       return true;
     }
     if (newProps.searchText !== undefined && newProps.searchText !== oldModel.searchText) {
@@ -127,6 +133,12 @@ function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
   }
   if (oldModel.type === "player" && newProps.type === oldModel.type) {
     if (newProps.playerId !== undefined && newProps.playerId !== oldModel.playerId) {
+      return true;
+    }
+    if (!isSameDateValue(oldModel.startDate, newProps.startDate)) {
+      return true;
+    }
+    if (!isSameDateValue(oldModel.endDate, newProps.endDate)) {
       return true;
     }
   }

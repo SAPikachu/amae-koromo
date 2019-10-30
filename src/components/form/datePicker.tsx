@@ -5,7 +5,7 @@ import { useCallback } from "react";
 
 export function DatePicker({
   date = dayjs() as dayjs.ConfigType,
-  onChange = (_: dayjs.ConfigType) => {},
+  onChange = (() => {}) as (_: dayjs.Dayjs) => void,
   className = "",
   min = 0 as dayjs.ConfigType,
   max = dayjs() as dayjs.ConfigType

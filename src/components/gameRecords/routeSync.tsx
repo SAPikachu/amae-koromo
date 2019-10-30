@@ -29,7 +29,7 @@ function parseOptionalDate<T>(s: string | null | undefined, defaultValue: T): da
 }
 
 const ModelBuilders = {
-  player: function(params: PlayerRouteParams): Model | string {
+  player(params: PlayerRouteParams): Model | string {
     return {
       type: "player",
       playerId: params.id,
@@ -38,7 +38,7 @@ const ModelBuilders = {
       version: 0
     };
   },
-  listing: function(params: ListingRouteParams): Model | string {
+  listing(params: ListingRouteParams): Model | string {
     const date = parseOptionalDate(params.date, null);
     if (date && !date.isValid()) {
       return "/";
@@ -60,6 +60,7 @@ const ModelBuilders = {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React.FunctionComponentElement<any> {
   const params = useParams();
   const [model, updateModel] = useModel();
@@ -76,6 +77,7 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
   }
   if (!state) {
     // Navigation
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const modelResult = ModelBuilders[view](params as any);
     if (typeof modelResult === "string") {
       return <Redirect to={modelResult} />;
