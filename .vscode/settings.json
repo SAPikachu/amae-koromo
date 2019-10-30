@@ -1,9 +1,0 @@
-{
-  "browser-preview.startUrl": "http://sapikachu-vbox.dns-external.rg:3000/",
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "prettier.printWidth": 120,
-  "editor.tabSize": 2,
-  "eslint.nodePath": "/home/sapikachu/.nvm/versions/node/v10.12.0/bin/node",
-  "files.autoSaveDelay": 2000
-}
