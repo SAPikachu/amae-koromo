@@ -19,12 +19,16 @@ const GameRecordTable = Loadable({
   loading: () => <Loading />
 });
 
-const PLAYER_PATH = "/player/:id";
+const PLAYER_PATH = "/player/:id/:startDate(\\d{4}-\\d{2}-\\d{2})?/:endDate(\\d{4}-\\d{2}-\\d{2})?";
 const PATH = "/:date(\\d{4}-\\d{2}-\\d{2})/:modes([0-9.]+)?/:search?";
 
 export function generatePath(model: Model): string {
   if (model.type === "player") {
-    return genPath(PLAYER_PATH, { id: model.playerId });
+    return genPath(PLAYER_PATH, {
+      id: model.playerId,
+      startDate: model.startDate ? dayjs(model.startDate).format("YYYY-MM-DD") : undefined,
+      endDate: model.endDate ? dayjs(model.endDate).format("YYYY-MM-DD") : undefined
+    });
   }
   if ((!model.selectedModes || !model.selectedModes.size) && !model.searchText && !model.date) {
     return "/";

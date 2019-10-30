@@ -42,14 +42,30 @@ class ListingDataLoader implements DataLoader<Metadata> {
 
 class PlayerDataLoader implements DataLoader<PlayerMetadata> {
   _playerId: string;
-  constructor(playerId: string) {
+  _startDate?: dayjs.Dayjs;
+  _endDate?: dayjs.Dayjs;
+  constructor(playerId: string, startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs) {
     this._playerId = playerId;
+    this._startDate = startDate;
+    this._endDate = endDate;
+  }
+  _getDatePath(): string {
+    let result = "";
+    if (this._startDate) {
+      result += `/${this._startDate.valueOf()}`;
+      if (this._endDate) {
+        result += `/${this._endDate.valueOf()}`;
+      }
+    }
+    return result;
   }
   async getMetadata(): Promise<PlayerMetadata> {
-    return await apiGet<PlayerMetadata>(`player_stats/${this._playerId}`);
+    return await apiGet<PlayerMetadata>(`player_stats/${this._playerId}${this._getDatePath()}`);
   }
   async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
-    return await apiGet<GameRecord[]>(`player_records/${this._playerId}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);
+    return await apiGet<GameRecord[]>(
+      `player_records/${this._playerId}${this._getDatePath()}?skip=${skip}&limit=${limit}&tag=${cacheTag}`
+    );
   }
 }
 
@@ -62,8 +78,14 @@ export const ListingDataProvider = Object.freeze({
 });
 export type PlayerDataProvider = _DataProvider<PlayerDataLoader>;
 export const PlayerDataProvider = Object.freeze({
-  create(playerId: string): PlayerDataProvider {
-    return new _DataProvider<PlayerDataLoader>(new PlayerDataLoader(playerId));
+  create(playerId: string, startDate?: dayjs.ConfigType, endDate?: dayjs.ConfigType): PlayerDataProvider {
+    return new _DataProvider<PlayerDataLoader>(
+      new PlayerDataLoader(
+        playerId,
+        startDate ? dayjs(startDate).startOf("day") : undefined,
+        endDate ? dayjs(endDate).endOf("day") : undefined
+      )
+    );
   }
 });
 export type DataProvider = ListingDataProvider | PlayerDataProvider;

@@ -13,21 +13,33 @@ type ListingRouteParams = {
   search?: string;
 };
 
+type PlayerRouteParams = {
+  id: string;
+  startDate?: string;
+  endDate?: string;
+};
+
 type HistoryState = {
   model: ModelPlain;
   pathname: string;
 };
 
+function parseOptionalDate<T>(s: string | null | undefined, defaultValue: T): dayjs.Dayjs | T {
+  return s ? dayjs(s, "YYYY-MM-DD") : defaultValue;
+}
+
 const ModelBuilders = {
-  player: function(params: { id: string }): Model | string {
+  player: function(params: PlayerRouteParams): Model | string {
     return {
       type: "player",
       playerId: params.id,
+      startDate: parseOptionalDate(params.startDate, undefined),
+      endDate: parseOptionalDate(params.endDate, undefined),
       version: 0
     };
   },
   listing: function(params: ListingRouteParams): Model | string {
-    const date = params.date ? dayjs(params.date, "YYYY-MM-DD") : null;
+    const date = parseOptionalDate(params.date, null);
     if (date && !date.isValid()) {
       return "/";
     }

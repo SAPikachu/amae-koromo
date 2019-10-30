@@ -17,6 +17,8 @@ export interface ListingModel {
 export interface PlayerModel {
   type: "player";
   playerId: string;
+  startDate?: dayjs.ConfigType;
+  endDate?: dayjs.ConfigType;
 }
 export type Model = (ListingModel | PlayerModel) & WithRuntimeInfo;
 interface ListingModelPlain {
@@ -25,11 +27,21 @@ interface ListingModelPlain {
   selectedModes: string[] | null;
   searchText: string;
 }
-export type ModelPlain = (ListingModelPlain | PlayerModel) & WithRuntimeInfo;
+export interface PlayerModelPlain {
+  type: "player";
+  playerId: string;
+  startDate?: number;
+  endDate?: number;
+}
+export type ModelPlain = (ListingModelPlain | PlayerModelPlain) & WithRuntimeInfo;
 export const Model = Object.freeze({
   toPlain: function(model: Model): ModelPlain {
     if (model.type === "player") {
-      return model;
+      return {
+        ...model,
+        startDate: model.startDate ? dayjs(model.startDate).valueOf() : undefined,
+        endDate: model.endDate ? dayjs(model.endDate).valueOf() : undefined,
+      };
     }
     return {
       ...model,

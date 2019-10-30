@@ -12,6 +12,7 @@ import {
 } from "../../utils/dataSource";
 import { useModel, Model } from "./model";
 import { Metadata } from "../../utils/dataSource";
+import { generatePath } from "./routes";
 
 interface ItemLoadingPlaceholder {
   loading: boolean;
@@ -121,7 +122,7 @@ function getProviderKey(model: Model): string {
       .valueOf()
       .toString();
   } else if (model.type === "player") {
-    return `player-${model.playerId}`;
+    return generatePath(model);
   }
   throw new Error("Unknown model type");
 }
@@ -131,7 +132,7 @@ function createProvider(model: Model): DataProvider {
     return ListingDataProvider.create(model.date || dayjs().startOf("day"));
   }
   if (model.type === "player") {
-    return PlayerDataProvider.create(model.playerId);
+    return PlayerDataProvider.create(model.playerId, model.startDate, model.endDate);
   }
   throw new Error("Not implemented");
 }
