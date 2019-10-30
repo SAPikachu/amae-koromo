@@ -71,6 +71,9 @@ class Level {
     if (this._majorRank === 1) {
       return 0;
     }
+    if (this._majorRank === PLAYER_RANKS.length) {
+      return 10000;
+    }
     return this.getMaxPoint() / 2;
   }
   getNextLevel(): Level {
