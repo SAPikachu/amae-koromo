@@ -143,12 +143,12 @@ function usePredicate(model: Model): FilterPredicate {
     return useMemo(() => null, [null, ""]);
   }
   const searchText = (model.searchText || "").trim() || "";
-  const needPredicate = searchText || (model.selectedModes && model.selectedModes.size < NUMBER_OF_GAME_MODE);
+  const needPredicate = searchText || model.selectedMode;
   return useMemo(
     () =>
       needPredicate
         ? game => {
-            if (model.selectedModes && !model.selectedModes.has(game.modeId.toString())) {
+            if (model.selectedMode !== game.modeId.toString()) {
               return false;
             }
             if (!game.players.some(player => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
@@ -157,7 +157,7 @@ function usePredicate(model: Model): FilterPredicate {
             return true;
           }
         : null,
-    [(model.type === undefined && model.selectedModes) || null, searchText]
+    [(model.type === undefined && model.selectedMode) || null, searchText]
   );
 }
 

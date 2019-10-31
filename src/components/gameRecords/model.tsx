@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import React, { useReducer, useContext, ReactChild } from "react";
 import { useMemo } from "react";
-import { NUMBER_OF_GAME_MODE } from "../../utils/gameMode";
 import { useLocation } from "react-router";
 
 interface WithRuntimeInfo {
@@ -11,7 +10,7 @@ interface WithRuntimeInfo {
 export interface ListingModel {
   type?: undefined;
   date: dayjs.ConfigType | null;
-  selectedModes: Set<string> | null;
+  selectedMode: string;
   searchText: string;
 }
 export interface PlayerModel {
@@ -24,7 +23,7 @@ export type Model = (ListingModel | PlayerModel) & WithRuntimeInfo;
 interface ListingModelPlain {
   type: undefined;
   date: number | null;
-  selectedModes: string[] | null;
+  selectedMode: string;
   searchText: string;
 }
 export interface PlayerModelPlain {
@@ -46,8 +45,7 @@ export const Model = Object.freeze({
     return {
       ...model,
       type: undefined,
-      date: model.date ? dayjs(model.date).valueOf() : null,
-      selectedModes: model.selectedModes ? Array.from(model.selectedModes) : null
+      date: model.date ? dayjs(model.date).valueOf() : null
     };
   },
   fromPlain(model: ModelPlain): ListingModel | PlayerModel {
@@ -58,7 +56,7 @@ export const Model = Object.freeze({
       return {
         date: model.date || null,
         searchText: model.searchText || "",
-        selectedModes: model.selectedModes ? new Set(model.selectedModes) : null
+        selectedMode: model.selectedMode
       };
     }
     console.warn("Unknown model data from location state:", model);
@@ -69,32 +67,17 @@ export const Model = Object.freeze({
 type ModelUpdate = Partial<ListingModel> | PlayerModel;
 type DispatchModelUpdate = (props: ModelUpdate) => void;
 
-const DEFAULT_MODEL: ListingModel = { date: null, selectedModes: null, searchText: "" };
+const DEFAULT_MODEL: ListingModel = { date: null, selectedMode: "", searchText: "" };
 const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([
   { ...DEFAULT_MODEL, version: 0 },
   () => {}
 ]);
 export const useModel = () => useContext(ModelContext);
 
-function isSameSet<T>(set: Set<T>, other: Set<T>) {
-  if (set.size !== other.size) {
-    return false;
-  }
-  for (const elem of other) {
-    if (!set.has(elem)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 function normalizeUpdate(newProps: ModelUpdate): ModelUpdate {
   if (newProps.type === undefined) {
     if (newProps.date) {
       newProps.date = dayjs(newProps.date).valueOf();
-    }
-    if (newProps.selectedModes && newProps.selectedModes.size >= NUMBER_OF_GAME_MODE) {
-      newProps.selectedModes = null;
     }
   }
   return newProps;
@@ -119,17 +102,8 @@ function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
     if (newProps.searchText !== undefined && newProps.searchText !== oldModel.searchText) {
       return true;
     }
-    let newSelectedModes = newProps.selectedModes;
-    if (newSelectedModes && newSelectedModes.size >= NUMBER_OF_GAME_MODE) {
-      newSelectedModes = null;
-    }
-    if (newSelectedModes !== undefined && newSelectedModes !== oldModel.selectedModes) {
-      if (!newSelectedModes || !oldModel.selectedModes) {
-        return true;
-      }
-      if (isSameSet(oldModel.selectedModes, newSelectedModes)) {
-        return true;
-      }
+    if (newProps.selectedMode !== undefined && newProps.selectedMode !== oldModel.selectedMode) {
+      return true;
     }
   }
   if (oldModel.type === "player" && newProps.type === oldModel.type) {

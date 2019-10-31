@@ -9,7 +9,7 @@ import { scrollToTop, triggerRelayout } from "../../utils/index";
 
 type ListingRouteParams = {
   date?: string;
-  modes?: string;
+  mode?: string;
   search?: string;
 };
 
@@ -43,17 +43,9 @@ const ModelBuilders = {
     if (date && !date.isValid()) {
       return "/";
     }
-    const modes = params.modes
-      ? new Set(
-          params.modes
-            .split(".")
-            .map(x => x.trim())
-            .filter(x => !!x)
-        )
-      : null;
     return {
       date: date ? date.startOf("day").valueOf() : null,
-      selectedModes: modes,
+      selectedMode: params.mode || "",
       searchText: params.search || "",
       version: 0
     };

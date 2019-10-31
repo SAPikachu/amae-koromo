@@ -13,6 +13,10 @@ export const MODE_CHECKBOXES = Object.keys(GameMode)
     key: String(GameMode[x as keyof typeof GameMode]),
     label: x
   }));
+MODE_CHECKBOXES.unshift({
+  key: "",
+  label: "全部"
+});
 
 const DEFAULT_DATE = dayjs().startOf("day");
 
@@ -22,10 +26,9 @@ export function FilterPanel({ className = "" }) {
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ searchText: e.currentTarget.value }),
     [updateModel]
   );
-  const setSelectedItems = useCallback(
-    (selectedItemKeys: Set<string>) => updateModel({ selectedModes: selectedItemKeys }),
-    [updateModel]
-  );
+  const setSelectedItem = useCallback((selectedItemKey: string) => updateModel({ selectedMode: selectedItemKey }), [
+    updateModel
+  ]);
   const setDate = useCallback((date: dayjs.ConfigType) => updateModel({ date }), [updateModel]);
   if (model.type !== undefined) {
     return null;
@@ -40,11 +43,11 @@ export function FilterPanel({ className = "" }) {
       </FormRow>
       <FormRow>
         <CheckboxGroup
-          type="checkbox"
+          type="radio"
           groupKey="default"
           items={MODE_CHECKBOXES}
-          selectedItemKeys={model.selectedModes}
-          onChange={setSelectedItems}
+          selectedItemKey={model.selectedMode}
+          onChange={setSelectedItem}
         />
       </FormRow>
     </div>
