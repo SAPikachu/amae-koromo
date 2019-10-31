@@ -47,7 +47,7 @@
       2,
       {
         "SwitchCase": 1,
-        "ignoredNodes": ["ConditionalExpression > *"]
+        "ignoredNodes": ["ConditionalExpression *"]
       }
     ],
     "key-spacing": [2, { "afterColon": true }],

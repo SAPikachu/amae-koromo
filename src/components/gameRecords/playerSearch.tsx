@@ -3,10 +3,10 @@ import { useEffect, useState, useMemo } from "react";
 
 import { useModel } from "./model";
 import Loading from "../misc/loading";
-import { PlayerMetadataLite, LevelWithDelta, getLevelTag } from "../../utils/dataTypes";
+import { PlayerMetadataLite, getLevelTag } from "../../utils/dataTypes";
 import { searchPlayer } from "../../utils/dataSource";
 import { Link } from "react-router-dom";
-import { generatePath, generatePlayerPathById } from "./routes";
+import { generatePlayerPathById } from "./routes";
 
 const playerSearchCache = {} as { [prefix: string]: PlayerMetadataLite[] | Promise<PlayerMetadataLite[]> };
 const NUM_RESULTS_SHOWN = 6;

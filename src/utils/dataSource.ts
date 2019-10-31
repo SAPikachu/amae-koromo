@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable no-use-before-define */
 import dayjs from "dayjs";
 
 import { API_ROOT } from "./constants";
@@ -70,16 +72,16 @@ class PlayerDataLoader implements DataLoader<PlayerMetadata> {
 }
 
 export type FilterPredicate = ((record: GameRecord) => boolean) | null;
-export type ListingDataProvider = _DataProvider<ListingDataLoader>;
+export type ListingDataProvider = DataProviderImpl<ListingDataLoader>;
 export const ListingDataProvider = Object.freeze({
   create(date: dayjs.ConfigType): ListingDataProvider {
-    return new _DataProvider<ListingDataLoader>(new ListingDataLoader(date));
+    return new DataProviderImpl<ListingDataLoader>(new ListingDataLoader(date));
   }
 });
-export type PlayerDataProvider = _DataProvider<PlayerDataLoader>;
+export type PlayerDataProvider = DataProviderImpl<PlayerDataLoader>;
 export const PlayerDataProvider = Object.freeze({
   create(playerId: string, startDate: dayjs.ConfigType | null, endDate: dayjs.ConfigType | null): PlayerDataProvider {
-    return new _DataProvider<PlayerDataLoader>(
+    return new DataProviderImpl<PlayerDataLoader>(
       new PlayerDataLoader(
         playerId,
         startDate ? dayjs(startDate).startOf("day") : undefined,
@@ -89,7 +91,7 @@ export const PlayerDataProvider = Object.freeze({
   }
 });
 export type DataProvider = ListingDataProvider | PlayerDataProvider;
-class _DataProvider<
+class DataProviderImpl<
   TLoader extends DataLoader<TMetadata>,
   TMetadata extends Metadata = TLoader extends DataLoader<infer T> ? T : Metadata
 > {
@@ -159,14 +161,14 @@ class _DataProvider<
     return this._metadata && !(this._metadata instanceof Promise) ? this._metadata : null;
   }
   getCountMaybeSync(): number | Promise<number> {
-    let metadata = this.getMetadataSync();
+    const metadata = this.getMetadataSync();
     if (metadata) {
       return this._filteredIndices ? this._filteredIndices.length : metadata.count;
     }
     return this.getCount();
   }
   async getCount(): Promise<number> {
-    let metadata = this.getMetadataSync();
+    const metadata = this.getMetadataSync();
     if (metadata) {
       return this.getCountMaybeSync();
     }

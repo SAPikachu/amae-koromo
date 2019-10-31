@@ -1,16 +1,9 @@
 import React from "react";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LabelList,
-  Curve
-} from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Cell, LabelList, Curve } from "recharts";
 
 import { PlayerMetadata, RANK_LABELS, RANK_COLORS } from "../../../utils/dataSource";
 import { useMemo } from "react";
-import { formatPercent } from '../../../utils/index';
+import { formatPercent } from "../../../utils/index";
 
 const generateCells = (activeIndex: number) =>
   RANK_COLORS.map((color, index) => (
@@ -19,7 +12,9 @@ const generateCells = (activeIndex: number) =>
 
 const CELLS = generateCells(-1);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formatLabel = (x: any) => (x.rate > 0 ? x.label : null);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createLabelLine = (props: any) =>
   props.payload.payload.rate > 0 ? <Curve {...props} type="linear" className="recharts-pie-label-line" /> : null;
 

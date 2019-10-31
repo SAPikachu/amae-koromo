@@ -20,7 +20,7 @@ export const Player = React.memo(function({
   const isTop = GameRecord.getRankIndexByPlayer(game, player) === 0;
   return (
     <span className={`player ${isTop && "font-weight-bold"} ${isActive && "active-player"}`}>
-      <a href={GameRecord.getRecordLink(game, player)} title="查看牌谱" target="_blank">
+      <a href={GameRecord.getRecordLink(game, player)} title="查看牌谱" target="_blank" rel="noopener noreferrer">
         [{getLevelTag(level)}] {nickname} {score !== undefined && `[${score}]`}
       </a>{" "}
       {hideDetailLink || isActive ? null : (

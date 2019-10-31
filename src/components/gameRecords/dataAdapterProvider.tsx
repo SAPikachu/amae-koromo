@@ -20,6 +20,7 @@ interface ItemLoadingPlaceholder {
 
 const loadingPlaceholder = { loading: true };
 
+// eslint-disable-next-line @typescript-eslint/interface-name-prefix
 export interface IDataAdapter {
   getCount(): number;
   getUnfilteredCount(): number;
@@ -28,7 +29,7 @@ export interface IDataAdapter {
   isItemLoaded(index: number): boolean;
 }
 
-class _DummyDataAdapter implements IDataAdapter {
+class DummyDataAdapter implements IDataAdapter {
   getCount(): number {
     return 0;
   }
@@ -38,15 +39,15 @@ class _DummyDataAdapter implements IDataAdapter {
   getMetadata<T extends Metadata>(): T | null {
     return null;
   }
-  getItem(index: number): GameRecord | ItemLoadingPlaceholder {
+  getItem(): GameRecord | ItemLoadingPlaceholder {
     return loadingPlaceholder;
   }
-  isItemLoaded(index: number): boolean {
+  isItemLoaded(): boolean {
     return false;
   }
 }
 
-export const DUMMY_DATA_ADAPTER = new _DummyDataAdapter() as IDataAdapter;
+export const DUMMY_DATA_ADAPTER = new DummyDataAdapter() as IDataAdapter;
 
 const noop = () => {};
 
@@ -60,7 +61,7 @@ class DataAdapter implements IDataAdapter {
     this._onDataUpdate = onDataUpdate;
     this._triggeredRequest = false;
   }
-  _installHook(promise: Promise<any>) {
+  _installHook<T>(promise: Promise<T>) {
     if (this._triggeredRequest) {
       return;
     }
