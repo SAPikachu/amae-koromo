@@ -17,12 +17,12 @@ export interface ListingModel {
 export interface PlayerModel {
   type: "player";
   playerId: string;
-  startDate?: dayjs.ConfigType;
-  endDate?: dayjs.ConfigType;
+  startDate: dayjs.ConfigType | null;
+  endDate: dayjs.ConfigType | null;
 }
 export type Model = (ListingModel | PlayerModel) & WithRuntimeInfo;
 interface ListingModelPlain {
-  type?: undefined;
+  type: undefined;
   date: number | null;
   selectedModes: string[] | null;
   searchText: string;
@@ -30,8 +30,8 @@ interface ListingModelPlain {
 export interface PlayerModelPlain {
   type: "player";
   playerId: string;
-  startDate?: number;
-  endDate?: number;
+  startDate: number | null;
+  endDate: number | null;
 }
 export type ModelPlain = (ListingModelPlain | PlayerModelPlain) & WithRuntimeInfo;
 export const Model = Object.freeze({
@@ -39,12 +39,13 @@ export const Model = Object.freeze({
     if (model.type === "player") {
       return {
         ...model,
-        startDate: model.startDate ? dayjs(model.startDate).valueOf() : undefined,
-        endDate: model.endDate ? dayjs(model.endDate).valueOf() : undefined
+        startDate: model.startDate ? dayjs(model.startDate).valueOf() : null,
+        endDate: model.endDate ? dayjs(model.endDate).valueOf() : null
       };
     }
     return {
       ...model,
+      type: undefined,
       date: model.date ? dayjs(model.date).valueOf() : null,
       selectedModes: model.selectedModes ? Array.from(model.selectedModes) : null
     };
@@ -135,10 +136,10 @@ function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
     if (newProps.playerId !== undefined && newProps.playerId !== oldModel.playerId) {
       return true;
     }
-    if (!isSameDateValue(oldModel.startDate, newProps.startDate)) {
+    if (newProps.startDate !== undefined && !isSameDateValue(oldModel.startDate, newProps.startDate)) {
       return true;
     }
-    if (!isSameDateValue(oldModel.endDate, newProps.endDate)) {
+    if (newProps.endDate !== undefined && !isSameDateValue(oldModel.endDate, newProps.endDate)) {
       return true;
     }
   }

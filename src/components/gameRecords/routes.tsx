@@ -39,6 +39,15 @@ export function generatePath(model: Model): string {
     search: model.searchText || undefined
   });
 }
+export function generatePlayerPathById(playerId: number | string): string {
+  return generatePath({
+    type: "player",
+    playerId: playerId.toString(),
+    startDate: null,
+    endDate: null,
+    version: 0
+  });
+}
 
 function Routes() {
   return (

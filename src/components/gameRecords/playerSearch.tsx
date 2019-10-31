@@ -6,7 +6,7 @@ import Loading from "../misc/loading";
 import { PlayerMetadataLite, LevelWithDelta, getLevelTag } from "../../utils/dataTypes";
 import { searchPlayer } from "../../utils/dataSource";
 import { Link } from "react-router-dom";
-import { generatePath } from "./routes";
+import { generatePath, generatePlayerPathById } from "./routes";
 
 const playerSearchCache = {} as { [prefix: string]: PlayerMetadataLite[] | Promise<PlayerMetadataLite[]> };
 const NUM_RESULTS_SHOWN = 6;
@@ -92,7 +92,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
       <ul className="list-unstyled row mb-2">
         {players.slice(0, NUM_RESULTS_SHOWN).map(x => (
           <li key={x.id} className="col-6">
-            <Link to={generatePath({ type: "player", playerId: x.id.toString(), version: 0 })}>
+            <Link to={generatePlayerPathById(x.id)}>
               <span>
                 [{getLevelTag(x.level.id)}] {x.nickname}
               </span>

@@ -64,8 +64,8 @@ function PlayerDetailsDateRangeSelector() {
         updateModel({
           type: "player",
           playerId: model.playerId,
-          startDate: undefined,
-          endDate: undefined
+          startDate: null,
+          endDate: null
         });
         break;
       case DateRangeOptions.Last4Weeks:
@@ -73,7 +73,7 @@ function PlayerDetailsDateRangeSelector() {
           type: "player",
           playerId: model.playerId,
           startDate: dayjs().subtract(27, "day"),
-          endDate: undefined
+          endDate: null
         });
         break;
       case DateRangeOptions.Custom:

@@ -33,8 +33,8 @@ const ModelBuilders = {
     return {
       type: "player",
       playerId: params.id,
-      startDate: parseOptionalDate(params.startDate, undefined),
-      endDate: parseOptionalDate(params.endDate, undefined),
+      startDate: parseOptionalDate(params.startDate, null),
+      endDate: parseOptionalDate(params.endDate, null),
       version: 0
     };
   },

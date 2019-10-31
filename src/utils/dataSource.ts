@@ -78,7 +78,7 @@ export const ListingDataProvider = Object.freeze({
 });
 export type PlayerDataProvider = _DataProvider<PlayerDataLoader>;
 export const PlayerDataProvider = Object.freeze({
-  create(playerId: string, startDate?: dayjs.ConfigType, endDate?: dayjs.ConfigType): PlayerDataProvider {
+  create(playerId: string, startDate: dayjs.ConfigType | null, endDate: dayjs.ConfigType | null): PlayerDataProvider {
     return new _DataProvider<PlayerDataLoader>(
       new PlayerDataLoader(
         playerId,

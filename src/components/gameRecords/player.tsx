@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { IoMdBook } from "react-icons/io";
 
 import { GameRecord, PlayerRecord, getLevelTag } from "../../utils/dataSource";
-import { generatePath } from "./routes";
+import { generatePlayerPathById } from "./routes";
 
 export const Player = React.memo(function({
   player,
@@ -24,7 +24,7 @@ export const Player = React.memo(function({
         [{getLevelTag(level)}] {nickname} {score !== undefined && `[${score}]`}
       </a>{" "}
       {hideDetailLink || isActive ? null : (
-        <Link title="玩家记录" to={generatePath({ type: "player", playerId: accountId.toString(), version: 0 })}>
+        <Link title="玩家记录" to={generatePlayerPathById(accountId)}>
           <IoMdBook />
         </Link>
       )}
