@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import {
   DataProvider,
   GameRecord,
-  NUMBER_OF_GAME_MODE,
   FilterPredicate,
   ListingDataProvider,
   PlayerDataProvider
