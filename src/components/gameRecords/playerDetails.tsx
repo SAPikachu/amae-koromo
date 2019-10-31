@@ -72,7 +72,7 @@ function PlayerDetailsDateRangeSelector() {
         updateModel({
           type: "player",
           playerId: model.playerId,
-          startDate: dayjs().subtract(28, "day"),
+          startDate: dayjs().subtract(27, "day"),
           endDate: undefined
         });
         break;
