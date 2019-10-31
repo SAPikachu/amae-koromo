@@ -16,6 +16,12 @@ MODE_CHECKBOXES.unshift({
 
 export function ModeSelector({ mode, onChange }: { mode: string; onChange: (x: string) => void }) {
   return (
-    <CheckboxGroup type="radio" groupKey="default" items={MODE_CHECKBOXES} selectedItemKey={mode} onChange={onChange} />
+    <CheckboxGroup
+      type="radio"
+      groupKey="ModeSelector"
+      items={MODE_CHECKBOXES}
+      selectedItemKey={mode || ""}
+      onChange={onChange}
+    />
   );
 }

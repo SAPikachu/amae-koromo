@@ -17,6 +17,7 @@ type PlayerRouteParams = {
   id: string;
   startDate?: string;
   endDate?: string;
+  mode?: string;
 };
 
 type HistoryState = {
@@ -35,6 +36,7 @@ const ModelBuilders = {
       playerId: params.id,
       startDate: parseOptionalDate(params.startDate, null),
       endDate: parseOptionalDate(params.endDate, null),
+      selectedMode: params.mode || "",
       version: 0
     };
   },
@@ -44,6 +46,7 @@ const ModelBuilders = {
       return "/";
     }
     return {
+      type: undefined,
       date: date ? date.startOf("day").valueOf() : null,
       selectedMode: params.mode || "",
       searchText: params.search || "",

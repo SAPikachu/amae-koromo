@@ -8,7 +8,7 @@ interface WithRuntimeInfo {
   pendingRouteUpdate?: boolean;
 }
 export interface ListingModel {
-  type?: undefined;
+  type: undefined;
   date: dayjs.ConfigType | null;
   selectedMode: string;
   searchText: string;
@@ -18,6 +18,7 @@ export interface PlayerModel {
   playerId: string;
   startDate: dayjs.ConfigType | null;
   endDate: dayjs.ConfigType | null;
+  selectedMode: string;
 }
 export type Model = (ListingModel | PlayerModel) & WithRuntimeInfo;
 interface ListingModelPlain {
@@ -31,6 +32,7 @@ export interface PlayerModelPlain {
   playerId: string;
   startDate: number | null;
   endDate: number | null;
+  selectedMode: string;
 }
 export type ModelPlain = (ListingModelPlain | PlayerModelPlain) & WithRuntimeInfo;
 export const Model = Object.freeze({
@@ -54,6 +56,7 @@ export const Model = Object.freeze({
     }
     if (model.type === undefined) {
       return {
+        type: undefined,
         date: model.date || null,
         searchText: model.searchText || "",
         selectedMode: model.selectedMode
@@ -62,12 +65,31 @@ export const Model = Object.freeze({
     console.warn("Unknown model data from location state:", model);
     // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
     return DEFAULT_MODEL;
+  },
+  removeExtraParams(model: Model): Model {
+    if (model.type === "player") {
+      return {
+        type: "player",
+        playerId: model.playerId,
+        selectedMode: "",
+        startDate: null,
+        endDate: null,
+        version: 0
+      };
+    }
+    return {
+      type: undefined,
+      searchText: "",
+      selectedMode: "",
+      date: null,
+      version: 0
+    };
   }
 });
-type ModelUpdate = Partial<ListingModel> | PlayerModel;
+type ModelUpdate = Partial<ListingModel> | ({ type: "player" } & Partial<PlayerModel>);
 type DispatchModelUpdate = (props: ModelUpdate) => void;
 
-const DEFAULT_MODEL: ListingModel = { date: null, selectedMode: "", searchText: "" };
+const DEFAULT_MODEL: ListingModel = { type: undefined, date: null, selectedMode: "", searchText: "" };
 const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([
   { ...DEFAULT_MODEL, version: 0 },
   () => {}
@@ -78,6 +100,11 @@ function normalizeUpdate(newProps: ModelUpdate): ModelUpdate {
   if (newProps.type === undefined) {
     if (newProps.date) {
       newProps.date = dayjs(newProps.date).valueOf();
+    }
+  }
+  for (const key of Object.keys(newProps)) {
+    if (key !== "type" && newProps[key as keyof typeof newProps] === undefined) {
+      delete newProps[key as keyof typeof newProps];
     }
   }
   return newProps;
@@ -95,14 +122,14 @@ function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
   if (oldModel.type !== newProps.type) {
     return true;
   }
+  if (newProps.selectedMode !== undefined && newProps.selectedMode !== oldModel.selectedMode) {
+    return true;
+  }
   if (oldModel.type === undefined && newProps.type === oldModel.type) {
     if (newProps.date !== undefined && !isSameDateValue(newProps.date, oldModel.date)) {
       return true;
     }
     if (newProps.searchText !== undefined && newProps.searchText !== oldModel.searchText) {
-      return true;
-    }
-    if (newProps.selectedMode !== undefined && newProps.selectedMode !== oldModel.selectedMode) {
       return true;
     }
   }
@@ -127,7 +154,7 @@ export function ModelProvider({ children }: { children: ReactChild | ReactChild[
       isChanged(oldModel, newProps)
         ? {
             ...((oldModel.type === newProps.type ? oldModel : {}) as Model),
-            ...normalizeUpdate(newProps),
+            ...(normalizeUpdate(newProps) as Model),
             version: oldModel.version + 1,
             pendingRouteUpdate: true
           }

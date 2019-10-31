@@ -46,10 +46,12 @@ class PlayerDataLoader implements DataLoader<PlayerMetadata> {
   _playerId: string;
   _startDate?: dayjs.Dayjs;
   _endDate?: dayjs.Dayjs;
-  constructor(playerId: string, startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs) {
+  _mode: string;
+  constructor(playerId: string, startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs, mode = "") {
     this._playerId = playerId;
     this._startDate = startDate;
     this._endDate = endDate;
+    this._mode = mode;
   }
   _getDatePath(): string {
     let result = "";
@@ -62,11 +64,13 @@ class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     return result;
   }
   async getMetadata(): Promise<PlayerMetadata> {
-    return await apiGet<PlayerMetadata>(`player_stats/${this._playerId}${this._getDatePath()}`);
+    return await apiGet<PlayerMetadata>(`player_stats/${this._playerId}${this._getDatePath()}?mode=${this._mode}`);
   }
   async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
     return await apiGet<GameRecord[]>(
-      `player_records/${this._playerId}${this._getDatePath()}?skip=${skip}&limit=${limit}&tag=${cacheTag}`
+      `player_records/${this._playerId}${this._getDatePath()}?skip=${skip}&limit=${limit}&mode=${
+        this._mode
+      }&tag=${cacheTag}`
     );
   }
 }
@@ -80,12 +84,18 @@ export const ListingDataProvider = Object.freeze({
 });
 export type PlayerDataProvider = DataProviderImpl<PlayerDataLoader>;
 export const PlayerDataProvider = Object.freeze({
-  create(playerId: string, startDate: dayjs.ConfigType | null, endDate: dayjs.ConfigType | null): PlayerDataProvider {
+  create(
+    playerId: string,
+    startDate: dayjs.ConfigType | null,
+    endDate: dayjs.ConfigType | null,
+    mode: string
+  ): PlayerDataProvider {
     return new DataProviderImpl<PlayerDataLoader>(
       new PlayerDataLoader(
         playerId,
         startDate ? dayjs(startDate).startOf("day") : undefined,
-        endDate ? dayjs(endDate).endOf("day") : undefined
+        endDate ? dayjs(endDate).endOf("day") : undefined,
+        mode
       )
     );
   }

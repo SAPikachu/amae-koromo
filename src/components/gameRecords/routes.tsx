@@ -19,7 +19,7 @@ const GameRecordTable = Loadable({
   loading: () => <Loading />
 });
 
-const PLAYER_PATH = "/player/:id/:startDate(\\d{4}-\\d{2}-\\d{2})?/:endDate(\\d{4}-\\d{2}-\\d{2})?";
+const PLAYER_PATH = "/player/:id/:mode([0-9]+)?/:startDate(\\d{4}-\\d{2}-\\d{2})?/:endDate(\\d{4}-\\d{2}-\\d{2})?";
 const PATH = "/:date(\\d{4}-\\d{2}-\\d{2})/:mode([0-9]+)?/:search?";
 
 export function generatePath(model: Model): string {
@@ -27,7 +27,8 @@ export function generatePath(model: Model): string {
     return genPath(PLAYER_PATH, {
       id: model.playerId,
       startDate: model.startDate ? dayjs(model.startDate).format("YYYY-MM-DD") : undefined,
-      endDate: model.endDate ? dayjs(model.endDate).format("YYYY-MM-DD") : undefined
+      endDate: model.endDate ? dayjs(model.endDate).format("YYYY-MM-DD") : undefined,
+      mode: model.selectedMode || undefined
     });
   }
   if (!model.selectedMode && !model.searchText && !model.date) {
@@ -45,6 +46,7 @@ export function generatePlayerPathById(playerId: number | string): string {
     playerId: playerId.toString(),
     startDate: null,
     endDate: null,
+    selectedMode: "",
     version: 0
   });
 }

@@ -61,7 +61,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
     [activePlayerId]
   );
   const unfilteredCount = data.getUnfilteredCount();
-  const shouldPreload = !!unfilteredCount && !("loading" in data.getItem(0));
+  const shouldPreload = !!unfilteredCount && !("loading" in (data.getItem(0) || {loading: true}));
   useEffect(() => {
     triggerRelayout();
   }, [!!unfilteredCount]);
@@ -71,6 +71,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
     }
   }, [shouldPreload]);
   return (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <div ref={registerChild as any}>
       <AutoSizer disableHeight>
         {({ width }) => (

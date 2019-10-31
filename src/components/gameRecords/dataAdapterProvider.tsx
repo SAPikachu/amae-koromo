@@ -52,7 +52,7 @@ const noop = () => {};
 
 class DataAdapter implements IDataAdapter {
   _provider: DataProvider;
-  _onDataUpdate: () => void;
+  _onDataUpdate: (isError: boolean) => void;
   _triggeredRequest: boolean;
 
   constructor(provider: DataProvider, onDataUpdate = noop) {
@@ -65,10 +65,10 @@ class DataAdapter implements IDataAdapter {
       return;
     }
     this._triggeredRequest = true;
-    promise.then(this._callHook.bind(this));
+    promise.then(() => this._callHook(false)).catch(() => this._callHook(true));
   }
-  _callHook() {
-    this._onDataUpdate();
+  _callHook(isError: boolean) {
+    this._onDataUpdate(isError);
   }
   getCount(): number {
     const maybeCount = this._provider.getCountMaybeSync();
@@ -132,7 +132,7 @@ function createProvider(model: Model): DataProvider {
     return ListingDataProvider.create(model.date || dayjs().startOf("day"));
   }
   if (model.type === "player") {
-    return PlayerDataProvider.create(model.playerId, model.startDate, model.endDate);
+    return PlayerDataProvider.create(model.playerId, model.startDate, model.endDate, model.selectedMode);
   }
   throw new Error("Not implemented");
 }
@@ -161,7 +161,7 @@ function usePredicate(model: Model): FilterPredicate {
 }
 
 export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {
-  const [model] = useModel();
+  const [model, updateModel] = useModel();
   const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
   const searchPredicate = usePredicate(model);
   const dataProvider = useMemo(() => {
@@ -172,11 +172,18 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
     return dataProviders[key];
   }, [model, dataProviders]);
   const [dataAdapter, setDataAdapter] = useState(() => DUMMY_DATA_ADAPTER);
-  const refreshDataAdapter = useCallback(() => {
-    dataProvider.setFilterPredicate(searchPredicate);
-    const adapter = new DataAdapter(dataProvider);
-    setDataAdapter(adapter);
-  }, [dataProvider, searchPredicate]);
+  const refreshDataAdapter = useCallback(
+    (isError?: boolean) => {
+      if (isError) {
+        updateModel(Model.removeExtraParams(model));
+        return;
+      }
+      dataProvider.setFilterPredicate(searchPredicate);
+      const adapter = new DataAdapter(dataProvider);
+      setDataAdapter(adapter);
+    },
+    [dataProvider, searchPredicate, model, updateModel]
+  );
   useEffect(refreshDataAdapter, [refreshDataAdapter]);
   useEffect(() => {
     const adapter = dataAdapter;

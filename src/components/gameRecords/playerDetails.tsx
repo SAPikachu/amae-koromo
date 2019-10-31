@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "./dataAdapterProvider";
 import { PlayerMetadata } from "../../utils/dataSource";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { triggerRelayout, formatPercent } from "../../utils/index";
 import { LevelWithDelta } from "../../utils/dataTypes";
 import { TITLE_PREFIX, DATE_MIN } from "../../utils/constants";
@@ -13,6 +13,7 @@ import { FormRow } from "../form/formRow";
 import { useModel } from "./model";
 import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
+import { ModeSelector } from "./modeSelector";
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
   loading: () => <Loading />
@@ -32,7 +33,7 @@ const DATE_RANGE_ITEMS = Object.keys(DateRangeOptions).map((key: string) => ({
   label: DateRangeOptions[key as keyof typeof DateRangeOptions]
 }));
 
-function PlayerDetailsDateRangeSelector() {
+function PlayerDetailsSettings({ showLevel = false }) {
   const [model, updateModel] = useModel();
   const [mode, setMode] = useState(() => {
     if (model.type !== "player") {
@@ -43,7 +44,7 @@ function PlayerDetailsDateRangeSelector() {
     }
     if (
       (!model.endDate || dayjs(model.endDate).isSame(dayjs(), "day")) &&
-      dayjs(model.startDate).isSame(dayjs().subtract(28, "day"), "day")
+      dayjs(model.startDate).isSame(dayjs().subtract(27, "day"), "day")
     ) {
       return DateRangeOptions.Last4Weeks;
     }
@@ -65,7 +66,8 @@ function PlayerDetailsDateRangeSelector() {
           type: "player",
           playerId: model.playerId,
           startDate: null,
-          endDate: null
+          endDate: null,
+          selectedMode: undefined
         });
         break;
       case DateRangeOptions.Last4Weeks:
@@ -86,22 +88,34 @@ function PlayerDetailsDateRangeSelector() {
         break;
     }
   }, [model, mode, customDateFrom, customDateTo]);
+  const setSelectedMode = useCallback(mode => updateModel({ type: "player", selectedMode: mode }), [updateModel]);
   return (
-    <FormRow title="数据范围" inline={true}>
-      <CheckboxGroup
-        type="radio"
-        selectedItemKey={mode}
-        items={DATE_RANGE_ITEMS}
-        groupKey="PlayerDetailsDateRangeSelector"
-        onChange={setMode as (x: string) => void}
-      />
-      {mode === DateRangeOptions.Custom ? (
-        <>
-          <DatePicker min={DATE_MIN} onChange={setCustomDateFrom} date={customDateFrom} className="form-control" />
-          <DatePicker min={DATE_MIN} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
-        </>
-      ) : null}
-    </FormRow>
+    <div className="row">
+      <div className="col-md-6">
+        <FormRow title="时间范围" inline={true}>
+          <CheckboxGroup
+            type="radio"
+            selectedItemKey={mode}
+            items={DATE_RANGE_ITEMS}
+            groupKey="PlayerDetailsDateRangeSelector"
+            onChange={setMode as (x: string) => void}
+          />
+          {mode === DateRangeOptions.Custom ? (
+            <>
+              <DatePicker min={DATE_MIN} onChange={setCustomDateFrom} date={customDateFrom} className="form-control" />
+              <DatePicker min={DATE_MIN} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
+            </>
+          ) : null}
+        </FormRow>
+      </div>
+      {showLevel && (
+        <div className="col-md-6">
+          <FormRow title="等级" inline={true}>
+            <ModeSelector mode={model.selectedMode} onChange={setSelectedMode} />
+          </FormRow>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -141,7 +155,7 @@ export default function PlayerDetails() {
           <RankRateChart metadata={metadata} />
         </div>
       </div>
-      <PlayerDetailsDateRangeSelector />
+      <PlayerDetailsSettings showLevel={true} />
     </div>
   );
 }
