@@ -21,7 +21,7 @@ export interface GameRecord {
   players: PlayerRecord[];
 }
 export const GameRecord = Object.freeze({
-  getRankIndexByPlayer: function(rec: GameRecord, player: number | string | PlayerRecord): number {
+  getRankIndexByPlayer(rec: GameRecord, player: number | string | PlayerRecord): number {
     const playerId = (typeof player === "object" ? player.accountId : player).toString();
     const sortedPlayers = rec.players.map((player, index) => ({ player, index }));
     sortedPlayers.sort((a, b) => 5 - b.index + b.player.score - (5 - a.index + a.player.score));
@@ -32,15 +32,15 @@ export const GameRecord = Object.freeze({
     }
     return -1;
   },
-  getPlayerRankLabel: function(rec: GameRecord, player: number | string | PlayerRecord): string {
+  getPlayerRankLabel(rec: GameRecord, player: number | string | PlayerRecord): string {
     return RANK_LABELS[GameRecord.getRankIndexByPlayer(rec, player)] || "";
   },
-  getPlayerRankColor: function(rec: GameRecord, player: number | string | PlayerRecord): string {
+  getPlayerRankColor(rec: GameRecord, player: number | string | PlayerRecord): string {
     return RANK_COLORS[GameRecord.getRankIndexByPlayer(rec, player)];
   },
   encodeAccountId: (t: number) => 1358437 + ((7 * t + 1117113) ^ 86216345),
   formatFullStartTime: (rec: GameRecord) => dayjs(rec.startTime * 1000).format("YYYY/M/D HH:mm"),
-  getRecordLink: function(rec: GameRecord, player?: PlayerRecord | number | string) {
+  getRecordLink(rec: GameRecord, player?: PlayerRecord | number | string) {
     const playerId = typeof player === "object" ? player.accountId : player;
     const trailer = playerId
       ? `_a${GameRecord.encodeAccountId(typeof playerId === "number" ? playerId : parseInt(playerId))}`
@@ -102,6 +102,7 @@ class Level {
   }
   formatWithAdjustedScore(score: number) {
     let maxPoints = this.getMaxPoint();
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let level: Level = this;
     if (maxPoints && score >= maxPoints) {
       level = this.getNextLevel();
