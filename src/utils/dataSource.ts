@@ -9,12 +9,23 @@ import { GameRecord, Metadata, PlayerMetadata, PlayerMetadataLite, PlayerExtende
 export { default as GameMode, NUMBER_OF_GAME_MODE } from "./gameMode";
 export * from "./dataTypes";
 
+let onMaintenance: (msg: string) => void = () => {};
+
+export function setMaintenanceHandler(handler: (msg: string) => void) {
+  onMaintenance = handler;
+}
+
 async function apiGet<T>(path: string) {
   const resp = await fetch(API_ROOT + path);
   if (!resp.ok) {
     throw resp;
   }
-  return (await resp.json()) as T;
+  const data = await resp.json();
+  if (data.maintenance) {
+    onMaintenance(data.maintenance);
+    return new Promise(() => {}) as Promise<T>; // Freeze all other components
+  }
+  return data as T;
 }
 
 export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMetadataLite[]> {

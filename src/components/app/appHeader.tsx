@@ -30,10 +30,6 @@ export function AppHeader() {
           </li>
         </ul>
       </Alert>
-      <Alert container={Container} stateName="maintenance">
-        <h4>临时维护公告</h4>
-        <p>因数据库出现问题，临时维护两小时左右</p>
-      </Alert>
     </React.Fragment>
   );
 }

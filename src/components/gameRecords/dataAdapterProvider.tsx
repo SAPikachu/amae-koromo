@@ -141,7 +141,6 @@ function usePredicate(model: Model): FilterPredicate {
   if (model.type !== undefined) {
     return useMemo(() => null, [null, ""]);
   }
-  console.log(model);
   const searchText = (model.searchText || "").trim() || "";
   const needPredicate = searchText || model.selectedMode;
   return useMemo(

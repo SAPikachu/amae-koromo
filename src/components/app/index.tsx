@@ -13,6 +13,7 @@ import { Container } from "../layout";
 import { AppHeader } from "./appHeader";
 import GameRecords from "../gameRecords";
 import { TITLE_PREFIX } from "../../utils/constants";
+import { MaintenanceHandler } from "./maintenance";
 
 function App() {
   return (
@@ -20,9 +21,14 @@ function App() {
       <Helmet>
         <title>{TITLE_PREFIX}</title>
       </Helmet>
-      <Scroller>
-        <AppHeader />
-      </Scroller>
+      <MaintenanceHandler>
+        <Scroller>
+          <AppHeader />
+          <Container>
+            <GameRecords />
+          </Container>
+        </Scroller>
+      </MaintenanceHandler>
     </Router>
   );
 }
