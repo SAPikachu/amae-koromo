@@ -25,7 +25,7 @@ export default function RankRateChart({ metadata, aspect = 1 }: { metadata: Play
   const startAngle = ranks.filter(x => x.rate > 0).length < 4 ? 45 : 0;
   return (
     <ResponsiveContainer width="100%" aspect={aspect} height="auto">
-      <PieChart>
+      <PieChart margin={{ left: 20, right: 20 }}>
         <Pie
           isAnimationActive={false}
           data={ranks}
