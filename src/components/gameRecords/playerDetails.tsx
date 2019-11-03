@@ -14,7 +14,6 @@ import { useModel } from "./model";
 import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
 import { ModeSelector } from "./modeSelector";
-import ReactChild from "react";
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
   loading: () => <Loading />
@@ -120,10 +119,20 @@ function PlayerDetailsSettings({ showLevel = false }) {
   );
 }
 
-function StatItem({ label, children }: { label: string; children: React.ReactChild }) {
+function StatItem({
+  label,
+  description,
+  children
+}: {
+  label: string;
+  description?: string;
+  children: React.ReactChild;
+}) {
   return (
     <>
-      <dt className="col-2 col-lg-1 text-nowrap">{label}</dt>
+      <dt className="col-2 col-lg-1 text-nowrap" title={description || ""}>
+        {label}
+      </dt>
       <dd className="col-4 col-lg-3 text-right">{children}</dd>
     </>
   );
@@ -137,16 +146,30 @@ function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedSta
   }
   return (
     <>
-      <StatItem label="和牌率">{formatPercent(stats.和牌率 || 0)}</StatItem>
-      <StatItem label="自摸率">{formatPercent(stats.自摸率 || 0)}</StatItem>
-      <StatItem label="放铳率">{formatPercent(stats.放铳率 || 0)}</StatItem>
-      <StatItem label="副露率">{formatPercent(stats.副露率 || 0)}</StatItem>
-      <StatItem label="立直率">{formatPercent(stats.立直率 || 0)}</StatItem>
-      <StatItem label="流局率">{formatPercent(stats.流局率 || 0)}</StatItem>
-      <StatItem label="流听率">{formatPercent(stats.流听率 || 0)}</StatItem>
-      <StatItem label="和了巡数">{(stats.和了巡数 || 0).toFixed(3)}</StatItem>
+      <StatItem label="和牌率" description="和牌局数 / 总局数">
+        {formatPercent(stats.和牌率 || 0)}
+      </StatItem>
+      <StatItem label="自摸率" description="自摸局数 / 和牌局数">
+        {formatPercent(stats.自摸率 || 0)}
+      </StatItem>
+      <StatItem label="放铳率" description="放铳局数 / 总局数">
+        {formatPercent(stats.放铳率 || 0)}
+      </StatItem>
+      <StatItem label="流局率" description="流局局数 / 总局数">
+        {formatPercent(stats.流局率 || 0)}
+      </StatItem>
+      <StatItem label="流听率" description="流局听牌局数 / 流局局数">
+        {formatPercent(stats.流听率 || 0)}
+      </StatItem>
+      <StatItem label="副露率" description="副露局数 / 总局数">
+        {formatPercent(stats.副露率 || 0)}
+      </StatItem>
+      <StatItem label="立直率" description="立直局数 / 总局数">
+        {formatPercent(stats.立直率 || 0)}
+      </StatItem>
       <StatItem label="平均打点">{stats.平均打点 || 0}</StatItem>
       <StatItem label="平均铳点">{stats.平均铳点 || 0}</StatItem>
+      <StatItem label="和了巡数">{(stats.和了巡数 || 0).toFixed(3)}</StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
     </>
   );
@@ -176,9 +199,9 @@ export default function PlayerDetails() {
             <StatItem label="记录场数">{metadata.count}</StatItem>
             <StatItem label="当前等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
             <StatItem label="当前分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
+            {metadata.extended_stats && <PlayerExtendedStatsView maybeStats={metadata.extended_stats} />}
             <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
             <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
-            {metadata.extended_stats && <PlayerExtendedStatsView maybeStats={metadata.extended_stats} />}
           </dl>
         </div>
         <div className="col-md-4">
