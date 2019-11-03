@@ -92,8 +92,8 @@ function PlayerDetailsSettings({ showLevel = false }) {
   const setSelectedMode = useCallback(mode => updateModel({ type: "player", selectedMode: mode }), [updateModel]);
   return (
     <div className="row">
-      <div className="col-md-6">
-        <FormRow title="时间范围" inline={true}>
+      <div className="col-6">
+        <FormRow title="时间" inline={true}>
           <CheckboxGroup
             type="radio"
             selectedItemKey={mode}
@@ -110,7 +110,7 @@ function PlayerDetailsSettings({ showLevel = false }) {
         </FormRow>
       </div>
       {showLevel && (
-        <div className="col-md-6">
+        <div className="col-6">
           <FormRow title="等级" inline={true}>
             <ModeSelector mode={model.selectedMode} onChange={setSelectedMode} />
           </FormRow>
