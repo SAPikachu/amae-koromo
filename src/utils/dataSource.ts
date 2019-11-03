@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-use-before-define */
 import dayjs from "dayjs";
 
 import { API_ROOT } from "./constants";
-import { GameRecord, Metadata, PlayerMetadata, PlayerMetadataLite } from "./dataTypes";
+import { GameRecord, Metadata, PlayerMetadata, PlayerMetadataLite, PlayerExtendedStats } from "./dataTypes";
 
 export { default as GameMode, NUMBER_OF_GAME_MODE } from "./gameMode";
 export * from "./dataTypes";
@@ -22,6 +23,22 @@ export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMe
     return [];
   }
   return apiGet<PlayerMetadataLite[]>(`search_player/${encodeURIComponent(prefix)}?limit=${limit}`);
+}
+
+export async function getExtendedStats(
+  playerId: number,
+  startDate?: dayjs.ConfigType,
+  endDate?: dayjs.ConfigType,
+  mode = ""
+): Promise<PlayerExtendedStats> {
+  let datePath = "";
+  if (startDate) {
+    datePath += `/${dayjs(startDate).valueOf()}`;
+    if (endDate) {
+      datePath += `/${dayjs(endDate).valueOf()}`;
+    }
+  }
+  return await apiGet<PlayerExtendedStats>(`player_extended_stats/${playerId}${datePath}?mode=${mode}`);
 }
 
 interface DataLoader<T extends Metadata> {
@@ -63,8 +80,16 @@ class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     }
     return result;
   }
+  _getParams(): string {
+    return `${this._playerId}${this._getDatePath()}?mode=${this._mode}`;
+  }
   async getMetadata(): Promise<PlayerMetadata> {
-    return await apiGet<PlayerMetadata>(`player_stats/${this._playerId}${this._getDatePath()}?mode=${this._mode}`);
+    return await apiGet<PlayerMetadata>(`player_stats/${this._getParams()}`).then(stats => {
+      stats.extended_stats = apiGet<PlayerExtendedStats>(`player_extended_stats/${this._getParams()}`).then(
+        extendedStats => (stats.extended_stats = extendedStats)
+      );
+      return stats;
+    });
   }
   async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
     return await apiGet<GameRecord[]>(

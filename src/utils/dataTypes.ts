@@ -100,7 +100,7 @@ class Level {
     }
     return new Level(majorRank * 100 + minorRank);
   }
-  formatWithAdjustedScore(score: number) {
+  getAdjustedLevel(score: number) {
     let maxPoints = this.getMaxPoint();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let level: Level = this;
@@ -117,7 +117,17 @@ class Level {
         score = level.getStartingPoint();
       }
     }
-    return `${level.getTag()} - ${score}${maxPoints ? "/" + maxPoints : ""}`;
+    return level;
+  }
+  formatWithAdjustedScore(score: number) {
+    const level = this.getAdjustedLevel(score);
+    return `${level.getTag()} - ${this.formatAdjustedScore(score)}`;
+  }
+  formatAdjustedScore(score: number) {
+    const level = this.getAdjustedLevel(score);
+    return `${level === this ? Math.max(score, 0) : level.getStartingPoint()}${
+      level.getTag() ? "/" + level.getMaxPoint() : ""
+    }`;
   }
 }
 export function getLevelTag(levelId: number) {
@@ -131,6 +141,12 @@ export type LevelWithDelta = {
 export const LevelWithDelta = Object.freeze({
   format(obj: LevelWithDelta): string {
     return new Level(obj.id).formatWithAdjustedScore(obj.score + obj.delta);
+  },
+  formatAdjustedScore(obj: LevelWithDelta): string {
+    return new Level(obj.id).formatAdjustedScore(obj.score + obj.delta);
+  },
+  getTag(obj: LevelWithDelta): string {
+    return new Level(obj.id).getAdjustedLevel(obj.score + obj.delta).getTag();
   }
 });
 
@@ -146,4 +162,19 @@ export interface PlayerMetadata extends PlayerMetadataLite {
   rank_rates: [number, number, number, number];
   avg_rank: number;
   negative_rate: number;
+  extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
+}
+export interface PlayerExtendedStats {
+  id: number;
+  和牌率: number;
+  自摸率: number;
+  放铳率: number;
+  副露率: number;
+  立直率: number;
+  平均打点: number;
+  最大连庄: number;
+  和了巡数: number;
+  平均铳点: number;
+  流局率: number;
+  流听率: number;
 }

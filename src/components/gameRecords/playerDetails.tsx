@@ -5,8 +5,8 @@ import { Helmet } from "react-helmet";
 import { useDataAdapter } from "./dataAdapterProvider";
 import { PlayerMetadata } from "../../utils/dataSource";
 import { useEffect, useState, useCallback } from "react";
-import { triggerRelayout, formatPercent } from "../../utils/index";
-import { LevelWithDelta } from "../../utils/dataTypes";
+import { triggerRelayout, formatPercent, useAsync } from "../../utils/index";
+import { LevelWithDelta, PlayerExtendedStats } from "../../utils/dataTypes";
 import { TITLE_PREFIX, DATE_MIN } from "../../utils/constants";
 import Loading from "../misc/loading";
 import { FormRow } from "../form/formRow";
@@ -14,6 +14,7 @@ import { useModel } from "./model";
 import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
 import { ModeSelector } from "./modeSelector";
+import ReactChild from "react";
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
   loading: () => <Loading />
@@ -119,6 +120,38 @@ function PlayerDetailsSettings({ showLevel = false }) {
   );
 }
 
+function StatItem({ label, children }: { label: string; children: React.ReactChild }) {
+  return (
+    <>
+      <dt className="col-2 col-lg-1 text-nowrap">{label}</dt>
+      <dd className="col-4 col-lg-3 text-right">{children}</dd>
+    </>
+  );
+}
+
+function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedStats | Promise<PlayerExtendedStats> }) {
+  const stats = useAsync(maybeStats);
+  useEffect(triggerRelayout, [!!stats]);
+  if (!stats) {
+    return <Loading size="small" />;
+  }
+  return (
+    <>
+      <StatItem label="和牌率">{formatPercent(stats.和牌率 || 0)}</StatItem>
+      <StatItem label="自摸率">{formatPercent(stats.自摸率 || 0)}</StatItem>
+      <StatItem label="放铳率">{formatPercent(stats.放铳率 || 0)}</StatItem>
+      <StatItem label="副露率">{formatPercent(stats.副露率 || 0)}</StatItem>
+      <StatItem label="立直率">{formatPercent(stats.立直率 || 0)}</StatItem>
+      <StatItem label="流局率">{formatPercent(stats.流局率 || 0)}</StatItem>
+      <StatItem label="流听率">{formatPercent(stats.流听率 || 0)}</StatItem>
+      <StatItem label="和了巡数">{(stats.和了巡数 || 0).toFixed(3)}</StatItem>
+      <StatItem label="平均打点">{stats.平均打点 || 0}</StatItem>
+      <StatItem label="平均铳点">{stats.平均铳点 || 0}</StatItem>
+      <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
+    </>
+  );
+}
+
 export default function PlayerDetails() {
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
@@ -140,14 +173,12 @@ export default function PlayerDetails() {
           <RecentRankChart dataAdapter={dataAdapter} playerId={metadata.id} aspect={6} />
           <h3 className="text-center mt-4 mb-4">相关数据</h3>
           <dl className="row">
-            <dt className="col-4 col-md-2">记录场数</dt>
-            <dd className="col-8 col-md-4">{metadata.count}</dd>
-            <dt className="col-4 col-md-2">当前等级</dt>
-            <dd className="col-8 col-md-4">{LevelWithDelta.format(metadata.level)}</dd>
-            <dt className="col-4 col-md-2">平均顺位</dt>
-            <dd className="col-8 col-md-4">{metadata.avg_rank.toFixed(3)}</dd>
-            <dt className="col-4 col-md-2">被飞率</dt>
-            <dd className="col-8 col-md-4">{formatPercent(metadata.negative_rate)}</dd>
+            <StatItem label="记录场数">{metadata.count}</StatItem>
+            <StatItem label="当前等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
+            <StatItem label="当前分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
+            <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
+            <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
+            {metadata.extended_stats && <PlayerExtendedStatsView maybeStats={metadata.extended_stats} />}
           </dl>
         </div>
         <div className="col-md-4">
