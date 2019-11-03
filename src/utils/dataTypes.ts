@@ -169,7 +169,7 @@ class Level {
   formatAdjustedScore(score: number) {
     const level = this.getAdjustedLevel(score);
     return `${level === this ? Math.max(score, 0) : level.getStartingPoint()}${
-      level.getTag() ? "/" + level.getMaxPoint() : ""
+      level.getMaxPoint() ? "/" + level.getMaxPoint() : ""
     }`;
   }
 }
