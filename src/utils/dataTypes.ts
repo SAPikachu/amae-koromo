@@ -189,7 +189,10 @@ export const LevelWithDelta = Object.freeze({
     return new Level(obj.id).formatAdjustedScore(obj.score + obj.delta);
   },
   getTag(obj: LevelWithDelta): string {
-    return new Level(obj.id).getAdjustedLevel(obj.score + obj.delta).getTag();
+    return LevelWithDelta.getAdjustedLevel(obj).getTag();
+  },
+  getAdjustedLevel(obj: LevelWithDelta): Level {
+    return new Level(obj.id).getAdjustedLevel(obj.score + obj.delta);
   }
 });
 
@@ -211,7 +214,7 @@ export interface PlayerMetadata extends PlayerMetadataLite {
 export const PlayerMetadata = Object.freeze({
   calculateExpectedGamePoint(metadata: PlayerMetadata, mode: GameMode, level?: Level): number {
     const rankDeltaPoints = metadata.rank_avg_score.map((score, rank) =>
-      calculateDeltaPoint(score, rank, mode, level || new Level(metadata.level.id))
+      calculateDeltaPoint(score, rank, mode, level || LevelWithDelta.getAdjustedLevel(metadata.level))
     );
     const rankWeightedPoints = rankDeltaPoints.map((point, rank) => point * metadata.rank_rates[rank]);
     const expectedGamePoint = rankWeightedPoints.reduce((a, b) => a + b, 0);

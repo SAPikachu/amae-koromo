@@ -186,7 +186,7 @@ function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
       <StatItem label="安定段位" description={`在${GameMode[mode]}之间一直进行对局，预测最终能达到的段位`}>
         {PlayerMetadata.estimateStableLevel(metadata, mode)}
       </StatItem>
-      <StatItem label="每局期待" description={`在${GameMode[mode]}之间每局获得点数的期待值`}>
+      <StatItem label="每局期待" description={`在${GameMode[mode]}之间每局获得点数的数学期待值`}>
         {PlayerMetadata.calculateExpectedGamePoint(metadata, mode).toFixed(3)}
       </StatItem>
     </>
