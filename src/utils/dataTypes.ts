@@ -1,11 +1,31 @@
 import dayjs from "dayjs";
 
-import GameMode from "./gameMode";
-
 export const PLAYER_RANKS = "初士杰豪圣魂";
-export const LEVEL_MAX_POINTS = [20, 80, 200, 600, 800, 1000, 1200, 1400, 2000, 2800, 3200, 3600, 4000, 6000, 9000];
+const LEVEL_MAX_POINTS = [20, 80, 200, 600, 800, 1000, 1200, 1400, 2000, 2800, 3200, 3600, 4000, 6000, 9000];
+const LEVEL_PENALTY = [0, 0, 0, 20, 40, 60, 80, 100, 120, 165, 180, 195, 210, 225, 240, 255];
+const RANK_DELTA = [15, 5, -5, -15];
+const MODE_DELTA = {
+  "12": [110, 55, 0, 0],
+  "16": [120, 60, 0, 0]
+};
 export const RANK_LABELS = ["一位", "二位", "三位", "四位"];
 export const RANK_COLORS = ["#28a745", "#17a2b8", "#6c757d", "#dc3545"];
+
+export enum GameMode {
+  王座 = 16,
+  玉 = 12
+}
+const LEVEL_ALLOWED_MODES: { [key: string]: GameMode[] } = {
+  "1": [],
+  "2": [],
+  "3": [],
+  "4": [GameMode.玉],
+  "5": [GameMode.玉, GameMode.王座],
+  "6": [GameMode.王座]
+};
+export const NUMBER_OF_GAME_MODE = Object.keys(GameMode).filter(
+  x => typeof GameMode[x as keyof typeof GameMode] === "number"
+).length;
 
 export interface PlayerRecord {
   accountId: number;
@@ -49,6 +69,20 @@ export const GameRecord = Object.freeze({
   }
 });
 
+function calculateDeltaPoint(score: number, rank: number, mode: GameMode, level: Level): number {
+  let result =
+    Math.ceil((score - 25000) / 1000 + RANK_DELTA[rank]) + MODE_DELTA[mode.toString() as keyof typeof MODE_DELTA][rank];
+  if (rank === 3) {
+    result -= level.getPenaltyPoint();
+  }
+  /*
+  console.log(
+    `calculateDeltaPoint: score=${score}, rank=${rank}, mode=${mode}, level=${level.getTag()}, result=${result}`
+  );
+  */
+  return result;
+}
+
 class Level {
   _majorRank: number;
   _minorRank: number;
@@ -56,6 +90,12 @@ class Level {
     const realId = levelId % 10000;
     this._majorRank = Math.floor(realId / 100);
     this._minorRank = realId % 100;
+  }
+  isSameMajorRank(other: Level): boolean {
+    return this._majorRank === other._majorRank;
+  }
+  isAllowedMode(mode: GameMode): boolean {
+    return LEVEL_ALLOWED_MODES[this._majorRank.toString() as keyof typeof LEVEL_ALLOWED_MODES].includes(mode);
   }
   getTag(): string {
     const label = PLAYER_RANKS[this._majorRank - 1];
@@ -66,6 +106,9 @@ class Level {
   }
   getMaxPoint(): number {
     return LEVEL_MAX_POINTS[(this._majorRank - 1) * 3 + this._minorRank - 1];
+  }
+  getPenaltyPoint(): number {
+    return LEVEL_PENALTY[(this._majorRank - 1) * 3 + this._minorRank - 1];
   }
   getStartingPoint(): number {
     if (this._majorRank === 1) {
@@ -100,7 +143,7 @@ class Level {
     }
     return new Level(majorRank * 100 + minorRank);
   }
-  getAdjustedLevel(score: number) {
+  getAdjustedLevel(score: number): Level {
     let maxPoints = this.getMaxPoint();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let level: Level = this;
@@ -160,10 +203,68 @@ export interface PlayerMetadataLite extends Metadata {
 }
 export interface PlayerMetadata extends PlayerMetadataLite {
   rank_rates: [number, number, number, number];
+  rank_avg_score: [number, number, number, number];
   avg_rank: number;
   negative_rate: number;
   extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
 }
+export const PlayerMetadata = Object.freeze({
+  calculateExpectedGamePoint(metadata: PlayerMetadata, mode: GameMode, level?: Level): number {
+    const rankDeltaPoints = metadata.rank_avg_score.map((score, rank) =>
+      calculateDeltaPoint(score, rank, mode, level || new Level(metadata.level.id))
+    );
+    const rankWeightedPoints = rankDeltaPoints.map((point, rank) => point * metadata.rank_rates[rank]);
+    const expectedGamePoint = rankWeightedPoints.reduce((a, b) => a + b, 0);
+    /*
+    console.log(rankDeltaPoints);
+    console.log(rankWeightedPoints);
+    console.log(
+      `calculateExpectedGamePoint: mode=${mode}, level=${level ? level.getTag() : ""}, result=${expectedGamePoint}`
+    );
+    */
+    return expectedGamePoint;
+  },
+  estimateStableLevel(metadata: PlayerMetadata, mode: GameMode): string {
+    let level = new Level(metadata.level.id);
+    let lastPositiveLevel: Level | undefined = undefined;
+    for (;;) {
+      const expectedGamePoint = PlayerMetadata.calculateExpectedGamePoint(metadata, mode, level);
+      if (Math.abs(expectedGamePoint) < 0.001) {
+        return level.getTag();
+      }
+      if (expectedGamePoint >= 0) {
+        lastPositiveLevel = level;
+        level = level.getNextLevel();
+        if (!level.isAllowedMode(mode)) {
+          return lastPositiveLevel.getTag() + "+";
+        }
+        if (level === lastPositiveLevel) {
+          return level.getTag() + "+";
+        }
+      } else {
+        if (lastPositiveLevel) {
+          return lastPositiveLevel.getTag();
+        }
+        break;
+      }
+    }
+    if (!level.getMaxPoint()) {
+      // 魂天不会掉段
+      return level.getTag() + "-";
+    }
+    for (;;) {
+      const prevLevel = level.getPreviousLevel();
+      if (!prevLevel.isAllowedMode(mode) || prevLevel === level) {
+        return level.getTag() + "-";
+      }
+      level = prevLevel;
+      const expectedGamePoint = PlayerMetadata.calculateExpectedGamePoint(metadata, mode, level);
+      if (expectedGamePoint + 0.001 >= 0) {
+        return level.getTag();
+      }
+    }
+  }
+});
 export interface PlayerExtendedStats {
   id: number;
   和牌率: number;

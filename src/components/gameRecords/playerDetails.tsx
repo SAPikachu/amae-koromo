@@ -3,10 +3,9 @@ import Loadable from "react-loadable";
 import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "./dataAdapterProvider";
-import { PlayerMetadata } from "../../utils/dataSource";
 import { useEffect, useState, useCallback } from "react";
 import { triggerRelayout, formatPercent, useAsync } from "../../utils/index";
-import { LevelWithDelta, PlayerExtendedStats } from "../../utils/dataTypes";
+import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameMode } from "../../utils/dataTypes";
 import { TITLE_PREFIX, DATE_MIN } from "../../utils/constants";
 import Loading from "../misc/loading";
 import { FormRow } from "../form/formRow";
@@ -142,7 +141,7 @@ function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedSta
   const stats = useAsync(maybeStats);
   useEffect(triggerRelayout, [!!stats]);
   if (!stats) {
-    return <Loading size="small" />;
+    return null;
   }
   return (
     <>
@@ -175,6 +174,25 @@ function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedSta
   );
 }
 
+function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
+  const [model] = useModel();
+  const mode = model.selectedMode
+    ? (parseInt(model.selectedMode) as GameMode)
+    : LevelWithDelta.getTag(metadata.level) === "魂"
+    ? GameMode.王座
+    : GameMode.玉;
+  return (
+    <>
+      <StatItem label="安定段位" description={`在${GameMode[mode]}之间一直进行对局，预测最终能达到的段位`}>
+        {PlayerMetadata.estimateStableLevel(metadata, mode)}
+      </StatItem>
+      <StatItem label="每局期待" description={`在${GameMode[mode]}之间每局获得点数的期待值`}>
+        {PlayerMetadata.calculateExpectedGamePoint(metadata, mode).toFixed(3)}
+      </StatItem>
+    </>
+  );
+}
+
 export default function PlayerDetails() {
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
@@ -202,6 +220,7 @@ export default function PlayerDetails() {
             {metadata.extended_stats && <PlayerExtendedStatsView maybeStats={metadata.extended_stats} />}
             <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
             <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
+            <EstimatedStableLevel metadata={metadata} />
           </dl>
         </div>
         <div className="col-md-4">

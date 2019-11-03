@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import { API_ROOT } from "./constants";
 import { GameRecord, Metadata, PlayerMetadata, PlayerMetadataLite, PlayerExtendedStats } from "./dataTypes";
 
-export { default as GameMode, NUMBER_OF_GAME_MODE } from "./gameMode";
 export * from "./dataTypes";
 
 let onMaintenance: (msg: string) => void = () => {};

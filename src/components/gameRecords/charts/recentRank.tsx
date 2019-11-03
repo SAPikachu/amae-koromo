@@ -4,7 +4,7 @@ import { ResponsiveContainer, LineChart, Line, Dot, Tooltip, TooltipProps } from
 import { IDataAdapter } from "../dataAdapterProvider";
 import { GameRecord, RANK_LABELS, RANK_COLORS } from "../../../utils/dataSource";
 import { useMemo } from "react";
-import GameMode from "../../../utils/gameMode";
+import { GameMode } from "../../../utils/dataTypes";
 import { Player } from "../player";
 import Loading from "../../misc/loading";
 
@@ -13,6 +13,7 @@ declare module "recharts" {
     strokeWidth?: number;
     stroke?: string;
     fill?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload?: any;
   }
   interface LabelListProps {
@@ -33,6 +34,7 @@ const createDot = (props: { payload: DotPayload }, active?: boolean) => {
     />
   );
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createActiveDot = (props: any) => createDot(props, true);
 
 const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
