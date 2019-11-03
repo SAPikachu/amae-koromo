@@ -162,7 +162,7 @@ class Level {
     }
     return level;
   }
-  formatWithAdjustedScore(score: number) {
+  formatAdjustedScoreWithTag(score: number) {
     const level = this.getAdjustedLevel(score);
     return `${level.getTag()} - ${this.formatAdjustedScore(score)}`;
   }
@@ -183,7 +183,7 @@ export type LevelWithDelta = {
 };
 export const LevelWithDelta = Object.freeze({
   format(obj: LevelWithDelta): string {
-    return new Level(obj.id).formatWithAdjustedScore(obj.score + obj.delta);
+    return new Level(obj.id).formatAdjustedScoreWithTag(obj.score + obj.delta);
   },
   formatAdjustedScore(obj: LevelWithDelta): string {
     return new Level(obj.id).formatAdjustedScore(obj.score + obj.delta);
