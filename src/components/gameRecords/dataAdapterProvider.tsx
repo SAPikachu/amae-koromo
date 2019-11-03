@@ -141,13 +141,14 @@ function usePredicate(model: Model): FilterPredicate {
   if (model.type !== undefined) {
     return useMemo(() => null, [null, ""]);
   }
+  console.log(model);
   const searchText = (model.searchText || "").trim() || "";
   const needPredicate = searchText || model.selectedMode;
   return useMemo(
     () =>
       needPredicate
         ? game => {
-            if (model.selectedMode !== game.modeId.toString()) {
+            if (model.selectedMode && model.selectedMode !== game.modeId.toString()) {
               return false;
             }
             if (!game.players.some(player => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
