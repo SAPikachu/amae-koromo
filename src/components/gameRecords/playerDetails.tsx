@@ -121,18 +121,20 @@ function PlayerDetailsSettings({ showLevel = false }) {
 function StatItem({
   label,
   description,
+  className = "",
   children
 }: {
   label: string;
   description?: string;
+  className?: string;
   children: React.ReactChild;
 }) {
   return (
     <>
-      <dt className="col-2 col-lg-1 text-nowrap" title={description || ""}>
+      <dt className={`col-2 col-lg-1 text-nowrap ${className}`} title={description || ""}>
         {label}
       </dt>
-      <dd className="col-4 col-lg-3 text-right">{children}</dd>
+      <dd className={`col-4 col-lg-3 text-right ${className}`}>{children}</dd>
     </>
   );
 }
@@ -181,13 +183,28 @@ function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
     : LevelWithDelta.getTag(metadata.level) === "魂"
     ? GameMode.王座
     : GameMode.玉;
+  const notEnoughData = metadata.count < 100;
   return (
     <>
-      <StatItem label="安定段位" description={`在${GameMode[mode]}之间一直进行对局，预测最终能达到的段位`}>
-        {PlayerMetadata.estimateStableLevel(metadata, mode)}
+      <StatItem
+        label="安定段位"
+        description={`在${GameMode[mode]}之间一直进行对局，预测最终能达到的段位`}
+        className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
+      >
+        <span title={notEnoughData ? "数据量不足，计算结果可能有较大偏差" : ""}>
+          {PlayerMetadata.estimateStableLevel(metadata, mode)}
+          {notEnoughData && "?"}
+        </span>
       </StatItem>
-      <StatItem label="每局期望" description={`在${GameMode[mode]}之间每局获得点数的数学期望值`}>
-        {PlayerMetadata.calculateExpectedGamePoint(metadata, mode).toFixed(3)}
+      <StatItem
+        label="每局期望"
+        description={`在${GameMode[mode]}之间每局获得点数的数学期望值`}
+        className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
+      >
+        <span title={notEnoughData ? "数据量不足，计算结果可能有较大偏差" : ""}>
+          {PlayerMetadata.calculateExpectedGamePoint(metadata, mode).toFixed(3)}
+          {notEnoughData && "?"}
+        </span>
       </StatItem>
     </>
   );
