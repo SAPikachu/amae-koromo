@@ -150,11 +150,14 @@ function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedSta
       <StatItem label="和牌率" description="和牌局数 / 总局数">
         {formatPercent(stats.和牌率 || 0)}
       </StatItem>
+      <StatItem label="放铳率" description="放铳局数 / 总局数">
+        {formatPercent(stats.放铳率 || 0)}
+      </StatItem>
       <StatItem label="自摸率" description="自摸局数 / 和牌局数">
         {formatPercent(stats.自摸率 || 0)}
       </StatItem>
-      <StatItem label="放铳率" description="放铳局数 / 总局数">
-        {formatPercent(stats.放铳率 || 0)}
+      <StatItem label="默胡率" description="门清默听和牌局数 / 和牌局数">
+        {formatPercent(stats.默听率 || 0)}
       </StatItem>
       <StatItem label="流局率" description="流局局数 / 总局数">
         {formatPercent(stats.流局率 || 0)}
@@ -168,9 +171,9 @@ function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedSta
       <StatItem label="立直率" description="立直局数 / 总局数">
         {formatPercent(stats.立直率 || 0)}
       </StatItem>
+      <StatItem label="和了巡数">{(stats.和了巡数 || 0).toFixed(3)}</StatItem>
       <StatItem label="平均打点">{stats.平均打点 || 0}</StatItem>
       <StatItem label="平均铳点">{stats.平均铳点 || 0}</StatItem>
-      <StatItem label="和了巡数">{(stats.和了巡数 || 0).toFixed(3)}</StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
     </>
   );
@@ -236,8 +239,8 @@ export default function PlayerDetails() {
             <StatItem label="当前分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
             {metadata.extended_stats && <PlayerExtendedStatsView maybeStats={metadata.extended_stats} />}
             <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
-            <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
             <EstimatedStableLevel metadata={metadata} />
+            <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
           </dl>
         </div>
         <div className="col-md-4">

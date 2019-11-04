@@ -272,6 +272,7 @@ export interface PlayerExtendedStats {
   id: number;
   和牌率: number;
   自摸率: number;
+  默听率: number;
   放铳率: number;
   副露率: number;
   立直率: number;
