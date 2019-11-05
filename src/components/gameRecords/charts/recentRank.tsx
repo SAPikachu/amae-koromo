@@ -83,7 +83,7 @@ export default function RecentRankChart({
       result.unshift({ pos: 3 - rank, rank, game, playerId });
     }
     return result;
-  }, [dataAdapter]);
+  }, [dataAdapter, numGames, playerId]);
   if (!dataPoints.length) {
     return <Loading />;
   }

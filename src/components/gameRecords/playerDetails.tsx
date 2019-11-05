@@ -86,7 +86,7 @@ function PlayerDetailsSettings({ showLevel = false }) {
         });
         break;
     }
-  }, [model, mode, customDateFrom, customDateTo]);
+  }, [model, mode, customDateFrom, customDateTo, updateModel]);
   const setSelectedMode = useCallback(mode => updateModel({ type: "player", selectedMode: mode }), [updateModel]);
   return (
     <div className="row">

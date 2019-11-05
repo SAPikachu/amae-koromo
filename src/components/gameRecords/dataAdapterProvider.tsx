@@ -138,13 +138,12 @@ function createProvider(model: Model): DataProvider {
 }
 
 function usePredicate(model: Model): FilterPredicate {
-  if (model.type !== undefined) {
-    return useMemo(() => null, [null, ""]);
-  }
-  const searchText = (model.searchText || "").trim() || "";
-  const needPredicate = searchText || model.selectedMode;
-  return useMemo(
-    () =>
+  let memoFunc: () => FilterPredicate = () => null;
+  let memoDeps = [null, ""];
+  if (model.type === undefined) {
+    const searchText = (model.searchText || "").trim() || "";
+    const needPredicate = searchText || model.selectedMode;
+    memoFunc = () =>
       needPredicate
         ? game => {
             if (model.selectedMode && model.selectedMode !== game.modeId.toString()) {
@@ -155,9 +154,10 @@ function usePredicate(model: Model): FilterPredicate {
             }
             return true;
           }
-        : null,
-    [(model.type === undefined && model.selectedMode) || null, searchText]
-  );
+        : null;
+    memoDeps = [(model.type === undefined && model.selectedMode) || null, searchText];
+  }
+  return useMemo(memoFunc, memoDeps);
 }
 
 export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {

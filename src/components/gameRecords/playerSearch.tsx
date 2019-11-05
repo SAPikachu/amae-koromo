@@ -53,6 +53,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
       }
     });
     return [filteredPlayers, mayHaveMore && filteredPlayers.length < NUM_RESULTS_SHOWN, mayHaveMore];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText, version]);
   useEffect(() => {
     const prefix = normalizeName(searchText);
