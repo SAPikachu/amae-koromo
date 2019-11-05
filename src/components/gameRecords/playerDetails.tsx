@@ -21,6 +21,11 @@ const RecentRankChart = Loadable({
   loader: () => import("./charts/recentRank"),
   loading: () => <Loading />
 });
+const ReactTooltipPromise = import("react-tooltip");
+const ReactTooltip = Loadable({
+  loader: () => ReactTooltipPromise,
+  loading: () => null
+});
 
 enum DateRangeOptions {
   All = "全部",
@@ -131,10 +136,10 @@ function StatItem({
 }) {
   return (
     <>
-      <dt className={`col-2 col-lg-1 text-nowrap ${className}`} title={description || ""}>
-        {label}
-      </dt>
-      <dd className={`col-4 col-lg-3 text-right ${className}`}>{children}</dd>
+      <dt className={`col-2 col-lg-1 text-nowrap ${className}`}>{label}</dt>
+      <dd className={`col-4 col-lg-3 text-right ${className}`} data-tip={description || ""}>
+        {children}
+      </dd>
     </>
   );
 }
@@ -197,6 +202,9 @@ function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
     estimatedNumGamesToChangeLevel =
       expectedGamePoint > 0 ? (level.getMaxPoint() - curPoint) / expectedGamePoint : curPoint / expectedGamePoint;
   }
+  const changeLevelMsg = estimatedNumGamesToChangeLevel
+    ? `，括号内为预计${estimatedNumGamesToChangeLevel > 0 ? "升" : "降"}段场数`
+    : "";
   return (
     <>
       <StatItem
@@ -204,22 +212,19 @@ function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
         description={`在${GameMode[mode]}之间一直进行对局，预测最终能达到的段位`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
-        <span title={notEnoughData ? "数据量不足，计算结果可能有较大偏差" : ""}>
+        <span>
           {PlayerMetadata.estimateStableLevel(metadata, mode)}
           {notEnoughData && "?"}
         </span>
       </StatItem>
       <StatItem
         label="分数期望"
-        description={
-          `在${GameMode[mode]}之间每局获得点数的数学期望值` +
-          (estimatedNumGamesToChangeLevel
-            ? `，括号内为预计${estimatedNumGamesToChangeLevel > 0 ? "升" : "降"}段场数`
-            : "")
-        }
+        description={`在${GameMode[mode]}之间每局获得点数的数学期望值${changeLevelMsg}${
+          notEnoughData ? "（数据量不足，计算结果可能有较大偏差）" : ""
+        }`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
-        <span title={notEnoughData ? "数据量不足，计算结果可能有较大偏差" : ""}>
+        <span>
           {expectedGamePoint.toFixed(1)}
           {estimatedNumGamesToChangeLevel ? ` (${Math.abs(estimatedNumGamesToChangeLevel).toFixed(0)})` : ""}
           {notEnoughData && "?"}
@@ -232,6 +237,9 @@ function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
 export default function PlayerDetails() {
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
+  useEffect(() => {
+    ReactTooltipPromise.then(x => x.rebuild());
+  });
   useEffect(triggerRelayout, [!!metadata]);
   if (!metadata || !metadata.nickname) {
     return <Loading />;
@@ -265,6 +273,7 @@ export default function PlayerDetails() {
         </div>
       </div>
       <PlayerDetailsSettings showLevel={true} />
+      <ReactTooltip effect="solid" multiline={true} place="top" />
     </div>
   );
 }

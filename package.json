@@ -16,6 +16,7 @@
     "react-loadable": "^5.5.0",
     "react-router-dom": "5.1.2",
     "react-scripts": "3.2.0",
+    "react-tooltip": "^3.11.1",
     "react-virtualized": "9.21.1",
     "recharts": "^1.8.5"
   },
@@ -25,6 +26,7 @@
     "@types/react-helmet": "^5.0.14",
     "@types/react-loadable": "^5.5.2",
     "@types/react-router-dom": "5.1.2",
+    "@types/react-tooltip": "^3.11.0",
     "@types/react-virtualized": "9.21.5",
     "@types/recharts": "^1.8.1",
     "@typescript-eslint/eslint-plugin": "^2.6.1",
