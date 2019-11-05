@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet";
 import { useDataAdapter } from "./dataAdapterProvider";
 import { useEffect, useState, useCallback } from "react";
 import { triggerRelayout, formatPercent, useAsync } from "../../utils/index";
-import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameMode } from "../../utils/dataTypes";
+import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameMode, Level } from "../../utils/dataTypes";
 import { TITLE_PREFIX, DATE_MIN } from "../../utils/constants";
 import Loading from "../misc/loading";
 import { FormRow } from "../form/formRow";
@@ -181,12 +181,22 @@ function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedSta
 
 function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
   const [model] = useModel();
+  const level = LevelWithDelta.getAdjustedLevel(metadata.level);
   const mode = model.selectedMode
     ? (parseInt(model.selectedMode) as GameMode)
     : LevelWithDelta.getTag(metadata.level) === "魂"
     ? GameMode.王座
     : GameMode.玉;
   const notEnoughData = metadata.count < 100;
+  const expectedGamePoint = PlayerMetadata.calculateExpectedGamePoint(metadata, mode);
+  let estimatedNumGamesToChangeLevel = null as number | null;
+  if (level.getMaxPoint() && level.isAllowedMode(mode)) {
+    const curPoint = level.isSame(new Level(metadata.level.id))
+      ? metadata.level.score + metadata.level.delta
+      : level.getStartingPoint();
+    estimatedNumGamesToChangeLevel =
+      expectedGamePoint > 0 ? (level.getMaxPoint() - curPoint) / expectedGamePoint : curPoint / expectedGamePoint;
+  }
   return (
     <>
       <StatItem
@@ -200,12 +210,18 @@ function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
         </span>
       </StatItem>
       <StatItem
-        label="每局期望"
-        description={`在${GameMode[mode]}之间每局获得点数的数学期望值`}
+        label="分数期望"
+        description={
+          `在${GameMode[mode]}之间每局获得点数的数学期望值` +
+          (estimatedNumGamesToChangeLevel
+            ? `，括号内为预计${estimatedNumGamesToChangeLevel > 0 ? "升" : "降"}段场数`
+            : "")
+        }
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span title={notEnoughData ? "数据量不足，计算结果可能有较大偏差" : ""}>
-          {PlayerMetadata.calculateExpectedGamePoint(metadata, mode).toFixed(3)}
+          {expectedGamePoint.toFixed(1)}
+          {estimatedNumGamesToChangeLevel ? ` (${Math.abs(estimatedNumGamesToChangeLevel).toFixed(0)})` : ""}
           {notEnoughData && "?"}
         </span>
       </StatItem>

@@ -83,7 +83,7 @@ function calculateDeltaPoint(score: number, rank: number, mode: GameMode, level:
   return result;
 }
 
-class Level {
+export class Level {
   _majorRank: number;
   _minorRank: number;
   constructor(levelId: number) {
@@ -93,6 +93,9 @@ class Level {
   }
   isSameMajorRank(other: Level): boolean {
     return this._majorRank === other._majorRank;
+  }
+  isSame(other: Level): boolean {
+    return this._majorRank === other._majorRank && this._minorRank === other._minorRank;
   }
   isAllowedMode(mode: GameMode): boolean {
     return LEVEL_ALLOWED_MODES[this._majorRank.toString() as keyof typeof LEVEL_ALLOWED_MODES].includes(mode);
