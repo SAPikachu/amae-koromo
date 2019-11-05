@@ -69,10 +69,10 @@ export const GameRecord = Object.freeze({
   }
 });
 
-function calculateDeltaPoint(score: number, rank: number, mode: GameMode, level: Level): number {
+function calculateDeltaPoint(score: number, rank: number, mode: GameMode, level: Level, includePenalty = true): number {
   let result =
     Math.ceil((score - 25000) / 1000 + RANK_DELTA[rank]) + MODE_DELTA[mode.toString() as keyof typeof MODE_DELTA][rank];
-  if (rank === 3) {
+  if (rank === 3 && includePenalty) {
     result -= level.getPenaltyPoint();
   }
   /*
@@ -215,9 +215,9 @@ export interface PlayerMetadata extends PlayerMetadataLite {
   extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
 }
 export const PlayerMetadata = Object.freeze({
-  calculateExpectedGamePoint(metadata: PlayerMetadata, mode: GameMode, level?: Level): number {
+  calculateExpectedGamePoint(metadata: PlayerMetadata, mode: GameMode, level?: Level, includePenalty = true): number {
     const rankDeltaPoints = metadata.rank_avg_score.map((score, rank) =>
-      calculateDeltaPoint(score, rank, mode, level || LevelWithDelta.getAdjustedLevel(metadata.level))
+      calculateDeltaPoint(score, rank, mode, level || LevelWithDelta.getAdjustedLevel(metadata.level), includePenalty)
     );
     const rankWeightedPoints = rankDeltaPoints.map((point, rank) => point * metadata.rank_rates[rank]);
     const expectedGamePoint = rankWeightedPoints.reduce((a, b) => a + b, 0);
@@ -269,6 +269,17 @@ export const PlayerMetadata = Object.freeze({
         return level.getTag();
       }
     }
+  },
+  estimateStableLevel2(metadata: PlayerMetadata, mode: GameMode): string {
+    const estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, undefined, false);
+    const result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
+    if (result >= 7) {
+      return `魂${(result - 6).toFixed(2)}`;
+    }
+    if (result >= 4) {
+      return `圣${(result - 3).toFixed(2)}`;
+    }
+    return `豪${result.toFixed(2)}`;
   }
 });
 export interface PlayerExtendedStats {

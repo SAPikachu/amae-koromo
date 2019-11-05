@@ -209,11 +209,13 @@ function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
     <>
       <StatItem
         label="安定段位"
-        description={`在${GameMode[mode]}之间一直进行对局，预测最终能达到的段位`}
+        description={`在${GameMode[mode]}之间一直进行对局，预测最终能达到的段位${
+          notEnoughData ? "（数据量不足，计算结果可能有较大偏差）" : ""
+        }`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span>
-          {PlayerMetadata.estimateStableLevel(metadata, mode)}
+          {PlayerMetadata.estimateStableLevel2(metadata, mode)}
           {notEnoughData && "?"}
         </span>
       </StatItem>
