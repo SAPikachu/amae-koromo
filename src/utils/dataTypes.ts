@@ -271,6 +271,9 @@ export const PlayerMetadata = Object.freeze({
     }
   },
   estimateStableLevel2(metadata: PlayerMetadata, mode: GameMode): string {
+    if (!metadata.rank_rates[3]) {
+      return "";
+    }
     const estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, undefined, false);
     const result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
     if (result >= 7) {
