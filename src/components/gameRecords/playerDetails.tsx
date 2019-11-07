@@ -95,32 +95,38 @@ function PlayerDetailsSettings({ showLevel = false }) {
   }, [model, mode, customDateFrom, customDateTo, updateModel]);
   const setSelectedMode = useCallback(mode => updateModel({ type: "player", selectedMode: mode }), [updateModel]);
   return (
-    <div className="row">
-      <div className="col-6">
-        <FormRow title="时间" inline={true}>
-          <CheckboxGroup
-            type="radio"
-            selectedItemKey={mode}
-            items={DATE_RANGE_ITEMS}
-            groupKey="PlayerDetailsDateRangeSelector"
-            onChange={setMode as (x: string) => void}
-          />
-          {mode === DateRangeOptions.Custom ? (
-            <>
-              <DatePicker min={DATE_MIN} onChange={setCustomDateFrom} date={customDateFrom} className="form-control" />
-              <DatePicker min={DATE_MIN} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
-            </>
-          ) : null}
-        </FormRow>
-      </div>
-      {showLevel && (
+    <>
+      <div className="row">
         <div className="col-6">
-          <FormRow title="等级" inline={true}>
-            <ModeSelector mode={model.selectedMode} onChange={setSelectedMode} />
+          <FormRow title="时间" inline={true}>
+            <CheckboxGroup
+              type="radio"
+              selectedItemKey={mode}
+              items={DATE_RANGE_ITEMS}
+              groupKey="PlayerDetailsDateRangeSelector"
+              onChange={setMode as (x: string) => void}
+            />
           </FormRow>
         </div>
-      )}
-    </div>
+        {showLevel && (
+          <div className="col-6">
+            <FormRow title="等级" inline={true}>
+              <ModeSelector mode={model.selectedMode} onChange={setSelectedMode} />
+            </FormRow>
+          </div>
+        )}
+      </div>
+      {mode === DateRangeOptions.Custom ? (
+        <div className="row mt-n3">
+          <div className="col-6">
+            <FormRow inline={true}>
+              <DatePicker min={DATE_MIN} onChange={setCustomDateFrom} date={customDateFrom} className="form-control" />
+              <DatePicker min={DATE_MIN} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
+            </FormRow>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
 
