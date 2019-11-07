@@ -7,7 +7,7 @@ import Scroller from "../misc/scroller";
 import { Container } from "../layout";
 import { AppHeader } from "./appHeader";
 import GameRecords from "../gameRecords";
-import { TITLE_PREFIX } from "../../utils/constants";
+import { TITLE_PREFIX, CANONICAL_DOMAIN } from "../../utils/constants";
 import { MaintenanceHandler } from "./maintenance";
 
 const Helmet = Loadable({
@@ -20,6 +20,7 @@ function App() {
     <Router>
       <Helmet>
         <title>{TITLE_PREFIX}</title>
+        <link rel="canonical" href={`https://${CANONICAL_DOMAIN}/`} />
       </Helmet>
       <MaintenanceHandler>
         <Scroller>
