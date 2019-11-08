@@ -1,12 +1,13 @@
 import React from "react";
 
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Loadable from "react-loadable";
 import Scroller from "../misc/scroller";
 
 import { Container } from "../layout";
 import { AppHeader } from "./appHeader";
 import GameRecords from "../gameRecords";
+import Ranking from "../ranking";
 import { TITLE_PREFIX, CANONICAL_DOMAIN } from "../../utils/constants";
 import { MaintenanceHandler } from "./maintenance";
 
@@ -26,7 +27,14 @@ function App() {
         <Scroller>
           <AppHeader />
           <Container>
-            <GameRecords />
+            <Switch>
+              <Route path="/ranking">
+                <Ranking />
+              </Route>
+              <Route path="/">
+                <GameRecords />
+              </Route>
+            </Switch>
           </Container>
         </Scroller>
       </MaintenanceHandler>

@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 
 import { apiGet } from "./api";
 import { PlayerMetadataLite, PlayerExtendedStats } from "../types/metadata";
+import { RankingTimeSpan, DeltaRankingResponse } from "../types/ranking";
 
 export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMetadataLite[]> {
   prefix = prefix.trim();
@@ -28,4 +29,10 @@ export async function getExtendedStats(
     }
   }
   return await apiGet<PlayerExtendedStats>(`player_extended_stats/${playerId}${datePath}?mode=${mode}`);
+}
+
+export async function getDeltaRanking(
+  timespan: RankingTimeSpan
+): Promise<DeltaRankingResponse> {
+  return await apiGet<DeltaRankingResponse>(`player_delta_ranking/${timespan}`);
 }
