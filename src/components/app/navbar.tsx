@@ -4,6 +4,7 @@ import { Link, NavLink } from "react-router-dom";
 import { TITLE_PREFIX } from "../../utils/constants";
 import { useState } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isActive(match: any, location: Location): boolean {
   if (!match) {
     return false;
