@@ -14,7 +14,7 @@ function isActive(match: any, location: Location): boolean {
 export default function Navbar() {
   const [mobileVisible, setMobileVisible] = useState(false);
   return (
-    <nav className="navbar navbar-expand-lg navbar-light">
+    <nav className="navbar navbar-expand-lg navbar-light fixed-top">
       <div className="container">
         <Link className="navbar-brand" to="/">
           {TITLE_PREFIX}
@@ -32,7 +32,7 @@ export default function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div
-          className={`collapse navbar-collapse justify-content-end ${mobileVisible ? "" : "d-md-none"}`}
+          className={`collapse navbar-collapse justify-content-end ${mobileVisible ? "" : "d-none"} d-lg-block`}
           id="navbarNavAltMarkup"
         >
           <div className="navbar-nav">

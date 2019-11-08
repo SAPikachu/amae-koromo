@@ -47,11 +47,11 @@ export default function DeltaRanking() {
         <div className="col-lg-6">
           <h3 className="text-center">苦主榜</h3>
           <div className="row">
-            <div className="col-6">
+            <div className="col-md-6">
               <h4 className="text-center">一周</h4>
               <RankingTable rows={data1w[modeId || "0"].bottom} />;
             </div>
-            <div className="col-6">
+            <div className="col-md-6">
               <h4 className="text-center">四周</h4>
               <RankingTable rows={data4w[modeId || "0"].bottom} />;
             </div>
@@ -60,11 +60,11 @@ export default function DeltaRanking() {
         <div className="col-lg-6">
           <h3 className="text-center">汪汪榜</h3>
           <div className="row">
-            <div className="col-6">
+            <div className="col-md-6">
               <h4 className="text-center">一周</h4>
               <RankingTable rows={data1w[modeId || "0"].top} />;
             </div>
-            <div className="col-6">
+            <div className="col-md-6">
               <h4 className="text-center">四周</h4>
               <RankingTable rows={data4w[modeId || "0"].top} />;
             </div>
