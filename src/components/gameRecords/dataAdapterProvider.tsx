@@ -4,13 +4,12 @@ import dayjs from "dayjs";
 
 import {
   DataProvider,
-  GameRecord,
   FilterPredicate,
   ListingDataProvider,
   PlayerDataProvider
-} from "../../utils/dataSource";
+} from "../../data/source/records/provider";
 import { useModel, Model } from "./model";
-import { Metadata } from "../../utils/dataSource";
+import { Metadata, GameRecord } from "../../data/types";
 import { generatePath } from "./routes";
 
 interface ItemLoadingPlaceholder {

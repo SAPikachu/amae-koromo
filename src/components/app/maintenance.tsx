@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import { Alert } from "../misc/alert";
 import { Container } from "../layout/container";
-import { setMaintenanceHandler } from "../../utils/dataSource";
+import { setMaintenanceHandler } from "../../data/source/api";
 
 export function MaintenanceHandler({ children }: { children: React.ReactElement }): React.ReactElement {
   const [msg, setMsg] = useState("");

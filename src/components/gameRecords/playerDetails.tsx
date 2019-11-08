@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet";
 import { useDataAdapter } from "./dataAdapterProvider";
 import { useEffect, useState, useCallback } from "react";
 import { triggerRelayout, formatPercent, useAsync } from "../../utils/index";
-import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameMode, Level } from "../../utils/dataTypes";
+import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameMode, Level } from "../../data/types";
 import { TITLE_PREFIX, DATE_MIN, CANONICAL_DOMAIN } from "../../utils/constants";
 import Loading from "../misc/loading";
 import { FormRow } from "../form/formRow";

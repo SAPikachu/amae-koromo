@@ -6,7 +6,7 @@ import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import dayjs from "dayjs";
 import clsx from "clsx";
 
-import { GameRecord, GameMode } from "../../utils/dataSource";
+import { GameRecord, GameMode } from "../../data/types";
 import { Player } from "./player";
 import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";

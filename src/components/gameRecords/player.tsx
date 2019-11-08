@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { IoMdBook } from "react-icons/io";
 
-import { GameRecord, PlayerRecord, getLevelTag } from "../../utils/dataSource";
+import { GameRecord, PlayerRecord, getLevelTag } from "../../data/types";
 import { generatePlayerPathById } from "./routes";
 
 export const Player = React.memo(function({

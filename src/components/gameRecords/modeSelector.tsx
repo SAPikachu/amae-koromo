@@ -1,7 +1,7 @@
 import React from "react";
 
 import { CheckboxGroup } from "../form";
-import { GameMode } from "../../utils/dataSource";
+import { GameMode } from "../../data/types";
 
 const MODE_CHECKBOXES = Object.keys(GameMode)
   .filter(x => typeof GameMode[x as keyof typeof GameMode] !== "string")

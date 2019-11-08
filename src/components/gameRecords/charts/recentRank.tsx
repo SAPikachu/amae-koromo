@@ -2,9 +2,8 @@ import React from "react";
 import { ResponsiveContainer, LineChart, Line, Dot, Tooltip, TooltipProps } from "recharts";
 
 import { IDataAdapter } from "../dataAdapterProvider";
-import { GameRecord, RANK_LABELS, RANK_COLORS } from "../../../utils/dataSource";
+import { GameRecord, RANK_LABELS, RANK_COLORS, GameMode } from "../../../data/types";
 import { useMemo } from "react";
-import { GameMode } from "../../../utils/dataTypes";
 import { Player } from "../player";
 import Loading from "../../misc/loading";
 

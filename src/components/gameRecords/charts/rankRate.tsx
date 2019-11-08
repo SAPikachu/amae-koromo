@@ -1,7 +1,7 @@
 import React from "react";
 import { ResponsiveContainer, PieChart, Pie, Cell, LabelList, Curve } from "recharts";
 
-import { PlayerMetadata, RANK_LABELS, RANK_COLORS } from "../../../utils/dataSource";
+import { PlayerMetadata, RANK_LABELS, RANK_COLORS } from "../../../data/types";
 import { useMemo } from "react";
 import { formatPercent } from "../../../utils/index";
 

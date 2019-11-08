@@ -1,0 +1,65 @@
+/* eslint-disable @typescript-eslint/camelcase */
+import dayjs from "dayjs";
+
+import { GameRecord } from "../../types/record";
+import { Metadata, PlayerMetadata, PlayerExtendedStats } from "../../types/metadata";
+import { apiGet } from "../api";
+
+export interface DataLoader<T extends Metadata> {
+  getMetadata(): Promise<T>;
+  getRecords(skip: number, limit: number, cacheTag?: string): Promise<GameRecord[]>;
+}
+
+export class ListingDataLoader implements DataLoader<Metadata> {
+  _date: dayjs.Dayjs;
+  constructor(date: dayjs.ConfigType) {
+    this._date = dayjs(date).startOf("day");
+  }
+  async getMetadata(): Promise<Metadata> {
+    return await apiGet<Metadata>(`count/${this._date.valueOf()}`);
+  }
+  async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
+    return await apiGet<GameRecord[]>(`games/${this._date.valueOf()}?skip=${skip}&limit=${limit}&tag=${cacheTag}`);
+  }
+}
+
+export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
+  _playerId: string;
+  _startDate?: dayjs.Dayjs;
+  _endDate?: dayjs.Dayjs;
+  _mode: string;
+  constructor(playerId: string, startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs, mode = "") {
+    this._playerId = playerId;
+    this._startDate = startDate;
+    this._endDate = endDate;
+    this._mode = mode;
+  }
+  _getDatePath(): string {
+    let result = "";
+    if (this._startDate) {
+      result += `/${this._startDate.valueOf()}`;
+      if (this._endDate) {
+        result += `/${this._endDate.valueOf()}`;
+      }
+    }
+    return result;
+  }
+  _getParams(): string {
+    return `${this._playerId}${this._getDatePath()}?mode=${this._mode}`;
+  }
+  async getMetadata(): Promise<PlayerMetadata> {
+    return await apiGet<PlayerMetadata>(`player_stats/${this._getParams()}`).then(stats => {
+      stats.extended_stats = apiGet<PlayerExtendedStats>(`player_extended_stats/${this._getParams()}`).then(
+        extendedStats => (stats.extended_stats = extendedStats)
+      );
+      return stats;
+    });
+  }
+  async getRecords(skip: number, limit: number, cacheTag = ""): Promise<GameRecord[]> {
+    return await apiGet<GameRecord[]>(
+      `player_records/${this._playerId}${this._getDatePath()}?skip=${skip}&limit=${limit}&mode=${
+        this._mode
+      }&tag=${cacheTag}`
+    );
+  }
+}

@@ -3,8 +3,8 @@ import { useEffect, useState, useMemo } from "react";
 
 import { useModel } from "./model";
 import Loading from "../misc/loading";
-import { PlayerMetadataLite, getLevelTag } from "../../utils/dataTypes";
-import { searchPlayer } from "../../utils/dataSource";
+import { PlayerMetadataLite, getLevelTag } from "../../data/types";
+import { searchPlayer } from "../../data/source/misc";
 import { Link } from "react-router-dom";
 import { generatePlayerPathById } from "./routes";
 
@@ -53,7 +53,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
       }
     });
     return [filteredPlayers, mayHaveMore && filteredPlayers.length < NUM_RESULTS_SHOWN, mayHaveMore];
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText, version]);
   useEffect(() => {
     const prefix = normalizeName(searchText);
