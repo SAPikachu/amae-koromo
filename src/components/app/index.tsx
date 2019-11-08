@@ -7,12 +7,15 @@ import Scroller from "../misc/scroller";
 import { Container } from "../layout";
 import { AppHeader } from "./appHeader";
 import GameRecords from "../gameRecords";
-import Ranking from "../ranking";
 import { TITLE_PREFIX, CANONICAL_DOMAIN } from "../../utils/constants";
 import { MaintenanceHandler } from "./maintenance";
 
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
+  loading: () => <></>
+});
+const Ranking = Loadable({
+  loader: () => import("../ranking"),
   loading: () => <></>
 });
 
