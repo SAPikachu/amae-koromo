@@ -9,7 +9,7 @@ function isActive(match: any, location: Location): boolean {
   if (!match) {
     return false;
   }
-  return !location.pathname.startsWith("/ranking");
+  return !location.pathname.startsWith("/ranking") && !location.pathname.startsWith("/statistics");
 }
 
 export default function Navbar() {
@@ -42,6 +42,9 @@ export default function Navbar() {
             </NavLink>
             <NavLink className="nav-item nav-link" activeClassName="active" to="/ranking">
               排行榜
+            </NavLink>
+            <NavLink className="nav-item nav-link" activeClassName="active" to="/statistics">
+              大数据
             </NavLink>
           </div>
         </div>

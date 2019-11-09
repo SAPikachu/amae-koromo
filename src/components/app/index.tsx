@@ -19,6 +19,10 @@ const Ranking = Loadable({
   loader: () => import("../ranking"),
   loading: () => <></>
 });
+const Statistics = Loadable({
+  loader: () => import("../statistics"),
+  loading: () => <></>
+});
 
 function App() {
   return (
@@ -35,6 +39,9 @@ function App() {
             <Switch>
               <Route path="/ranking">
                 <Ranking />
+              </Route>
+              <Route path="/statistics">
+                <Statistics />
               </Route>
               <Route path="/">
                 <GameRecords />

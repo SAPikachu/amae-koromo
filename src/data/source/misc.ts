@@ -4,8 +4,9 @@
 import dayjs from "dayjs";
 
 import { apiGet } from "./api";
-import { PlayerMetadataLite, PlayerExtendedStats } from "../types/metadata";
-import { RankingTimeSpan, DeltaRankingResponse } from "../types/ranking";
+import { PlayerMetadataLite, PlayerExtendedStats } from "../types";
+import { RankingTimeSpan, DeltaRankingResponse } from "../types";
+import { RankRateBySeat } from "../types";
 
 export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMetadataLite[]> {
   prefix = prefix.trim();
@@ -31,8 +32,28 @@ export async function getExtendedStats(
   return await apiGet<PlayerExtendedStats>(`player_extended_stats/${playerId}${datePath}?mode=${mode}`);
 }
 
-export async function getDeltaRanking(
-  timespan: RankingTimeSpan
-): Promise<DeltaRankingResponse> {
+export async function getDeltaRanking(timespan: RankingTimeSpan): Promise<DeltaRankingResponse> {
   return await apiGet<DeltaRankingResponse>(`player_delta_ranking/${timespan}`);
+}
+
+export async function getRankRateBySeat(): Promise<RankRateBySeat> {
+  type RawResponse = [[number, number, number], number][];
+  const rawResp = await apiGet<RawResponse>("rank_rate_by_seat");
+  const counts: {
+    [modeId: string]: { [rank: number]: number };
+  } = {};
+  for (const [[modeId, , rank], count] of rawResp) {
+    const modeIdStr = modeId.toString();
+    counts[modeIdStr] = counts[modeIdStr] || [];
+    counts[modeIdStr][rank] = counts[modeIdStr][rank] || 0;
+    counts[modeIdStr][rank] += count;
+  }
+  const result: RankRateBySeat = {};
+  for (const [[modeId, seatId, rank], count] of rawResp) {
+    const modeIdStr = modeId.toString();
+    result[modeIdStr] = result[modeIdStr] || [];
+    result[modeIdStr][rank] = result[modeIdStr][rank] || [0, 0, 0, 0];
+    result[modeIdStr][rank][seatId - 1] = count / counts[modeIdStr][rank];
+  }
+  return result;
 }
