@@ -25,7 +25,11 @@ export default function Routes() {
           数据榜
         </NavLink>
       </nav>
-      <ModelModeSelector />
+      <div className="row mb-3">
+        <div className="col">
+          <ModelModeSelector />
+        </div>
+      </div>
       <Switch>
         <Route path={`${match.path}/delta`}>
           <Helmet>
