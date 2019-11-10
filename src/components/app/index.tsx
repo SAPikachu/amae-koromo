@@ -11,6 +11,7 @@ import { TITLE_PREFIX } from "../../utils/constants";
 import { MaintenanceHandler } from "./maintenance";
 import Navbar from "./navbar";
 import CanonicalLink from "../misc/canonicalLink";
+import Loading from "../misc/loading";
 
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
@@ -18,11 +19,11 @@ const Helmet = Loadable({
 });
 const Ranking = Loadable({
   loader: () => import("../ranking"),
-  loading: () => <></>
+  loading: () => <Loading />
 });
 const Statistics = Loadable({
   loader: () => import("../statistics"),
-  loading: () => <></>
+  loading: () => <Loading />
 });
 
 function App() {
