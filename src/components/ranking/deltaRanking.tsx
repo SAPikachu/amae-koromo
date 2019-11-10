@@ -7,8 +7,7 @@ import { getDeltaRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
 import { LevelWithDelta } from "../../data/types";
-import { useState } from "react";
-import { ModeSelector } from "../gameRecords/modeSelector";
+import { useModel } from "./model";
 
 function RankingTable({ rows = [] as DeltaRankingItem[] }) {
   return (
@@ -32,17 +31,13 @@ function RankingTable({ rows = [] as DeltaRankingItem[] }) {
 export default function DeltaRanking() {
   const data1w = useAsyncFactory(() => getDeltaRanking(RankingTimeSpan.OneWeek), []);
   const data4w = useAsyncFactory(() => getDeltaRanking(RankingTimeSpan.FourWeeks), []);
-  const [modeId, setModeId] = useState("");
+  const [model] = useModel();
+  const modeId = model.selectedMode;
   if (!data1w || !data4w) {
     return <Loading />;
   }
   return (
     <>
-      <div className="row">
-        <div className="col">
-          <ModeSelector mode={modeId} onChange={setModeId} />
-        </div>
-      </div>
       <div className="row">
         <div className="col-lg-6">
           <h3 className="text-center">苦主榜</h3>

@@ -6,11 +6,13 @@ import DeltaRanking from "./deltaRanking";
 import CareerRanking from "./careerRanking";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import ModelModeSelector from "./modelModeSelector";
+import { ModelProvider } from "./model";
 
 export default function Routes() {
   const match = useRouteMatch() || { path: "" };
   return (
-    <div>
+    <ModelProvider>
       <Alert stateName="rankingNotice">
         <h4 className="mb-2">提示</h4>
         排行榜非实时更新，可能会有数小时的延迟
@@ -23,6 +25,7 @@ export default function Routes() {
           数据榜
         </NavLink>
       </nav>
+      <ModelModeSelector />
       <Switch>
         <Route path={`${match.path}/delta`}>
           <Helmet>
@@ -40,6 +43,6 @@ export default function Routes() {
           <Redirect to={`${match.path}/delta`} />
         </Route>
       </Switch>
-    </div>
+    </ModelProvider>
   );
 }
