@@ -5,6 +5,7 @@ import { Switch, Route, Redirect, useRouteMatch } from "react-router";
 import DeltaRanking from "./deltaRanking";
 import CareerRanking from "./careerRanking";
 import { NavLink } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 export default function Routes() {
   const match = useRouteMatch() || { path: "" };
@@ -24,9 +25,15 @@ export default function Routes() {
       </nav>
       <Switch>
         <Route path={`${match.path}/delta`}>
+          <Helmet>
+            <title>苦主及汪汪</title>
+          </Helmet>
           <DeltaRanking />
         </Route>
         <Route path={`${match.path}/career`}>
+          <Helmet>
+            <title>数据榜</title>
+          </Helmet>
           <CareerRanking />
         </Route>
         <Route>

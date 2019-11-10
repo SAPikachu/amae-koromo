@@ -29,9 +29,7 @@ const Statistics = Loadable({
 function App() {
   return (
     <Router>
-      <Helmet>
-        <title>{TITLE_PREFIX}</title>
-      </Helmet>
+      <Helmet defaultTitle={TITLE_PREFIX} titleTemplate={`%s | ${TITLE_PREFIX}`} />
       <CanonicalLink />
       <Navbar />
       <MaintenanceHandler>

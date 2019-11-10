@@ -6,7 +6,7 @@ import { useDataAdapter } from "./dataAdapterProvider";
 import { useEffect, useState, useCallback } from "react";
 import { triggerRelayout, formatPercent, useAsync } from "../../utils/index";
 import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameMode, Level } from "../../data/types";
-import { TITLE_PREFIX, DATE_MIN } from "../../utils/constants";
+import { DATE_MIN } from "../../utils/constants";
 import Loading from "../misc/loading";
 import { FormRow } from "../form/formRow";
 import { useModel } from "./model";
@@ -255,9 +255,7 @@ export default function PlayerDetails() {
   return (
     <div>
       <Helmet>
-        <title>
-          {TITLE_PREFIX} - {metadata.nickname}
-        </title>
+        <title>{metadata.nickname}</title>
       </Helmet>
       <h2 className="text-center">玩家：{metadata.nickname}</h2>
       <div className="row mt-4">
