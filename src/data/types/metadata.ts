@@ -108,18 +108,21 @@ export const PlayerMetadata = Object.freeze({
       }
     }
   },
+  formatStableLevel2(level: number): string {
+    if (level >= 7) {
+      return `魂${(level - 6).toFixed(2)}`;
+    }
+    if (level >= 4) {
+      return `圣${(level - 3).toFixed(2)}`;
+    }
+    return `豪${level.toFixed(2)}`;
+  },
   estimateStableLevel2(metadata: PlayerMetadata, mode: GameMode): string {
     if (!metadata.rank_rates[3]) {
       return "";
     }
     const estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, undefined, false);
     const result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
-    if (result >= 7) {
-      return `魂${(result - 6).toFixed(2)}`;
-    }
-    if (result >= 4) {
-      return `圣${(result - 3).toFixed(2)}`;
-    }
-    return `豪${result.toFixed(2)}`;
+    return PlayerMetadata.formatStableLevel2(result);
   }
 });

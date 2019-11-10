@@ -25,5 +25,6 @@ export enum CareerRankingType {
   Rank1 = "rank1",
   Rank12 = "rank12",
   Rank123 = "rank123",
-  Rank4 = "rank4"
+  Rank4 = "rank4",
+  StableLevel = "stable_level"
 }
