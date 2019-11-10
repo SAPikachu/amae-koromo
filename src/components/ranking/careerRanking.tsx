@@ -44,7 +44,7 @@ export default function CareerRanking() {
     <>
       <Alert stateName="careerRankingNotice">
         <h4 className="mb-2">提示</h4>
-        本榜只包含进行过至少 300 场对局的玩家
+        本榜只包含有至少 300 场对局记录的玩家
       </Alert>
       <div className="row mb-3">
         <div className="col">
