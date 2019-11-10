@@ -39,7 +39,7 @@ export default function CareerRanking() {
   const [modeId, setModeId] = useState("");
   const dataRank1 = useAsyncFactory(() => getCareerRanking(CareerRankingType.Rank1, modeId), [modeId]);
   const dataRank12 = useAsyncFactory(() => getCareerRanking(CareerRankingType.Rank12, modeId), [modeId]);
-  const dataRank123 = useAsyncFactory(() => getCareerRanking(CareerRankingType.Rank123, modeId), [modeId]);
+  const dataRank4 = useAsyncFactory(() => getCareerRanking(CareerRankingType.Rank4, modeId), [modeId]);
   return (
     <>
       <Alert stateName="careerRankingNotice">
@@ -61,8 +61,8 @@ export default function CareerRanking() {
           <RankingTable rows={dataRank12} />;
         </div>
         <div className="col-lg-4">
-          <h3 className="text-center">避四率</h3>
-          <RankingTable rows={dataRank123} />;
+          <h3 className="text-center">四位率</h3>
+          <RankingTable rows={dataRank4} />;
         </div>
       </div>
     </>
