@@ -56,11 +56,11 @@ export default function RankBySeats() {
       <div className="row">
         <div className="col-lg-6">
           <h3 className="text-center">坐席吃一率</h3>
-          <Chart rates={data[modeId || "0"][0]} />
+          <Chart rates={data[modeId || "0"][1]} />
         </div>
         <div className="col-lg-6">
           <h3 className="text-center">坐席吃四率</h3>
-          <Chart rates={data[modeId || "0"][3]} />
+          <Chart rates={data[modeId || "0"][4]} />
         </div>
       </div>
     </>

@@ -47,18 +47,19 @@ export async function getRankRateBySeat(): Promise<RankRateBySeat> {
   const counts: {
     [modeId: string]: { [rank: number]: number };
   } = {};
-  for (const [[modeId, , rank], count] of rawResp) {
+  for (const [[modeId, rank], count] of rawResp) {
     const modeIdStr = modeId.toString();
     counts[modeIdStr] = counts[modeIdStr] || [];
     counts[modeIdStr][rank] = counts[modeIdStr][rank] || 0;
     counts[modeIdStr][rank] += count;
   }
+  console.log(counts);
   const result: RankRateBySeat = {};
-  for (const [[modeId, seatId, rank], count] of rawResp) {
+  for (const [[modeId, rank, seatId], count] of rawResp) {
     const modeIdStr = modeId.toString();
     result[modeIdStr] = result[modeIdStr] || [];
     result[modeIdStr][rank] = result[modeIdStr][rank] || [0, 0, 0, 0];
-    result[modeIdStr][rank][seatId - 1] = count / counts[modeIdStr][rank];
+    result[modeIdStr][rank][seatId] = count / counts[modeIdStr][rank];
   }
   return result;
 }
