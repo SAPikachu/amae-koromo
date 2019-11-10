@@ -6,14 +6,13 @@ import { useDataAdapter } from "./dataAdapterProvider";
 import { useEffect, useState, useCallback } from "react";
 import { triggerRelayout, formatPercent, useAsync } from "../../utils/index";
 import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameMode, Level } from "../../data/types";
-import { TITLE_PREFIX, DATE_MIN, CANONICAL_DOMAIN } from "../../utils/constants";
+import { TITLE_PREFIX, DATE_MIN } from "../../utils/constants";
 import Loading from "../misc/loading";
 import { FormRow } from "../form/formRow";
 import { useModel } from "./model";
 import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
 import { ModeSelector } from "./modeSelector";
-import { useLocation } from "react-router";
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
   loading: () => <Loading />
@@ -244,7 +243,6 @@ function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
 }
 
 export default function PlayerDetails() {
-  const loc = useLocation();
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
   useEffect(() => {
@@ -257,7 +255,6 @@ export default function PlayerDetails() {
   return (
     <div>
       <Helmet>
-        <link rel="canonical" href={`https://${CANONICAL_DOMAIN}${loc.pathname}`} />
         <title>
           {TITLE_PREFIX} - {metadata.nickname}
         </title>
