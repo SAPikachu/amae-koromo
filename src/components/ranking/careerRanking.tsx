@@ -14,6 +14,7 @@ import { useModel } from "./model";
 function RankingTable({
   rows = [] as CareerRankingItem[],
   formatter = formatPercent as (x: number) => string,
+  showNumGames = true,
   valueLabel = ""
 }) {
   if (!rows || !rows.length) {
@@ -25,7 +26,7 @@ function RankingTable({
         <tr>
           <th className="text-right">排名</th>
           <th>玩家</th>
-          <th className="text-right">局数</th>
+          {showNumGames && <th className="text-right">对局数</th>}
           <th className="text-right">{valueLabel}</th>
         </tr>
       </thead>
@@ -38,7 +39,7 @@ function RankingTable({
                 [{LevelWithDelta.getTag(x.level)}] {x.nickname}
               </Link>
             </td>
-            <td className="text-right">{x.count}</td>
+            {showNumGames && <td className="text-right">{x.count}</td>}
             <td className="text-right">{formatter(x.rank_key)}</td>
           </tr>
         ))}
@@ -51,11 +52,13 @@ export function CareerRankingColumn({
   type,
   title,
   formatter = formatPercent,
+  showNumGames = true,
   valueLabel = ""
 }: {
   type: CareerRankingType;
   title: string;
   formatter?: (x: number) => string;
+  showNumGames?: boolean;
   valueLabel?: string;
 }) {
   const [model] = useModel();
@@ -64,7 +67,7 @@ export function CareerRankingColumn({
   return (
     <div className="col-lg">
       <h3 className="text-center mb-2">{title}</h3>
-      <RankingTable rows={data} formatter={formatter} valueLabel={valueLabel || title} />;
+      <RankingTable rows={data} formatter={formatter} valueLabel={valueLabel || title} showNumGames={showNumGames} />;
     </div>
   );
 }

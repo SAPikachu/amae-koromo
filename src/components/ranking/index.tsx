@@ -10,6 +10,7 @@ import ModelModeSelector from "./modelModeSelector";
 import { ModelProvider } from "./model";
 import { CareerRankingType } from "../../data/types";
 import { PlayerMetadata } from "../../data/types/metadata";
+import { formatFixed3, formatIdentity } from "../../utils/index";
 
 export default function Routes() {
   const match = useRouteMatch() || { path: "" };
@@ -28,6 +29,9 @@ export default function Routes() {
         </NavLink>
         <NavLink to={`${match.path}/career2`} className="nav-link" activeClassName="active">
           连对率/安定段位
+        </NavLink>
+        <NavLink to={`${match.path}/career3`} className="nav-link" activeClassName="active">
+          平均顺位/对局数
         </NavLink>
       </nav>
       <div className="row mb-3">
@@ -61,6 +65,20 @@ export default function Routes() {
               type={CareerRankingType.StableLevel}
               title="安定段位"
               formatter={PlayerMetadata.formatStableLevel2}
+            />
+          </CareerRanking>
+        </Route>
+        <Route path={`${match.path}/career3`}>
+          <Helmet>
+            <title>平均顺位/对局数</title>
+          </Helmet>
+          <CareerRanking>
+            <CareerRankingColumn type={CareerRankingType.AvgRank} title="平均顺位" formatter={formatFixed3} />
+            <CareerRankingColumn
+              type={CareerRankingType.NumGames}
+              title="对局数"
+              formatter={formatIdentity}
+              showNumGames={false}
             />
           </CareerRanking>
         </Route>
