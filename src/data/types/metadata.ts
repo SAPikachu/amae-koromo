@@ -21,6 +21,8 @@ export interface PlayerExtendedStats {
   平均铳点: number;
   流局率: number;
   流听率: number;
+  里宝率: number;
+  一发率: number;
 }
 export interface Metadata {
   count: number;

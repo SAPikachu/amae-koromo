@@ -42,7 +42,7 @@ export function useAsync<T>(maybePromise: T | Promise<T>): T | undefined {
   }
   return undefined;
 }
-export function useAsyncFactory<T>(factory: () => Promise<T>, deps: readonly any[]): T | undefined {
+export function useAsyncFactory<T>(factory: () => Promise<T>, deps: React.DependencyList): T | undefined {
   const promise = useMemo(factory, deps);
   return useAsync(promise);
 }

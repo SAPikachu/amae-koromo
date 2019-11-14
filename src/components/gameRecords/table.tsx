@@ -62,7 +62,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
   );
   const unfilteredCount = data.getUnfilteredCount();
   const shouldTriggerLayout = !!unfilteredCount;
-  const shouldPreload = !!unfilteredCount && !("loading" in (data.getItem(0) || {loading: true}));
+  const shouldPreload = !!unfilteredCount && !("loading" in (data.getItem(0) || { loading: true }));
   useEffect(() => {
     triggerRelayout();
   }, [shouldTriggerLayout]);

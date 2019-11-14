@@ -11,7 +11,7 @@ import Loadable from "react-loadable";
 import Loading from "../misc/loading";
 import { PlayerSearch } from "./playerSearch";
 const PlayerDetails = Loadable({
-  loader: () => import("./playerDetails"),
+  loader: () => import("../playerDetails/playerDetails"),
   loading: () => <Loading />
 });
 const GameRecordTable = Loadable({
