@@ -23,6 +23,10 @@ h1 a:hover {
     background: rgba(255, 255, 255, 0.8);
   }
 }
+button.nav-link {
+  border: 0 none;
+  background: transparent;
+}
 .ReactVirtualized__Table__row.even {
   background-color: rgba(0, 0, 0, 0.05);
 }

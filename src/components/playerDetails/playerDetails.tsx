@@ -3,13 +3,14 @@ import Loadable from "react-loadable";
 import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { triggerRelayout, formatPercent, useAsync } from "../../utils/index";
 import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata } from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
 import StatItem from "./statItem";
 import EstimatedStableLevel from "./estimatedStableLevel";
+import clsx from "clsx";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -25,12 +26,23 @@ const ReactTooltip = Loadable({
   loading: () => null
 });
 
-function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedStats | Promise<PlayerExtendedStats> }) {
+function PlayerExtendedStatsViewAsync({
+  maybeStats,
+  view
+}: {
+  maybeStats: PlayerExtendedStats | Promise<PlayerExtendedStats> | null | undefined;
+  view: React.ComponentType<{ stats: PlayerExtendedStats }>;
+}) {
   const stats = useAsync(maybeStats);
   useEffect(triggerRelayout, [!!stats]);
   if (!stats) {
     return null;
   }
+  const View = view;
+  return <View stats={stats} />;
+}
+
+function PlayerExtendedStatsView({ stats }: { stats: PlayerExtendedStats }) {
   return (
     <>
       <StatItem label="和牌率" description="和牌局数 / 总局数">
@@ -65,6 +77,56 @@ function PlayerExtendedStatsView({ maybeStats }: { maybeStats: PlayerExtendedSta
   );
 }
 
+function PlayerMoreExtendedStats({ stats }: { stats: PlayerExtendedStats }) {
+  return (
+    <>
+      <StatItem label="一发率" description="一发局数 / 立直和了局数">
+        {formatPercent(stats.一发率 || 0)}
+      </StatItem>
+      <StatItem label="里宝率" description="里宝局数 / 立直和了局数">
+        {formatPercent(stats.里宝率 || 0)}
+      </StatItem>
+    </>
+  );
+}
+function PlayerBasicStats({ metadata }: { metadata: PlayerMetadata }) {
+  return (
+    <>
+      <StatItem label="记录场数">{metadata.count}</StatItem>
+      <StatItem label="当前等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
+      <StatItem label="当前分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
+      <PlayerExtendedStatsViewAsync maybeStats={metadata.extended_stats} view={PlayerExtendedStatsView} />
+      <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
+      <EstimatedStableLevel metadata={metadata} />
+      <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
+    </>
+  );
+}
+function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
+  const [page, setPage] = useState(0);
+  useEffect(() => {
+    ReactTooltipPromise.then(x => x.rebuild());
+  }, [page]);
+  return (
+    <>
+      <nav className="nav nav-pills mb-3 mt-3">
+        <button onClick={() => setPage(0)} className={clsx("nav-link", page === 0 && "active")}>
+          基本数据
+        </button>
+        <button onClick={() => setPage(1)} className={clsx("nav-link", page === 1 && "active")}>
+          更多数据
+        </button>
+      </nav>
+      <dl className="row">
+        {page === 0 && <PlayerBasicStats metadata={metadata} />}
+        {page === 1 && (
+          <PlayerExtendedStatsViewAsync maybeStats={metadata.extended_stats} view={PlayerMoreExtendedStats} />
+        )}
+      </dl>
+    </>
+  );
+}
+
 export default function PlayerDetails() {
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
@@ -85,16 +147,7 @@ export default function PlayerDetails() {
         <div className="col-md-8">
           <h3 className="text-center mb-4">最近走势</h3>
           <RecentRankChart dataAdapter={dataAdapter} playerId={metadata.id} aspect={6} />
-          <h3 className="text-center mt-4 mb-4">相关数据</h3>
-          <dl className="row">
-            <StatItem label="记录场数">{metadata.count}</StatItem>
-            <StatItem label="当前等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
-            <StatItem label="当前分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
-            {metadata.extended_stats && <PlayerExtendedStatsView maybeStats={metadata.extended_stats} />}
-            <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
-            <EstimatedStableLevel metadata={metadata} />
-            <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
-          </dl>
+          <PlayerStats metadata={metadata} />
         </div>
         <div className="col-md-4">
           <h3 className="text-center mb-4">累计战绩</h3>
