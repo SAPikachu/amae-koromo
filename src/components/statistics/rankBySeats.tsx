@@ -48,7 +48,7 @@ export default function RankBySeats() {
   }
   return (
     <>
-      <div className="row">
+      <div className="row mb-3">
         <div className="col">
           <ModeSelector mode={modeId} onChange={setModeId} />
         </div>
