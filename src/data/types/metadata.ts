@@ -23,6 +23,7 @@ export interface PlayerExtendedStats {
   流听率: number;
   里宝率: number;
   一发率: number;
+  被炸率: number;
 }
 export interface Metadata {
   count: number;
