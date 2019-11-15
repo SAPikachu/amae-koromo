@@ -2,7 +2,7 @@ import React from "react";
 import { Location } from "history";
 import { Link, NavLink } from "react-router-dom";
 import { TITLE_PREFIX } from "../../utils/constants";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isActive(match: any, location: Location): boolean {
@@ -14,6 +14,27 @@ function isActive(match: any, location: Location): boolean {
 
 export default function Navbar() {
   const [mobileVisible, setMobileVisible] = useState(false);
+  const onToggleButtonClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setMobileVisible(!mobileVisible);
+    },
+    [mobileVisible, setMobileVisible]
+  );
+  useEffect(() => {
+    if (!mobileVisible) {
+      return;
+    }
+    const handler = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).classList.contains("navbar-toggler")) {
+        return;
+      }
+      setMobileVisible(false);
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [mobileVisible, setMobileVisible]);
   return (
     <nav className="navbar navbar-expand-lg navbar-light fixed-top">
       <div className="container">
@@ -28,7 +49,7 @@ export default function Navbar() {
           aria-controls="navbarNavAltMarkup"
           aria-expanded="false"
           aria-label="Toggle navigation"
-          onClick={() => setMobileVisible(!mobileVisible)}
+          onClick={onToggleButtonClick}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
