@@ -86,7 +86,7 @@ function PlayerMoreExtendedStats({ stats }: { stats: PlayerExtendedStats }) {
       <StatItem label="里宝率" description="中里宝局数 / 立直和了局数">
         {formatPercent(stats.里宝率 || 0)}
       </StatItem>
-      <StatItem label="被炸率" description="庄家被自摸次数 / 被自摸次数">
+      <StatItem label="被炸率" description="被炸庄（满贯或以上）次数 / 被自摸次数">
         {formatPercent(stats.被炸率 || 0)}
       </StatItem>
     </>
