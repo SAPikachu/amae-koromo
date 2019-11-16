@@ -44,11 +44,11 @@ export default function DeltaRanking() {
           <div className="row">
             <div className="col-md-6">
               <h4 className="text-center">一周</h4>
-              <RankingTable rows={data1w[modeId || "0"].bottom} />;
+              <RankingTable rows={data1w[modeId || "0"].bottom} />
             </div>
             <div className="col-md-6">
               <h4 className="text-center">四周</h4>
-              <RankingTable rows={data4w[modeId || "0"].bottom} />;
+              <RankingTable rows={data4w[modeId || "0"].bottom} />
             </div>
           </div>
         </div>
