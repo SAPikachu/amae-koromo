@@ -73,7 +73,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
   }, [shouldPreload]);
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <div ref={registerChild as any}>
+    <div ref={registerChild as any} className="font-xs-adjust">
       <AutoSizer disableHeight>
         {({ width }) => (
           <Table

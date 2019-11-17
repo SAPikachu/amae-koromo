@@ -39,53 +39,55 @@ export default function Routes() {
           <ModelModeSelector />
         </div>
       </div>
-      <Switch>
-        <Route path={`${match.path}/delta`}>
-          <Helmet>
-            <title>苦主及汪汪</title>
-          </Helmet>
-          <DeltaRanking />
-        </Route>
-        <Route path={`${match.path}/career1`}>
-          <Helmet>
-            <title>一位率/四位率</title>
-          </Helmet>
-          <CareerRanking>
-            <CareerRankingColumn type={CareerRankingType.Rank1} title="一位率" />
-            <CareerRankingColumn type={CareerRankingType.Rank4} title="四位率" />
-          </CareerRanking>
-        </Route>
-        <Route path={`${match.path}/career2`}>
-          <Helmet>
-            <title>连对率/安定段位</title>
-          </Helmet>
-          <CareerRanking>
-            <CareerRankingColumn type={CareerRankingType.Rank12} title="连对率" />
-            <CareerRankingColumn
-              type={CareerRankingType.StableLevel}
-              title="安定段位"
-              formatter={PlayerMetadata.formatStableLevel2}
-            />
-          </CareerRanking>
-        </Route>
-        <Route path={`${match.path}/career3`}>
-          <Helmet>
-            <title>平均顺位/对局数</title>
-          </Helmet>
-          <CareerRanking>
-            <CareerRankingColumn type={CareerRankingType.AvgRank} title="平均顺位" formatter={formatFixed3} />
-            <CareerRankingColumn
-              type={CareerRankingType.NumGames}
-              title="对局数"
-              formatter={formatIdentity}
-              showNumGames={false}
-            />
-          </CareerRanking>
-        </Route>
-        <Route>
-          <Redirect to={`${match.path}/delta`} />
-        </Route>
-      </Switch>
+      <div className="font-xs-adjust">
+        <Switch>
+          <Route path={`${match.path}/delta`}>
+            <Helmet>
+              <title>苦主及汪汪</title>
+            </Helmet>
+            <DeltaRanking />
+          </Route>
+          <Route path={`${match.path}/career1`}>
+            <Helmet>
+              <title>一位率/四位率</title>
+            </Helmet>
+            <CareerRanking>
+              <CareerRankingColumn type={CareerRankingType.Rank1} title="一位率" />
+              <CareerRankingColumn type={CareerRankingType.Rank4} title="四位率" />
+            </CareerRanking>
+          </Route>
+          <Route path={`${match.path}/career2`}>
+            <Helmet>
+              <title>连对率/安定段位</title>
+            </Helmet>
+            <CareerRanking>
+              <CareerRankingColumn type={CareerRankingType.Rank12} title="连对率" />
+              <CareerRankingColumn
+                type={CareerRankingType.StableLevel}
+                title="安定段位"
+                formatter={PlayerMetadata.formatStableLevel2}
+              />
+            </CareerRanking>
+          </Route>
+          <Route path={`${match.path}/career3`}>
+            <Helmet>
+              <title>平均顺位/对局数</title>
+            </Helmet>
+            <CareerRanking>
+              <CareerRankingColumn type={CareerRankingType.AvgRank} title="平均顺位" formatter={formatFixed3} />
+              <CareerRankingColumn
+                type={CareerRankingType.NumGames}
+                title="对局数"
+                formatter={formatIdentity}
+                showNumGames={false}
+              />
+            </CareerRanking>
+          </Route>
+          <Route>
+            <Redirect to={`${match.path}/delta`} />
+          </Route>
+        </Switch>
+      </div>
     </ModelProvider>
   );
 }
