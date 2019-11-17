@@ -36,6 +36,7 @@ export const GameRecord = Object.freeze({
   },
   encodeAccountId: (t: number) => 1358437 + ((7 * t + 1117113) ^ 86216345),
   formatFullStartTime: (rec: GameRecord) => dayjs(rec.startTime * 1000).format("YYYY/M/D HH:mm"),
+  formatStartDate: (rec: GameRecord) => dayjs(rec.startTime * 1000).format("M/D"),
   getRecordLink(rec: GameRecord, player?: PlayerRecord | number | string) {
     const playerId = typeof player === "object" ? player.accountId : player;
     const trailer = playerId

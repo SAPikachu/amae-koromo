@@ -20,7 +20,7 @@ h1 a:hover {
   text-decoration: none;
 }
 @include media-breakpoint-down(xs) {
-  .font-xs-adjust {
+  body {
     font-size: 0.8rem;
   }
 }
@@ -39,6 +39,9 @@ h1 a:hover {
 button.nav-link {
   border: 0 none;
   background: transparent;
+}
+.alert h4 {
+  font-size: 1.2em;
 }
 .ReactVirtualized__Table__row.even {
   background-color: rgba(0, 0, 0, 0.05);

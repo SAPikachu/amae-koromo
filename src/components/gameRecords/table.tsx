@@ -27,9 +27,13 @@ const Players = React.memo(({ game, activePlayerId }: { game: GameRecord; active
   </div>
 ));
 
+function isMobile() {
+  return !!window.matchMedia("(max-width: 575.75px)").matches;
+}
+
 const cellFormatTime = ({ cellData }: TableCellProps) => formatTime(cellData);
 const cellFormatFullTime = ({ rowData }: TableCellProps) =>
-  rowData.loading ? "" : GameRecord.formatFullStartTime(rowData);
+  rowData.loading ? "" : isMobile() ? GameRecord.formatStartDate(rowData) : GameRecord.formatFullStartTime(rowData);
 const cellFormatRank = ({ rowData, columnData }: TableCellProps) =>
   !rowData || rowData.loading || !columnData.activePlayerId ? (
     ""
@@ -42,6 +46,16 @@ const cellFormatRank = ({ rowData, columnData }: TableCellProps) =>
     </span>
   );
 const cellFormatGameMode = ({ cellData }: TableCellProps) => GameMode[cellData];
+
+function getRowHeight() {
+  if (window.matchMedia("(min-width: 768px)").matches) {
+    return 70;
+  }
+  if (!isMobile()) {
+    return 140;
+  }
+  return 100;
+}
 
 export default function GameRecordTable({ showStartEnd = true, showFullTime = false } = {}) {
   const data = useDataAdapter();
@@ -81,7 +95,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
             className={activePlayerId ? "with-active-player" : ""}
             rowCount={data.getCount()}
             rowGetter={rowGetter}
-            rowHeight={window.matchMedia("(min-width: 768px)").matches ? 70 : 140}
+            rowHeight={getRowHeight()}
             headerHeight={50}
             width={width}
             height={height}
@@ -91,14 +105,19 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
             rowClassName={getRowClassName}
             noRowsRenderer={noRowsRenderer}
           >
-            <Column dataKey="modeId" label="等级" cellRenderer={cellFormatGameMode} width={40} />
+            <Column
+              dataKey="modeId"
+              label={isMobile() ? "" : "等级"}
+              cellRenderer={cellFormatGameMode}
+              width={isMobile() ? 20 : 40}
+            />
             {activePlayerId ? (
               <Column
                 dataKey="modeId"
-                label="顺位"
+                label={isMobile() ? "" : "顺位"}
                 columnData={{ activePlayerId }}
                 cellRenderer={cellFormatRank}
-                width={40}
+                width={isMobile() ? 20 : 40}
               />
             ) : null}
             <Column dataKey="players" label="玩家" cellRenderer={cellRenderPlayer} width={120} flexGrow={1} />
@@ -129,7 +148,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
                 dataKey="startTime"
                 label="时间"
                 cellRenderer={cellFormatFullTime}
-                width={140}
+                width={isMobile() ? 40 : 140}
                 className="text-right"
                 headerClassName="text-right"
               />
