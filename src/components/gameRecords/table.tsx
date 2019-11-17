@@ -128,7 +128,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
                     dataKey="startTime"
                     label="开始"
                     cellRenderer={cellFormatTime}
-                    width={50}
+                    width={isMobile() ? 40 : 50}
                     className="text-right"
                     headerClassName="text-right"
                   />,
@@ -137,7 +137,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
                     dataKey="endTime"
                     label="结束"
                     cellRenderer={cellFormatTime}
-                    width={50}
+                    width={isMobile() ? 40 : 50}
                     headerClassName="text-right"
                     className="text-right"
                   />
