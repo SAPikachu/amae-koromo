@@ -89,6 +89,15 @@ function PlayerMoreExtendedStats({ stats }: { stats: PlayerExtendedStats }) {
       <StatItem label="被炸率" description="被炸庄（满贯或以上）次数 / 被自摸次数">
         {formatPercent(stats.被炸率 || 0)}
       </StatItem>
+      <StatItem label="平均被炸点数" description="被炸庄（满贯或以上）点数 / 次数">
+        {stats.平均被炸点数 || 0}
+      </StatItem>
+      <StatItem label="放铳时立直率" description="放铳时立直次数 / 放铳次数">
+        {formatPercent(stats.放铳时立直率 || 0)}
+      </StatItem>
+      <StatItem label="放铳时副露率" description="放铳时副露次数 / 放铳次数">
+        {formatPercent(stats.放铳时副露率 || 0)}
+      </StatItem>
     </>
   );
 }
@@ -120,7 +129,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
           更多数据
         </button>
       </nav>
-      <dl className="row">
+      <dl className="row font-xs-adjust">
         {page === 0 && <PlayerBasicStats metadata={metadata} />}
         {page === 1 && (
           <PlayerExtendedStatsViewAsync maybeStats={metadata.extended_stats} view={PlayerMoreExtendedStats} />

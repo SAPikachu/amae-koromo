@@ -24,6 +24,9 @@ export interface PlayerExtendedStats {
   里宝率: number;
   一发率: number;
   被炸率: number;
+  平均被炸点数: number;
+  放铳时立直率: number;
+  放铳时副露率: number;
 }
 export interface Metadata {
   count: number;
