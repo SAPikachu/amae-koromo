@@ -27,19 +27,19 @@ const ReactTooltip = Loadable({
 });
 
 function PlayerExtendedStatsViewAsync({
-  maybeStats,
+  metadata,
   view
 }: {
-  maybeStats: PlayerExtendedStats | Promise<PlayerExtendedStats> | null | undefined;
-  view: React.ComponentType<{ stats: PlayerExtendedStats }>;
+  metadata: PlayerMetadata;
+  view: React.ComponentType<{ stats: PlayerExtendedStats; metadata: PlayerMetadata }>;
 }) {
-  const stats = useAsync(maybeStats);
+  const stats = useAsync(metadata.extended_stats);
   useEffect(triggerRelayout, [!!stats]);
   if (!stats) {
     return null;
   }
   const View = view;
-  return <View stats={stats} />;
+  return <View stats={stats} metadata={metadata} />;
 }
 
 function PlayerExtendedStatsView({ stats }: { stats: PlayerExtendedStats }) {
@@ -72,14 +72,16 @@ function PlayerExtendedStatsView({ stats }: { stats: PlayerExtendedStats }) {
       <StatItem label="和了巡数">{(stats.和了巡数 || 0).toFixed(3)}</StatItem>
       <StatItem label="平均打点">{stats.平均打点 || 0}</StatItem>
       <StatItem label="平均铳点">{stats.平均铳点 || 0}</StatItem>
-      <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
     </>
   );
 }
 
-function PlayerMoreExtendedStats({ stats }: { stats: PlayerExtendedStats }) {
+function PlayerMoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   return (
     <>
+      <StatItem label="最高等级">{LevelWithDelta.getTag(metadata.max_level)}</StatItem>
+      <StatItem label="最高分数">{LevelWithDelta.formatAdjustedScore(metadata.max_level)}</StatItem>
+      <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
       <StatItem label="一发率" description="一发局数 / 立直和了局数">
         {formatPercent(stats.一发率 || 0)}
       </StatItem>
@@ -107,10 +109,10 @@ function PlayerBasicStats({ metadata }: { metadata: PlayerMetadata }) {
       <StatItem label="记录场数">{metadata.count}</StatItem>
       <StatItem label="当前等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
       <StatItem label="当前分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
-      <PlayerExtendedStatsViewAsync maybeStats={metadata.extended_stats} view={PlayerExtendedStatsView} />
+      <PlayerExtendedStatsViewAsync metadata={metadata} view={PlayerExtendedStatsView} />
       <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
-      <EstimatedStableLevel metadata={metadata} />
       <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
+      <EstimatedStableLevel metadata={metadata} />
     </>
   );
 }
@@ -131,9 +133,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
       </nav>
       <dl className="row font-xs-adjust">
         {page === 0 && <PlayerBasicStats metadata={metadata} />}
-        {page === 1 && (
-          <PlayerExtendedStatsViewAsync maybeStats={metadata.extended_stats} view={PlayerMoreExtendedStats} />
-        )}
+        {page === 1 && <PlayerExtendedStatsViewAsync metadata={metadata} view={PlayerMoreStats} />}
       </dl>
     </>
   );

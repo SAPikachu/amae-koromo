@@ -41,6 +41,7 @@ export interface PlayerMetadata extends PlayerMetadataLite {
   rank_avg_score: [number, number, number, number];
   avg_rank: number;
   negative_rate: number;
+  max_level: LevelWithDelta;
   extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
 }
 
