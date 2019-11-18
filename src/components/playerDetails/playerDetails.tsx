@@ -11,6 +11,7 @@ import PlayerDetailsSettings from "./playerDetailsSettings";
 import StatItem from "./statItem";
 import EstimatedStableLevel from "./estimatedStableLevel";
 import clsx from "clsx";
+import { Level } from "../../data/types/level";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -76,13 +77,23 @@ function PlayerExtendedStatsView({ stats }: { stats: PlayerExtendedStats }) {
   );
 }
 
+function fixMaxLevel(level: LevelWithDelta): LevelWithDelta {
+  const levelObj = new Level(level.id);
+  if (level.score + level.delta < levelObj.getStartingPoint()) {
+    return {
+      id: level.id,
+      score: levelObj.getStartingPoint(),
+      delta: 0
+    };
+  }
+  return level;
+}
+
 function PlayerMoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   return (
     <>
       <StatItem label="最高等级">{LevelWithDelta.getTag(metadata.max_level)}</StatItem>
-      <StatItem label="最高分数">
-        {LevelWithDelta.formatAdjustedScore({ ...metadata.max_level, delta: Math.max(metadata.max_level.delta, 0) })}
-      </StatItem>
+      <StatItem label="最高分数">{LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.max_level))}</StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
       <StatItem label="一发率" description="一发局数 / 立直和了局数">
         {formatPercent(stats.一发率 || 0)}
