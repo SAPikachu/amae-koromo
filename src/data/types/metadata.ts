@@ -27,6 +27,8 @@ export interface PlayerExtendedStats {
   平均被炸点数: number;
   放铳时立直率: number;
   放铳时副露率: number;
+  立直后放铳率: number;
+  副露后放铳率: number;
 }
 export interface Metadata {
   count: number;
