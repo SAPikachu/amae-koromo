@@ -92,8 +92,6 @@ function fixMaxLevel(level: LevelWithDelta): LevelWithDelta {
 function PlayerMoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   return (
     <>
-      <StatItem label="最高等级">{LevelWithDelta.getTag(metadata.max_level)}</StatItem>
-      <StatItem label="最高分数">{LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.max_level))}</StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
       <StatItem label="一发率" description="一发局数 / 立直和了局数">
         {formatPercent(stats.一发率 || 0)}
