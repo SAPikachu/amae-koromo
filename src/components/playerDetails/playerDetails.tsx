@@ -80,7 +80,9 @@ function PlayerMoreStats({ stats, metadata }: { stats: PlayerExtendedStats; meta
   return (
     <>
       <StatItem label="最高等级">{LevelWithDelta.getTag(metadata.max_level)}</StatItem>
-      <StatItem label="最高分数">{LevelWithDelta.formatAdjustedScore(metadata.max_level)}</StatItem>
+      <StatItem label="最高分数">
+        {LevelWithDelta.formatAdjustedScore({ ...metadata.max_level, delta: Math.max(metadata.max_level.delta, 0) })}
+      </StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
       <StatItem label="一发率" description="一发局数 / 立直和了局数">
         {formatPercent(stats.一发率 || 0)}
