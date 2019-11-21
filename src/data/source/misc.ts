@@ -8,6 +8,7 @@ import { PlayerMetadataLite, PlayerExtendedStats } from "../types";
 import { RankingTimeSpan, DeltaRankingResponse } from "../types";
 import { RankRateBySeat } from "../types";
 import { CareerRankingItem, CareerRankingType } from "../types/ranking";
+import { GlobalStatistics } from "../types/statistics";
 
 export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMetadataLite[]> {
   prefix = prefix.trim();
@@ -39,6 +40,10 @@ export async function getDeltaRanking(timespan: RankingTimeSpan): Promise<DeltaR
 
 export async function getCareerRanking(type: CareerRankingType, modeId?: string): Promise<CareerRankingItem[]> {
   return await apiGet<CareerRankingItem[]>(`career_ranking/${type}?mode=${modeId || ""}`);
+}
+
+export async function getGlobalStatistics(): Promise<GlobalStatistics> {
+  return await apiGet<GlobalStatistics>("global_statistics");
 }
 
 export async function getRankRateBySeat(): Promise<RankRateBySeat> {

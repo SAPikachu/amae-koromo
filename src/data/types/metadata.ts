@@ -37,11 +37,13 @@ export interface PlayerMetadataLite extends Metadata {
   nickname: string;
   level: LevelWithDelta;
 }
-export interface PlayerMetadata extends PlayerMetadataLite {
+export interface PlayerMetadataLite2 extends Metadata {
   rank_rates: [number, number, number, number];
-  rank_avg_score: [number, number, number, number];
   avg_rank: number;
   negative_rate: number;
+}
+export interface PlayerMetadata extends PlayerMetadataLite, PlayerMetadataLite2 {
+  rank_avg_score: [number, number, number, number];
   max_level: LevelWithDelta;
   extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
 }

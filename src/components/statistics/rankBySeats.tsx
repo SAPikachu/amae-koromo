@@ -3,8 +3,8 @@ import { ResponsiveContainer, PieChart, Pie, Cell, LabelList } from "recharts";
 import { useAsyncFactory, formatPercent } from "../../utils/index";
 import { getRankRateBySeat } from "../../data/source/misc";
 import Loading from "../misc/loading";
-import { useMemo, useState } from "react";
-import { ModeSelector } from "../gameRecords/modeSelector";
+import { useMemo } from "react";
+import { useModel } from "../modeModel";
 
 const SEAT_LABELS = "东南西北";
 const SEAT_COLORS = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
@@ -42,25 +42,20 @@ function Chart({ rates, aspect = 1 }: { rates: [number, number, number, number];
 
 export default function RankBySeats() {
   const data = useAsyncFactory(getRankRateBySeat, []);
-  const [modeId, setModeId] = useState("");
+  const [model] = useModel();
   if (!data) {
     return <Loading />;
   }
   return (
     <>
-      <div className="row mb-3">
-        <div className="col">
-          <ModeSelector mode={modeId} onChange={setModeId} />
-        </div>
-      </div>
       <div className="row">
         <div className="col-lg-6">
           <h3 className="text-center">坐席吃一率</h3>
-          <Chart rates={data[modeId || "0"][1]} />
+          <Chart rates={data[model.selectedMode || "0"][1]} />
         </div>
         <div className="col-lg-6">
           <h3 className="text-center">坐席吃四率</h3>
-          <Chart rates={data[modeId || "0"][4]} />
+          <Chart rates={data[model.selectedMode || "0"][4]} />
         </div>
       </div>
     </>

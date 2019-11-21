@@ -12,7 +12,7 @@ const DEFAULT_MODEL: Model = { selectedMode: "" };
 const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([{ ...DEFAULT_MODEL }, () => {}]);
 export const useModel = () => useContext(ModelContext);
 
-export function ModelProvider({ children }: { children: ReactChild | ReactChild[] }) {
+export function ModelModeProvider({ children }: { children: ReactChild | ReactChild[] }) {
   const [model, updateModel] = useReducer(
     (oldModel: Model, newProps: ModelUpdate): Model => ({
       ...oldModel,

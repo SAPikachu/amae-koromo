@@ -1,7 +1,7 @@
 import React from "react";
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { useRouteMatch, Switch, Route } from "react-router";
+import { useRouteMatch, Switch, Route, Redirect } from "react-router";
 import { Helmet } from "react-helmet";
 
 type RouteDefProps = { path: string; title: string; children: React.ReactChild | React.ReactChildren };
@@ -30,7 +30,13 @@ export function NavButtons() {
   );
 }
 
-export function ViewSwitch({ children }: { children?: React.ReactChild | React.ReactChildren }) {
+export function ViewSwitch({
+  defaultPath,
+  children
+}: {
+  defaultPath?: string;
+  children?: React.ReactChild | React.ReactChildren;
+}) {
   const routes = useContext(Context);
   const match = useRouteMatch() || { path: "" };
   return (
@@ -43,6 +49,9 @@ export function ViewSwitch({ children }: { children?: React.ReactChild | React.R
           {route.children}
         </Route>
       ))}
+      <Route>
+        <Redirect to={`${match.path}/${defaultPath || routes[0].path}`} />
+      </Route>
       {children}
     </Switch>
   );

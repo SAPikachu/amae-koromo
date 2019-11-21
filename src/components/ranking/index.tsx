@@ -1,10 +1,9 @@
 import React from "react";
 
 import { Alert } from "../misc/alert";
-import { Route, Redirect, useRouteMatch } from "react-router";
 import DeltaRanking from "./deltaRanking";
 import { CareerRanking, CareerRankingColumn } from "./careerRanking";
-import { ModelProvider, ModelModeSelector } from "../modeModel";
+import { ModelModeProvider, ModelModeSelector } from "../modeModel";
 import { CareerRankingType } from "../../data/types";
 import { PlayerMetadata } from "../../data/types/metadata";
 import { formatFixed3, formatIdentity } from "../../utils/index";
@@ -47,27 +46,18 @@ const ROUTES = (
 );
 
 export default function Routes() {
-  const match = useRouteMatch() || { path: "" };
   return (
     <SimpleRoutedSubViews>
       {ROUTES}
-      <ModelProvider>
+      <ModelModeProvider>
         <Alert stateName="rankingNotice">
           <h4 className="mb-2">提示</h4>
           排行榜非实时更新，可能会有数小时的延迟
         </Alert>
         <NavButtons />
-        <div className="row mb-3">
-          <div className="col">
-            <ModelModeSelector />
-          </div>
-        </div>
-        <ViewSwitch>
-          <Route>
-            <Redirect to={`${match.path}/delta`} />
-          </Route>
-        </ViewSwitch>
-      </ModelProvider>
+        <ModelModeSelector />
+        <ViewSwitch />
+      </ModelModeProvider>
     </SimpleRoutedSubViews>
   );
 }
