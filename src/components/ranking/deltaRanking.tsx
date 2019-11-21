@@ -7,7 +7,7 @@ import { getDeltaRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
 import { LevelWithDelta } from "../../data/types";
-import { useModel } from "./model";
+import { useModel } from "../modeModel";
 
 function RankingTable({ rows = [] as DeltaRankingItem[] }) {
   return (

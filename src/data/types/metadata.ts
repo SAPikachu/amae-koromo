@@ -8,7 +8,6 @@ const MODE_DELTA = {
 };
 
 export interface PlayerExtendedStats {
-  id: number;
   和牌率: number;
   自摸率: number;
   默听率: number;

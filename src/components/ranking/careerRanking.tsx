@@ -9,7 +9,7 @@ import { generatePlayerPathById } from "../gameRecords/routes";
 import { LevelWithDelta } from "../../data/types";
 import { formatPercent } from "../../utils/index";
 import { Alert } from "../misc/alert";
-import { useModel } from "./model";
+import { useModel } from "../modeModel";
 
 function RankingTable({
   rows = [] as CareerRankingItem[],
