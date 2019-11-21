@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useAsyncFactory, formatPercent } from "../../utils/index";
+import { useAsyncFactory, formatPercent, formatFixed3 } from "../../utils/index";
 import { getGlobalStatistics } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { useModel } from "../modeModel/model";
@@ -13,6 +13,7 @@ const HEADERS = [
   "三位率",
   "四位率",
   "被飞率",
+  "平均顺位",
   "和牌率",
   "放铳率",
   "副露率",
@@ -52,6 +53,7 @@ export default function DataByRank() {
               <td key={i}>{formatPercent(x)}</td>
             ))}
             <td>{formatPercent(levelData.basic.negative_rate)}</td>
+            <td>{formatFixed3(levelData.basic.avg_rank)}</td>
             <td>{formatPercent(levelData.extended.和牌率)}</td>
             <td>{formatPercent(levelData.extended.放铳率)}</td>
             <td>{formatPercent(levelData.extended.副露率)}</td>
