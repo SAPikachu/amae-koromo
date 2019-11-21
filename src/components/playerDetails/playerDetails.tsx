@@ -126,8 +126,8 @@ function PlayerBasicStats({ metadata }: { metadata: PlayerMetadata }) {
   return (
     <>
       <StatItem label="记录场数">{metadata.count}</StatItem>
-      <StatItem label="当前等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
-      <StatItem label="当前分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
+      <StatItem label="记录等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
+      <StatItem label="记录分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
       <PlayerExtendedStatsViewAsync metadata={metadata} view={PlayerExtendedStatsView} />
       <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
       <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
