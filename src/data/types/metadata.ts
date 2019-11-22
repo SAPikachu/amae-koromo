@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { LevelWithDelta, Level } from "./level";
 import { GameMode } from "./gameMode";
 
@@ -6,6 +7,8 @@ const MODE_DELTA = {
   "12": [110, 55, 0, 0],
   "16": [120, 60, 0, 0]
 };
+
+type RankRates = [number, number, number, number];
 
 export interface PlayerExtendedStats {
   和牌率: number;
@@ -38,19 +41,27 @@ export interface PlayerMetadataLite extends Metadata {
   level: LevelWithDelta;
 }
 export interface PlayerMetadataLite2 extends Metadata {
-  rank_rates: [number, number, number, number];
+  rank_rates: RankRates;
   avg_rank: number;
   negative_rate: number;
 }
 export interface PlayerMetadata extends PlayerMetadataLite, PlayerMetadataLite2 {
-  rank_avg_score: [number, number, number, number];
+  rank_avg_score: RankRates;
   max_level: LevelWithDelta;
   extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
 }
 
-function calculateDeltaPoint(score: number, rank: number, mode: GameMode, level: Level, includePenalty = true): number {
+function calculateDeltaPoint(
+  score: number,
+  rank: number,
+  mode: GameMode,
+  level: Level,
+  includePenalty = true,
+  trimNumber = true
+): number {
   let result =
-    Math.ceil((score - 25000) / 1000 + RANK_DELTA[rank]) + MODE_DELTA[mode.toString() as keyof typeof MODE_DELTA][rank];
+    (trimNumber ? Math.ceil : (x: number) => x)((score - 25000) / 1000 + RANK_DELTA[rank]) +
+    MODE_DELTA[mode.toString() as keyof typeof MODE_DELTA][rank];
   if (rank === 3 && includePenalty) {
     result -= level.getPenaltyPoint();
   }
@@ -63,10 +74,27 @@ function calculateDeltaPoint(score: number, rank: number, mode: GameMode, level:
 }
 
 export const PlayerMetadata = Object.freeze({
-  calculateExpectedGamePoint(metadata: PlayerMetadata, mode: GameMode, level?: Level, includePenalty = true): number {
+  calculateRankDeltaPoints(
+    metadata: PlayerMetadata,
+    mode: GameMode,
+    level?: Level,
+    includePenalty = true,
+    trimNumber = true
+  ): RankRates {
     const rankDeltaPoints = metadata.rank_avg_score.map((score, rank) =>
-      calculateDeltaPoint(score, rank, mode, level || LevelWithDelta.getAdjustedLevel(metadata.level), includePenalty)
-    );
+      calculateDeltaPoint(
+        score,
+        rank,
+        mode,
+        level || LevelWithDelta.getAdjustedLevel(metadata.level),
+        includePenalty,
+        trimNumber
+      )
+    ) as typeof metadata.rank_avg_score;
+    return rankDeltaPoints;
+  },
+  calculateExpectedGamePoint(metadata: PlayerMetadata, mode: GameMode, level?: Level, includePenalty = true): number {
+    const rankDeltaPoints = PlayerMetadata.calculateRankDeltaPoints(metadata, mode, level, includePenalty);
     const rankWeightedPoints = rankDeltaPoints.map((point, rank) => point * metadata.rank_rates[rank]);
     const expectedGamePoint = rankWeightedPoints.reduce((a, b) => a + b, 0);
     /*
@@ -126,6 +154,9 @@ export const PlayerMetadata = Object.freeze({
       return `圣${(level - 3).toFixed(2)}`;
     }
     return `豪${level.toFixed(2)}`;
+  },
+  getStableLevelComponents(metadata: PlayerMetadata, mode: GameMode): RankRates {
+    return this.calculateRankDeltaPoints(metadata, mode, undefined, false, false);
   },
   estimateStableLevel2(metadata: PlayerMetadata, mode: GameMode): string {
     if (!metadata.rank_rates[3]) {
