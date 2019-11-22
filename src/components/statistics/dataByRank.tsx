@@ -48,7 +48,7 @@ export default function DataByRank() {
       <tbody>
         {modeData.map(([levelId, levelData]) => (
           <tr key={levelId}>
-            <td>{new Level(parseInt(levelId)).getTag()}</td>
+            <td className="text-nowrap">{new Level(parseInt(levelId)).getTag()}</td>
             {levelData.basic.rank_rates.map((x, i) => (
               <td key={i}>{formatPercent(x)}</td>
             ))}
