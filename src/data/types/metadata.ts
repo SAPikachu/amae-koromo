@@ -31,6 +31,10 @@ export interface PlayerExtendedStats {
   放铳时副露率: number;
   立直后放铳率: number;
   副露后放铳率: number;
+  立直后和牌率: number;
+  副露后和牌率: number;
+  立直后流局率: number;
+  副露后流局率: number;
 }
 export interface Metadata {
   count: number;

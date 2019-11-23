@@ -119,6 +119,18 @@ function PlayerMoreStats({ stats, metadata }: { stats: PlayerExtendedStats; meta
       <StatItem label="副露后放铳率" description="放铳时副露次数 / 副露次数">
         {formatPercent(stats.副露后放铳率 || 0)}
       </StatItem>
+      <StatItem label="立直后和牌率" description="立直后和牌次数 / 立直次数">
+        {formatPercent(stats.立直后和牌率 || 0)}
+      </StatItem>
+      <StatItem label="副露后和牌率" description="副露后和牌次数 / 副露次数">
+        {formatPercent(stats.副露后和牌率 || 0)}
+      </StatItem>
+      <StatItem label="立直后流局率" description="立直后流局次数 / 立直次数">
+        {formatPercent(stats.立直后流局率 || 0)}
+      </StatItem>
+      <StatItem label="副露后流局率" description="副露后流局次数 / 副露次数">
+        {formatPercent(stats.副露后流局率 || 0)}
+      </StatItem>
     </>
   );
 }
