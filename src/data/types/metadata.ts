@@ -35,6 +35,9 @@ export interface PlayerExtendedStats {
   副露后和牌率: number;
   立直后流局率: number;
   副露后流局率: number;
+  役满: number;
+  累计役满: number;
+  最大累计番数: number;
 }
 export interface Metadata {
   count: number;

@@ -147,6 +147,21 @@ function PlayerBasicStats({ metadata }: { metadata: PlayerMetadata }) {
     </>
   );
 }
+function PlayerLuckStats({ stats }: { stats: PlayerExtendedStats }) {
+  return (
+    <>
+      <StatItem label="役满" description="和出役满次数">
+        {stats.役满}
+      </StatItem>
+      <StatItem label="累计役满" description="和出累计役满次数">
+        {stats.累计役满}
+      </StatItem>
+      <StatItem label="最大累计番数" description="和出的最大番数（不含役满役）">
+        {stats.最大累计番数}
+      </StatItem>
+    </>
+  );
+}
 function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
   const [page, setPage] = useState(0);
   useEffect(() => {
@@ -161,10 +176,14 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
         <button onClick={() => setPage(1)} className={clsx("nav-link", page === 1 && "active")}>
           更多数据
         </button>
+        <button onClick={() => setPage(2)} className={clsx("nav-link", page === 2 && "active")}>
+          血统
+        </button>
       </nav>
       <dl className="row font-xs-adjust">
         {page === 0 && <PlayerBasicStats metadata={metadata} />}
         {page === 1 && <PlayerExtendedStatsViewAsync metadata={metadata} view={PlayerMoreStats} />}
+        {page === 2 && <PlayerExtendedStatsViewAsync metadata={metadata} view={PlayerLuckStats} />}
       </dl>
     </>
   );
