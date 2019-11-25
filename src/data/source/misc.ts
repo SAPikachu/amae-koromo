@@ -62,8 +62,10 @@ export async function getRankRateBySeat(): Promise<RankRateBySeat> {
   for (const [[modeId, rank, seatId], count] of rawResp) {
     const modeIdStr = modeId.toString();
     result[modeIdStr] = result[modeIdStr] || [];
+    result[modeIdStr].numGames = counts[modeIdStr][rank];
     result[modeIdStr][rank] = result[modeIdStr][rank] || [0, 0, 0, 0];
     result[modeIdStr][rank][seatId] = count / counts[modeIdStr][rank];
   }
+  console.log(result);
   return result;
 }

@@ -35,37 +35,44 @@ export default function DataByRank() {
   modeData.sort((a, b) => a[0].localeCompare(b[0]));
 
   return (
-    <table className="table table-responsive-xl table-striped table-sm table-hover text-center">
-      <thead className="vertical-table-header">
-        <tr>
-          {HEADERS.map(x => (
-            <th key={x}>
-              <div>{x}</div>
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {modeData.map(([levelId, levelData]) => (
-          <tr key={levelId}>
-            <td className="text-nowrap">{new Level(parseInt(levelId)).getTag()}</td>
-            {levelData.basic.rank_rates.map((x, i) => (
-              <td key={i}>{formatPercent(x)}</td>
+    <>
+      <table className="table table-responsive-xl table-striped table-sm table-hover text-center">
+        <thead className="vertical-table-header">
+          <tr>
+            {HEADERS.map(x => (
+              <th key={x}>
+                <div>{x}</div>
+              </th>
             ))}
-            <td>{formatPercent(levelData.basic.negative_rate)}</td>
-            <td>{formatFixed3(levelData.basic.avg_rank)}</td>
-            <td>{formatPercent(levelData.extended.和牌率)}</td>
-            <td>{formatPercent(levelData.extended.放铳率)}</td>
-            <td>{formatPercent(levelData.extended.副露率)}</td>
-            <td>{formatPercent(levelData.extended.立直率)}</td>
-            <td>{formatPercent(levelData.extended.自摸率)}</td>
-            <td>{formatPercent(levelData.extended.流局率)}</td>
-            <td>{formatPercent(levelData.extended.流听率)}</td>
-            <td>{levelData.basic.count}</td>
-            <td>{levelData.num_players}</td>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {modeData.map(([levelId, levelData]) => (
+            <tr key={levelId}>
+              <td className="text-nowrap">{new Level(parseInt(levelId)).getTag()}</td>
+              {levelData.basic.rank_rates.map((x, i) => (
+                <td key={i}>{formatPercent(x)}</td>
+              ))}
+              <td>{formatPercent(levelData.basic.negative_rate)}</td>
+              <td>{formatFixed3(levelData.basic.avg_rank)}</td>
+              <td>{formatPercent(levelData.extended.和牌率)}</td>
+              <td>{formatPercent(levelData.extended.放铳率)}</td>
+              <td>{formatPercent(levelData.extended.副露率)}</td>
+              <td>{formatPercent(levelData.extended.立直率)}</td>
+              <td>{formatPercent(levelData.extended.自摸率)}</td>
+              <td>{formatPercent(levelData.extended.流局率)}</td>
+              <td>{formatPercent(levelData.extended.流听率)}</td>
+              <td>{levelData.basic.count}</td>
+              <td>{levelData.num_players}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="row">
+        <div className="col text-right">
+          统计半庄数：{modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) / 4}
+        </div>
+      </div>
+    </>
   );
 }
