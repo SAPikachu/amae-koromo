@@ -151,13 +151,19 @@ function PlayerLuckStats({ stats }: { stats: PlayerExtendedStats }) {
   return (
     <>
       <StatItem label="役满" description="和出役满次数">
-        {stats.役满}
+        {stats.役满 || 0}
       </StatItem>
       <StatItem label="累计役满" description="和出累计役满次数">
-        {stats.累计役满}
+        {stats.累计役满 || 0}
       </StatItem>
       <StatItem label="最大累计番数" description="和出的最大番数（不含役满役）">
-        {stats.最大累计番数}
+        {stats.最大累计番数 || 0}
+      </StatItem>
+      <StatItem label="流满" description="流满次数">
+        {stats.流满 || 0}
+      </StatItem>
+      <StatItem label="两立直" description="两立直次数">
+        {stats.W立直 || 0}
       </StatItem>
     </>
   );

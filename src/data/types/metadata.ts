@@ -18,7 +18,7 @@ export interface PlayerExtendedStats {
   副露率: number;
   立直率: number;
   平均打点: number;
-  最大连庄: number;
+  最大连庄?: number;
   和了巡数: number;
   平均铳点: number;
   流局率: number;
@@ -35,9 +35,11 @@ export interface PlayerExtendedStats {
   副露后和牌率: number;
   立直后流局率: number;
   副露后流局率: number;
-  役满: number;
-  累计役满: number;
-  最大累计番数: number;
+  役满?: number;
+  累计役满?: number;
+  最大累计番数?: number;
+  W立直?: number;
+  流满?: number;
 }
 export interface Metadata {
   count: number;
