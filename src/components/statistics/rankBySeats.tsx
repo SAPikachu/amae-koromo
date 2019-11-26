@@ -34,7 +34,6 @@ export const polarToCartesian = (cx: number, cy: number, radius: number, angle: 
 });
 
 const renderCustomizedLabel = (props: LabelProps) => {
-  console.log(props);
   let { value } = props;
   if (!value) {
     return null;
