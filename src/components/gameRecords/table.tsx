@@ -12,7 +12,6 @@ import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";
 import { triggerRelayout } from "../../utils/index";
 import { useModel } from "./model";
-import Loadable from "react-loadable";
 import Loading from "../misc/loading";
 
 const formatTime = (x: number) => (x ? dayjs.unix(x).format("HH:mm") : null);
@@ -76,15 +75,9 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
   );
   const unfilteredCount = data.getUnfilteredCount();
   const shouldTriggerLayout = !!unfilteredCount;
-  const shouldPreload = !!unfilteredCount && !("loading" in (data.getItem(0) || { loading: true }));
   useEffect(() => {
     triggerRelayout();
   }, [shouldTriggerLayout]);
-  useEffect(() => {
-    if (shouldPreload) {
-      Loadable.preloadAll();
-    }
-  }, [shouldPreload]);
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <div ref={registerChild as any} className="font-xs-adjust">
