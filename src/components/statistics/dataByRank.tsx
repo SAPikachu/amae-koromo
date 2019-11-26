@@ -70,7 +70,8 @@ export default function DataByRank() {
       </table>
       <div className="row">
         <div className="col text-right">
-          统计半庄数：{modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) / 4}
+          统计半庄数：
+          {Math.floor(modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) / 4)}
         </div>
       </div>
     </>
