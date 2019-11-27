@@ -17,7 +17,7 @@ serviceWorker.register({
     if (waitingServiceWorker) {
       waitingServiceWorker.addEventListener("statechange", event => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ((event?.target as any)?.state === "activated") {
+        if (event.target && (event.target as any).state === "activated") {
           window.location.reload();
         }
       });
