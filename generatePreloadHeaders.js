@@ -1,6 +1,6 @@
-const fs = require('fs');
-const pathToEntry = './build/index.html';
-const pathToHeaders = './build/_headers';
+const fs = require("fs");
+const pathToEntry = "./build/index.html";
+const pathToHeaders = "./build/_headers";
 const bundlesRegExp = /\/static\/\w+\/\w+\.[a-f0-9]+\.chunk\.(?:css|js)/g;
 
 const builtHTMLContent = fs.readFileSync(pathToEntry).toString();
@@ -9,10 +9,10 @@ const links = builtHTMLContent.match(bundlesRegExp);
 let preloadLines = [];
 
 links.forEach(link => {
-  let fileType = 'script';
+  let fileType = "script";
 
   if (/\.css$/.test(link)) {
-    fileType = 'style';
+    fileType = "style";
   }
   preloadLines.push(`Link: <${link}>; rel=preload; as=${fileType}`);
 });
@@ -30,10 +30,18 @@ const headerTemplate = `
 `;
 
 const paths = ["/", "/:a", "/:a/:b"];
-const cacheHeader = "Cache-Control: public, max-age=0, stale-while-revalidate=600";
+const cacheHeader = "Cache-Control: public, max-age=0";
 
-fs.writeFileSync(pathToHeaders, headerTemplate + paths.map(path => `
+fs.writeFileSync(
+  pathToHeaders,
+  headerTemplate +
+    paths
+      .map(
+        path => `
 ${path}
   ${cacheHeader}
   ${preloadLines.join("\n  ")}
-`).join(""));
+`
+      )
+      .join("")
+);
