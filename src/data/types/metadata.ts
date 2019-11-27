@@ -165,13 +165,18 @@ export const PlayerMetadata = Object.freeze({
     }
   },
   formatStableLevel2(level: number): string {
+    const formatNumber = function(x: number): string {
+      // Trim after the second digit after decimal point
+      const s = x.toFixed(30);
+      return s.slice(0, s.indexOf(".") + 3);
+    };
     if (level >= 7) {
-      return `魂${(level - 6).toFixed(2)}`;
+      return `魂${formatNumber(level - 6)}`;
     }
     if (level >= 4) {
-      return `圣${(level - 3).toFixed(2)}`;
+      return `圣${formatNumber(level - 3)}`;
     }
-    return `豪${level.toFixed(2)}`;
+    return `豪${formatNumber(level)}`;
   },
   getStableLevelComponents(metadata: PlayerMetadata, mode: GameMode): RankRates {
     return this.calculateRankDeltaPoints(metadata, mode, undefined, false, false);
