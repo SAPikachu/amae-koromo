@@ -12,9 +12,13 @@ render(<App />, rootElement);
 
 serviceWorker.register({
   onUpdate(registration) {
-    const waitingServiceWorker = registration.waiting;
+    const waitingServiceWorker = registration.waiting || navigator.serviceWorker.controller;
 
     if (waitingServiceWorker) {
+      if (waitingServiceWorker.state === "activated") {
+        window.location.reload();
+        return;
+      }
       waitingServiceWorker.addEventListener("statechange", event => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (event.target && (event.target as any).state === "activated") {
