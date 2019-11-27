@@ -170,6 +170,9 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
 }
 function formatFanSummary(count: number, 役满: number): string {
   if (役满) {
+    if (役满 === 1) {
+      return "役满";
+    }
     return `${役满} 倍役满`;
   }
   let result = `${count} 番`;
@@ -188,6 +191,9 @@ function formatFanSummary(count: number, 役满: number): string {
 }
 function formatFan(count: number, 役满: number): string {
   if (役满) {
+    if (役满 === 1) {
+      return "役满";
+    }
     return `${役满} 倍役满`;
   }
   return `${count} 番`;
