@@ -27,6 +27,8 @@ for (const file of mediaFiles) {
 const headerTemplate = `
 /static/*
   Cache-Control: public, immutable, max-age=604800, s-maxage=604800
+/favicon2/*
+  Cache-Control: public, immutable, max-age=604800, s-maxage=604800
 `;
 
 const paths = ["/", "/:a", "/:a/:b"];
