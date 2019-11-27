@@ -4,8 +4,8 @@ import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
 import { useEffect, useState } from "react";
-import { triggerRelayout, formatPercent, useAsync } from "../../utils/index";
-import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata } from "../../data/types";
+import { triggerRelayout, formatPercent, useAsync, sum } from "../../utils/index";
+import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameRecord } from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
 import StatItem from "./statItem";
@@ -27,7 +27,7 @@ const ReactTooltip = Loadable({
   loading: () => null
 });
 
-function PlayerExtendedStatsViewAsync({
+function ExtendedStatsViewAsync({
   metadata,
   view
 }: {
@@ -89,7 +89,7 @@ function fixMaxLevel(level: LevelWithDelta): LevelWithDelta {
   return level;
 }
 
-function PlayerMoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
+function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   return (
     <>
       <StatItem label="最高等级">{LevelWithDelta.getTag(metadata.max_level)}</StatItem>
@@ -134,20 +134,20 @@ function PlayerMoreStats({ stats, metadata }: { stats: PlayerExtendedStats; meta
     </>
   );
 }
-function PlayerBasicStats({ metadata }: { metadata: PlayerMetadata }) {
+function BasicStats({ metadata }: { metadata: PlayerMetadata }) {
   return (
     <>
       <StatItem label="记录场数">{metadata.count}</StatItem>
       <StatItem label="记录等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
       <StatItem label="记录分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
-      <PlayerExtendedStatsViewAsync metadata={metadata} view={PlayerExtendedStatsView} />
+      <ExtendedStatsViewAsync metadata={metadata} view={PlayerExtendedStatsView} />
       <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
       <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
       <EstimatedStableLevel metadata={metadata} />
     </>
   );
 }
-function PlayerLuckStats({ stats }: { stats: PlayerExtendedStats }) {
+function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
   return (
     <>
       <StatItem label="役满" description="和出役满次数">
@@ -168,6 +168,57 @@ function PlayerLuckStats({ stats }: { stats: PlayerExtendedStats }) {
     </>
   );
 }
+function formatFanSummary(count: number, 役满: number): string {
+  if (役满) {
+    return `${役满} 倍役满`;
+  }
+  let result = `${count} 番`;
+  if (count >= 13) {
+    result += " - 累计役满";
+  } else if (count >= 11) {
+    result += " - 三倍满";
+  } else if (count >= 8) {
+    result += " - 倍满";
+  } else if (count >= 6) {
+    result += " - 跳满";
+  } else if (count === 5) {
+    result += " - 满贯";
+  }
+  return result;
+}
+function formatFan(count: number, 役满: number): string {
+  if (役满) {
+    return `${役满} 倍役满`;
+  }
+  return `${count} 番`;
+}
+function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
+  if (!stats.最近大铳) {
+    return <p className="text-center">无满贯或以上大铳</p>;
+  }
+  return (
+    <div>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        className="d-flex justify-content-between font-weight-bold"
+        href={GameRecord.getRecordLink(stats.最近大铳.id, metadata.id)}
+      >
+        <span>
+          {formatFanSummary(sum(stats.最近大铳.fans.map(x => x.count)), sum(stats.最近大铳.fans.map(x => x.役满)))}
+        </span>
+        <span>{GameRecord.formatFullStartTime(stats.最近大铳.start_time)}</span>
+      </a>
+      <dl className="row mt-2">
+        {stats.最近大铳.fans.map(x => (
+          <StatItem key={x.label} label={x.label}>
+            {formatFan(x.count, x.役满)}
+          </StatItem>
+        ))}
+      </dl>
+    </div>
+  );
+}
 function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
   const [page, setPage] = useState(0);
   useEffect(() => {
@@ -185,12 +236,16 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
         <button onClick={() => setPage(2)} className={clsx("nav-link", page === 2 && "active")}>
           血统
         </button>
+        <button onClick={() => setPage(3)} className={clsx("nav-link", page === 3 && "active")}>
+          最近大铳
+        </button>
       </nav>
       <dl className="row font-xs-adjust">
-        {page === 0 && <PlayerBasicStats metadata={metadata} />}
-        {page === 1 && <PlayerExtendedStatsViewAsync metadata={metadata} view={PlayerMoreStats} />}
-        {page === 2 && <PlayerExtendedStatsViewAsync metadata={metadata} view={PlayerLuckStats} />}
+        {page === 0 && <BasicStats metadata={metadata} />}
+        {page === 1 && <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} />}
+        {page === 2 && <ExtendedStatsViewAsync metadata={metadata} view={LuckStats} />}
       </dl>
+      {page === 3 && <ExtendedStatsViewAsync metadata={metadata} view={LargestLost} />}
     </>
   );
 }

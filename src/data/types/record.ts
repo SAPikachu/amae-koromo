@@ -35,13 +35,15 @@ export const GameRecord = Object.freeze({
     return RANK_COLORS[GameRecord.getRankIndexByPlayer(rec, player)];
   },
   encodeAccountId: (t: number) => 1358437 + ((7 * t + 1117113) ^ 86216345),
-  formatFullStartTime: (rec: GameRecord) => dayjs(rec.startTime * 1000).format("YYYY/M/D HH:mm"),
-  formatStartDate: (rec: GameRecord) => dayjs(rec.startTime * 1000).format("M/D"),
-  getRecordLink(rec: GameRecord, player?: PlayerRecord | number | string) {
+  getStartTime: (rec: GameRecord | number) => (typeof rec === "number" ? rec : rec.startTime) * 1000,
+  formatFullStartTime: (rec: GameRecord | number) => dayjs(GameRecord.getStartTime(rec)).format("YYYY/M/D HH:mm"),
+  formatStartDate: (rec: GameRecord | number) => dayjs(GameRecord.getStartTime(rec)).format("M/D"),
+  getRecordLink(rec: GameRecord | string, player?: PlayerRecord | number | string) {
     const playerId = typeof player === "object" ? player.accountId : player;
     const trailer = playerId
       ? `_a${GameRecord.encodeAccountId(typeof playerId === "number" ? playerId : parseInt(playerId))}`
       : "";
-    return `https://www.majsoul.com/1/?paipu=${rec.uuid}${trailer}`;
+    const uuid = typeof rec === "string" ? rec : rec.uuid;
+    return `https://www.majsoul.com/1/?paipu=${uuid}${trailer}`;
   }
 });

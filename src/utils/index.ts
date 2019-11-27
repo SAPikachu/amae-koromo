@@ -46,3 +46,7 @@ export function useAsyncFactory<T>(factory: () => Promise<T>, deps: React.Depend
   const promise = useMemo(factory, deps);
   return useAsync(promise);
 }
+
+export function sum(numbers: number[]): number {
+  return numbers.reduce((a, b) => a + b, 0);
+}
