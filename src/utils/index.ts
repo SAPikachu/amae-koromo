@@ -18,8 +18,16 @@ export const formatIdentity = (x: number) => x.toString();
 type NotFinished = { notFinished: string };
 const NOT_FINISHED = { notFinished: "yes" };
 
-export function useAsync<T>(maybePromise: T | Promise<T>): T | undefined {
-  const [fulfilledValue, setFulfilledValue] = useState<T | NotFinished>(NOT_FINISHED);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const __useAsyncCache = {} as { [key: string]: any };
+
+export function useAsync<T>(maybePromise: T | Promise<T>, cacheKey?: string): T | undefined {
+  if (cacheKey && __useAsyncCache[cacheKey]) {
+    maybePromise = __useAsyncCache[cacheKey];
+  }
+  const [fulfilledValue, setFulfilledValue] = useState<T | NotFinished>(
+    maybePromise instanceof Promise ? NOT_FINISHED : maybePromise
+  );
   useEffect(() => {
     let cancelled = false;
     if (maybePromise instanceof Promise) {
@@ -27,6 +35,9 @@ export function useAsync<T>(maybePromise: T | Promise<T>): T | undefined {
       maybePromise.then(result => {
         if (cancelled) {
           return;
+        }
+        if (cacheKey) {
+          __useAsyncCache[cacheKey] = result;
         }
         setFulfilledValue(result);
       });
@@ -36,15 +47,19 @@ export function useAsync<T>(maybePromise: T | Promise<T>): T | undefined {
     return () => {
       cancelled = true;
     };
-  }, [maybePromise]);
+  }, [maybePromise, cacheKey]);
   if (fulfilledValue !== NOT_FINISHED) {
     return fulfilledValue as T;
   }
   return undefined;
 }
-export function useAsyncFactory<T>(factory: () => Promise<T>, deps: React.DependencyList): T | undefined {
+export function useAsyncFactory<T>(
+  factory: () => Promise<T>,
+  deps: React.DependencyList,
+  cacheKey?: string
+): T | undefined {
   const promise = useMemo(factory, deps);
-  return useAsync(promise);
+  return useAsync(promise, cacheKey ? `${cacheKey}-${deps.join(",")}` : undefined);
 }
 
 export function sum(numbers: number[]): number {

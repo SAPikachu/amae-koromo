@@ -63,7 +63,7 @@ export function CareerRankingColumn({
 }) {
   const [model] = useModel();
   const modeId = model.selectedMode;
-  const data = useAsyncFactory(() => getCareerRanking(type, modeId), [type, modeId]);
+  const data = useAsyncFactory(() => getCareerRanking(type, modeId), [type, modeId], "getCareerRanking");
   return (
     <div className="col-lg">
       <h3 className="text-center mb-2">{title}</h3>

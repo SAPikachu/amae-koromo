@@ -27,7 +27,7 @@ const HEADERS = [
 ];
 
 export default function DataByRank() {
-  const data = useAsyncFactory(getGlobalStatistics, []);
+  const data = useAsyncFactory(getGlobalStatistics, [], "getGlobalStatistics");
   const [model] = useModel();
   if (!data) {
     return <Loading />;

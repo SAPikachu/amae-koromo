@@ -86,7 +86,7 @@ function Chart({
 }
 
 export default function RankBySeats() {
-  const data = useAsyncFactory(getRankRateBySeat, []);
+  const data = useAsyncFactory(getRankRateBySeat, [], "getRankRateBySeat");
   const [model] = useModel();
   if (!data) {
     return <Loading />;

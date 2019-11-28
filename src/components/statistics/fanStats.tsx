@@ -6,7 +6,7 @@ import Loading from "../misc/loading";
 import { GameMode } from "../../data/types";
 
 export default function FanStats() {
-  const data = useAsyncFactory(getFanStats, []);
+  const data = useAsyncFactory(getFanStats, [], "getFanStats");
   if (!data) {
     return <Loading />;
   }

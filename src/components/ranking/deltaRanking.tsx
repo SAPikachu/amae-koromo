@@ -29,8 +29,16 @@ function RankingTable({ rows = [] as DeltaRankingItem[] }) {
 }
 
 export default function DeltaRanking() {
-  const data1w = useAsyncFactory(() => getDeltaRanking(RankingTimeSpan.OneWeek), []);
-  const data4w = useAsyncFactory(() => getDeltaRanking(RankingTimeSpan.FourWeeks), []);
+  const data1w = useAsyncFactory(
+    () => getDeltaRanking(RankingTimeSpan.OneWeek),
+    [],
+    "getDeltaRanking(RankingTimeSpan.OneWeek)"
+  );
+  const data4w = useAsyncFactory(
+    () => getDeltaRanking(RankingTimeSpan.FourWeeks),
+    [],
+    "getDeltaRanking(RankingTimeSpan.FourWeeks)"
+  );
   const [model] = useModel();
   const modeId = model.selectedMode;
   if (!data1w || !data4w) {
