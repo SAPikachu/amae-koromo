@@ -31,7 +31,7 @@ export default function FanStats() {
                   <tr key={x.label}>
                     <td>{x.label}</td>
                     <td className="text-right">{x.count}</td>
-                    <td className="text-right">{formatPercent(x.count / value.count)}</td>
+                    <td className="text-right">{x.count / value.count < 0.0001 ? "<0.01%" :formatPercent(x.count / value.count)}</td>
                   </tr>
                 ))}
               </tbody>
