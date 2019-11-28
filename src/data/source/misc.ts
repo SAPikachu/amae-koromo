@@ -8,7 +8,7 @@ import { PlayerMetadataLite, PlayerExtendedStats } from "../types";
 import { RankingTimeSpan, DeltaRankingResponse } from "../types";
 import { RankRateBySeat } from "../types";
 import { CareerRankingItem, CareerRankingType } from "../types/ranking";
-import { GlobalStatistics } from "../types/statistics";
+import { GlobalStatistics, FanStats } from "../types/statistics";
 
 export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMetadataLite[]> {
   prefix = prefix.trim();
@@ -45,6 +45,9 @@ export async function getCareerRanking(type: CareerRankingType, modeId?: string)
 export async function getGlobalStatistics(): Promise<GlobalStatistics> {
   return await apiGet<GlobalStatistics>("global_statistics");
 }
+export async function getFanStats(): Promise<FanStats> {
+  return await apiGet<FanStats>("fan_stats");
+}
 
 export async function getRankRateBySeat(): Promise<RankRateBySeat> {
   type RawResponse = [[number, number, number], number][];
@@ -66,6 +69,5 @@ export async function getRankRateBySeat(): Promise<RankRateBySeat> {
     result[modeIdStr][rank] = result[modeIdStr][rank] || [0, 0, 0, 0];
     result[modeIdStr][rank][seatId] = count / counts[modeIdStr][rank];
   }
-  console.log(result);
   return result;
 }

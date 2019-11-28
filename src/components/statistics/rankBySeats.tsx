@@ -4,7 +4,7 @@ import { useAsyncFactory } from "../../utils/index";
 import { getRankRateBySeat } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { useMemo } from "react";
-import { useModel } from "../modeModel";
+import { useModel, ModelModeSelector } from "../modeModel";
 
 const SEAT_LABELS = "东南西北";
 const SEAT_COLORS = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
@@ -94,6 +94,7 @@ export default function RankBySeats() {
   const selectedData = data[model.selectedMode || "0"];
   return (
     <>
+      <ModelModeSelector />
       <div className="row">
         <div className="col-lg-6">
           <h3 className="text-center">坐席吃一率</h3>

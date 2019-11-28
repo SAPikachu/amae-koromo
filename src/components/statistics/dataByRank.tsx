@@ -5,6 +5,7 @@ import { getGlobalStatistics } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { useModel } from "../modeModel/model";
 import { Level } from "../../data/types/level";
+import { ModelModeSelector } from "../modeModel";
 
 const HEADERS = [
   "等级",
@@ -36,6 +37,7 @@ export default function DataByRank() {
 
   return (
     <>
+      <ModelModeSelector />
       <table className="table table-responsive-xl table-striped table-sm table-hover text-center">
         <thead className="vertical-table-header">
           <tr>

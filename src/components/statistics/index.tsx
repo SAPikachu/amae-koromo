@@ -1,11 +1,12 @@
 import React from "react";
 
-import { ModelModeProvider, ModelModeSelector } from "../modeModel";
+import { ModelModeProvider } from "../modeModel";
 import { ViewRoutes, SimpleRoutedSubViews, NavButtons, RouteDef } from "../routing";
 import { ViewSwitch } from "../routing/index";
 
 import RankBySeats from "./rankBySeats";
 import DataByRank from "./dataByRank";
+import FanStats from "./fanStats";
 
 const ROUTES = (
   <ViewRoutes>
@@ -14,6 +15,9 @@ const ROUTES = (
     </RouteDef>
     <RouteDef path="data-by-rank" title="等级数据">
       <DataByRank />
+    </RouteDef>
+    <RouteDef path="fan-stats" title="和出役种统计">
+      <FanStats />
     </RouteDef>
   </ViewRoutes>
 );
@@ -24,7 +28,6 @@ export default function Routes() {
       {ROUTES}
       <ModelModeProvider>
         <NavButtons />
-        <ModelModeSelector />
         <ViewSwitch />
       </ModelModeProvider>
     </SimpleRoutedSubViews>
