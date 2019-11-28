@@ -167,7 +167,13 @@ export const PlayerMetadata = Object.freeze({
   formatStableLevel2(level: number): string {
     const formatNumber = function(x: number): string {
       // Trim after the second digit after decimal point
-      const s = x.toFixed(20);
+      let s = x.toString();
+      if (s.indexOf(".") === -1) {
+        s += ".00";
+      }
+      if (s.length < 8) {
+        s += "00";
+      }
       return s.slice(0, s.indexOf(".") + 3);
     };
     if (level >= 7) {
