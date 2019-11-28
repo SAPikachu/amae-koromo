@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { RouteSync } from "./routeSync";
 import { DataAdapterProvider } from "./dataAdapterProvider";
 import { FilterPanel } from "./filterPanel";
-import Loadable from "react-loadable";
+import Loadable from "../misc/customizedLoadable";
 import Loading from "../misc/loading";
 import { PlayerSearch } from "./playerSearch";
 const PlayerDetails = Loadable({

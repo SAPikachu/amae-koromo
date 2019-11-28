@@ -1,5 +1,5 @@
 import React from "react";
-import Loadable from "react-loadable";
+import Loadable from "../misc/customizedLoadable";
 import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";

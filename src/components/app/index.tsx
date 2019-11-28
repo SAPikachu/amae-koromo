@@ -1,7 +1,7 @@
 import React from "react";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Loadable from "react-loadable";
+import Loadable from "../misc/customizedLoadable";
 import Scroller from "../misc/scroller";
 
 import { Container } from "../layout";
