@@ -3,7 +3,9 @@ import React from "react";
 import { useAsyncFactory, formatPercent } from "../../utils/index";
 import { getFanStats } from "../../data/source/misc";
 import Loading from "../misc/loading";
-import { GameMode } from "../../data/types";
+import { GameMode, FanStatEntry } from "../../data/types";
+
+const SORTERS: { [i: number]: (s: FanStatEntry[]) => FanStatEntry[] } = [];
 
 export default function FanStats() {
   const data = useAsyncFactory(getFanStats, [], "getFanStats");
@@ -31,7 +33,13 @@ export default function FanStats() {
                   <tr key={x.label}>
                     <td>{x.label}</td>
                     <td className="text-right">{x.count}</td>
-                    <td className="text-right">{x.count / value.count < 0.0001 ? "<0.01%" :formatPercent(x.count / value.count)}</td>
+                    <td className="text-right">
+                      {x.count
+                        ? x.count / value.count < 0.0001
+                          ? "<0.01%"
+                          : formatPercent(x.count / value.count)
+                        : ""}
+                    </td>
                   </tr>
                 ))}
               </tbody>

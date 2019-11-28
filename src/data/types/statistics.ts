@@ -13,12 +13,13 @@ export type GlobalStatistics = {
     };
   };
 };
+export type FanStatEntry = {
+  label: string;
+  count: number;
+};
 export type FanStats = {
   [modeId: string]: {
     count: number;
-    entries: {
-      label: string;
-      count: number;
-    }[];
+    entries: FanStatEntry[];
   };
 };
