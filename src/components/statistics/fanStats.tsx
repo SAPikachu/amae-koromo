@@ -38,7 +38,7 @@ export default function FanStatsView() {
     <>
       <div className="row">
         {Object.entries(sortedData).map(([modeId, value]) => (
-          <div className="col" key={modeId}>
+          <div className="col-xl-4" key={modeId}>
             <h2 className="text-center">{modeId === "0" ? "全部" : GameMode[parseInt(modeId)]}</h2>
             <p className="text-center">记录和出局数：{value.count}</p>
             <table className="table table-striped">
