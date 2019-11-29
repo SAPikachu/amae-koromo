@@ -10,7 +10,15 @@ export function scrollToTop() {
   requestAnimationFrame(() => window.scrollTo(0, 0));
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const formatPercent = (x: any) => (x > 0 ? `${(x * 100).toFixed(2)}%` : "");
+export const formatPercent = (x: any) => {
+  if (!x) {
+    return "";
+  }
+  if (x < 0.0001) {
+    return "<0.01%";
+  }
+  return `${(x * 100).toFixed(2)}%`;
+};
 
 export const formatFixed3 = (x: number) => x.toFixed(3);
 export const formatIdentity = (x: number) => x.toString();

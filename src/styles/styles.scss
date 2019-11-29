@@ -22,6 +22,9 @@ h1 a:hover {
 dl:empty {
   display: none;
 }
+.cursor-pointer {
+  cursor: pointer;
+}
 .vertical-table-header {
   white-space: nowrap;
 }
