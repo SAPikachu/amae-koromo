@@ -13,6 +13,7 @@ import { useDataAdapter } from "./dataAdapterProvider";
 import { triggerRelayout } from "../../utils/index";
 import { useModel } from "./model";
 import Loading from "../misc/loading";
+import { CONTEST_MODE } from "../../data/source/constants";
 
 const formatTime = (x: number) => (x ? dayjs.unix(x).format("HH:mm") : null);
 
@@ -98,12 +99,14 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
             rowClassName={getRowClassName}
             noRowsRenderer={noRowsRenderer}
           >
-            <Column
-              dataKey="modeId"
-              label={isMobile() ? "" : "等级"}
-              cellRenderer={cellFormatGameMode}
-              width={isMobile() ? 20 : 40}
-            />
+            {!CONTEST_MODE && (
+              <Column
+                dataKey="modeId"
+                label={isMobile() ? "" : "等级"}
+                cellRenderer={cellFormatGameMode}
+                width={isMobile() ? 20 : 40}
+              />
+            )}
             {activePlayerId ? (
               <Column
                 dataKey="modeId"
