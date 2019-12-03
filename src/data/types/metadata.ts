@@ -40,6 +40,7 @@ export interface PlayerExtendedStats {
   最大累计番数?: number;
   W立直?: number;
   流满?: number;
+  平均起手向听: number;
   最近大铳?: {
     id: string;
     start_time: number;

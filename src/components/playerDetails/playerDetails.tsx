@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
 import { useEffect, useState } from "react";
-import { triggerRelayout, formatPercent, useAsync, sum } from "../../utils/index";
+import { triggerRelayout, formatPercent, useAsync, sum, formatFixed3 } from "../../utils/index";
 import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameRecord } from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
@@ -165,6 +165,7 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
       <StatItem label="两立直" description="两立直次数">
         {stats.W立直 || 0}
       </StatItem>
+      <StatItem label="平均起手向听">{formatFixed3(stats.平均起手向听)}</StatItem>
     </>
   );
 }
