@@ -2,20 +2,24 @@ import React from "react";
 
 import { Switch, Route, Redirect, generatePath as genPath } from "react-router-dom";
 
-import { Model, ModelProvider } from "./model";
+import { Model, useModel } from "./model";
 import dayjs from "dayjs";
 import { RouteSync } from "./routeSync";
-import { DataAdapterProvider } from "./dataAdapterProvider";
 import { FilterPanel } from "./filterPanel";
 import Loadable from "../misc/customizedLoadable";
 import Loading from "../misc/loading";
 import { PlayerSearch } from "./playerSearch";
+import { COLUMN_RANK } from "./table";
+import {
+  default as GameRecordTable,
+  COLUMN_GAMEMODE,
+  COLUMN_PLAYERS,
+  COLUMN_STARTTIME,
+  COLUMN_ENDTIME,
+  COLUMN_FULLTIME
+} from "./table";
 const PlayerDetails = Loadable({
   loader: () => import("../playerDetails/playerDetails"),
-  loading: () => <Loading />
-});
-const GameRecordTable = Loadable({
-  loader: () => import("./table"),
   loading: () => <Loading />
 });
 
@@ -51,30 +55,39 @@ export function generatePlayerPathById(playerId: number | string): string {
   });
 }
 
+function GameRecordTablePlayerView() {
+  const [model] = useModel();
+  if (!("playerId" in model)) {
+    return null;
+  }
+  return (
+    <GameRecordTable
+      withActivePlayer
+      columns={[COLUMN_GAMEMODE, COLUMN_RANK(model.playerId), COLUMN_PLAYERS(model.playerId), COLUMN_FULLTIME]}
+    />
+  );
+}
+
 function Routes() {
   return (
-    <ModelProvider>
-      <DataAdapterProvider>
-        <Switch>
-          <Route exact path={PLAYER_PATH}>
-            <RouteSync view="player" />
-            <PlayerDetails />
-            <GameRecordTable showFullTime showStartEnd={false} />
-          </Route>
-          <Route exact path={["/", PATH]}>
-            <RouteSync view="listing" />
-            <div className="row">
-              <FilterPanel className="col" />
-              <PlayerSearch className="col-12 col-sm-6 col-md-4" />
-            </div>
-            <GameRecordTable />
-          </Route>
-          <Route>
-            <Redirect to="/" />
-          </Route>
-        </Switch>
-      </DataAdapterProvider>
-    </ModelProvider>
+    <Switch>
+      <Route exact path={PLAYER_PATH}>
+        <RouteSync view="player" />
+        <PlayerDetails />
+        <GameRecordTablePlayerView />
+      </Route>
+      <Route exact path={["/", PATH]}>
+        <RouteSync view="listing" />
+        <div className="row">
+          <FilterPanel className="col" />
+          <PlayerSearch className="col-12 col-sm-6 col-md-4" />
+        </div>
+        <GameRecordTable columns={[COLUMN_GAMEMODE, COLUMN_PLAYERS(""), COLUMN_STARTTIME, COLUMN_ENDTIME]} />
+      </Route>
+      <Route>
+        <Redirect to="/" />
+      </Route>
+    </Switch>
   );
 }
 export default Routes;

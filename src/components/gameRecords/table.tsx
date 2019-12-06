@@ -1,5 +1,5 @@
 import React from "react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { TableCellProps, Index } from "react-virtualized";
 import { Table, Column } from "react-virtualized/dist/es/Table";
 import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
@@ -11,7 +11,6 @@ import { Player } from "./player";
 import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";
 import { triggerRelayout } from "../../utils/index";
-import { useModel } from "./model";
 import Loading from "../misc/loading";
 import { CONTEST_MODE } from "../../data/source/constants";
 
@@ -57,9 +56,105 @@ function getRowHeight() {
   return 100;
 }
 
-export default function GameRecordTable({ showStartEnd = true, showFullTime = false } = {}) {
+type TableColumnDefKey = {
+  key?: string;
+};
+export type TableColumn = React.FunctionComponentElement<Column> | false | undefined | null;
+export type TableColumnDef = TableColumnDefKey & (() => TableColumn);
+
+function makeColumn<T extends (string | number)[]>(
+  builder: (...args: T) => TableColumn
+): (...args: T) => TableColumnDef {
+  const key = Math.random().toString();
+  const newBuilder = (...args: T) => {
+    const outer = () => {
+      const ret = builder(...args);
+      if (ret) {
+        return React.cloneElement(ret, { key });
+      }
+      return ret;
+    };
+    outer.key = key + args.join("-");
+    return outer;
+  };
+  return newBuilder;
+}
+
+export const COLUMN_GAMEMODE = makeColumn(
+  () =>
+    !CONTEST_MODE && (
+      <Column
+        dataKey="modeId"
+        label={isMobile() ? "" : "等级"}
+        cellRenderer={cellFormatGameMode}
+        width={isMobile() ? 20 : 40}
+      />
+    )
+)();
+
+export const COLUMN_RANK = makeColumn((activePlayerId: number | string) => (
+  <Column
+    dataKey="modeId"
+    label={isMobile() ? "" : "顺位"}
+    columnData={{ activePlayerId }}
+    cellRenderer={cellFormatRank}
+    width={isMobile() ? 20 : 40}
+  />
+));
+
+export const COLUMN_PLAYERS = makeColumn((activePlayerId: number | string) => (
+  <Column
+    dataKey="players"
+    label="玩家"
+    cellRenderer={({ rowData }: TableCellProps) =>
+      rowData && rowData.players ? <Players game={rowData} activePlayerId={activePlayerId.toString()} /> : null
+    }
+    width={120}
+    flexGrow={1}
+  />
+));
+
+export const COLUMN_STARTTIME = makeColumn(() => (
+  <Column
+    dataKey="startTime"
+    label="开始"
+    cellRenderer={cellFormatTime}
+    width={isMobile() ? 40 : 50}
+    className="text-right"
+    headerClassName="text-right"
+  />
+))();
+
+export const COLUMN_ENDTIME = makeColumn(() => (
+  <Column
+    dataKey="endTime"
+    label="结束"
+    cellRenderer={cellFormatTime}
+    width={isMobile() ? 40 : 50}
+    headerClassName="text-right"
+    className="text-right"
+  />
+))();
+
+export const COLUMN_FULLTIME = makeColumn(() => (
+  <Column
+    dataKey="startTime"
+    label="时间"
+    cellRenderer={cellFormatFullTime}
+    width={isMobile() ? 40 : 140}
+    className="text-right"
+    headerClassName="text-right"
+  />
+))();
+
+export default function GameRecordTable({
+  columns,
+  withActivePlayer = false
+}: {
+  columns: TableColumnDef[];
+  withActivePlayer?: boolean;
+}) {
   const data = useDataAdapter();
-  const [model] = useModel();
   const scrollerProps = useScrollerProps();
   const { isScrolling, onChildScroll, scrollTop, height, registerChild } = scrollerProps;
   const rowGetter = useCallback(({ index }: Index) => data.getItem(index), [data]);
@@ -68,17 +163,18 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
     [data]
   );
   const noRowsRenderer = useCallback(() => (data.getUnfilteredCount() ? null : <Loading />), [data]);
-  const activePlayerId = model.type === "player" ? model.playerId : undefined;
-  const cellRenderPlayer = useCallback(
-    ({ rowData }: TableCellProps) =>
-      rowData && rowData.players ? <Players game={rowData} activePlayerId={activePlayerId} /> : null,
-    [activePlayerId]
-  );
   const unfilteredCount = data.getUnfilteredCount();
   const shouldTriggerLayout = !!unfilteredCount;
   useEffect(() => {
     triggerRelayout();
   }, [shouldTriggerLayout]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoColumns = useMemo(() => columns.map(x => x()).filter(x => x), [
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    isMobile(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ...columns.map(x => x.key || x)
+  ]);
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <div ref={registerChild as any} className="font-xs-adjust">
@@ -86,7 +182,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
         {({ width }) => (
           <Table
             autoHeight
-            className={activePlayerId ? "with-active-player" : ""}
+            className={withActivePlayer ? "with-active-player" : ""}
             rowCount={data.getCount()}
             rowGetter={rowGetter}
             rowHeight={getRowHeight()}
@@ -99,56 +195,7 @@ export default function GameRecordTable({ showStartEnd = true, showFullTime = fa
             rowClassName={getRowClassName}
             noRowsRenderer={noRowsRenderer}
           >
-            {!CONTEST_MODE && (
-              <Column
-                dataKey="modeId"
-                label={isMobile() ? "" : "等级"}
-                cellRenderer={cellFormatGameMode}
-                width={isMobile() ? 20 : 40}
-              />
-            )}
-            {activePlayerId ? (
-              <Column
-                dataKey="modeId"
-                label={isMobile() ? "" : "顺位"}
-                columnData={{ activePlayerId }}
-                cellRenderer={cellFormatRank}
-                width={isMobile() ? 20 : 40}
-              />
-            ) : null}
-            <Column dataKey="players" label="玩家" cellRenderer={cellRenderPlayer} width={120} flexGrow={1} />
-            {showStartEnd
-              ? [
-                  <Column
-                    key="startTime"
-                    dataKey="startTime"
-                    label="开始"
-                    cellRenderer={cellFormatTime}
-                    width={isMobile() ? 40 : 50}
-                    className="text-right"
-                    headerClassName="text-right"
-                  />,
-                  <Column
-                    key="endTime"
-                    dataKey="endTime"
-                    label="结束"
-                    cellRenderer={cellFormatTime}
-                    width={isMobile() ? 40 : 50}
-                    headerClassName="text-right"
-                    className="text-right"
-                  />
-                ]
-              : null}
-            {showFullTime ? (
-              <Column
-                dataKey="startTime"
-                label="时间"
-                cellRenderer={cellFormatFullTime}
-                width={isMobile() ? 40 : 140}
-                className="text-right"
-                headerClassName="text-right"
-              />
-            ) : null}
+            {memoColumns}
           </Table>
         )}
       </AutoSizer>
