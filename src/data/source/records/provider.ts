@@ -4,17 +4,18 @@ import { GameRecord } from "../../types/record";
 import { Metadata } from "../../types/metadata";
 import { ListingDataLoader, PlayerDataLoader, DataLoader } from "./loader";
 
-export type FilterPredicate = ((record: GameRecord) => boolean) | null;
+export type FilterPredicate<TRecord = GameRecord> = ((record: TRecord) => boolean) | null;
 class DataProviderImpl<
-  TLoader extends DataLoader<TMetadata>,
-  TMetadata extends Metadata = TLoader extends DataLoader<infer T> ? T : Metadata
+  TLoader extends DataLoader<TMetadata, TRecord>,
+  TMetadata extends Metadata = TLoader extends DataLoader<infer T> ? T : Metadata,
+  TRecord extends { uuid: string } = GameRecord
 > {
   _loader: TLoader;
   _metadata: TMetadata | Promise<TMetadata> | null;
   _countPromise: Promise<number> | null;
-  _chunks: (GameRecord[] | Promise<GameRecord[]>)[];
+  _chunks: (TRecord[] | Promise<TRecord[]>)[];
   _itemsPerChunk: number;
-  _filterPredicate: FilterPredicate;
+  _filterPredicate: FilterPredicate<TRecord>;
   _filteredIndices: number[] | null;
   _filterResultCache: { [uuid: string]: boolean };
 
@@ -28,7 +29,7 @@ class DataProviderImpl<
     this._filteredIndices = null;
     this._filterResultCache = {};
   }
-  setFilterPredicate(predicate: FilterPredicate) {
+  setFilterPredicate(predicate: FilterPredicate<TRecord>) {
     if (this._filterPredicate === predicate) {
       return;
     }
@@ -121,7 +122,7 @@ class DataProviderImpl<
     const chunkNumber = Math.floor(mappedIndex / this._itemsPerChunk);
     return !!this._chunks[chunkNumber] && !(this._chunks[chunkNumber] instanceof Promise);
   }
-  getItem(index: number, skipPreload = false): GameRecord | Promise<GameRecord | null> {
+  getItem(index: number, skipPreload = false): TRecord | Promise<TRecord | null> {
     const mappedIndex = this._mapItemIndex(index);
     if (mappedIndex === null) {
       return this.getCount().then(count => {
@@ -167,7 +168,7 @@ class DataProviderImpl<
     }
     return this._filteredIndices ? this._filteredIndices[reversed] : reversed;
   }
-  async _getChunk(chunkIndex: number): Promise<GameRecord[]> {
+  async _getChunk(chunkIndex: number): Promise<TRecord[]> {
     if (!this._chunks[chunkIndex]) {
       this._chunks[chunkIndex] = this._loadChunk(chunkIndex);
     }
@@ -186,7 +187,7 @@ class DataProviderImpl<
       this._getChunk(i);
     }
   }
-  async _loadChunk(chunkIndex: number): Promise<GameRecord[]> {
+  async _loadChunk(chunkIndex: number): Promise<TRecord[]> {
     const count = await this.getCount();
     const numChunks = Math.ceil(count / this._itemsPerChunk);
     if (!numChunks) {

@@ -5,9 +5,9 @@ import { GameRecord } from "../../types/record";
 import { Metadata, PlayerMetadata, PlayerExtendedStats } from "../../types/metadata";
 import { apiGet } from "../api";
 
-export interface DataLoader<T extends Metadata> {
+export interface DataLoader<T extends Metadata, TRecord = GameRecord> {
   getMetadata(): Promise<T>;
-  getRecords(skip: number, limit: number, cacheTag?: string): Promise<GameRecord[]>;
+  getRecords(skip: number, limit: number, cacheTag?: string): Promise<TRecord[]>;
 }
 
 export class ListingDataLoader implements DataLoader<Metadata> {
