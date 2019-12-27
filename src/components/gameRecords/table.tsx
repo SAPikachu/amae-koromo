@@ -14,17 +14,29 @@ import { triggerRelayout } from "../../utils/index";
 import Loading from "../misc/loading";
 import { CONTEST_MODE } from "../../data/source/constants";
 
+export { Column } from "react-virtualized/dist/es/Table";
+
 const formatTime = (x: number) => (x ? dayjs.unix(x).format("HH:mm") : null);
 
-const Players = React.memo(({ game, activePlayerId }: { game: GameRecord; activePlayerId?: string }) => (
-  <div className="row no-gutters">
-    {game.players.map(x => (
-      <div key={x.accountId} className="col-12 col-md-6 pr-1">
-        <Player game={game} player={x} isActive={x.accountId.toString() === activePlayerId} />
-      </div>
-    ))}
-  </div>
-));
+type ActivePlayerId = number | string | ((x: GameRecord) => number | string);
+
+const Players = React.memo(({ game, activePlayerId }: { game: GameRecord; activePlayerId?: ActivePlayerId }) => {
+  if (typeof activePlayerId === "function") {
+    activePlayerId = activePlayerId(game);
+  }
+  if (typeof activePlayerId !== "string") {
+    activePlayerId = activePlayerId?.toString() || "";
+  }
+  return (
+    <div className="row no-gutters">
+      {game.players.map(x => (
+        <div key={x.accountId} className="col-12 col-md-6 pr-1">
+          <Player game={game} player={x} isActive={x.accountId.toString() === activePlayerId} />
+        </div>
+      ))}
+    </div>
+  );
+});
 
 function isMobile() {
   return !!window.matchMedia("(max-width: 575.75px)").matches;
@@ -62,7 +74,7 @@ type TableColumnDefKey = {
 export type TableColumn = React.FunctionComponentElement<Column> | false | undefined | null;
 export type TableColumnDef = TableColumnDefKey & (() => TableColumn);
 
-function makeColumn<T extends (string | number)[]>(
+export function makeColumn<T extends (string | number | Function)[]>(
   builder: (...args: T) => TableColumn
 ): (...args: T) => TableColumnDef {
   const key = Math.random().toString();
@@ -102,12 +114,12 @@ export const COLUMN_RANK = makeColumn((activePlayerId: number | string) => (
   />
 ));
 
-export const COLUMN_PLAYERS = makeColumn((activePlayerId: number | string) => (
+export const COLUMN_PLAYERS = makeColumn((activePlayerId: ActivePlayerId) => (
   <Column
     dataKey="players"
     label="玩家"
     cellRenderer={({ rowData }: TableCellProps) =>
-      rowData && rowData.players ? <Players game={rowData} activePlayerId={activePlayerId.toString()} /> : null
+      rowData && rowData.players ? <Players game={rowData} activePlayerId={activePlayerId} /> : null
     }
     width={120}
     flexGrow={1}
@@ -149,10 +161,12 @@ export const COLUMN_FULLTIME = makeColumn(() => (
 
 export default function GameRecordTable({
   columns,
-  withActivePlayer = false
+  withActivePlayer = false,
+  alwaysShowDetailLink = false
 }: {
   columns: TableColumnDef[];
   withActivePlayer?: boolean;
+  alwaysShowDetailLink?: boolean;
 }) {
   const data = useDataAdapter();
   const scrollerProps = useScrollerProps();
@@ -182,7 +196,10 @@ export default function GameRecordTable({
         {({ width }) => (
           <Table
             autoHeight
-            className={withActivePlayer ? "with-active-player" : ""}
+            className={clsx(
+              withActivePlayer && "with-active-player",
+              alwaysShowDetailLink && "always-show-detail-link"
+            )}
             rowCount={data.getCount()}
             rowGetter={rowGetter}
             rowHeight={getRowHeight()}

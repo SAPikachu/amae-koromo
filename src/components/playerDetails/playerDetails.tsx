@@ -4,8 +4,15 @@ import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
 import { useEffect, useState } from "react";
-import { triggerRelayout, formatPercent, useAsync, sum, formatFixed3 } from "../../utils/index";
-import { LevelWithDelta, PlayerExtendedStats, PlayerMetadata, GameRecord } from "../../data/types";
+import { triggerRelayout, formatPercent, useAsync, formatFixed3 } from "../../utils/index";
+import {
+  LevelWithDelta,
+  PlayerExtendedStats,
+  PlayerMetadata,
+  GameRecord,
+  FanStatEntry2,
+  FanStatEntryList
+} from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
 import StatItem from "./statItem";
@@ -169,36 +176,6 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
     </>
   );
 }
-function formatFanSummary(count: number, 役满: number): string {
-  if (役满) {
-    if (役满 === 1) {
-      return "役满";
-    }
-    return `${役满} 倍役满`;
-  }
-  let result = `${count} 番`;
-  if (count >= 13) {
-    result += " - 累计役满";
-  } else if (count >= 11) {
-    result += " - 三倍满";
-  } else if (count >= 8) {
-    result += " - 倍满";
-  } else if (count >= 6) {
-    result += " - 跳满";
-  } else if (count === 5) {
-    result += " - 满贯";
-  }
-  return result;
-}
-function formatFan(count: number, 役满: number): string {
-  if (役满) {
-    if (役满 === 1) {
-      return "役满";
-    }
-    return `${役满} 倍役满`;
-  }
-  return `${count} 番`;
-}
 function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   if (!stats.最近大铳) {
     return <p className="text-center">无满贯或以上大铳</p>;
@@ -211,15 +188,13 @@ function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata
         className="d-flex justify-content-between font-weight-bold"
         href={GameRecord.getRecordLink(stats.最近大铳.id, metadata.id)}
       >
-        <span>
-          {formatFanSummary(sum(stats.最近大铳.fans.map(x => x.count)), sum(stats.最近大铳.fans.map(x => x.役满)))}
-        </span>
+        <span>{FanStatEntryList.formatFanSummary(stats.最近大铳.fans)}</span>
         <span>{GameRecord.formatFullStartTime(stats.最近大铳.start_time)}</span>
       </a>
       <dl className="row mt-2">
         {stats.最近大铳.fans.map(x => (
           <StatItem key={x.label} label={x.label}>
-            {formatFan(x.count, x.役满)}
+            {FanStatEntry2.formatFan(x)}
           </StatItem>
         ))}
       </dl>

@@ -5,12 +5,18 @@ import { TITLE_PREFIX } from "../../utils/constants";
 import { useState, useEffect, useCallback } from "react";
 import { CONTEST_MODE } from "../../data/source/constants";
 
+const NAV_ITEMS = [
+  ["最近役满", "highlight"],
+  ["排行榜", "ranking"],
+  ["大数据", "statistics"]
+].map(([label, path]) => ({ label, path }));
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isActive(match: any, location: Location): boolean {
   if (!match) {
     return false;
   }
-  return !location.pathname.startsWith("/ranking") && !location.pathname.startsWith("/statistics");
+  return !NAV_ITEMS.some(({ path }) => location.pathname.startsWith("/" + path));
 }
 
 export default function Navbar() {
@@ -64,12 +70,11 @@ export default function Navbar() {
                 <NavLink className="nav-item nav-link" activeClassName="active" to="/" isActive={isActive}>
                   主页
                 </NavLink>
-                <NavLink className="nav-item nav-link" activeClassName="active" to="/ranking">
-                  排行榜
-                </NavLink>
-                <NavLink className="nav-item nav-link" activeClassName="active" to="/statistics">
-                  大数据
-                </NavLink>
+                {NAV_ITEMS.map(({ label, path }) => (
+                  <NavLink key={path} className="nav-item nav-link" activeClassName="active" to={`/${path}`}>
+                    {label}
+                  </NavLink>
+                ))}
               </div>
             </div>
           </>

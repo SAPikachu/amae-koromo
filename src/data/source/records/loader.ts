@@ -10,6 +10,21 @@ export interface DataLoader<T extends Metadata, TRecord = GameRecord> {
   getRecords(skip: number, limit: number, cacheTag?: string): Promise<TRecord[]>;
 }
 
+export class RecentHighlightDataLoader implements DataLoader<Metadata> {
+  _data: Promise<GameRecord[]>;
+  constructor(numItems = 100) {
+    this._data = apiGet<GameRecord[]>(`recent_highlight_games?limit=${numItems}`).then(data =>
+      data.sort((a, b) => a.startTime - b.startTime)
+    );
+  }
+  async getMetadata(): Promise<Metadata> {
+    return this._data.then(x => ({ count: x.length }));
+  }
+  async getRecords(skip: number, limit: number): Promise<GameRecord[]> {
+    return this._data.then(data => data.slice(skip, skip + limit));
+  }
+}
+
 export class ListingDataLoader implements DataLoader<Metadata> {
   _date: dayjs.Dayjs;
   constructor(date: dayjs.ConfigType) {

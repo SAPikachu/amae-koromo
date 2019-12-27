@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { LevelWithDelta, Level } from "./level";
 import { GameMode } from "./gameMode";
+import { FanStatEntry } from "./statistics";
+import { sum } from "../../utils";
 
 const RANK_DELTA = [15, 5, -5, -15];
 const MODE_DELTA = {
@@ -9,6 +11,47 @@ const MODE_DELTA = {
 };
 
 type RankRates = [number, number, number, number];
+
+export type FanStatEntry2 = FanStatEntry & {
+  役满: number;
+};
+export const FanStatEntry2 = Object.freeze({
+  formatFan(entry: FanStatEntry2): string {
+    if (entry.役满) {
+      if (entry.役满 === 1) {
+        return "役满";
+      }
+      return `${entry.役满} 倍役满`;
+    }
+    return `${entry.count} 番`;
+  }
+});
+export type FanStatEntryList = FanStatEntry2[];
+export const FanStatEntryList = Object.freeze({
+  formatFanSummary(list: FanStatEntryList): string {
+    const count = sum(list.map(x => x.count));
+    const 役满 = sum(list.map(x => x.役满));
+    if (役满) {
+      if (役满 === 1) {
+        return "役满";
+      }
+      return `${役满} 倍役满`;
+    }
+    let result = `${count} 番`;
+    if (count >= 13) {
+      result += " - 累计役满";
+    } else if (count >= 11) {
+      result += " - 三倍满";
+    } else if (count >= 8) {
+      result += " - 倍满";
+    } else if (count >= 6) {
+      result += " - 跳满";
+    } else if (count === 5) {
+      result += " - 满贯";
+    }
+    return result;
+  }
+});
 
 export interface PlayerExtendedStats {
   和牌率: number;
@@ -44,11 +87,7 @@ export interface PlayerExtendedStats {
   最近大铳?: {
     id: string;
     start_time: number;
-    fans: {
-      label: string;
-      count: number;
-      役满: number;
-    }[];
+    fans: FanStatEntryList;
   };
 }
 export interface Metadata {

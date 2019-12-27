@@ -25,6 +25,10 @@ const Statistics = Loadable({
   loader: () => import("../statistics"),
   loading: () => <Loading />
 });
+const RecentHighlight = Loadable({
+  loader: () => import("../recentHighlight"),
+  loading: () => <Loading />
+});
 
 function App() {
   return (
@@ -42,6 +46,9 @@ function App() {
               </Route>
               <Route path="/statistics">
                 <Statistics />
+              </Route>
+              <Route path="/highlight">
+                <RecentHighlight />
               </Route>
               <Route path="/">
                 <GameRecords />

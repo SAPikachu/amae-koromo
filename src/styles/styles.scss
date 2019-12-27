@@ -101,6 +101,13 @@ button.nav-link {
 .with-active-player .player:not(.active-player) a {
   color: inherit;
 }
+.player-chart-tooltip .detail-link,
+.active-player .detail-link {
+  display: none;
+}
+.always-show-detail-link.always-show-detail-link .detail-link {
+  display: unset;
+}
 .player-chart-tooltip {
   margin: 0;
   padding: 20px;

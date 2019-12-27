@@ -1,16 +1,12 @@
 import dayjs from "dayjs";
 
 import { GameRecord } from "../../types/record";
-import { Metadata } from "../../types/metadata";
-import { ListingDataLoader, PlayerDataLoader, DataLoader } from "./loader";
+import { Metadata, PlayerMetadata } from "../../types/metadata";
+import { ListingDataLoader, PlayerDataLoader, DataLoader, RecentHighlightDataLoader } from "./loader";
 
 export type FilterPredicate<TRecord = GameRecord> = ((record: TRecord) => boolean) | null;
-class DataProviderImpl<
-  TLoader extends DataLoader<TMetadata, TRecord>,
-  TMetadata extends Metadata = TLoader extends DataLoader<infer T> ? T : Metadata,
-  TRecord extends { uuid: string } = GameRecord
-> {
-  _loader: TLoader;
+class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: string } = GameRecord> {
+  _loader: DataLoader<TMetadata, TRecord>;
   _metadata: TMetadata | Promise<TMetadata> | null;
   _countPromise: Promise<number> | null;
   _chunks: (TRecord[] | Promise<TRecord[]>)[];
@@ -19,7 +15,7 @@ class DataProviderImpl<
   _filteredIndices: number[] | null;
   _filterResultCache: { [uuid: string]: boolean };
 
-  constructor(loader: TLoader, itemsPerChunk = 100) {
+  constructor(loader: DataLoader<TMetadata, TRecord>, itemsPerChunk = 100) {
     this._loader = loader;
     this._metadata = null;
     this._countPromise = null;
@@ -211,21 +207,24 @@ class DataProviderImpl<
   }
 }
 
-export type ListingDataProvider = DataProviderImpl<ListingDataLoader>;
-export const ListingDataProvider = Object.freeze({
-  create(date: dayjs.ConfigType): ListingDataProvider {
-    return new DataProviderImpl<ListingDataLoader>(new ListingDataLoader(date));
-  }
-});
-export type PlayerDataProvider = DataProviderImpl<PlayerDataLoader>;
-export const PlayerDataProvider = Object.freeze({
-  create(
+export type ListingDataProvider = DataProviderImpl<Metadata>;
+export type PlayerDataProvider = DataProviderImpl<PlayerMetadata>;
+
+export type DataProvider = ListingDataProvider | PlayerDataProvider;
+export const DataProvider = Object.freeze({
+  createListing(date: dayjs.ConfigType): ListingDataProvider {
+    return new DataProviderImpl(new ListingDataLoader(date));
+  },
+  createHightlight(): ListingDataProvider {
+    return new DataProviderImpl(new RecentHighlightDataLoader());
+  },
+  createPlayer(
     playerId: string,
     startDate: dayjs.ConfigType | null,
     endDate: dayjs.ConfigType | null,
     mode: string
   ): PlayerDataProvider {
-    return new DataProviderImpl<PlayerDataLoader>(
+    return new DataProviderImpl(
       new PlayerDataLoader(
         playerId,
         startDate ? dayjs(startDate).startOf("day") : undefined,
@@ -235,4 +234,3 @@ export const PlayerDataProvider = Object.freeze({
     );
   }
 });
-export type DataProvider = ListingDataProvider | PlayerDataProvider;

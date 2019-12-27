@@ -2,12 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import React, { ReactChild } from "react";
 import dayjs from "dayjs";
 
-import {
-  DataProvider,
-  FilterPredicate,
-  ListingDataProvider,
-  PlayerDataProvider
-} from "../../data/source/records/provider";
+import { DataProvider, FilterPredicate } from "../../data/source/records/provider";
 import { useModel, Model } from "./model";
 import { Metadata, GameRecord } from "../../data/types";
 import { generatePath } from "./routes";
@@ -47,6 +42,7 @@ class DummyDataAdapter implements IDataAdapter {
 
 export const DUMMY_DATA_ADAPTER = new DummyDataAdapter() as IDataAdapter;
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
 class DataAdapter implements IDataAdapter {
@@ -128,10 +124,10 @@ function getProviderKey(model: Model): string {
 
 function createProvider(model: Model): DataProvider {
   if (model.type === undefined) {
-    return ListingDataProvider.create(model.date || dayjs().startOf("day"));
+    return DataProvider.createListing(model.date || dayjs().startOf("day"));
   }
   if (model.type === "player") {
-    return PlayerDataProvider.create(model.playerId, model.startDate, model.endDate, model.selectedMode);
+    return DataProvider.createPlayer(model.playerId, model.startDate, model.endDate, model.selectedMode);
   }
   throw new Error("Not implemented");
 }
@@ -159,29 +155,19 @@ function usePredicate(model: Model): FilterPredicate {
   return useMemo(memoFunc, memoDeps);
 }
 
-export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {
-  const [model, updateModel] = useModel();
-  const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
-  const searchPredicate = usePredicate(model);
-  const dataProvider = useMemo(() => {
-    const key = getProviderKey(model);
-    if (!dataProviders[key]) {
-      dataProviders[key] = createProvider(model);
-    }
-    return dataProviders[key];
-  }, [model, dataProviders]);
+function useDataAdapterCommon(dataProvider: DataProvider, onError: () => void, deps: React.DependencyList) {
   const [dataAdapter, setDataAdapter] = useState(() => DUMMY_DATA_ADAPTER);
   const refreshDataAdapter = useCallback(
     (isError?: boolean) => {
       if (isError) {
-        updateModel(Model.removeExtraParams(model));
+        onError();
         return;
       }
-      dataProvider.setFilterPredicate(searchPredicate);
       const adapter = new DataAdapter(dataProvider);
       setDataAdapter(adapter);
     },
-    [dataProvider, searchPredicate, model, updateModel]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dataProvider, onError, ...deps]
   );
   useEffect(refreshDataAdapter, [refreshDataAdapter]);
   useEffect(() => {
@@ -199,5 +185,35 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
   useEffect(() => {
     dataProvider.getCountMaybeSync(); // Preload metadata
   }, [dataProvider]);
+  return {
+    dataAdapter
+  };
+}
+
+export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {
+  const [model, updateModel] = useModel();
+  const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
+  const searchPredicate = usePredicate(model);
+  const dataProvider = useMemo(() => {
+    const key = getProviderKey(model);
+    if (!dataProviders[key]) {
+      dataProviders[key] = createProvider(model);
+    }
+    return dataProviders[key];
+  }, [model, dataProviders]);
+  useEffect(() => dataProvider.setFilterPredicate(searchPredicate), [dataProvider, searchPredicate]);
+  const onError = useCallback(() => updateModel(Model.removeExtraParams(model)), [model, updateModel]);
+  const { dataAdapter } = useDataAdapterCommon(dataProvider, onError, [model, searchPredicate]);
+  return <DataAdapterContext.Provider value={dataAdapter}>{children}</DataAdapterContext.Provider>;
+}
+
+export function DataAdapterProviderCustom({
+  provider,
+  children
+}: {
+  provider: DataProvider;
+  children: ReactChild | ReactChild[];
+}) {
+  const { dataAdapter } = useDataAdapterCommon(provider, noop, []);
   return <DataAdapterContext.Provider value={dataAdapter}>{children}</DataAdapterContext.Provider>;
 }

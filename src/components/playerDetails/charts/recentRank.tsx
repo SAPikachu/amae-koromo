@@ -49,7 +49,7 @@ const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
       </h5>
       {realPayload.game.players.map(x => (
         <p key={x.accountId.toString()}>
-          <Player player={x} game={realPayload.game} isActive={realPayload.playerId === x.accountId} hideDetailLink />
+          <Player player={x} game={realPayload.game} isActive={realPayload.playerId === x.accountId} />
         </p>
       ))}
     </div>

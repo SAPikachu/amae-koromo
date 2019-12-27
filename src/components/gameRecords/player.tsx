@@ -8,13 +8,11 @@ import { generatePlayerPathById } from "./routes";
 export const Player = React.memo(function({
   player,
   game,
-  isActive,
-  hideDetailLink
+  isActive
 }: {
   player: PlayerRecord;
   game: GameRecord;
   isActive: boolean;
-  hideDetailLink?: boolean;
 }) {
   const { nickname, level, score, accountId } = player;
   const isTop = GameRecord.getRankIndexByPlayer(game, player) === 0;
@@ -23,11 +21,9 @@ export const Player = React.memo(function({
       <a href={GameRecord.getRecordLink(game, player)} title="查看牌谱" target="_blank" rel="noopener noreferrer">
         [{getLevelTag(level)}] {nickname} {score !== undefined && `[${score}]`}
       </a>{" "}
-      {hideDetailLink || isActive ? null : (
-        <Link title="玩家记录" to={generatePlayerPathById(accountId)}>
-          <IoMdBook />
-        </Link>
-      )}
+      <Link className="detail-link" title="玩家记录" to={generatePlayerPathById(accountId)}>
+        <IoMdBook />
+      </Link>
     </span>
   );
 });
