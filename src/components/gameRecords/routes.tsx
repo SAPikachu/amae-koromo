@@ -71,7 +71,7 @@ function GameRecordTablePlayerView() {
 function Routes() {
   return (
     <Switch>
-      <Route exact path={PLAYER_PATH}>
+      <Route path={PLAYER_PATH}>
         <RouteSync view="player" />
         <PlayerDetails />
         <GameRecordTablePlayerView />

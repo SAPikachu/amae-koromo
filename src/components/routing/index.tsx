@@ -16,13 +16,13 @@ export const ViewRoutes: React.FunctionComponent<RoutesProps> = () => {
 
 const Context = React.createContext<RouteDefProps[]>([]);
 
-export function NavButtons() {
+export function NavButtons({ className = "" }) {
   const routes = useContext(Context);
-  const match = useRouteMatch() || { path: "" };
+  const match = useRouteMatch() || { url: "" };
   return (
-    <nav className="nav nav-pills mb-3">
+    <nav className={`nav nav-pills mb-3 ${className}`}>
       {routes.map(route => (
-        <NavLink key={route.path} to={`${match.path}/${route.path}`} className="nav-link" activeClassName="active">
+        <NavLink key={route.path} to={`${match.url}/${route.path}`} className="nav-link" activeClassName="active">
           {route.title}
         </NavLink>
       ))}
@@ -32,25 +32,30 @@ export function NavButtons() {
 
 export function ViewSwitch({
   defaultPath,
+  mutateTitle = true,
   children
 }: {
   defaultPath?: string;
+  mutateTitle?: boolean;
   children?: React.ReactChild | React.ReactChildren;
 }) {
   const routes = useContext(Context);
-  const match = useRouteMatch() || { path: "" };
+  const match = useRouteMatch() || { url: "" };
+
   return (
     <Switch>
       {routes.map(route => (
-        <Route key={route.path} path={`${match.path}/${route.path}`}>
-          <Helmet>
-            <title>{route.title}</title>
-          </Helmet>
+        <Route key={route.path} path={`${match.url}/${route.path}`}>
+          {mutateTitle && (
+            <Helmet>
+              <title>{route.title}</title>
+            </Helmet>
+          )}
           {route.children}
         </Route>
       ))}
       <Route>
-        <Redirect to={`${match.path}/${defaultPath || routes[0].path}`} />
+        <Redirect to={`${match.url}/${defaultPath || routes[0].path}`} />
       </Route>
       {children}
     </Switch>

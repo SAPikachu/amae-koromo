@@ -3,7 +3,7 @@ import Loadable from "../misc/customizedLoadable";
 import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { triggerRelayout, formatPercent, useAsync, formatFixed3 } from "../../utils/index";
 import {
   LevelWithDelta,
@@ -17,8 +17,10 @@ import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
 import StatItem from "./statItem";
 import EstimatedStableLevel from "./estimatedStableLevel";
-import clsx from "clsx";
 import { Level } from "../../data/types/level";
+import { ViewRoutes, RouteDef, SimpleRoutedSubViews, NavButtons, ViewSwitch } from "../routing";
+import { useLocation } from "react-router-dom";
+import SameMatchRate from "./sameMatchRate";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -202,33 +204,38 @@ function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata
   );
 }
 function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
-  const [page, setPage] = useState(0);
+  const loc = useLocation();
   useEffect(() => {
     ReactTooltipPromise.then(x => x.rebuild());
-  }, [page]);
+  }, [loc.pathname]);
   return (
-    <>
-      <nav className="nav nav-pills mb-3 mt-3">
-        <button onClick={() => setPage(0)} className={clsx("nav-link", page === 0 && "active")}>
-          基本数据
-        </button>
-        <button onClick={() => setPage(1)} className={clsx("nav-link", page === 1 && "active")}>
-          更多数据
-        </button>
-        <button onClick={() => setPage(2)} className={clsx("nav-link", page === 2 && "active")}>
-          血统
-        </button>
-        <button onClick={() => setPage(3)} className={clsx("nav-link", page === 3 && "active")}>
-          最近大铳
-        </button>
-      </nav>
-      <dl className="row font-xs-adjust">
-        {page === 0 && <BasicStats metadata={metadata} />}
-        {page === 1 && <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} />}
-        {page === 2 && <ExtendedStatsViewAsync metadata={metadata} view={LuckStats} />}
-      </dl>
-      {page === 3 && <ExtendedStatsViewAsync metadata={metadata} view={LargestLost} />}
-    </>
+    <SimpleRoutedSubViews>
+      <ViewRoutes>
+        <RouteDef path="basic" title="基本数据">
+          <dl className="row">
+            <BasicStats metadata={metadata} />
+          </dl>
+        </RouteDef>
+        <RouteDef path="extended" title="更多数据">
+          <dl className="row">
+            <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} />
+          </dl>
+        </RouteDef>
+        <RouteDef path="luck" title="血统">
+          <dl className="row">
+            <ExtendedStatsViewAsync metadata={metadata} view={LuckStats} />
+          </dl>
+        </RouteDef>
+        <RouteDef path="largest-lost" title="最近大铳">
+          <ExtendedStatsViewAsync metadata={metadata} view={LargestLost} />
+        </RouteDef>
+        <RouteDef path="same-match" title="最常同桌">
+          <SameMatchRate currentAccountId={metadata.id} />
+        </RouteDef>
+      </ViewRoutes>
+      <NavButtons className="mt-3" />
+      <ViewSwitch mutateTitle={false} />
+    </SimpleRoutedSubViews>
   );
 }
 
