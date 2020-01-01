@@ -100,6 +100,7 @@ export const COLUMN_GAMEMODE = makeColumn(
         label={isMobile() ? "" : "等级"}
         cellRenderer={cellFormatGameMode}
         width={isMobile() ? 20 : 40}
+        className="mobile-vertical"
       />
     )
 )();

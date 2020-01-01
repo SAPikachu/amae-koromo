@@ -38,6 +38,12 @@ dl:empty {
   body {
     font-size: 0.8rem;
   }
+  .mobile-vertical {
+    writing-mode: vertical-lr;
+    letter-spacing: 0.5em;
+    padding-top: 0.5em;
+    white-space: nowrap;
+  }
 }
 .navbar {
   transition: background-color 0.3s;
