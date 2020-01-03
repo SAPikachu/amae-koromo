@@ -1,6 +1,7 @@
 import { useLocation } from "react-router";
 import React, { useEffect, useLayoutEffect } from "react";
 import Helmet from "react-helmet";
+import { CANONICAL_DOMAIN } from "../../utils/constants";
 
 let currentCategory = "Home";
 
@@ -43,6 +44,9 @@ export default function Tracker() {
     return null;
   }
   if (process.env.NODE_ENV !== "production") {
+    return null;
+  }
+  if (window.location.host !== CANONICAL_DOMAIN) {
     return null;
   }
   return <TrackerImpl />;
