@@ -12,6 +12,7 @@ import Navbar from "./navbar";
 import CanonicalLink from "../misc/canonicalLink";
 import Loading from "../misc/loading";
 import GameRecords from "../gameRecords";
+import Tracker, { PageCategory } from "../misc/tracker";
 
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
@@ -35,6 +36,7 @@ function App() {
     <Router>
       <Helmet defaultTitle={TITLE_PREFIX} titleTemplate={`%s | ${TITLE_PREFIX}`} />
       <CanonicalLink />
+      <Tracker />
       <Navbar />
       <MaintenanceHandler>
         <Scroller>
@@ -42,12 +44,15 @@ function App() {
           <Container>
             <Switch>
               <Route path="/ranking">
+                <PageCategory category="Ranking" />
                 <Ranking />
               </Route>
               <Route path="/statistics">
+                <PageCategory category="Statistics" />
                 <Statistics />
               </Route>
               <Route path="/highlight">
+                <PageCategory category="RecentHighlight" />
                 <RecentHighlight />
               </Route>
               <Route path="/">

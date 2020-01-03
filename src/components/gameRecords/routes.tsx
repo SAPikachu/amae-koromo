@@ -18,6 +18,7 @@ import {
   COLUMN_ENDTIME,
   COLUMN_FULLTIME
 } from "./table";
+import { PageCategory } from "../misc/tracker";
 const PlayerDetails = Loadable({
   loader: () => import("../playerDetails/playerDetails"),
   loading: () => <Loading />
@@ -73,11 +74,13 @@ function Routes() {
     <Switch>
       <Route path={PLAYER_PATH}>
         <RouteSync view="player" />
+        <PageCategory category="Player" />
         <PlayerDetails />
         <GameRecordTablePlayerView />
       </Route>
       <Route exact path={["/", PATH]}>
         <RouteSync view="listing" />
+        <PageCategory category="Listing" />
         <div className="row">
           <FilterPanel className="col" />
           <PlayerSearch className="col-12 col-sm-6 col-md-4" />
