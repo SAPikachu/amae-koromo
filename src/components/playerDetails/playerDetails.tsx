@@ -30,6 +30,10 @@ const RecentRankChart = Loadable({
   loader: () => import("./charts/recentRank"),
   loading: () => <Loading />
 });
+const WinLoseDistribution = Loadable({
+  loader: () => import("./charts/winLoseDistribution"),
+  loading: () => <Loading />
+});
 const ReactTooltipPromise = import("react-tooltip");
 const ReactTooltip = Loadable({
   loader: () => ReactTooltipPromise,
@@ -220,6 +224,9 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
           <dl className="row">
             <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} />
           </dl>
+        </RouteDef>
+        <RouteDef path="win-lose" title="和铳分布">
+          <ExtendedStatsViewAsync metadata={metadata} view={WinLoseDistribution as any} />
         </RouteDef>
         <RouteDef path="luck" title="血统">
           <dl className="row">

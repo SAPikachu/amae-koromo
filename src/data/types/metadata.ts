@@ -84,6 +84,12 @@ export interface PlayerExtendedStats {
   W立直?: number;
   流满?: number;
   平均起手向听: number;
+  放铳至立直: number;
+  放铳至副露: number;
+  放铳至默听: number;
+  立直和了: number;
+  副露和了: number;
+  默听和了: number;
   最近大铳?: {
     id: string;
     start_time: number;
