@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useRouteMatch, Switch, Route, Redirect, useLocation } from "react-router";
 import { Helmet } from "react-helmet";
 
-type RouteDefProps = { path: string; title: string; children: React.ReactChild | React.ReactChildren };
+type RouteDefProps = { path: string; exact?: boolean; title: string; children: React.ReactChild | React.ReactChildren };
 export const RouteDef: React.FunctionComponent<RouteDefProps> = () => {
   throw new Error("Not intended for rendering");
 };
@@ -19,13 +19,18 @@ const Context = React.createContext<RouteDefProps[]>([]);
 export function NavButtons({ className = "", replace = false, keepState = false }) {
   const routes = useContext(Context);
   const match = useRouteMatch() || { url: "" };
+  const urlBase = match.url.replace(/\/+$/, "");
   return (
     <nav className={`nav nav-pills mb-3 ${className}`}>
       {routes.map(route => (
         <NavLink
           key={route.path}
-          to={loc => ({ pathname: `${match.url}/${route.path}`, state: keepState ? loc.state : undefined })}
+          to={loc => ({
+            pathname: `${urlBase}/${route.path}`,
+            state: keepState ? loc.state : undefined
+          })}
           replace={replace}
+          exact={!!route.exact}
           className="nav-link"
           activeClassName="active"
         >
@@ -37,21 +42,22 @@ export function NavButtons({ className = "", replace = false, keepState = false 
 }
 
 export function ViewSwitch({
-  defaultPath,
+  defaultRenderDirectly = false,
   mutateTitle = true,
   children
 }: {
-  defaultPath?: string;
+  defaultRenderDirectly?: boolean;
   mutateTitle?: boolean;
   children?: React.ReactChild | React.ReactChildren;
 }) {
   const routes = useContext(Context);
   const match = useRouteMatch() || { url: "" };
   const loc = useLocation();
+  const urlBase = match.url.replace(/\/+$/, "");
   return (
     <Switch>
       {routes.map(route => (
-        <Route key={route.path} path={`${match.url}/${route.path}`}>
+        <Route exact={route.exact} key={route.path} path={`${urlBase}/${route.path}`}>
           {mutateTitle && (
             <Helmet>
               <title>{route.title}</title>
@@ -61,7 +67,11 @@ export function ViewSwitch({
         </Route>
       ))}
       <Route>
-        <Redirect to={{ ...loc, pathname: `${match.url}/${defaultPath || routes[0].path}` }} />
+        {defaultRenderDirectly ? (
+          routes[0].children
+        ) : (
+          <Redirect to={{ ...loc, pathname: `${urlBase}/${routes[0].path}` }} push={false} />
+        )}
       </Route>
       {children}
     </Switch>

@@ -215,7 +215,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
   return (
     <SimpleRoutedSubViews>
       <ViewRoutes>
-        <RouteDef path="basic" title="基本数据">
+        <RouteDef path="" exact title="基本数据">
           <dl className="row">
             <BasicStats metadata={metadata} />
           </dl>
@@ -241,7 +241,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
         </RouteDef>
       </ViewRoutes>
       <NavButtons className="mt-3" replace keepState />
-      <ViewSwitch mutateTitle={false} />
+      <ViewSwitch mutateTitle={false} defaultRenderDirectly />
     </SimpleRoutedSubViews>
   );
 }
