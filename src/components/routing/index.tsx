@@ -1,7 +1,7 @@
 import React from "react";
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { useRouteMatch, Switch, Route, Redirect } from "react-router";
+import { useRouteMatch, Switch, Route, Redirect, useLocation } from "react-router";
 import { Helmet } from "react-helmet";
 
 type RouteDefProps = { path: string; title: string; children: React.ReactChild | React.ReactChildren };
@@ -47,7 +47,7 @@ export function ViewSwitch({
 }) {
   const routes = useContext(Context);
   const match = useRouteMatch() || { url: "" };
-
+  const loc = useLocation();
   return (
     <Switch>
       {routes.map(route => (
@@ -61,7 +61,7 @@ export function ViewSwitch({
         </Route>
       ))}
       <Route>
-        <Redirect to={`${match.url}/${defaultPath || routes[0].path}`} />
+        <Redirect to={{ ...loc, pathname: `${match.url}/${defaultPath || routes[0].path}` }} />
       </Route>
       {children}
     </Switch>

@@ -47,14 +47,14 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
   return (
     <dl className="row">
       {rates.slice(0, numDisplay).map(x => (
-        <>
+        <React.Fragment key={x.player.accountId}>
           <dt className="col-8 col-lg-4 font-weight-normal">
             <Link to={generatePlayerPathById(x.player.accountId)}>{x.player.nickname}</Link>
           </dt>
           <dd className="col-4 col-lg-2 text-right">
             {formatPercent(x.count / numProcessedGames)} ({x.count})
           </dd>
-        </>
+        </React.Fragment>
       ))}
     </dl>
   );
