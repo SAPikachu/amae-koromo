@@ -241,7 +241,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
         </RouteDef>
       </ViewRoutes>
       <NavButtons className="mt-3" replace keepState />
-      <ViewSwitch mutateTitle={false} defaultRenderDirectly />
+      <ViewSwitch mutateTitle={false} />
     </SimpleRoutedSubViews>
   );
 }

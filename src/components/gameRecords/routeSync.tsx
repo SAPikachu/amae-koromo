@@ -64,10 +64,11 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
   const state = location.state;
   // console.log(params, model, location, state);
   if (state && state.model.version === model.version) {
+    /*
     delete (model as Model).pendingRouteUpdate;
     if (location.pathname !== state.pathname) {
       return <Redirect to={{ pathname: state.pathname, state }} />;
-    }
+    }*/
     return <></>;
   }
   if (!state) {
