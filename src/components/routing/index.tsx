@@ -16,13 +16,19 @@ export const ViewRoutes: React.FunctionComponent<RoutesProps> = () => {
 
 const Context = React.createContext<RouteDefProps[]>([]);
 
-export function NavButtons({ className = "" }) {
+export function NavButtons({ className = "", replace = false, keepState = false }) {
   const routes = useContext(Context);
   const match = useRouteMatch() || { url: "" };
   return (
     <nav className={`nav nav-pills mb-3 ${className}`}>
       {routes.map(route => (
-        <NavLink key={route.path} to={`${match.url}/${route.path}`} className="nav-link" activeClassName="active">
+        <NavLink
+          key={route.path}
+          to={loc => ({ pathname: `${match.url}/${route.path}`, state: keepState ? loc.state : undefined })}
+          replace={replace}
+          className="nav-link"
+          activeClassName="active"
+        >
           {route.title}
         </NavLink>
       ))}

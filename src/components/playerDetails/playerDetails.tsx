@@ -240,7 +240,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
           <SameMatchRate currentAccountId={metadata.id} />
         </RouteDef>
       </ViewRoutes>
-      <NavButtons className="mt-3" />
+      <NavButtons className="mt-3" replace keepState />
       <ViewSwitch mutateTitle={false} />
     </SimpleRoutedSubViews>
   );
