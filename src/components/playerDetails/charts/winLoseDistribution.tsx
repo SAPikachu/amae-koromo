@@ -1,5 +1,5 @@
 import React from "react";
-import { PlayerExtendedStats } from "../../../data/types";
+import { PlayerExtendedStats, PlayerMetadata } from "../../../data/types";
 import SimplePieChart, { PieChartItem } from "../../charts/simplePieChart";
 import { sum } from "../../../utils";
 import { formatPercent } from "../../../utils/index";
@@ -14,7 +14,7 @@ function buildItems(stats: PlayerExtendedStats, keys: (keyof PlayerExtendedStats
   }));
 }
 
-export default function WinLoseDistribution({ stats }: { stats: PlayerExtendedStats }) {
+export default function WinLoseDistribution({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   const winData = useMemo(() => buildItems(stats, ["立直和了", "副露和了", "默听和了"], ["立直", "副露", "默听"]), [
     stats
   ]);

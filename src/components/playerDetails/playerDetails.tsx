@@ -226,7 +226,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
           </dl>
         </RouteDef>
         <RouteDef path="win-lose" title="和铳分布">
-          <ExtendedStatsViewAsync metadata={metadata} view={WinLoseDistribution as any} />
+          <ExtendedStatsViewAsync metadata={metadata} view={WinLoseDistribution} />
         </RouteDef>
         <RouteDef path="luck" title="血统">
           <dl className="row">
