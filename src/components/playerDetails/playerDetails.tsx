@@ -108,9 +108,6 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       <StatItem label="最高等级">{LevelWithDelta.getTag(metadata.max_level)}</StatItem>
       <StatItem label="最高分数">{LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.max_level))}</StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
-      <StatItem label="一发率" description="一发局数 / 立直和了局数">
-        {formatPercent(stats.一发率 || 0)}
-      </StatItem>
       <StatItem label="里宝率" description="中里宝局数 / 立直和了局数">
         {formatPercent(stats.里宝率 || 0)}
       </StatItem>
@@ -126,23 +123,57 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       <StatItem label="放铳时副露率" description="放铳时副露次数 / 放铳次数">
         {formatPercent(stats.放铳时副露率 || 0)}
       </StatItem>
-      <StatItem label="立直后放铳率" description="放铳时立直次数 / 立直次数">
-        {formatPercent(stats.立直后放铳率 || 0)}
-      </StatItem>
       <StatItem label="副露后放铳率" description="放铳时副露次数 / 副露次数">
         {formatPercent(stats.副露后放铳率 || 0)}
-      </StatItem>
-      <StatItem label="立直后和牌率" description="立直后和牌次数 / 立直次数">
-        {formatPercent(stats.立直后和牌率 || 0)}
       </StatItem>
       <StatItem label="副露后和牌率" description="副露后和牌次数 / 副露次数">
         {formatPercent(stats.副露后和牌率 || 0)}
       </StatItem>
-      <StatItem label="立直后流局率" description="立直后流局次数 / 立直次数">
-        {formatPercent(stats.立直后流局率 || 0)}
-      </StatItem>
       <StatItem label="副露后流局率" description="副露后流局次数 / 副露次数">
         {formatPercent(stats.副露后流局率 || 0)}
+      </StatItem>
+    </>
+  );
+}
+function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
+  return (
+    <>
+      <StatItem label="立直率" description="立直局数 / 总局数">
+        {formatPercent(stats.立直率 || 0)}
+      </StatItem>
+      <StatItem label="立直和了" description="立直和了局数 / 立直局数">
+        {formatPercent(stats.立直后和牌率 || 0)}
+      </StatItem>
+      <StatItem label="立直放铳" description="立直放铳局数 / 立直局数">
+        {formatPercent(stats.立直后放铳率 || 0)}
+      </StatItem>
+      <StatItem label="立直收支" description="立直总收支（含供托） / 立直局数">
+        {stats.立直收支 || 0}
+      </StatItem>
+      <StatItem label="立直收入" description="立直和了收入（含供托） / 立直和了局数">
+        {stats.立直收入 || 0}
+      </StatItem>
+      <StatItem label="立直支出" description="立直放铳支出（含立直棒） / 立直放铳局数">
+        {stats.立直支出 || 0}
+      </StatItem>
+      <StatItem label="先制率" description="先制立直局数 / 立直局数">
+        {formatPercent(stats.先制率 || 0)}
+      </StatItem>
+      <StatItem label="追立率" description="追立局数 / 立直局数">
+        {formatPercent(stats.追立率 || 0)}
+      </StatItem>
+      <StatItem label="被追率" description="被追立局数 / 立直局数">
+        {formatPercent(stats.被追率 || 0)}
+      </StatItem>
+      <StatItem label="立直巡目">{formatFixed3(stats.立直巡目 || 0)}</StatItem>
+      <StatItem label="立直流局" description="立直流局局数 / 立直局数">
+        {formatPercent(stats.立直后流局率 || 0)}
+      </StatItem>
+      <StatItem label="一发率" description="一发局数 / 立直和了局数">
+        {formatPercent(stats.一发率 || 0)}
+      </StatItem>
+      <StatItem label="振听率" description="振听立直局数（不含立直见逃） / 立直局数">
+        {formatPercent(stats.振听立直率 || 0)}
       </StatItem>
     </>
   );
@@ -215,12 +246,17 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
   return (
     <SimpleRoutedSubViews>
       <ViewRoutes>
-        <RouteDef path="" exact title="基本数据">
+        <RouteDef path="" exact title="基本">
           <dl className="row">
             <BasicStats metadata={metadata} />
           </dl>
         </RouteDef>
-        <RouteDef path="extended" title="更多数据">
+        <RouteDef path="riichi" title="立直">
+          <dl className="row">
+            <ExtendedStatsViewAsync metadata={metadata} view={RiichiStats} />
+          </dl>
+        </RouteDef>
+        <RouteDef path="extended" title="更多">
           <dl className="row">
             <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} />
           </dl>

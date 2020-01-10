@@ -90,6 +90,15 @@ export interface PlayerExtendedStats {
   立直和了: number;
   副露和了: number;
   默听和了: number;
+  立直巡目: number;
+  立直流局: number;
+  立直收支: number;
+  立直收入: number;
+  立直支出: number;
+  先制率: number;
+  追立率: number;
+  被追率: number;
+  振听立直率: number;
   最近大铳?: {
     id: string;
     start_time: number;
