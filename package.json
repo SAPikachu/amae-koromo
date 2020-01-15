@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@rescripts/cli": "0.0.13",
+    "@types/google.analytics": "0.0.40",
     "@types/react": "16.9.15",
     "@types/react-dom": "16.9.4",
     "@types/react-helmet": "^5.0.14",
@@ -30,7 +31,6 @@
     "@types/react-tooltip": "^3.11.0",
     "@types/react-virtualized": "9.21.6",
     "@types/recharts": "^1.8.3",
-    "@types/segment-analytics": "0.0.32",
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
     "eslint": "^6.7.2",

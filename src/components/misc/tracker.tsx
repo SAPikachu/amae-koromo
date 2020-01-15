@@ -26,10 +26,11 @@ function TrackerImpl() {
       }
       const helmet = Helmet.peek();
       const title = (helmet.title || document.title).toString();
-      window.analytics.page(currentCategory, title, {
-        url: `https://${window.location.host}${loc.pathname}`,
+      window.ga("send", {
+        hitType: "pageview",
         path: loc.pathname,
-        title
+        title: `${currentCategory} ${title}`,
+        contentGroup1: currentCategory
       });
     });
     return () => {
@@ -40,7 +41,7 @@ function TrackerImpl() {
 }
 
 export default function Tracker() {
-  if (!window.analytics) {
+  if (!window.ga) {
     return null;
   }
   if (process.env.NODE_ENV !== "production") {
