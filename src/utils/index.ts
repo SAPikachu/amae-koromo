@@ -73,3 +73,7 @@ export function useAsyncFactory<T>(
 export function sum(numbers: number[]): number {
   return numbers.reduce((a, b) => a + b, 0);
 }
+
+export function isMobile() {
+  return !!window.matchMedia("(max-width: 575.75px)").matches;
+}

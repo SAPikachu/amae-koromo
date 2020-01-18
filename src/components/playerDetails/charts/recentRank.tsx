@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { Player } from "../../gameRecords/player";
 import Loading from "../../misc/loading";
 import { calculateDeltaPoint } from "../../../data/types/metadata";
+import { isMobile } from "../../../utils/index";
 
 declare module "recharts" {
   interface DotProps {
@@ -31,13 +32,14 @@ type DotPayload = {
 };
 
 const createDot = (props: { payload: DotPayload }, active?: boolean) => {
+  const scale = isMobile() ? 1.5 : 2;
   return (
     <Dot
       {...props}
-      r={5}
+      r={2.5 * scale}
       stroke={RANK_COLORS[props.payload.rank]}
       onClick={() => window.open(GameRecord.getRecordLink(props.payload.game, props.payload.playerId), "_blank")}
-      {...(active ? { fill: RANK_COLORS[props.payload.rank], r: 10 } : {})}
+      {...(active ? { fill: RANK_COLORS[props.payload.rank], r: 5 * scale } : {})}
     />
   );
 };
@@ -69,7 +71,7 @@ export default function RecentRankChart({
   dataAdapter,
   playerId,
   aspect = 2,
-  numGames = 20
+  numGames = isMobile() ? 20 : 30
 }: {
   dataAdapter: IDataAdapter;
   playerId: number;

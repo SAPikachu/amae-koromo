@@ -10,7 +10,7 @@ import { GameRecord, GameMode } from "../../data/types";
 import { Player } from "./player";
 import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";
-import { triggerRelayout } from "../../utils/index";
+import { triggerRelayout, isMobile } from "../../utils/index";
 import Loading from "../misc/loading";
 import { CONTEST_MODE } from "../../data/source/constants";
 
@@ -37,10 +37,6 @@ const Players = React.memo(({ game, activePlayerId }: { game: GameRecord; active
     </div>
   );
 });
-
-function isMobile() {
-  return !!window.matchMedia("(max-width: 575.75px)").matches;
-}
 
 const cellFormatTime = ({ cellData }: TableCellProps) => formatTime(cellData);
 const cellFormatFullTime = ({ rowData }: TableCellProps) =>
