@@ -1,11 +1,12 @@
 import React from "react";
-import { ResponsiveContainer, LineChart, Line, Dot, Tooltip, TooltipProps } from "recharts";
+import { ResponsiveContainer, LineChart, Line, Dot, Tooltip, YAxis, TooltipProps } from "recharts";
 
 import { IDataAdapter } from "../../gameRecords/dataAdapterProvider";
-import { GameRecord, RANK_LABELS, RANK_COLORS, GameMode } from "../../../data/types";
+import { GameRecord, RANK_LABELS, RANK_COLORS, GameMode, Level } from "../../../data/types";
 import { useMemo } from "react";
 import { Player } from "../../gameRecords/player";
 import Loading from "../../misc/loading";
+import { calculateDeltaPoint } from "../../../data/types/metadata";
 
 declare module "recharts" {
   interface DotProps {
@@ -20,7 +21,14 @@ declare module "recharts" {
   }
 }
 
-type DotPayload = { pos: number; rank: number; game: GameRecord; playerId: number };
+type DotPayload = {
+  pos: number;
+  rank: number;
+  delta: number;
+  cumulativeDelta: number;
+  game: GameRecord;
+  playerId: number;
+};
 
 const createDot = (props: { payload: DotPayload }, active?: boolean) => {
   return (
@@ -45,7 +53,8 @@ const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
     <div className="player-chart-tooltip">
       <h5>
         {GameRecord.formatFullStartTime(realPayload.game)} {GameMode[realPayload.game.modeId]}{" "}
-        {RANK_LABELS[realPayload.rank]}
+        {RANK_LABELS[realPayload.rank]} {realPayload.delta > 0 ? "+" : ""}
+        {realPayload.delta}pt
       </h5>
       {realPayload.game.players.map(x => (
         <p key={x.accountId.toString()}>
@@ -79,7 +88,22 @@ export default function RecentRankChart({
         break;
       }
       const rank = GameRecord.getRankIndexByPlayer(game, playerId);
-      result.unshift({ pos: 3 - rank, rank, game, playerId });
+      result.unshift({
+        pos: 3 - rank,
+        rank,
+        delta: 0,
+        cumulativeDelta: 0,
+        game,
+        playerId
+      });
+    }
+    let delta = 0;
+    for (const point of result) {
+      const game = point.game;
+      const playerRecord = game.players.filter(x => x.accountId.toString() === playerId.toString())[0];
+      point.delta = calculateDeltaPoint(playerRecord.score, point.rank, game.modeId, new Level(playerRecord.level));
+      delta += point.delta;
+      point.cumulativeDelta = delta;
     }
     return result;
   }, [dataAdapter, numGames, playerId]);
@@ -89,6 +113,19 @@ export default function RecentRankChart({
   return (
     <ResponsiveContainer width="100%" aspect={aspect} height="auto">
       <LineChart data={dataPoints} margin={{ top: 15, right: 15, bottom: 15, left: 15 }}>
+        <YAxis type="number" domain={["dataMin", "dataMax"]} yAxisId={0} hide={true} />
+        <YAxis type="number" domain={["dataMin", "dataMax"]} yAxisId={1} hide={true} />
+        <Line
+          isAnimationActive={false}
+          dataKey="cumulativeDelta"
+          type="linear"
+          stroke="#969696"
+          strokeWidth={1.5}
+          yAxisId={1}
+          dot={false}
+          activeDot={false}
+          strokeDasharray="5 5"
+        />
         <Line
           isAnimationActive={false}
           dataKey="pos"

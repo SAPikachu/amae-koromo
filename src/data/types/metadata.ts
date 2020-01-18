@@ -124,7 +124,7 @@ export interface PlayerMetadata extends PlayerMetadataLite, PlayerMetadataLite2 
   extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
 }
 
-function calculateDeltaPoint(
+export function calculateDeltaPoint(
   score: number,
   rank: number,
   mode: GameMode,
