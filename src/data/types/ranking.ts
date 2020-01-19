@@ -30,5 +30,11 @@ export enum CareerRankingType {
   NumGames = "num_games",
   StableLevel = "stable_level",
   Win = "win",
-  Lose = "lose"
+  Lose = "lose",
+  里宝率 = "里宝率",
+  被炸率 = "被炸率",
+  一发率 = "一发率",
+  里宝率Rev = "里宝率_rev",
+  被炸率Rev = "被炸率_rev",
+  一发率Rev = "一发率_rev"
 }

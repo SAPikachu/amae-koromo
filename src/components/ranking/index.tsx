@@ -48,6 +48,20 @@ const ROUTES = (
         <CareerRankingColumn type={CareerRankingType.Lose} title="放铳率" />
       </CareerRanking>
     </RouteDef>
+    <RouteDef path="lucky" title="欧洲人">
+      <CareerRanking>
+        <CareerRankingColumn showNumGames={false} type={CareerRankingType.被炸率} title="被炸率" />
+        <CareerRankingColumn showNumGames={false} type={CareerRankingType.里宝率} title="里宝率" />
+        <CareerRankingColumn showNumGames={false} type={CareerRankingType.一发率} title="一发率" />
+      </CareerRanking>
+    </RouteDef>
+    <RouteDef path="unlucky" title="非洲人">
+      <CareerRanking>
+        <CareerRankingColumn showNumGames={false} type={CareerRankingType.被炸率Rev} title="被炸率" />
+        <CareerRankingColumn showNumGames={false} type={CareerRankingType.里宝率Rev} title="里宝率" />
+        <CareerRankingColumn showNumGames={false} type={CareerRankingType.一发率Rev} title="一发率" />
+      </CareerRanking>
+    </RouteDef>
   </ViewRoutes>
 );
 
