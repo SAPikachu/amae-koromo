@@ -28,7 +28,7 @@ function TrackerImpl() {
       const title = (helmet.title || document.title).toString();
       window.ga("send", {
         hitType: "pageview",
-        path: loc.pathname,
+        page: loc.pathname,
         title: `${currentCategory} ${title}`,
         contentGroup1: currentCategory
       });
