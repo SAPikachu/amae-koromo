@@ -44,8 +44,8 @@ const ROUTES = (
     </RouteDef>
     <RouteDef path="winlose" title="和率/铳率">
       <CareerRanking>
-        <CareerRankingColumn type={CareerRankingType.Win} title="和率" />
-        <CareerRankingColumn type={CareerRankingType.Lose} title="铳率" />
+        <CareerRankingColumn type={CareerRankingType.Win} title="和牌率" />
+        <CareerRankingColumn type={CareerRankingType.Lose} title="放铳率" />
       </CareerRanking>
     </RouteDef>
   </ViewRoutes>
