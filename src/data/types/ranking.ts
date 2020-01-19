@@ -28,5 +28,7 @@ export enum CareerRankingType {
   Rank4 = "rank4",
   AvgRank = "avg_rank",
   NumGames = "num_games",
-  StableLevel = "stable_level"
+  StableLevel = "stable_level",
+  Win = "win",
+  Lose = "lose"
 }
