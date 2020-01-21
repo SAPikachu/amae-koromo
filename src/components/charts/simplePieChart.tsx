@@ -75,6 +75,7 @@ export default function SimplePieChart<T extends PieChartItem>({
   items,
   innerLabel = defaultInnerLabel,
   outerLabel = defaultOuterLabel,
+  outerLabelOffset = 0,
   innerLabelLineHeight = 24,
   startAngle = 0,
   colors = DEFAULT_COLORS,
@@ -84,6 +85,7 @@ export default function SimplePieChart<T extends PieChartItem>({
   items: T[];
   innerLabel?: (item: T) => string;
   outerLabel?: (item: T) => string;
+  outerLabelOffset?: number;
   innerLabelLineHeight?: number;
   startAngle?: number;
   colors?: string[];
@@ -101,6 +103,12 @@ export default function SimplePieChart<T extends PieChartItem>({
     () => renderCustomizedLabelFactory({ lineHeight: innerLabelLineHeight, innerLabelFontSize }),
     [innerLabelLineHeight, innerLabelFontSize]
   );
+  const wrappedOuterLabel = useMemo(() => {
+    const ret = (item: T) => outerLabel(item);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (ret as any).offsetRadius = outerLabelOffset;
+    return ret;
+  }, [outerLabel, outerLabelOffset]);
   return (
     <ResponsiveContainer width="100%" aspect={aspect} height="auto">
       <PieChart>
@@ -110,7 +118,7 @@ export default function SimplePieChart<T extends PieChartItem>({
           nameKey="outerLabel"
           dataKey="value"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          label={outerLabel as (x: any) => string}
+          label={wrappedOuterLabel as (x: any) => string}
           startAngle={startAngle}
           endAngle={startAngle + 360}
         >

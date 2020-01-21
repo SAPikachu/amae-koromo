@@ -5,8 +5,13 @@ import { sum } from "../../../utils";
 import { formatPercent } from "../../../utils/index";
 import { useMemo } from "react";
 
-function buildItems(stats: PlayerExtendedStats, keys: (keyof PlayerExtendedStats)[], labels: string[]): PieChartItem[] {
-  const total = sum(keys.map(key => stats[key] as number));
+function buildItems(
+  stats: PlayerExtendedStats,
+  keys: (keyof PlayerExtendedStats)[],
+  labels: string[],
+  total = 0
+): PieChartItem[] {
+  total = total || sum(keys.map(key => stats[key] as number));
   return keys.map((key, index) => ({
     value: stats[key] as number,
     outerLabel: labels[index],
@@ -22,15 +27,47 @@ export default function WinLoseDistribution({ stats }: { stats: PlayerExtendedSt
     () => buildItems(stats, ["放铳至立直", "放铳至副露", "放铳至默听"], ["立直", "副露", "默听"]),
     [stats]
   );
+  const loseSelfData = useMemo(() => {
+    const result = buildItems(stats, ["放铳时立直率", "放铳时副露率"], ["立直", "副露"], 1);
+    const selfOther = {
+      value: 1 - stats.放铳时副露率 - stats.放铳时立直率,
+      outerLabel: "门清"
+    } as PieChartItem;
+    selfOther.innerLabel = formatPercent(selfOther.value / 1);
+    result.push(selfOther);
+    return result;
+  }, [stats]);
   return (
     <div className="row">
-      <div className="col-lg-6">
-        <h5 className="text-center mb-n3">和牌时</h5>
-        <SimplePieChart aspect={3 / 2} items={winData} startAngle={-45} innerLabelFontSize="0.85rem" />
+      <div className="col-lg-4 mb-2">
+        <h5 className="text-center">和牌时</h5>
+        <SimplePieChart
+          aspect={4 / 3}
+          items={winData}
+          startAngle={-45}
+          innerLabelFontSize="0.85rem"
+          outerLabelOffset={10}
+        />
       </div>
-      <div className="col-lg-6">
-        <h5 className="text-center mb-n3">放铳至</h5>
-        <SimplePieChart aspect={3 / 2} items={loseData} startAngle={-45} innerLabelFontSize="0.85rem" />
+      <div className="col-lg-4 mb-2">
+        <h5 className="text-center">放铳时</h5>
+        <SimplePieChart
+          aspect={4 / 3}
+          items={loseSelfData}
+          startAngle={-45}
+          innerLabelFontSize="0.85rem"
+          outerLabelOffset={10}
+        />
+      </div>
+      <div className="col-lg-4 mb-2">
+        <h5 className="text-center">放铳至</h5>
+        <SimplePieChart
+          aspect={4 / 3}
+          items={loseData}
+          startAngle={-45}
+          innerLabelFontSize="0.85rem"
+          outerLabelOffset={10}
+        />
       </div>
     </div>
   );

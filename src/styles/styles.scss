@@ -100,6 +100,7 @@ button.nav-link {
 }
 .recharts-pie-label-text {
   font-weight: bold;
+  transform: translateY(5px);
 }
 .with-active-player .player:not(.active-player) {
   color: #aaa;
