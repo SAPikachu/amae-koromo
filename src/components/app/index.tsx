@@ -6,13 +6,13 @@ import Scroller from "../misc/scroller";
 
 import { Container } from "../layout";
 import { AppHeader } from "./appHeader";
-import { TITLE_PREFIX } from "../../utils/constants";
 import { MaintenanceHandler } from "./maintenance";
 import Navbar from "./navbar";
 import CanonicalLink from "../misc/canonicalLink";
 import Loading from "../misc/loading";
 import GameRecords from "../gameRecords";
 import Tracker, { PageCategory } from "../misc/tracker";
+import Conf from "../../utils/conf";
 
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
@@ -34,7 +34,7 @@ const RecentHighlight = Loadable({
 function App() {
   return (
     <Router>
-      <Helmet defaultTitle={TITLE_PREFIX} titleTemplate={`%s | ${TITLE_PREFIX}`} />
+      <Helmet defaultTitle={Conf.siteTitle} titleTemplate={`%s | ${Conf.siteTitle}`} />
       <CanonicalLink />
       <Tracker />
       <Navbar />

@@ -1,11 +1,11 @@
 import React from "react";
 import { useEffect, useState, useCallback } from "react";
-import { DATE_MIN } from "../../utils/constants";
 import { FormRow } from "../form/formRow";
 import { useModel } from "../gameRecords/model";
 import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
 import { ModeSelector } from "../gameRecords/modeSelector";
+import Conf from "../../utils/conf";
 
 enum DateRangeOptions {
   All = "全部",
@@ -35,7 +35,7 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
     return DateRangeOptions.Custom;
   });
   const [customDateFrom, setCustomDateFrom] = useState(() =>
-    model.type === "player" && model.startDate ? model.startDate : DATE_MIN
+    model.type === "player" && model.startDate ? model.startDate : Conf.dateMin
   );
   const [customDateTo, setCustomDateTo] = useState(() =>
     model.type === "player" && model.endDate ? model.endDate : dayjs()
@@ -87,7 +87,7 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
             />
           </FormRow>
         </div>
-        {showLevel && (
+        {showLevel && Conf.availableModes.length > 1 && (
           <div className="col-6">
             <FormRow title="等级" inline={true}>
               <ModeSelector mode={model.selectedMode} onChange={setSelectedMode} />
@@ -99,8 +99,13 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
         <div className="row mt-n3">
           <div className="col-6">
             <FormRow inline={true}>
-              <DatePicker min={DATE_MIN} onChange={setCustomDateFrom} date={customDateFrom} className="form-control" />
-              <DatePicker min={DATE_MIN} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
+              <DatePicker
+                min={Conf.dateMin}
+                onChange={setCustomDateFrom}
+                date={customDateFrom}
+                className="form-control"
+              />
+              <DatePicker min={Conf.dateMin} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
             </FormRow>
           </div>
         </div>

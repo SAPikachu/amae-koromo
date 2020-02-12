@@ -6,6 +6,7 @@ import { sum } from "../../utils";
 
 const RANK_DELTA = [15, 5, -5, -15];
 const MODE_DELTA = {
+  "9": [80, 40, 0, 0],
   "12": [110, 55, 0, 0],
   "16": [120, 60, 0, 0]
 };

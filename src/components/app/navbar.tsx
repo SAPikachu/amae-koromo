@@ -1,15 +1,16 @@
 import React from "react";
 import { Location } from "history";
 import { Link, NavLink } from "react-router-dom";
-import { TITLE_PREFIX } from "../../utils/constants";
 import { useState, useEffect, useCallback } from "react";
-import { CONTEST_MODE } from "../../data/source/constants";
+import Conf from "../../utils/conf";
 
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
   ["排行榜", "ranking"],
   ["大数据", "statistics"]
-].map(([label, path]) => ({ label, path }));
+]
+  .filter(([, path]) => !(path in Conf.features) || Conf.features[path as keyof typeof Conf.features])
+  .map(([label, path]) => ({ label, path }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isActive(match: any, location: Location): boolean {
@@ -46,39 +47,35 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-light fixed-top">
       <div className="container">
         <Link className="navbar-brand" to="/">
-          {TITLE_PREFIX}
+          {Conf.siteTitle}
         </Link>
-        {!CONTEST_MODE && (
-          <>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target="#navbarNavAltMarkup"
-              aria-controls="navbarNavAltMarkup"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-              onClick={onToggleButtonClick}
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div
-              className={`collapse navbar-collapse justify-content-end ${mobileVisible ? "" : "d-none"} d-lg-block`}
-              id="navbarNavAltMarkup"
-            >
-              <div className="navbar-nav">
-                <NavLink className="nav-item nav-link" activeClassName="active" to="/" isActive={isActive}>
-                  主页
-                </NavLink>
-                {NAV_ITEMS.map(({ label, path }) => (
-                  <NavLink key={path} className="nav-item nav-link" activeClassName="active" to={`/${path}`}>
-                    {label}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          onClick={onToggleButtonClick}
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div
+          className={`collapse navbar-collapse justify-content-end ${mobileVisible ? "" : "d-none"} d-lg-block`}
+          id="navbarNavAltMarkup"
+        >
+          <div className="navbar-nav">
+            <NavLink className="nav-item nav-link" activeClassName="active" to="/" isActive={isActive}>
+              主页
+            </NavLink>
+            {NAV_ITEMS.map(({ label, path }) => (
+              <NavLink key={path} className="nav-item nav-link" activeClassName="active" to={`/${path}`}>
+                {label}
+              </NavLink>
+            ))}
+          </div>
+        </div>
       </div>
     </nav>
   );

@@ -12,7 +12,7 @@ import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";
 import { triggerRelayout, isMobile } from "../../utils/index";
 import Loading from "../misc/loading";
-import { CONTEST_MODE } from "../../data/source/constants";
+import Conf from "../../utils/conf";
 
 export { Column } from "react-virtualized/dist/es/Table";
 
@@ -90,7 +90,7 @@ export function makeColumn<T extends (string | number | Function)[]>(
 
 export const COLUMN_GAMEMODE = makeColumn(
   () =>
-    !CONTEST_MODE && (
+    Conf.table.showGameMode && (
       <Column
         dataKey="modeId"
         label={isMobile() ? "" : "等级"}

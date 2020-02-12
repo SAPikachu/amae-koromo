@@ -2,19 +2,21 @@ import React from "react";
 
 import { CheckboxGroup } from "../form";
 import { GameMode } from "../../data/types";
+import Conf from "../../utils/conf";
 
-const MODE_CHECKBOXES = Object.keys(GameMode)
-  .filter(x => typeof GameMode[x as keyof typeof GameMode] !== "string")
-  .map(x => ({
-    key: String(GameMode[x as keyof typeof GameMode]),
-    label: x
-  }));
+const MODE_CHECKBOXES = Conf.availableModes.map(x => ({
+  key: String(x),
+  label: GameMode[x]
+}));
 MODE_CHECKBOXES.unshift({
   key: "",
   label: "全部"
 });
 
 export function ModeSelector({ mode, onChange }: { mode: string; onChange: (x: string) => void }) {
+  if (MODE_CHECKBOXES.length < 3) {
+    return null;
+  }
   return (
     <CheckboxGroup
       type="radio"

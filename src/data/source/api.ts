@@ -1,4 +1,4 @@
-import { API_ROOT } from "./constants";
+import Conf from "../../utils/conf";
 
 let onMaintenance: (msg: string) => void = () => {};
 
@@ -7,7 +7,7 @@ export function setMaintenanceHandler(handler: (msg: string) => void) {
 }
 
 export async function apiGet<T>(path: string) {
-  const resp = await fetch(API_ROOT + path);
+  const resp = await fetch(Conf.apiRoot + path);
   if (!resp.ok) {
     throw resp;
   }

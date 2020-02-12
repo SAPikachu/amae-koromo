@@ -7,8 +7,8 @@ const LEVEL_PENALTY = [0, 0, 0, 20, 40, 60, 80, 100, 120, 165, 180, 195, 210, 22
 const LEVEL_ALLOWED_MODES: { [key: string]: GameMode[] } = {
   "1": [],
   "2": [],
-  "3": [],
-  "4": [GameMode.玉],
+  "3": [GameMode.金],
+  "4": [GameMode.金, GameMode.玉],
   "5": [GameMode.玉, GameMode.王座],
   "6": [GameMode.王座]
 };

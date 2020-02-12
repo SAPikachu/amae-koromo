@@ -2,9 +2,13 @@ import React from "react";
 import { LevelWithDelta, PlayerMetadata, GameMode, Level } from "../../data/types";
 import { useModel } from "../gameRecords/model";
 import StatItem from "./statItem";
+import Conf from "../../utils/conf";
 
 export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
   const [model] = useModel();
+  if (!Conf.features.estimatedStableLevel) {
+    return null;
+  }
   const level = LevelWithDelta.getAdjustedLevel(metadata.level);
   const mode = model.selectedMode
     ? (parseInt(model.selectedMode) as GameMode)

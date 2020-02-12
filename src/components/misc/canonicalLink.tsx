@@ -1,13 +1,13 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { CANONICAL_DOMAIN } from "../../utils/constants";
 import { useLocation } from "react-router";
+import Conf from "../../utils/conf";
 
 export default function CanonicalLink() {
   const loc = useLocation();
   return (
     <Helmet>
-      <link rel="canonical" href={`https://${CANONICAL_DOMAIN}${loc.pathname}`} />
+      <link rel="canonical" href={`https://${Conf.canonicalDomain}${loc.pathname}`} />
     </Helmet>
   );
 }
