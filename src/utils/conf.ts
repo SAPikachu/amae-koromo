@@ -23,7 +23,8 @@ const CONFIGURATIONS = {
     canonicalDomain: "amae-koromo.sapk.ch",
     showTopNotice: true,
     mirrorUrl: "https://saki.sapk.ch/",
-    siteSpecificNotice: "记录包含雀魂国服四人半庄段位战玉之间及王座之间的牌谱。"
+    siteSpecificNotice: "记录包含雀魂国服四人半庄段位战玉之间及王座之间的牌谱。",
+    rootClassName: "koromo"
   },
   ako: {
     apiSuffix: "api/2_9/",
@@ -40,7 +41,8 @@ const CONFIGURATIONS = {
     siteTitle: "雀魂牌谱屋·金",
     canonicalDomain: "ako.sapk.ch",
     mirrorUrl: "https://kuro.sapk.ch/",
-    siteSpecificNotice: "记录包含雀魂国服四人半庄段位战金之间的牌谱。"
+    siteSpecificNotice: "记录包含雀魂国服四人半庄段位战金之间的牌谱。",
+    rootClassName: "achiga"
   },
   contest: {
     apiSuffix: (s: string) => `api/contest/${s}/`,
@@ -100,5 +102,7 @@ const ConfBase: Partial<Configuration> = (() => {
 const Conf = mergeDeep<Configuration>(CONFIGURATIONS.DEFAULT, ConfBase, {
   apiRoot: DATA_ROOT + ConfBase.apiSuffix
 });
+
+document.documentElement.className += " " + Conf.rootClassName;
 
 export default Conf;

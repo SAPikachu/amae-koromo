@@ -5,7 +5,6 @@
 @import "~react-virtualized/styles";
 
 body {
-  background: url(../assets/img/koromo.preload.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -13,6 +12,12 @@ body {
   font-family: "Microsoft YaHei", "Meiryo", "Segoe UI", sans-serif;
   overflow-y: scroll;
   padding-top: 50px;
+}
+.koromo body {
+  background-image: url(../assets/img/koromo.jpg);
+}
+.achiga body {
+  background-image: url(../assets/img/achiga.jpg);
 }
 h1 a,
 h1 a:hover {
