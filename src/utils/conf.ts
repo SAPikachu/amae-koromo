@@ -12,7 +12,7 @@ const CONFIGURATIONS = {
     features: {
       ranking: true,
       statistics: true,
-      estimatedStableLevel: true,
+      estimatedStableLevel: true
     },
     table: {
       showGameMode: true
@@ -20,7 +20,10 @@ const CONFIGURATIONS = {
     availableModes: [GameMode.王座, GameMode.玉],
     dateMin: dayjs("2019-08-23", "YYYY-MM-DD"),
     siteTitle: "雀魂牌谱屋",
-    canonicalDomain: "amae-koromo.sapk.ch"
+    canonicalDomain: "amae-koromo.sapk.ch",
+    showTopNotice: true,
+    mirrorUrl: "https://saki.sapk.ch/",
+    siteSpecificNotice: "记录包含雀魂国服四人半庄段位战玉之间及王座之间的牌谱。"
   },
   ako: {
     apiSuffix: "api/2_9/",
@@ -35,20 +38,23 @@ const CONFIGURATIONS = {
     availableModes: [GameMode.金],
     dateMin: dayjs("2019-11-29", "YYYY-MM-DD"),
     siteTitle: "雀魂牌谱屋·金",
-    canonicalDomain: "ako.sapk.ch"
+    canonicalDomain: "ako.sapk.ch",
+    mirrorUrl: "https://kuro.sapk.ch/",
+    siteSpecificNotice: "记录包含雀魂国服四人半庄段位战金之间的牌谱。"
   },
   contest: {
     apiSuffix: (s: string) => `api/contest/${s}/`,
     features: {
       ranking: false,
       statistics: false,
-      estimatedStableLevel: false,
+      estimatedStableLevel: false
     },
     table: {
       showGameMode: true
     },
     availableModes: [],
-    canonicalDomain: domain
+    canonicalDomain: domain,
+    showTopNotice: false
   }
 };
 
@@ -56,7 +62,8 @@ type Configuration = typeof CONFIGURATIONS.DEFAULT & { apiRoot?: string };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mergeDeep<T extends { [key: string]: any }>(...objects: Partial<T>[]): T {
-  const isObject = <T>(obj: T) => obj && typeof obj === "object";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isObject = <T>(obj: T) => obj && typeof obj === "object" && (obj as any).constructor === Object;
 
   return objects.reduce((prev: T, obj: Partial<T>) => {
     Object.keys(obj).forEach((key: keyof T) => {

@@ -40,7 +40,7 @@ function App() {
       <Navbar />
       <MaintenanceHandler>
         <Scroller>
-          <AppHeader />
+          {Conf.showTopNotice ? <AppHeader /> : <></>}
           <Container>
             <Switch>
               <Route path="/ranking">
