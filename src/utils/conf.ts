@@ -87,10 +87,10 @@ function mergeDeep<T extends { [key: string]: any }>(...objects: Partial<T>[]): 
 }
 
 const ConfBase: Partial<Configuration> = (() => {
-  if (/^ako\./.test(domain)) {
+  if (/^(ako|kuro)\./i.test(domain)) {
     return CONFIGURATIONS.ako;
   }
-  const m = /^([^.]+)\.contest\./.exec(domain);
+  const m = /^([^.]+)\.contest\./i.exec(domain);
   if (m) {
     return { ...CONFIGURATIONS.contest, apiSuffix: CONFIGURATIONS.contest.apiSuffix(m[1]) };
   }
