@@ -2,7 +2,7 @@ import React from "react";
 import { Location } from "history";
 import { Link, NavLink } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import Conf from "../../utils/conf";
+import Conf, { CONFIGURATIONS } from "../../utils/conf";
 
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
@@ -11,6 +11,13 @@ const NAV_ITEMS = [
 ]
   .filter(([, path]) => !(path in Conf.features) || Conf.features[path as keyof typeof Conf.features])
   .map(([label, path]) => ({ label, path }));
+
+const SITE_LINKS = [
+  ["玉/王座", CONFIGURATIONS.DEFAULT.canonicalDomain],
+  ["金", CONFIGURATIONS.ako.canonicalDomain]
+]
+  .filter(([, domain]) => Conf.canonicalDomain !== domain)
+  .map(([label, domain]) => ({ label, domain }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isActive(match: any, location: Location): boolean {
@@ -73,6 +80,11 @@ export default function Navbar() {
               <NavLink key={path} className="nav-item nav-link" activeClassName="active" to={`/${path}`}>
                 {label}
               </NavLink>
+            ))}
+            {SITE_LINKS.map(({ label, domain }) => (
+              <a key={domain} className="nav-item nav-link" href={`https://${domain}/`}>
+                {label}
+              </a>
             ))}
           </div>
         </div>

@@ -6,7 +6,7 @@ const domain =
 
 const DATA_ROOT = "https://ak-data-2.sapk.ch/";
 
-const CONFIGURATIONS = {
+export const CONFIGURATIONS = {
   DEFAULT: {
     apiSuffix: process.env.NODE_ENV === "development" ? "api-test/" : "api/",
     features: {
