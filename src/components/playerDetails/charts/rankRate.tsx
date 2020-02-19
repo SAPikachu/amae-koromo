@@ -1,12 +1,13 @@
 import React from "react";
 import { ResponsiveContainer, PieChart, Pie, Cell, LabelList, Curve } from "recharts";
 
-import { PlayerMetadata, RANK_LABELS, RANK_COLORS } from "../../../data/types";
+import { PlayerMetadata, RANK_LABELS } from "../../../data/types";
 import { useMemo } from "react";
 import { formatPercent } from "../../../utils/index";
+import Conf from "../../../utils/conf";
 
 const generateCells = (activeIndex: number) =>
-  RANK_COLORS.map((color, index) => (
+  Conf.rankColors.map((color, index) => (
     <Cell fill={color} fillOpacity={activeIndex === index ? 1 : 1} key={`cell-${index}`} />
   ));
 

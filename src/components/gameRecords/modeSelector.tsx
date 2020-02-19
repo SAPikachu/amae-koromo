@@ -1,12 +1,12 @@
 import React from "react";
 
 import { CheckboxGroup } from "../form";
-import { GameMode } from "../../data/types";
+import { modeLabel } from "../../data/types";
 import Conf from "../../utils/conf";
 
 const MODE_CHECKBOXES = Conf.availableModes.map(x => ({
   key: String(x),
-  label: GameMode[x]
+  label: modeLabel(x)
 }));
 MODE_CHECKBOXES.unshift({
   key: "",

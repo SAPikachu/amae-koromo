@@ -24,7 +24,8 @@ export const CONFIGURATIONS = {
     showTopNotice: true,
     mirrorUrl: "https://saki.sapk.ch/",
     siteSpecificNotice: "记录包含雀魂国服四人半庄段位战玉之间及王座之间的牌谱。",
-    rootClassName: "koromo"
+    rootClassName: "koromo",
+    rankColors: ["#28a745", "#17a2b8", "#6c757d", "#dc3545"]
   },
   ako: {
     apiSuffix: "api/2_9/",
@@ -43,6 +44,21 @@ export const CONFIGURATIONS = {
     mirrorUrl: "https://kuro.sapk.ch/",
     siteSpecificNotice: "记录包含雀魂国服四人半庄段位战金之间的牌谱。",
     rootClassName: "achiga"
+  },
+  ikeda: {
+    apiSuffix: "api/12/",
+    features: {
+      ranking: false,
+      statistics: false,
+      estimatedStableLevel: false
+    },
+    availableModes: [GameMode.三王座, GameMode.三玉, GameMode.三金],
+    dateMin: dayjs("2019-11-29", "YYYY-MM-DD"),
+    siteTitle: "雀魂牌谱屋·三麻",
+    canonicalDomain: "ikeda.sapk.ch",
+    mirrorUrl: "https://momoko.sapk.ch/",
+    siteSpecificNotice: "记录包含雀魂国服三人半庄段位战金之间、玉之间及王座之间的牌谱。",
+    rankColors: ["#28a745", "#6c757d", "#dc3545"]
   },
   contest: {
     apiSuffix: (s: string) => `api/contest/${s}/`,
@@ -91,6 +107,9 @@ function mergeDeep<T extends { [key: string]: any }>(...objects: Partial<T>[]): 
 const ConfBase: Partial<Configuration> = (() => {
   if (/^(ako|kuro)\./i.test(domain)) {
     return CONFIGURATIONS.ako;
+  }
+  if (/^(ikeda|momoko)\./i.test(domain)) {
+    return CONFIGURATIONS.ikeda;
   }
   const m = /^([^.]+)\.contest\./i.exec(domain);
   if (m) {

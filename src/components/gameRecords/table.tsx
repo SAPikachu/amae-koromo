@@ -6,7 +6,7 @@ import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import dayjs from "dayjs";
 import clsx from "clsx";
 
-import { GameRecord, GameMode } from "../../data/types";
+import { GameRecord, modeLabel } from "../../data/types";
 import { Player } from "./player";
 import { useScrollerProps } from "../misc/scroller";
 import { useDataAdapter } from "./dataAdapterProvider";
@@ -52,7 +52,7 @@ const cellFormatRank = ({ rowData, columnData }: TableCellProps) =>
       {GameRecord.getPlayerRankLabel(rowData, columnData.activePlayerId).slice(0, 1)}
     </span>
   );
-const cellFormatGameMode = ({ cellData }: TableCellProps) => GameMode[cellData];
+const cellFormatGameMode = ({ cellData }: TableCellProps) => (cellData ? modeLabel(parseInt(cellData)) : "");
 
 function getRowHeight() {
   if (window.matchMedia("(min-width: 768px)").matches) {

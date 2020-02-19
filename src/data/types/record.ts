@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
 
 import { GameMode } from "./gameMode";
-import { RANK_LABELS, RANK_COLORS } from "./constants";
+import { RANK_LABELS } from "./constants";
+import Conf from "../../utils/conf";
 
 export interface PlayerRecord {
   accountId: number;
@@ -32,7 +33,7 @@ export const GameRecord = Object.freeze({
     return RANK_LABELS[GameRecord.getRankIndexByPlayer(rec, player)] || "";
   },
   getPlayerRankColor(rec: GameRecord, player: number | string | PlayerRecord): string {
-    return RANK_COLORS[GameRecord.getRankIndexByPlayer(rec, player)];
+    return Conf.rankColors[GameRecord.getRankIndexByPlayer(rec, player)];
   },
   encodeAccountId: (t: number) => 1358437 + ((7 * t + 1117113) ^ 86216345),
   getStartTime: (rec: GameRecord | number) => (typeof rec === "number" ? rec : rec.startTime) * 1000,

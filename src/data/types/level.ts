@@ -3,6 +3,7 @@ import { PLAYER_RANKS } from "./constants";
 
 const LEVEL_MAX_POINTS = [20, 80, 200, 600, 800, 1000, 1200, 1400, 2000, 2800, 3200, 3600, 4000, 6000, 9000];
 const LEVEL_PENALTY = [0, 0, 0, 20, 40, 60, 80, 100, 120, 165, 180, 195, 210, 225, 240, 255];
+const LEVEL_PENALTY_3 = [0, 0, 0, 20, 40, 60, 80, 100, 120, 165, 190, 215, 240, 265, 290, 320];
 
 const LEVEL_ALLOWED_MODES: { [key: string]: GameMode[] } = {
   "1": [],
@@ -16,10 +17,12 @@ const LEVEL_ALLOWED_MODES: { [key: string]: GameMode[] } = {
 export class Level {
   _majorRank: number;
   _minorRank: number;
+  _numPlayerId: number;
   constructor(levelId: number) {
     const realId = levelId % 10000;
     this._majorRank = Math.floor(realId / 100);
     this._minorRank = realId % 100;
+    this._numPlayerId = Math.floor(levelId / 10000);
   }
   isSameMajorRank(other: Level): boolean {
     return this._majorRank === other._majorRank;
@@ -41,7 +44,7 @@ export class Level {
     return LEVEL_MAX_POINTS[(this._majorRank - 1) * 3 + this._minorRank - 1];
   }
   getPenaltyPoint(): number {
-    return LEVEL_PENALTY[(this._majorRank - 1) * 3 + this._minorRank - 1];
+    return (this._numPlayerId === 2 ? LEVEL_PENALTY_3 : LEVEL_PENALTY)[(this._majorRank - 1) * 3 + this._minorRank - 1];
   }
   getStartingPoint(): number {
     if (this._majorRank === 1) {

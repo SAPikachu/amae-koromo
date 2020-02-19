@@ -3,7 +3,7 @@ import React from "react";
 import { useAsyncFactory, formatPercent } from "../../utils/index";
 import { getFanStats } from "../../data/source/misc";
 import Loading from "../misc/loading";
-import { GameMode, FanStatEntry, FanStats } from "../../data/types";
+import { FanStatEntry, FanStats, modeLabel } from "../../data/types";
 import { useState, useMemo } from "react";
 
 const SORTERS: (undefined | ((a: FanStatEntry, b: FanStatEntry) => number))[] = [
@@ -39,7 +39,7 @@ export default function FanStatsView() {
       <div className="row">
         {Object.entries(sortedData).map(([modeId, value]) => (
           <div className="col-xl-4" key={modeId}>
-            <h2 className="text-center">{modeId === "0" ? "全部" : GameMode[parseInt(modeId)]}</h2>
+            <h2 className="text-center">{modeId === "0" ? "全部" : modeLabel(parseInt(modeId))}</h2>
             <p className="text-center">记录和出局数：{value.count}</p>
             <table className="table table-striped">
               <thead onClick={() => setSorterIndex((sorterIndex + 1) % SORTERS.length)} className="cursor-pointer">

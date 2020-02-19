@@ -2,12 +2,13 @@ import React from "react";
 import { ResponsiveContainer, LineChart, Line, Dot, Tooltip, YAxis, TooltipProps } from "recharts";
 
 import { IDataAdapter } from "../../gameRecords/dataAdapterProvider";
-import { GameRecord, RANK_LABELS, RANK_COLORS, GameMode, Level } from "../../../data/types";
+import { GameRecord, RANK_LABELS, Level, modeLabel } from "../../../data/types";
 import { useMemo } from "react";
 import { Player } from "../../gameRecords/player";
 import Loading from "../../misc/loading";
 import { calculateDeltaPoint } from "../../../data/types/metadata";
 import { isMobile } from "../../../utils/index";
+import Conf from "../../../utils/conf";
 
 declare module "recharts" {
   interface DotProps {
@@ -37,9 +38,9 @@ const createDot = (props: { payload: DotPayload }, active?: boolean) => {
     <Dot
       {...props}
       r={2.5 * scale}
-      stroke={RANK_COLORS[props.payload.rank]}
+      stroke={Conf.rankColors[props.payload.rank]}
       onClick={() => window.open(GameRecord.getRecordLink(props.payload.game, props.payload.playerId), "_blank")}
-      {...(active ? { fill: RANK_COLORS[props.payload.rank], r: 5 * scale } : {})}
+      {...(active ? { fill: Conf.rankColors[props.payload.rank], r: 5 * scale } : {})}
     />
   );
 };
@@ -54,7 +55,7 @@ const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
   return (
     <div className="player-chart-tooltip">
       <h5>
-        {GameRecord.formatFullStartTime(realPayload.game)} {GameMode[realPayload.game.modeId]}{" "}
+        {GameRecord.formatFullStartTime(realPayload.game)} {modeLabel(realPayload.game.modeId)}{" "}
         {RANK_LABELS[realPayload.rank]} {realPayload.delta > 0 ? "+" : ""}
         {realPayload.delta}pt
       </h5>

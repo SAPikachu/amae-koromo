@@ -4,11 +4,31 @@ import { GameMode } from "./gameMode";
 import { FanStatEntry } from "./statistics";
 import { sum } from "../../utils";
 
-const RANK_DELTA = [15, 5, -5, -15];
+const RANK_DELTA_4 = [15, 5, -5, -15];
+const RANK_DELTA_3 = [15, 0, -15];
+const RANK_DELTA = {
+  [GameMode.金]: RANK_DELTA_4,
+  [GameMode.玉]: RANK_DELTA_4,
+  [GameMode.王座]: RANK_DELTA_4,
+  [GameMode.三金]: RANK_DELTA_3,
+  [GameMode.三玉]: RANK_DELTA_3,
+  [GameMode.三王座]: RANK_DELTA_3
+};
 const MODE_DELTA = {
-  "9": [80, 40, 0, 0],
-  "12": [110, 55, 0, 0],
-  "16": [120, 60, 0, 0]
+  [GameMode.金]: [80, 40, 0, 0],
+  [GameMode.玉]: [110, 55, 0, 0],
+  [GameMode.王座]: [120, 60, 0, 0],
+  [GameMode.三金]: [105, 0, 0],
+  [GameMode.三玉]: [160, 0, 0],
+  [GameMode.三王座]: [240, 0, 0]
+};
+const MODE_BASE_POINT = {
+  [GameMode.金]: 25000,
+  [GameMode.玉]: 25000,
+  [GameMode.王座]: 25000,
+  [GameMode.三金]: 35000,
+  [GameMode.三玉]: 35000,
+  [GameMode.三王座]: 35000
 };
 
 type RankRates = [number, number, number, number];
@@ -125,6 +145,12 @@ export interface PlayerMetadata extends PlayerMetadataLite, PlayerMetadataLite2 
   extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
 }
 
+function assertMode(mode: GameMode) {
+  if (![GameMode.金, GameMode.玉, GameMode.王座].includes(mode)) {
+    throw new Error("Unsupported game mode");
+  }
+}
+
 export function calculateDeltaPoint(
   score: number,
   rank: number,
@@ -134,9 +160,9 @@ export function calculateDeltaPoint(
   trimNumber = true
 ): number {
   let result =
-    (trimNumber ? Math.ceil : (x: number) => x)((score - 25000) / 1000 + RANK_DELTA[rank]) +
-    MODE_DELTA[mode.toString() as keyof typeof MODE_DELTA][rank];
-  if (rank === 3 && includePenalty) {
+    (trimNumber ? Math.ceil : (x: number) => x)((score - MODE_BASE_POINT[mode]) / 1000 + RANK_DELTA[mode][rank]) +
+    MODE_DELTA[mode][rank];
+  if (rank === RANK_DELTA[mode].length - 1 && includePenalty) {
     result -= level.getPenaltyPoint();
   }
   /*
@@ -155,6 +181,7 @@ export const PlayerMetadata = Object.freeze({
     includePenalty = true,
     trimNumber = true
   ): RankRates {
+    assertMode(mode);
     const rankDeltaPoints = metadata.rank_avg_score.map((score, rank) =>
       calculateDeltaPoint(
         score,
@@ -181,6 +208,7 @@ export const PlayerMetadata = Object.freeze({
     return expectedGamePoint;
   },
   estimateStableLevel(metadata: PlayerMetadata, mode: GameMode): string {
+    assertMode(mode);
     let level = new Level(metadata.level.id);
     let lastPositiveLevel: Level | undefined = undefined;
     for (;;) {
@@ -244,6 +272,7 @@ export const PlayerMetadata = Object.freeze({
     return this.calculateRankDeltaPoints(metadata, mode, undefined, false, false);
   },
   estimateStableLevel2(metadata: PlayerMetadata, mode: GameMode): string {
+    assertMode(mode);
     if (!metadata.rank_rates[3]) {
       return "";
     }
