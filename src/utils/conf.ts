@@ -58,7 +58,8 @@ export const CONFIGURATIONS = {
     canonicalDomain: "ikeda.sapk.ch",
     mirrorUrl: "https://momoko.sapk.ch/",
     siteSpecificNotice: "记录包含雀魂国服三人半庄段位战金之间、玉之间及王座之间的牌谱。",
-    rankColors: ["#28a745", "#6c757d", "#dc3545"]
+    rankColors: ["#28a745", "#6c757d", "#dc3545"],
+    rootClassName: "yuuki"
   },
   contest: {
     apiSuffix: (s: string) => `api/contest/${s}/`,

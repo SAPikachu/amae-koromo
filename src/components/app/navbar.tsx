@@ -13,8 +13,9 @@ const NAV_ITEMS = [
   .map(([label, path]) => ({ label, path }));
 
 const SITE_LINKS = [
-  ["玉/王座", CONFIGURATIONS.DEFAULT.canonicalDomain],
-  ["金", CONFIGURATIONS.ako.canonicalDomain]
+  ["四麻玉/王座", CONFIGURATIONS.DEFAULT.canonicalDomain],
+  ["四麻金", CONFIGURATIONS.ako.canonicalDomain],
+  ["三麻", CONFIGURATIONS.ikeda.canonicalDomain]
 ]
   .filter(([, domain]) => Conf.canonicalDomain !== domain)
   .map(([label, domain]) => ({ label, domain }));
