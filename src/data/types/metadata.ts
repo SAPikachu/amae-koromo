@@ -213,7 +213,7 @@ export const PlayerMetadata = Object.freeze({
         lastPositiveLevel = level;
         level = level.getNextLevel();
         if (!level.isAllowedMode(mode) || level === lastPositiveLevel) {
-          return `${lastPositiveLevel.getTag()} (${expectedGamePoint.toFixed(2)})`;
+          return `${lastPositiveLevel.getTag()}+ (${expectedGamePoint.toFixed(2)})`;
         }
       } else {
         if (lastPositiveLevel) {
@@ -224,12 +224,12 @@ export const PlayerMetadata = Object.freeze({
     }
     if (!level.getMaxPoint()) {
       // 魂天不会掉段
-      return `${level.getTag()} (${calcPoint(level).toFixed(2)})`;
+      return `${level.getTag()}- (${calcPoint(level).toFixed(2)})`;
     }
     for (;;) {
       const prevLevel = level.getPreviousLevel();
       if (!prevLevel.isAllowedMode(mode) || prevLevel === level) {
-        return `${level.getTag()} (${calcPoint(level).toFixed(2)})`;
+        return `${level.getTag()}- (${calcPoint(level).toFixed(2)})`;
       }
       level = prevLevel;
       const expectedGamePoint = calcPoint(level);
