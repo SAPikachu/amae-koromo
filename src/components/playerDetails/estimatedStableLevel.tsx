@@ -12,11 +12,10 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
     return null;
   }
   const level = LevelWithDelta.getAdjustedLevel(metadata.level);
-  const mode = model.selectedMode
-    ? (parseInt(model.selectedMode) as GameMode)
-    : LevelWithDelta.getTag(metadata.level) === "魂"
-    ? GameMode.王座
-    : GameMode.玉;
+  if (!model.selectedMode) {
+    return null;
+  }
+  const mode = parseInt(model.selectedMode) as GameMode;
   if (!ENABLED_MODES.includes(mode) || !level.isAllowedMode(mode)) {
     return null;
   }
