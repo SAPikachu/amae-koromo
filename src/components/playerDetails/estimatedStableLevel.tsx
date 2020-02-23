@@ -39,10 +39,13 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
       <StatItem
         label="安定段位"
         description={`在${modeLabel(mode)}之间一直进行对局，预测最终能达到的段位。${
-          notEnoughData ? "（数据量不足，计算结果可能有较大偏差）" : ""
-        }<br/>${levelNames.slice(0, levelNames.length - 1)}位平均 Pt / ${
-          levelNames[levelNames.length - 1]
-        }位平均得点 Pt：[${levelComponents.map(x => x.toFixed(2)).join("/")}]`}
+          levelNames.length === 3 ? "括号内为安定段位时的分数期望。" : ""
+        }${notEnoughData ? "（数据量不足，计算结果可能有较大偏差）" : ""}<br/>${levelNames.slice(
+          0,
+          levelNames.length - 1
+        )}位平均 Pt / ${levelNames[levelNames.length - 1]}位平均得点 Pt：[${levelComponents
+          .map(x => x.toFixed(2))
+          .join("/")}]`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span>
