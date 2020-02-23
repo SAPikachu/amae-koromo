@@ -5,13 +5,19 @@ const LEVEL_MAX_POINTS = [20, 80, 200, 600, 800, 1000, 1200, 1400, 2000, 2800, 3
 const LEVEL_PENALTY = [0, 0, 0, 20, 40, 60, 80, 100, 120, 165, 180, 195, 210, 225, 240, 255];
 const LEVEL_PENALTY_3 = [0, 0, 0, 20, 40, 60, 80, 100, 120, 165, 190, 215, 240, 265, 290, 320];
 
-const LEVEL_ALLOWED_MODES: { [key: string]: GameMode[] } = {
-  "1": [],
-  "2": [],
-  "3": [GameMode.金],
-  "4": [GameMode.金, GameMode.玉],
-  "5": [GameMode.玉, GameMode.王座],
-  "6": [GameMode.王座]
+const LEVEL_ALLOWED_MODES: { [key: number]: GameMode[] } = {
+  101: [],
+  102: [],
+  103: [GameMode.金],
+  104: [GameMode.金, GameMode.玉],
+  105: [GameMode.玉, GameMode.王座],
+  106: [GameMode.王座],
+  201: [],
+  202: [],
+  203: [GameMode.三金],
+  204: [GameMode.三金, GameMode.三玉],
+  205: [GameMode.三玉, GameMode.三王座],
+  206: [GameMode.三王座]
 };
 
 export class Level {
@@ -31,7 +37,7 @@ export class Level {
     return this._majorRank === other._majorRank && this._minorRank === other._minorRank;
   }
   isAllowedMode(mode: GameMode): boolean {
-    return LEVEL_ALLOWED_MODES[this._majorRank.toString() as keyof typeof LEVEL_ALLOWED_MODES].includes(mode);
+    return LEVEL_ALLOWED_MODES[this._numPlayerId * 100 + this._majorRank].includes(mode);
   }
   getTag(): string {
     const label = PLAYER_RANKS[this._majorRank - 1];
@@ -65,7 +71,7 @@ export class Level {
       majorRank++;
       minorRank = 1;
     }
-    return new Level(majorRank * 100 + minorRank);
+    return new Level(this._numPlayerId * 10000 + majorRank * 100 + minorRank);
   }
   getPreviousLevel(): Level {
     if (this._majorRank === 1 && this._minorRank === 1) {
@@ -77,7 +83,7 @@ export class Level {
       majorRank--;
       minorRank = 3;
     }
-    return new Level(majorRank * 100 + minorRank);
+    return new Level(this._numPlayerId * 10000 + majorRank * 100 + minorRank);
   }
   getAdjustedLevel(score: number): Level {
     let maxPoints = this.getMaxPoint();

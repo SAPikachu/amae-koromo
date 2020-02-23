@@ -50,7 +50,7 @@ export const CONFIGURATIONS = {
     features: {
       ranking: false,
       statistics: false,
-      estimatedStableLevel: false
+      estimatedStableLevel: true
     },
     availableModes: [GameMode.三王座, GameMode.三玉, GameMode.三金],
     dateMin: dayjs("2019-11-29", "YYYY-MM-DD"),

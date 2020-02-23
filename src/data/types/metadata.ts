@@ -31,7 +31,7 @@ const MODE_BASE_POINT = {
   [GameMode.三王座]: 35000
 };
 
-type RankRates = [number, number, number, number];
+type RankRates = [number, number, number, number] | [number, number, number];
 
 export type FanStatEntry2 = FanStatEntry & {
   役满: number;
@@ -145,12 +145,6 @@ export interface PlayerMetadata extends PlayerMetadataLite, PlayerMetadataLite2 
   extended_stats?: PlayerExtendedStats | Promise<PlayerExtendedStats>;
 }
 
-function assertMode(mode: GameMode) {
-  if (![GameMode.金, GameMode.玉, GameMode.王座].includes(mode)) {
-    throw new Error("Unsupported game mode");
-  }
-}
-
 export function calculateDeltaPoint(
   score: number,
   rank: number,
@@ -181,7 +175,6 @@ export const PlayerMetadata = Object.freeze({
     includePenalty = true,
     trimNumber = true
   ): RankRates {
-    assertMode(mode);
     const rankDeltaPoints = metadata.rank_avg_score.map((score, rank) =>
       calculateDeltaPoint(
         score,
@@ -208,43 +201,43 @@ export const PlayerMetadata = Object.freeze({
     return expectedGamePoint;
   },
   estimateStableLevel(metadata: PlayerMetadata, mode: GameMode): string {
-    assertMode(mode);
+    const calcPoint = (level: Level) => PlayerMetadata.calculateExpectedGamePoint(metadata, mode, level);
     let level = new Level(metadata.level.id);
     let lastPositiveLevel: Level | undefined = undefined;
     for (;;) {
-      const expectedGamePoint = PlayerMetadata.calculateExpectedGamePoint(metadata, mode, level);
+      const expectedGamePoint = calcPoint(level);
       if (Math.abs(expectedGamePoint) < 0.001) {
-        return level.getTag();
+        return level.getTag() + "=";
       }
       if (expectedGamePoint >= 0) {
         lastPositiveLevel = level;
         level = level.getNextLevel();
-        if (!level.isAllowedMode(mode)) {
-          return lastPositiveLevel.getTag() + "+";
-        }
-        if (level === lastPositiveLevel) {
-          return level.getTag() + "+";
+        if (!level.isAllowedMode(mode) || level === lastPositiveLevel) {
+          return `${lastPositiveLevel.getTag()}+${expectedGamePoint.toFixed(2)}`;
         }
       } else {
         if (lastPositiveLevel) {
-          return lastPositiveLevel.getTag();
+          return `${lastPositiveLevel.getTag()}+${calcPoint(lastPositiveLevel).toFixed(2)}`;
         }
         break;
       }
     }
     if (!level.getMaxPoint()) {
       // 魂天不会掉段
-      return level.getTag() + "-";
+      return level.getTag() + calcPoint(level).toFixed(2);
     }
     for (;;) {
       const prevLevel = level.getPreviousLevel();
       if (!prevLevel.isAllowedMode(mode) || prevLevel === level) {
-        return level.getTag() + "-";
+        return level.getTag() + calcPoint(level).toFixed(2);
       }
       level = prevLevel;
-      const expectedGamePoint = PlayerMetadata.calculateExpectedGamePoint(metadata, mode, level);
-      if (expectedGamePoint + 0.001 >= 0) {
-        return level.getTag();
+      const expectedGamePoint = calcPoint(level);
+      if (Math.abs(expectedGamePoint) < 0.001) {
+        return level.getTag() + "=";
+      }
+      if (expectedGamePoint > 0) {
+        return `${level.getTag()}+${calcPoint(level).toFixed(2)}`;
       }
     }
   },
@@ -272,7 +265,9 @@ export const PlayerMetadata = Object.freeze({
     return this.calculateRankDeltaPoints(metadata, mode, undefined, false, false);
   },
   estimateStableLevel2(metadata: PlayerMetadata, mode: GameMode): string {
-    assertMode(mode);
+    if (metadata.rank_rates.length === 3) {
+      return this.estimateStableLevel(metadata, mode);
+    }
     if (!metadata.rank_rates[3]) {
       return "";
     }

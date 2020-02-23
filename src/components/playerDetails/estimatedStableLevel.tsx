@@ -4,6 +4,8 @@ import { useModel } from "../gameRecords/model";
 import StatItem from "./statItem";
 import Conf from "../../utils/conf";
 
+const ENABLED_MODES = [GameMode.玉, GameMode.王座, GameMode.三玉, GameMode.三王座];
+
 export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
   const [model] = useModel();
   if (!Conf.features.estimatedStableLevel) {
@@ -15,6 +17,9 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
     : LevelWithDelta.getTag(metadata.level) === "魂"
     ? GameMode.王座
     : GameMode.玉;
+  if (!ENABLED_MODES.includes(mode) || !level.isAllowedMode(mode)) {
+    return null;
+  }
   const notEnoughData = metadata.count < 100;
   const expectedGamePoint = PlayerMetadata.calculateExpectedGamePoint(metadata, mode);
   let estimatedNumGamesToChangeLevel = null as number | null;
@@ -28,15 +33,17 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
   const changeLevelMsg = estimatedNumGamesToChangeLevel
     ? `，括号内为预计${estimatedNumGamesToChangeLevel > 0 ? "升" : "降"}段场数`
     : "";
+  const levelComponents = PlayerMetadata.getStableLevelComponents(metadata, mode);
+  const levelNames = "一二三四".slice(0, levelComponents.length);
   return (
     <>
       <StatItem
         label="安定段位"
         description={`在${modeLabel(mode)}之间一直进行对局，预测最终能达到的段位。${
           notEnoughData ? "（数据量不足，计算结果可能有较大偏差）" : ""
-        }<br/>一二三位平均 Pt / 四位平均得点 Pt：[${PlayerMetadata.getStableLevelComponents(metadata, mode)
-          .map(x => x.toFixed(2))
-          .join("/")}]`}
+        }<br/>${levelNames.slice(0, levelNames.length - 1)}位平均 Pt / ${
+          levelNames[levelNames.length - 1]
+        }位平均得点 Pt：[${levelComponents.map(x => x.toFixed(2)).join("/")}]`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span>
