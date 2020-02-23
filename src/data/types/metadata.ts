@@ -213,11 +213,11 @@ export const PlayerMetadata = Object.freeze({
         lastPositiveLevel = level;
         level = level.getNextLevel();
         if (!level.isAllowedMode(mode) || level === lastPositiveLevel) {
-          return `${lastPositiveLevel.getTag()}+${expectedGamePoint.toFixed(2)}`;
+          return `${lastPositiveLevel.getTag()}(${expectedGamePoint.toFixed(2)})`;
         }
       } else {
         if (lastPositiveLevel) {
-          return `${lastPositiveLevel.getTag()}+${calcPoint(lastPositiveLevel).toFixed(2)}`;
+          return `${lastPositiveLevel.getTag()}(${calcPoint(lastPositiveLevel).toFixed(2)})`;
         }
         break;
       }
@@ -229,15 +229,12 @@ export const PlayerMetadata = Object.freeze({
     for (;;) {
       const prevLevel = level.getPreviousLevel();
       if (!prevLevel.isAllowedMode(mode) || prevLevel === level) {
-        return level.getTag() + calcPoint(level).toFixed(2);
+        return `${level.getTag()}(${calcPoint(level).toFixed(2)})`;
       }
       level = prevLevel;
       const expectedGamePoint = calcPoint(level);
-      if (Math.abs(expectedGamePoint) < 0.001) {
-        return level.getTag() + "=";
-      }
-      if (expectedGamePoint > 0) {
-        return `${level.getTag()}+${calcPoint(level).toFixed(2)}`;
+      if (expectedGamePoint > -0.001) {
+        return `${level.getTag()}(${calcPoint(level).toFixed(2)})`;
       }
     }
   },
