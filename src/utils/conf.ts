@@ -4,8 +4,6 @@ import dayjs from "dayjs";
 const domain =
   sessionStorage.getItem("overrideDomain") || localStorage.getItem("overrideDomain") || window.location.hostname;
 
-const DATA_ROOT = "https://ak-data-2.sapk.ch/";
-
 export const CONFIGURATIONS = {
   DEFAULT: {
     apiSuffix: process.env.NODE_ENV === "development" ? "api-test/" : "api/",
@@ -77,7 +75,7 @@ export const CONFIGURATIONS = {
   }
 };
 
-type Configuration = typeof CONFIGURATIONS.DEFAULT & { apiRoot?: string };
+type Configuration = typeof CONFIGURATIONS.DEFAULT;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mergeDeep<T extends { [key: string]: any }>(...objects: Partial<T>[]): T {
@@ -119,9 +117,7 @@ const ConfBase: Partial<Configuration> = (() => {
   return CONFIGURATIONS.DEFAULT;
 })();
 
-const Conf = mergeDeep<Configuration>(CONFIGURATIONS.DEFAULT, ConfBase, {
-  apiRoot: DATA_ROOT + ConfBase.apiSuffix
-});
+const Conf = mergeDeep<Configuration>(CONFIGURATIONS.DEFAULT, ConfBase);
 
 document.documentElement.className += " " + Conf.rootClassName;
 
