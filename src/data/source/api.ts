@@ -11,7 +11,7 @@ export function setMaintenanceHandler(handler: (msg: string) => void) {
   onMaintenance = handler;
 }
 
-async function fetchWithTimeout(url: string, opts?: RequestInit, timeout = 5000): Promise<Response> {
+async function fetchWithTimeout(url: string, opts: RequestInit = {}, timeout = 5000): Promise<Response> {
   const abortController = window.AbortController ? new AbortController() : { signal: undefined, abort: () => {} };
   return Promise.race([
     fetch(url, { ...opts, signal: abortController.signal }),
@@ -26,7 +26,7 @@ async function fetchWithTimeout(url: string, opts?: RequestInit, timeout = 5000)
 
 async function fetchData(path: string): Promise<Response> {
   try {
-    return fetchWithTimeout(selectedMirror + path);
+    return await fetchWithTimeout(selectedMirror + path);
   } catch (e) {
     console.warn(e);
     console.warn(`Failed to fetch data from mirror ${selectedMirror}, trying other mirror...`);
@@ -35,7 +35,7 @@ async function fetchData(path: string): Promise<Response> {
   let done = false;
   return Promise.race(
     DATA_MIRRORS.map(mirror =>
-      fetchWithTimeout(mirror + path)
+      fetchWithTimeout(mirror + path, {}, 15000)
         .then(function(resp) {
           if (done) {
             return resp;
