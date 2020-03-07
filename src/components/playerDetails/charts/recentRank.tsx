@@ -87,7 +87,7 @@ export default function RecentRankChart({
     }
     for (let i = 0; i < Math.min(totalGames, numGames); i++) {
       const game = dataAdapter.getItem(i);
-      if (!("uuid" in game)) {
+      if (!game || !("uuid" in game)) {
         break;
       }
       const rank = GameRecord.getRankIndexByPlayer(game, playerId);
