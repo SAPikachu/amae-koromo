@@ -2,6 +2,7 @@
 import Conf from "../../utils/conf";
 
 const DATA_MIRRORS = ["https://ak-data-2.sapk.ch/", "https://ak-data-1.sapk.ch/", "https://ak-data-3.sapk.ch/"];
+const PROBE_TIMEOUT = 15000;
 
 let selectedMirror = localStorage.getItem("selectedMirror") || DATA_MIRRORS[0];
 
@@ -35,7 +36,7 @@ async function fetchData(path: string): Promise<Response> {
   let done = false;
   return Promise.race(
     DATA_MIRRORS.map(mirror =>
-      fetchWithTimeout(mirror + path, {}, 15000)
+      fetchWithTimeout(mirror + path, {}, PROBE_TIMEOUT)
         .then(function(resp) {
           if (done) {
             return resp;
@@ -46,7 +47,7 @@ async function fetchData(path: string): Promise<Response> {
           console.log(`Set ${mirror} as preferred`);
           return resp;
         })
-        .catch(e => new Promise((_, reject) => setTimeout(() => reject(e), 5000)))
+        .catch(e => new Promise((_, reject) => setTimeout(() => reject(e), PROBE_TIMEOUT)))
     )
   ) as Promise<Response>;
 }
