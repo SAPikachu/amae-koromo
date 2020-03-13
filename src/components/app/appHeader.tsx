@@ -3,10 +3,11 @@ import React from "react";
 import { Container } from "../layout";
 import { Alert } from "../misc/alert";
 import Conf from "../../utils/conf";
+import { useTranslation } from "react-i18next";
 
-export function AppHeader() {
+function AlertDefault() {
   return (
-    <Alert container={Container} stateName="topNote20200103">
+    <>
       <h4>说明</h4>
       <ul>
         <li>本页面数据由第三方维护，不能绝对保证完整和正确，信息仅供参考，请勿用于不良用途。</li>
@@ -25,6 +26,43 @@ export function AppHeader() {
           感谢 <a href="https://github.com/kamicloud/">Kamicloud</a> 提供部分数据。
         </li>
       </ul>
+    </>
+  );
+}
+
+function AlertJa() {
+  return (
+    <>
+      <h4>说明</h4>
+      <ul>
+        <li>本サイトは非公式サイトで、全てのデータの正しさが保証できません。サイトの内容を悪用しないでください。</li>
+        <li>現時点では半荘戦だけ記録しています。東風戦のデータは含まれません。</li>
+        <li>データの更新はリアルタイムではありません。対局がサイトに載せるまで数分から数時間がかかります。</li>
+        <li>
+          データの収集は{Conf.dateMin.format(" YYYY 年 M 月 D 日")}からです。収集が始まるまでの対戦は検索できません。
+        </li>
+        <li>
+          <a href={"https://" + Conf.canonicalDomain}>メーンサイト</a>
+          はサービス向上のため、少しの匿名使用情報を収集しています。希望しない場合、
+          <a href={Conf.mirrorUrl}>ミラーサイト</a>を使ってください。
+        </li>
+        <li>
+          内容の誤り・誤植等はご報告いただけますと幸いです。 <a href="mailto:i@sapika.ch">SAPikachu (i@sapika.ch)</a>{" "}
+          または <a href="https://github.com/SAPikachu/amae-koromo/">GitHub</a> でご連絡ください。
+        </li>
+        <li>
+          感谢 <a href="https://github.com/kamicloud/">Kamicloud</a> 提供部分数据。
+        </li>
+      </ul>
+    </>
+  );
+}
+
+export function AppHeader() {
+  const { i18n } = useTranslation();
+  return (
+    <Alert container={Container} stateName="topNote20200313">
+      {i18n.language.indexOf("ja") === 0 ? <AlertJa /> : <AlertDefault />}
     </Alert>
   );
 }
