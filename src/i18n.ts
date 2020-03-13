@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
 import resources from "./translations.json";
 import { triggerRelayout } from "./utils";
@@ -11,14 +12,20 @@ if (DEBUG) {
 }
 
 i18n
+  .use(LanguageDetector)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources,
-    lng: localStorage.defaultLanguage || "zh-hans",
     lowerCaseLng: true,
-    fallbackLng: false,
+    fallbackLng: "zh-hans",
     defaultNS: "default",
     debug: DEBUG,
+    whitelist: ["ja", "zh-hans"],
+    detection: {
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"],
+      checkWhitelist: true
+    },
 
     returnEmptyString: false,
     returnNull: false,
@@ -47,8 +54,7 @@ i18n
     }
   });
 
-i18n.on("languageChanged", function(lng) {
-  localStorage.setItem("defaultLanguage", lng);
+i18n.on("languageChanged", function() {
   triggerRelayout();
 });
 
