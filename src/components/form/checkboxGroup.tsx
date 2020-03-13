@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export interface CheckboxItem {
   key: string;
@@ -26,9 +27,11 @@ export function CheckboxGroup(
     items: [],
     groupKey: "default",
     selectedItemKeys: null,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onChange: () => {}
   }
 ) {
+  const { t } = useTranslation();
   const { type, items, groupKey } = props;
   const { setSelected, isChecked } = (() => {
     if (props.type === "checkbox") {
@@ -78,7 +81,7 @@ export function CheckboxGroup(
             onChange={event => setSelected(item.key, event.currentTarget.checked)}
           />
           <label className="form-check-label" htmlFor={`CG_${groupKey}_${item.key}`}>
-            {item.label}
+            {t(item.label)}
           </label>
         </div>
       ))}

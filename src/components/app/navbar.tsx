@@ -3,6 +3,8 @@ import { Location } from "history";
 import { Link, NavLink } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import Conf, { CONFIGURATIONS } from "../../utils/conf";
+import { useTranslation } from "react-i18next";
+import clsx from "clsx";
 
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
@@ -16,9 +18,12 @@ const SITE_LINKS = [
   ["四麻玉/王座", CONFIGURATIONS.DEFAULT.canonicalDomain],
   ["四麻金", CONFIGURATIONS.ako.canonicalDomain],
   ["三麻", CONFIGURATIONS.ikeda.canonicalDomain]
-]
-  .filter(([, domain]) => Conf.canonicalDomain !== domain)
-  .map(([label, domain]) => ({ label, domain }));
+].map(([label, domain]) => ({ label, domain, active: Conf.canonicalDomain === domain }));
+
+const LANGUAGES = [
+  ["中文", "zh-hans"],
+  ["日本語", "ja"]
+].map(([label, code]) => ({ label, code }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isActive(match: any, location: Location): boolean {
@@ -29,6 +34,7 @@ function isActive(match: any, location: Location): boolean {
 }
 
 export default function Navbar() {
+  const { t, i18n } = useTranslation();
   const [mobileVisible, setMobileVisible] = useState(false);
   const onToggleButtonClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -75,17 +81,31 @@ export default function Navbar() {
         >
           <div className="navbar-nav">
             <NavLink className="nav-item nav-link" activeClassName="active" to="/" isActive={isActive}>
-              主页
+              {t("主页")}
             </NavLink>
             {NAV_ITEMS.map(({ label, path }) => (
               <NavLink key={path} className="nav-item nav-link" activeClassName="active" to={`/${path}`}>
-                {label}
+                {t(label)}
               </NavLink>
             ))}
-            {SITE_LINKS.map(({ label, domain }) => (
-              <a key={domain} className="nav-item nav-link" href={`https://${domain}/`}>
-                {label}
+            <span className="sep"></span>
+            {SITE_LINKS.map(({ label, domain, active }) => (
+              <a key={domain} className={clsx("nav-item nav-link", active && "active")} href={`https://${domain}/`}>
+                {t(label)}
               </a>
+            ))}
+            <span className="sep"></span>
+            {LANGUAGES.map(({ label, code }) => (
+              <button
+                key={code}
+                className={clsx("nav-item nav-link", i18n.language === code && "active")}
+                onClick={e => {
+                  e.preventDefault();
+                  i18n.changeLanguage(code);
+                }}
+              >
+                {label}
+              </button>
             ))}
           </div>
         </div>

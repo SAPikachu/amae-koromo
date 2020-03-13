@@ -57,6 +57,11 @@ dl:empty {
   transition: background-color 0.3s;
   background: rgba(255, 255, 255, 0.45);
 }
+.navbar .sep {
+  display: block;
+  width: 2em;
+  height: 1em;
+}
 @include media-breakpoint-down(md) {
   .navbar {
     background: rgba(255, 255, 255, 0.8);

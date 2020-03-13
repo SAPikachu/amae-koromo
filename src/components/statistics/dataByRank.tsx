@@ -6,6 +6,7 @@ import Loading from "../misc/loading";
 import { useModel } from "../modeModel/model";
 import { Level } from "../../data/types/level";
 import { ModelModeSelector } from "../modeModel";
+import { useTranslation } from "react-i18next";
 
 const HEADERS = [
   "等级",
@@ -27,6 +28,7 @@ const HEADERS = [
 ];
 
 export default function DataByRank() {
+  const { t } = useTranslation();
   const data = useAsyncFactory(getGlobalStatistics, [], "getGlobalStatistics");
   const [model] = useModel();
   if (!data) {
@@ -43,7 +45,7 @@ export default function DataByRank() {
           <tr>
             {HEADERS.map(x => (
               <th key={x}>
-                <div>{x}</div>
+                <div>{t(x)}</div>
               </th>
             ))}
           </tr>
@@ -72,7 +74,7 @@ export default function DataByRank() {
       </table>
       <div className="row">
         <div className="col text-right">
-          统计半庄数：
+          {t("统计半庄数：")}
           {Math.floor(modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) / 4)}
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { useRouteMatch, Switch, Route, Redirect, useLocation } from "react-router";
 import { Helmet } from "react-helmet";
+import { useTranslation } from "react-i18next";
 
 type RouteDefProps = { path: string; exact?: boolean; title: string; children: React.ReactChild | React.ReactChildren };
 export const RouteDef: React.FunctionComponent<RouteDefProps> = () => {
@@ -17,6 +18,7 @@ export const ViewRoutes: React.FunctionComponent<RoutesProps> = () => {
 const Context = React.createContext<RouteDefProps[]>([]);
 
 export function NavButtons({ className = "", replace = false, keepState = false }) {
+  const { t } = useTranslation("navButtons");
   const routes = useContext(Context);
   const match = useRouteMatch() || { url: "" };
   const urlBase = match.url.replace(/\/+$/, "");
@@ -34,7 +36,7 @@ export function NavButtons({ className = "", replace = false, keepState = false 
           className="nav-link"
           activeClassName="active"
         >
-          {route.title}
+          {t(route.title)}
         </NavLink>
       ))}
     </nav>
@@ -50,6 +52,7 @@ export function ViewSwitch({
   mutateTitle?: boolean;
   children?: React.ReactChild | React.ReactChildren;
 }) {
+  const { t } = useTranslation("navButtons");
   const routes = useContext(Context);
   const match = useRouteMatch() || { url: "" };
   const loc = useLocation();
@@ -60,7 +63,7 @@ export function ViewSwitch({
         <Route exact={route.exact} key={route.path} path={`${urlBase}/${route.path}`}>
           {mutateTitle && (
             <Helmet>
-              <title>{route.title}</title>
+              <title>{t(route.title)}</title>
             </Helmet>
           )}
           {route.children}

@@ -13,6 +13,7 @@ import { useDataAdapter } from "./dataAdapterProvider";
 import { triggerRelayout, isMobile } from "../../utils/index";
 import Loading from "../misc/loading";
 import Conf from "../../utils/conf";
+import { Trans, useTranslation } from "react-i18next";
 
 export { Column } from "react-virtualized/dist/es/Table";
 
@@ -93,7 +94,7 @@ export const COLUMN_GAMEMODE = makeColumn(
     Conf.table.showGameMode && (
       <Column
         dataKey="modeId"
-        label={isMobile() ? "" : "等级"}
+        label={isMobile() ? "" : <Trans>等级</Trans>}
         cellRenderer={cellFormatGameMode}
         width={isMobile() ? 20 : 40}
         className="mobile-vertical"
@@ -104,7 +105,7 @@ export const COLUMN_GAMEMODE = makeColumn(
 export const COLUMN_RANK = makeColumn((activePlayerId: number | string) => (
   <Column
     dataKey="modeId"
-    label={isMobile() ? "" : "顺位"}
+    label={isMobile() ? "" : <Trans>顺位</Trans>}
     columnData={{ activePlayerId }}
     cellRenderer={cellFormatRank}
     width={isMobile() ? 20 : 40}
@@ -114,7 +115,7 @@ export const COLUMN_RANK = makeColumn((activePlayerId: number | string) => (
 export const COLUMN_PLAYERS = makeColumn((activePlayerId: ActivePlayerId) => (
   <Column
     dataKey="players"
-    label="玩家"
+    label={<Trans>玩家</Trans>}
     cellRenderer={({ rowData }: TableCellProps) =>
       rowData && rowData.players ? <Players game={rowData} activePlayerId={activePlayerId} /> : null
     }
@@ -126,7 +127,7 @@ export const COLUMN_PLAYERS = makeColumn((activePlayerId: ActivePlayerId) => (
 export const COLUMN_STARTTIME = makeColumn(() => (
   <Column
     dataKey="startTime"
-    label="开始"
+    label={<Trans>开始</Trans>}
     cellRenderer={cellFormatTime}
     width={isMobile() ? 40 : 50}
     className="text-right"
@@ -137,7 +138,7 @@ export const COLUMN_STARTTIME = makeColumn(() => (
 export const COLUMN_ENDTIME = makeColumn(() => (
   <Column
     dataKey="endTime"
-    label="结束"
+    label={<Trans>结束</Trans>}
     cellRenderer={cellFormatTime}
     width={isMobile() ? 40 : 50}
     headerClassName="text-right"
@@ -148,7 +149,7 @@ export const COLUMN_ENDTIME = makeColumn(() => (
 export const COLUMN_FULLTIME = makeColumn(() => (
   <Column
     dataKey="startTime"
-    label="时间"
+    label={<Trans>时间</Trans>}
     cellRenderer={cellFormatFullTime}
     width={isMobile() ? 40 : 140}
     className="text-right"
@@ -165,6 +166,7 @@ export default function GameRecordTable({
   withActivePlayer?: boolean;
   alwaysShowDetailLink?: boolean;
 }) {
+  const { i18n } = useTranslation();
   const data = useDataAdapter();
   const scrollerProps = useScrollerProps();
   const { isScrolling, onChildScroll, scrollTop, height, registerChild } = scrollerProps;
@@ -183,6 +185,8 @@ export default function GameRecordTable({
   const memoColumns = useMemo(() => columns.map(x => x()).filter(x => x), [
     // eslint-disable-next-line react-hooks/exhaustive-deps
     isMobile(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    i18n.language,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ...columns.map(x => x.key || x)
   ]);

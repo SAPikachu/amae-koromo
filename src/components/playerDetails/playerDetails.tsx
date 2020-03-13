@@ -21,6 +21,7 @@ import { Level } from "../../data/types/level";
 import { ViewRoutes, RouteDef, SimpleRoutedSubViews, NavButtons, ViewSwitch } from "../routing";
 import { useLocation } from "react-router-dom";
 import SameMatchRate from "./sameMatchRate";
+import { useTranslation } from "react-i18next";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -214,8 +215,9 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
   );
 }
 function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
+  const { t } = useTranslation();
   if (!stats.最近大铳) {
-    return <p className="text-center">无满贯或以上大铳</p>;
+    return <p className="text-center">{t("无满贯或以上大铳")}</p>;
   }
   return (
     <div>
@@ -283,6 +285,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
 }
 
 export default function PlayerDetails() {
+  const { t } = useTranslation();
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
   useEffect(() => {
@@ -297,15 +300,18 @@ export default function PlayerDetails() {
       <Helmet>
         <title>{metadata.nickname}</title>
       </Helmet>
-      <h2 className="text-center">玩家：{metadata.nickname}</h2>
+      <h2 className="text-center">
+        {t("玩家：")}
+        {metadata.nickname}
+      </h2>
       <div className="row mt-4">
         <div className="col-md-8">
-          <h3 className="text-center mb-4">最近走势</h3>
+          <h3 className="text-center mb-4">{t("最近走势")}</h3>
           <RecentRankChart dataAdapter={dataAdapter} playerId={metadata.id} aspect={6} />
           <PlayerStats metadata={metadata} />
         </div>
         <div className="col-md-4">
-          <h3 className="text-center mb-4">累计战绩</h3>
+          <h3 className="text-center mb-4">{t("累计战绩")}</h3>
           <RankRateChart metadata={metadata} />
         </div>
       </div>

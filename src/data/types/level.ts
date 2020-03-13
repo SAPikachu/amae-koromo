@@ -1,5 +1,8 @@
 import { GameMode } from "./gameMode";
 import { PLAYER_RANKS } from "./constants";
+import i18n from "../../i18n";
+
+const t = i18n.t.bind(i18n);
 
 const LEVEL_MAX_POINTS = [20, 80, 200, 600, 800, 1000, 1200, 1400, 2000, 2800, 3200, 3600, 4000, 6000, 9000];
 const LEVEL_PENALTY = [0, 0, 0, 20, 40, 60, 80, 100, 120, 165, 180, 195, 210, 225, 240, 255];
@@ -40,7 +43,7 @@ export class Level {
     return LEVEL_ALLOWED_MODES[this._numPlayerId * 100 + this._majorRank].includes(mode);
   }
   getTag(): string {
-    const label = PLAYER_RANKS[this._majorRank - 1];
+    const label = t(PLAYER_RANKS)[this._majorRank - 1];
     if (this._majorRank === PLAYER_RANKS.length) {
       return label;
     }

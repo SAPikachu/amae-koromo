@@ -7,6 +7,7 @@ import { PlayerMetadataLite, getLevelTag } from "../../data/types";
 import { searchPlayer } from "../../data/source/misc";
 import { Link } from "react-router-dom";
 import { generatePlayerPathById } from "./routes";
+import { useTranslation } from "react-i18next";
 
 const playerSearchCache = {} as { [prefix: string]: PlayerMetadataLite[] | Promise<PlayerMetadataLite[]> };
 const NUM_RESULTS_SHOWN = 6;
@@ -32,6 +33,7 @@ function findRawResultFromCache(prefix: string): { result: PlayerMetadataLite[];
 }
 
 function PlayerSearchResult({ searchText }: { searchText: string }) {
+  const { t } = useTranslation();
   const [version, setVersion] = useState(0);
   const [players, isLoading, mayHaveMore] = useMemo(() => {
     const cachedResult = findRawResultFromCache(searchText);
@@ -89,7 +91,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
   }, [searchText, isLoading]);
   return (
     <>
-      <h6 className="text-center mb-2">玩家前缀搜索</h6>
+      <h6 className="text-center mb-2">{t("玩家前缀搜索")}</h6>
       <ul className="list-unstyled row mb-2">
         {players.slice(0, NUM_RESULTS_SHOWN).map(x => (
           <li key={x.id} className="col-6">
@@ -103,7 +105,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
       </ul>
       {(isLoading && <Loading size="small" />) ||
         ((players.length > NUM_RESULTS_SHOWN || mayHaveMore) && (
-          <small className="d-block text-center text-muted">（输入更长名字显示其它结果）</small>
+          <small className="d-block text-center text-muted">{t("（输入更长名字显示其它结果）")}</small>
         ))}
     </>
   );

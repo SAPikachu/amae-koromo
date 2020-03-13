@@ -12,6 +12,10 @@ import GameRecordTable, {
 import { GameRecord, FanStatEntryList } from "../../data/types";
 import { TableCellProps } from "react-virtualized/dist/es/Table";
 import { sum } from "../../utils";
+import { Trans, useTranslation } from "react-i18next";
+import i18n from "../../i18n";
+
+const t = i18n.t.bind(i18n);
 
 type Event = {
   type: "役满";
@@ -30,14 +34,14 @@ function buildEventInfo({ cellData }: TableCellProps) {
   if (!event.fan[0].役满) {
     return (
       <span>
-        {sum(event.fan.map(x => x.count))} 番
+        {sum(event.fan.map(x => x.count))} <Trans>番</Trans>
         <br />
-        累计役满
+        <Trans>累计役满</Trans>
       </span>
     );
   }
   if (event.fan.length === 1) {
-    const label = event.fan[0].label;
+    const label = t(event.fan[0].label);
     if (label.length > 4) {
       return (
         <span>
@@ -51,9 +55,9 @@ function buildEventInfo({ cellData }: TableCellProps) {
   } else if (event.fan.length === 2) {
     return (
       <span>
-        {event.fan[0].label}
+        <Trans>{event.fan[0].label}</Trans>
         <br />
-        {event.fan[1].label}
+        <Trans>{event.fan[1].label}</Trans>
       </span>
     );
   }
@@ -61,7 +65,7 @@ function buildEventInfo({ cellData }: TableCellProps) {
 }
 
 const COLUMN_EVENTINFO = makeColumn(() => (
-  <Column dataKey="event" label="类型" cellRenderer={buildEventInfo} width={80} />
+  <Column dataKey="event" label={<Trans>类型</Trans>} cellRenderer={buildEventInfo} width={80} />
 ))();
 
 function getEventPlayerId(rec: GameRecord) {
@@ -69,10 +73,11 @@ function getEventPlayerId(rec: GameRecord) {
 }
 
 export default function RecentHighlight() {
+  const { t } = useTranslation();
   const provider = useMemo(() => DataProvider.createHightlight(), []);
   return (
     <>
-      <Helmet title="最近役满" />
+      <Helmet title={t("最近役满")} />
       <DataAdapterProviderCustom provider={provider}>
         <GameRecordTable
           withActivePlayer

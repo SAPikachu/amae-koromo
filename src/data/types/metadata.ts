@@ -3,6 +3,10 @@ import { LevelWithDelta, Level } from "./level";
 import { GameMode } from "./gameMode";
 import { FanStatEntry } from "./statistics";
 import { sum } from "../../utils";
+import i18n from "../../i18n";
+import { PLAYER_RANKS } from "./constants";
+
+const t = i18n.t.bind(i18n);
 
 const RANK_DELTA_4 = [15, 5, -5, -15];
 const RANK_DELTA_3 = [15, 0, -15];
@@ -40,11 +44,11 @@ export const FanStatEntry2 = Object.freeze({
   formatFan(entry: FanStatEntry2): string {
     if (entry.役满) {
       if (entry.役满 === 1) {
-        return "役满";
+        return t("役满");
       }
-      return `${entry.役满} 倍役满`;
+      return `${entry.役满} ${t("倍役满")}`;
     }
-    return `${entry.count} 番`;
+    return `${entry.count} ${t("番")}`;
   }
 });
 export type FanStatEntryList = FanStatEntry2[];
@@ -54,21 +58,21 @@ export const FanStatEntryList = Object.freeze({
     const 役满 = sum(list.map(x => x.役满));
     if (役满) {
       if (役满 === 1) {
-        return "役满";
+        return t("役满");
       }
-      return `${役满} 倍役满`;
+      return `${役满} ${t("倍役满")}`;
     }
-    let result = `${count} 番`;
+    let result = `${count} ${t("番")}`;
     if (count >= 13) {
-      result += " - 累计役满";
+      result += " - " + t("累计役满");
     } else if (count >= 11) {
-      result += " - 三倍满";
+      result += " - " + t("三倍满");
     } else if (count >= 8) {
-      result += " - 倍满";
+      result += " - " + t("倍满");
     } else if (count >= 6) {
-      result += " - 跳满";
+      result += " - " + t("跳满");
     } else if (count === 5) {
-      result += " - 满贯";
+      result += " - " + t("满贯");
     }
     return result;
   }
@@ -250,13 +254,14 @@ export const PlayerMetadata = Object.freeze({
       }
       return s.slice(0, s.indexOf(".") + 3);
     };
+    const translatedLevelTags = t(PLAYER_RANKS);
     if (level >= 7) {
-      return `魂${formatNumber(level - 6)}`;
+      return `${translatedLevelTags[5]}${formatNumber(level - 6)}`;
     }
     if (level >= 4) {
-      return `圣${formatNumber(level - 3)}`;
+      return `${translatedLevelTags[4]}${formatNumber(level - 3)}`;
     }
-    return `豪${formatNumber(level)}`;
+    return `${translatedLevelTags[3]}${formatNumber(level)}`;
   },
   getStableLevelComponents(metadata: PlayerMetadata, mode: GameMode): RankRates {
     return this.calculateRankDeltaPoints(metadata, mode, undefined, false, false);

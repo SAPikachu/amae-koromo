@@ -3,11 +3,13 @@ import { LevelWithDelta, PlayerMetadata, GameMode, Level, modeLabel } from "../.
 import { useModel } from "../gameRecords/model";
 import StatItem from "./statItem";
 import Conf from "../../utils/conf";
+import { useTranslation } from "react-i18next";
 
 const ENABLED_MODES = [GameMode.玉, GameMode.王座, GameMode.三玉, GameMode.三王座];
 
 export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
   const [model] = useModel();
+  const { t } = useTranslation();
   if (!Conf.features.estimatedStableLevel) {
     return null;
   }
@@ -30,22 +32,24 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
       expectedGamePoint > 0 ? (level.getMaxPoint() - curPoint) / expectedGamePoint : curPoint / expectedGamePoint;
   }
   const changeLevelMsg = estimatedNumGamesToChangeLevel
-    ? `，括号内为预计${estimatedNumGamesToChangeLevel > 0 ? "升" : "降"}段场数`
+    ? t("，括号内为预计{{ label }}段场数", { label: estimatedNumGamesToChangeLevel > 0 ? t("升") : t("降") })
     : "";
   const levelComponents = PlayerMetadata.getStableLevelComponents(metadata, mode);
   const levelNames = "一二三四".slice(0, levelComponents.length);
+  const modeL = modeLabel(mode);
   return (
     <>
       <StatItem
         label="安定段位"
-        description={`在${modeLabel(mode)}之间一直进行对局，预测最终能达到的段位。${
-          levelNames.length === 3 ? "括号内为安定段位时的分数期望。" : ""
-        }${notEnoughData ? "（数据量不足，计算结果可能有较大偏差）" : ""}<br/>${levelNames.slice(
-          0,
-          levelNames.length - 1
-        )}位平均 Pt / ${levelNames[levelNames.length - 1]}位平均得点 Pt：[${levelComponents
-          .map(x => x.toFixed(2))
-          .join("/")}]`}
+        description={`${t("在{{ modeL }}之间一直进行对局，预测最终能达到的段位。", { modeL })}${
+          levelNames.length === 3 ? t("括号内为安定段位时的分数期望。") : ""
+        }${notEnoughData ? t("（数据量不足，计算结果可能有较大偏差）") : ""}<br/>${t(
+          "{{ levelNames1 }}位平均 Pt / {{ levelName2 }}位平均得点 Pt：",
+          {
+            levelNames1: levelNames.slice(0, levelNames.length - 1),
+            levelName2: levelNames[levelNames.length - 1]
+          }
+        )}[${levelComponents.map(x => x.toFixed(2)).join("/")}]`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span>
@@ -55,9 +59,10 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
       </StatItem>
       <StatItem
         label="分数期望"
-        description={`在${modeLabel(mode)}之间每局获得点数的数学期望值${changeLevelMsg}${
-          notEnoughData ? "（数据量不足，计算结果可能有较大偏差）" : ""
-        }`}
+        description={`${t("在{{ modeL }}之间每局获得点数的数学期望值{{ changeLevelMsg }}", {
+          changeLevelMsg,
+          modeL
+        })}${notEnoughData ? t("（数据量不足，计算结果可能有较大偏差）") : ""}`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span>

@@ -5,6 +5,7 @@ import Loading from "../misc/loading";
 import { useMemo } from "react";
 import { useModel, ModelModeSelector } from "../modeModel";
 import SimplePieChart from "../charts/simplePieChart";
+import { useTranslation } from "react-i18next";
 
 const SEAT_LABELS = "东南西北";
 
@@ -30,6 +31,7 @@ function Chart({
 }
 
 export default function RankBySeats() {
+  const { t } = useTranslation();
   const data = useAsyncFactory(getRankRateBySeat, [], "getRankRateBySeat");
   const [model] = useModel();
   if (!data) {
@@ -41,16 +43,16 @@ export default function RankBySeats() {
       <ModelModeSelector />
       <div className="row">
         <div className="col-lg-6">
-          <h3 className="text-center">坐席吃一率</h3>
+          <h3 className="text-center">{t("坐席吃一率")}</h3>
           <Chart rates={selectedData[1]} numGames={selectedData.numGames} />
         </div>
         <div className="col-lg-6">
-          <h3 className="text-center">坐席吃四率</h3>
+          <h3 className="text-center">{t("坐席吃四率")}</h3>
           <Chart rates={selectedData[4]} numGames={selectedData.numGames} />
         </div>
       </div>
       <div className="row">
-        <div className="col text-right">统计半庄数：{selectedData.numGames}</div>
+        <div className="col text-right">{t("统计半庄数：")}{selectedData.numGames}</div>
       </div>
     </>
   );

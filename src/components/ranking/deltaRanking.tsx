@@ -8,6 +8,7 @@ import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
 import { LevelWithDelta } from "../../data/types";
 import { useModel } from "../modeModel";
+import { useTranslation } from "react-i18next";
 
 function RankingTable({ rows = [] as DeltaRankingItem[] }) {
   return (
@@ -29,6 +30,7 @@ function RankingTable({ rows = [] as DeltaRankingItem[] }) {
 }
 
 export default function DeltaRanking() {
+  const { t } = useTranslation();
   const data1w = useAsyncFactory(
     () => getDeltaRanking(RankingTimeSpan.OneWeek),
     [],
@@ -48,27 +50,27 @@ export default function DeltaRanking() {
     <>
       <div className="row">
         <div className="col-lg-6">
-          <h3 className="text-center">苦主榜</h3>
+          <h3 className="text-center">{t("苦主榜")}</h3>
           <div className="row">
             <div className="col-md-6">
-              <h4 className="text-center">一周</h4>
+              <h4 className="text-center">{t("一周")}</h4>
               <RankingTable rows={data1w[modeId || "0"].bottom} />
             </div>
             <div className="col-md-6">
-              <h4 className="text-center">四周</h4>
+              <h4 className="text-center">{t("四周")}</h4>
               <RankingTable rows={data4w[modeId || "0"].bottom} />
             </div>
           </div>
         </div>
         <div className="col-lg-6">
-          <h3 className="text-center">汪汪榜</h3>
+          <h3 className="text-center">{t("汪汪榜")}</h3>
           <div className="row">
             <div className="col-md-6">
-              <h4 className="text-center">一周</h4>
+              <h4 className="text-center">{t("一周")}</h4>
               <RankingTable rows={data1w[modeId || "0"].top} />
             </div>
             <div className="col-md-6">
-              <h4 className="text-center">四周</h4>
+              <h4 className="text-center">{t("四周")}</h4>
               <RankingTable rows={data4w[modeId || "0"].top} />
             </div>
           </div>

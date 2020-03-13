@@ -9,6 +9,7 @@ import { PlayerMetadata } from "../../data/types/metadata";
 import { formatFixed3, formatIdentity } from "../../utils/index";
 import { ViewRoutes, SimpleRoutedSubViews, NavButtons, RouteDef } from "../routing";
 import { ViewSwitch } from "../routing/index";
+import { useTranslation } from "react-i18next";
 
 const ROUTES = (
   <ViewRoutes>
@@ -66,13 +67,14 @@ const ROUTES = (
 );
 
 export default function Routes() {
+  const { t } = useTranslation();
   return (
     <SimpleRoutedSubViews>
       {ROUTES}
       <ModelModeProvider>
         <Alert stateName="rankingNotice">
-          <h4 className="mb-2">提示</h4>
-          排行榜非实时更新，可能会有数小时的延迟
+          <h4 className="mb-2">{t("提示")}</h4>
+          {t("排行榜非实时更新，可能会有数小时的延迟")}
         </Alert>
         <NavButtons />
         <ModelModeSelector />

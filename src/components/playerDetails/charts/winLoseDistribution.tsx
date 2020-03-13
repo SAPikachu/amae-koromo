@@ -4,6 +4,7 @@ import SimplePieChart, { PieChartItem } from "../../charts/simplePieChart";
 import { sum } from "../../../utils";
 import { formatPercent } from "../../../utils/index";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 function buildItems(
   stats: PlayerExtendedStats,
@@ -20,6 +21,7 @@ function buildItems(
 }
 
 export default function WinLoseDistribution({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
+  const { t } = useTranslation();
   const winData = useMemo(() => buildItems(stats, ["立直和了", "副露和了", "默听和了"], ["立直", "副露", "默听"]), [
     stats
   ]);
@@ -40,33 +42,36 @@ export default function WinLoseDistribution({ stats }: { stats: PlayerExtendedSt
   return (
     <div className="row">
       <div className="col-lg-4 mb-2">
-        <h5 className="text-center">和牌时</h5>
+        <h5 className="text-center">{t("和牌时")}</h5>
         <SimplePieChart
           aspect={4 / 3}
           items={winData}
           startAngle={-45}
           innerLabelFontSize="0.85rem"
           outerLabelOffset={10}
+          outerLabel={x => t(x.outerLabel || "")}
         />
       </div>
       <div className="col-lg-4 mb-2">
-        <h5 className="text-center">放铳时</h5>
+        <h5 className="text-center">{t("放铳时")}</h5>
         <SimplePieChart
           aspect={4 / 3}
           items={loseSelfData}
           startAngle={-45}
           innerLabelFontSize="0.85rem"
           outerLabelOffset={10}
+          outerLabel={x => t(x.outerLabel || "")}
         />
       </div>
       <div className="col-lg-4 mb-2">
-        <h5 className="text-center">放铳至</h5>
+        <h5 className="text-center">{t("放铳至")}</h5>
         <SimplePieChart
           aspect={4 / 3}
           items={loseData}
           startAngle={-45}
           innerLabelFontSize="0.85rem"
           outerLabelOffset={10}
+          outerLabel={x => t(x.outerLabel || "")}
         />
       </div>
     </div>

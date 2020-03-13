@@ -5,6 +5,7 @@ import { getFanStats } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { FanStatEntry, FanStats, modeLabel } from "../../data/types";
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const SORTERS: (undefined | ((a: FanStatEntry, b: FanStatEntry) => number))[] = [
   undefined,
@@ -13,6 +14,7 @@ const SORTERS: (undefined | ((a: FanStatEntry, b: FanStatEntry) => number))[] = 
 ];
 
 export default function FanStatsView() {
+  const { t } = useTranslation();
   const data = useAsyncFactory(getFanStats, [], "getFanStats");
   const [sorterIndex, setSorterIndex] = useState(0);
   const sortedData = useMemo((): FanStats | undefined => {
@@ -39,20 +41,23 @@ export default function FanStatsView() {
       <div className="row">
         {Object.entries(sortedData).map(([modeId, value]) => (
           <div className="col-xl-4" key={modeId}>
-            <h2 className="text-center">{modeId === "0" ? "全部" : modeLabel(parseInt(modeId))}</h2>
-            <p className="text-center">记录和出局数：{value.count}</p>
+            <h2 className="text-center">{t(modeId === "0" ? "全部" : modeLabel(parseInt(modeId)))}</h2>
+            <p className="text-center">
+              {t("记录和出局数：")}
+              {value.count}
+            </p>
             <table className="table table-striped">
               <thead onClick={() => setSorterIndex((sorterIndex + 1) % SORTERS.length)} className="cursor-pointer">
                 <tr>
-                  <th>役</th>
-                  <th className="text-right">记录数</th>
-                  <th className="text-right">比率</th>
+                  <th>{t("役")}</th>
+                  <th className="text-right">{t("记录数")}</th>
+                  <th className="text-right">{t("比率")}</th>
                 </tr>
               </thead>
               <tbody>
                 {value.entries.map(x => (
                   <tr key={x.label}>
-                    <td>{x.label}</td>
+                    <td>{t(x.label)}</td>
                     <td className="text-right">{x.count}</td>
                     <td className="text-right">
                       {x.count
