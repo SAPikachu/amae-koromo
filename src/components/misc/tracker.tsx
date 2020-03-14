@@ -5,6 +5,14 @@ import Conf from "../../utils/conf";
 
 let currentCategory = "Home";
 
+type Ga = NonNullable<typeof window.ga>;
+
+declare global {
+  interface Window {
+    __loadGa?: () => Ga;
+  }
+}
+
 export function PageCategory({ category }: { category: string }) {
   useLayoutEffect(() => {
     const oldCategory = currentCategory;
@@ -16,7 +24,7 @@ export function PageCategory({ category }: { category: string }) {
   return null;
 }
 
-function TrackerImpl() {
+function TrackerImpl({ ga }: { ga: Ga }) {
   const loc = useLocation();
   useEffect(() => {
     let cancelled = false;
@@ -26,7 +34,7 @@ function TrackerImpl() {
       }
       const helmet = Helmet.peek();
       const title = (helmet.title || document.title).toString();
-      window.ga("send", {
+      ga("send", {
         hitType: "pageview",
         page: loc.pathname,
         title: `${currentCategory} ${title}`,
@@ -36,19 +44,19 @@ function TrackerImpl() {
     return () => {
       cancelled = true;
     };
-  }, [loc.pathname]);
+  }, [loc.pathname, ga]);
   return null;
 }
 
 export default function Tracker() {
-  if (!window.ga) {
-    return null;
-  }
   if (process.env.NODE_ENV !== "production") {
     return null;
   }
   if (window.location.host !== Conf.canonicalDomain) {
     return null;
   }
-  return <TrackerImpl />;
+  if (!window.__loadGa) {
+    return null;
+  }
+  return <TrackerImpl ga={window.ga || window.__loadGa()} />;
 }
