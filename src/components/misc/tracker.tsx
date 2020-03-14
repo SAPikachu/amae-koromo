@@ -24,7 +24,7 @@ export function PageCategory({ category }: { category: string }) {
   return null;
 }
 
-function TrackerImpl({ ga }: { ga: Ga }) {
+function TrackerImpl() {
   const loc = useLocation();
   useEffect(() => {
     let cancelled = false;
@@ -34,7 +34,7 @@ function TrackerImpl({ ga }: { ga: Ga }) {
       }
       const helmet = Helmet.peek();
       const title = (helmet.title || document.title).toString();
-      ga("send", {
+      window.ga("send", {
         hitType: "pageview",
         page: loc.pathname,
         title: `${currentCategory} ${title}`,
@@ -44,7 +44,7 @@ function TrackerImpl({ ga }: { ga: Ga }) {
     return () => {
       cancelled = true;
     };
-  }, [loc.pathname, ga]);
+  }, [loc.pathname]);
   return null;
 }
 
@@ -58,5 +58,6 @@ export default function Tracker() {
   if (!window.__loadGa) {
     return null;
   }
-  return <TrackerImpl ga={window.ga || window.__loadGa()} />;
+  window.__loadGa();
+  return <TrackerImpl />;
 }
