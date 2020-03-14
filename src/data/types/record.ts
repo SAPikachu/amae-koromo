@@ -4,6 +4,8 @@ import { GameMode } from "./gameMode";
 import { RANK_LABELS } from "./constants";
 import Conf from "../../utils/conf";
 
+import i18n from "../../i18n";
+
 export interface PlayerRecord {
   accountId: number;
   nickname: string;
@@ -45,6 +47,6 @@ export const GameRecord = Object.freeze({
       ? `_a${GameRecord.encodeAccountId(typeof playerId === "number" ? playerId : parseInt(playerId))}`
       : "";
     const uuid = typeof rec === "string" ? rec : rec.uuid;
-    return `https://www.majsoul.com/1/?paipu=${uuid}${trailer}`;
+    return `${i18n.t("https://www.majsoul.com/1/")}?paipu=${uuid}${trailer}`;
   }
 });
