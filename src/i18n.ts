@@ -34,14 +34,13 @@ i18n
     missingKeyHandler: DEBUG
       ? function(lng, ns, key) {
           const missingKeys = JSON.parse(sessionStorage.getItem("__i18nMissingKeys") || "{}") || {};
-          for (const l of lng) {
-            if (l === "zh-hans") {
-              continue;
-            }
-            missingKeys[l] = missingKeys[l] || {};
-            missingKeys[l][ns] = missingKeys[l][ns] || {};
-            missingKeys[l][ns][key] = "";
+          const l = i18n.language;
+          if (l === "zh-hans") {
+            return;
           }
+          missingKeys[l] = missingKeys[l] || {};
+          missingKeys[l][ns] = missingKeys[l][ns] || {};
+          missingKeys[l][ns][key] = "";
           sessionStorage.setItem("__i18nMissingKeys", JSON.stringify(missingKeys));
         }
       : false,

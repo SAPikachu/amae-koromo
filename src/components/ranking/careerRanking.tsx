@@ -55,22 +55,34 @@ export function CareerRankingColumn({
   title,
   formatter = formatPercent,
   showNumGames = true,
-  valueLabel = ""
+  valueLabel = "",
+  disableMixedMode = false
 }: {
   type: CareerRankingType;
   title: string;
   formatter?: (x: number) => string;
   showNumGames?: boolean;
   valueLabel?: string;
+  disableMixedMode?: boolean;
 }) {
   const { t } = useTranslation();
   const [model] = useModel();
   const modeId = model.selectedMode;
+  const isMixedMode = !modeId || modeId === "0";
   const data = useAsyncFactory(() => getCareerRanking(type, modeId), [type, modeId], "getCareerRanking");
   return (
     <div className="col-lg">
       <h3 className="text-center mb-2">{t(title)}</h3>
-      <RankingTable rows={data} formatter={formatter} valueLabel={t(valueLabel || title)} showNumGames={showNumGames} />;
+      {!disableMixedMode || !isMixedMode ? (
+        <RankingTable
+          rows={data}
+          formatter={formatter}
+          valueLabel={t(valueLabel || title)}
+          showNumGames={showNumGames}
+        />
+      ) : (
+        <p className="text-center mt-4">{t("请选择模式")}</p>
+      )}
     </div>
   );
 }

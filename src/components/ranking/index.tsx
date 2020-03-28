@@ -29,6 +29,7 @@ const ROUTES = (
           type={CareerRankingType.StableLevel}
           title="安定段位"
           formatter={PlayerMetadata.formatStableLevel2}
+          disableMixedMode
         />
       </CareerRanking>
     </RouteDef>
@@ -40,6 +41,42 @@ const ROUTES = (
           title="对局数"
           formatter={formatIdentity}
           showNumGames={false}
+        />
+      </CareerRanking>
+    </RouteDef>
+    <RouteDef path="ept12" title="一/二位平均 Pt">
+      <CareerRanking>
+        <CareerRankingColumn
+          type={CareerRankingType.ExpectedGamePoint0}
+          title="一位平均 Pt"
+          formatter={formatFixed3}
+          valueLabel="Pt"
+          disableMixedMode
+        />
+        <CareerRankingColumn
+          type={CareerRankingType.ExpectedGamePoint1}
+          title="二位平均 Pt"
+          formatter={formatFixed3}
+          valueLabel="Pt"
+          disableMixedMode
+        />
+      </CareerRanking>
+    </RouteDef>
+    <RouteDef path="ept34" title="三位平均 Pt/四位平均得点 Pt">
+      <CareerRanking>
+        <CareerRankingColumn
+          type={CareerRankingType.ExpectedGamePoint2}
+          title="三位平均 Pt"
+          formatter={formatFixed3}
+          valueLabel="Pt"
+          disableMixedMode
+        />
+        <CareerRankingColumn
+          type={CareerRankingType.ExpectedGamePoint3}
+          title="四位平均得点 Pt"
+          formatter={formatFixed3}
+          valueLabel="Pt"
+          disableMixedMode
         />
       </CareerRanking>
     </RouteDef>
