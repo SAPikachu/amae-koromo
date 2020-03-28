@@ -1,5 +1,5 @@
 import { LevelWithDelta } from "./level";
-import { PlayerMetadataLite } from "./metadata";
+import { PlayerMetadata } from "./metadata";
 
 export enum RankingTimeSpan {
   OneWeek = "1w",
@@ -17,7 +17,7 @@ export type DeltaRankingResponse = {
     bottom: DeltaRankingItem[];
   };
 };
-export interface CareerRankingItem extends PlayerMetadataLite {
+export interface CareerRankingItem extends PlayerMetadata {
   rank_key: number;
   count: number;
 }
@@ -29,6 +29,7 @@ export enum CareerRankingType {
   AvgRank = "avg_rank",
   NumGames = "num_games",
   StableLevel = "stable_level",
+  PointEfficiency = "point_efficiency",
   Win = "win",
   Lose = "lose",
   WinRev = "win_rev",

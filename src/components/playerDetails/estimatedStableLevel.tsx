@@ -4,6 +4,7 @@ import { useModel } from "../gameRecords/model";
 import StatItem from "./statItem";
 import Conf from "../../utils/conf";
 import { useTranslation } from "react-i18next";
+import { formatFixed3 } from "../../utils";
 
 const ENABLED_MODES = [GameMode.玉, GameMode.王座, GameMode.三玉, GameMode.三王座];
 
@@ -49,7 +50,9 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
             levelNames1: levelNames.slice(0, levelNames.length - 1),
             levelName2: levelNames[levelNames.length - 1]
           }
-        )}[${levelComponents.map(x => x.toFixed(2)).join("/")}]`}
+        )}[${levelComponents.map(x => x.toFixed(2)).join("/")}]<br/>${t(
+          "得点效率（各顺位平均 Pt 及平均得点 Pt 的加权平均值）："
+        )}${formatFixed3(PlayerMetadata.calculateExpectedGamePoint(metadata, mode, undefined, false))}`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span>

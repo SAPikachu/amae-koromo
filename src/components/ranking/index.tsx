@@ -44,6 +44,12 @@ const ROUTES = (
         />
       </CareerRanking>
     </RouteDef>
+    <RouteDef path="winlose" title="和率/铳率">
+      <CareerRanking>
+        <CareerRankingColumn type={CareerRankingType.Win} title="和牌率" />
+        <CareerRankingColumn type={CareerRankingType.Lose} title="放铳率" />
+      </CareerRanking>
+    </RouteDef>
     <RouteDef path="ept12" title="一/二位平均 Pt">
       <CareerRanking>
         <CareerRankingColumn
@@ -80,10 +86,14 @@ const ROUTES = (
         />
       </CareerRanking>
     </RouteDef>
-    <RouteDef path="winlose" title="和率/铳率">
+    <RouteDef path="efficiency" title="得点效率">
       <CareerRanking>
-        <CareerRankingColumn type={CareerRankingType.Win} title="和牌率" />
-        <CareerRankingColumn type={CareerRankingType.Lose} title="放铳率" />
+        <CareerRankingColumn
+          type={CareerRankingType.PointEfficiency}
+          title="得点效率"
+          formatter={formatFixed3}
+          disableMixedMode
+        />
       </CareerRanking>
     </RouteDef>
     <RouteDef path="lucky" title="欧洲人">
