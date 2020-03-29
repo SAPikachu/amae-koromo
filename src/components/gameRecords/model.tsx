@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import dayjs from "dayjs";
 import React, { useReducer, useContext, ReactChild } from "react";
 import { useMemo } from "react";
@@ -19,6 +20,7 @@ export interface PlayerModel {
   startDate: dayjs.ConfigType | null;
   endDate: dayjs.ConfigType | null;
   selectedMode: string;
+  searchText: string;
 }
 export type Model = (ListingModel | PlayerModel) & WithRuntimeInfo;
 interface ListingModelPlain {
@@ -33,6 +35,7 @@ export interface PlayerModelPlain {
   startDate: number | null;
   endDate: number | null;
   selectedMode: string;
+  searchText: string;
 }
 export type ModelPlain = (ListingModelPlain | PlayerModelPlain) & WithRuntimeInfo;
 export const Model = Object.freeze({
@@ -74,6 +77,7 @@ export const Model = Object.freeze({
         selectedMode: "",
         startDate: null,
         endDate: null,
+        searchText: "",
         version: 0
       };
     }
@@ -129,9 +133,6 @@ function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
     if (newProps.date !== undefined && !isSameDateValue(newProps.date, oldModel.date)) {
       return true;
     }
-    if (newProps.searchText !== undefined && newProps.searchText !== oldModel.searchText) {
-      return true;
-    }
   }
   if (oldModel.type === "player" && newProps.type === oldModel.type) {
     if (newProps.playerId !== undefined && newProps.playerId !== oldModel.playerId) {
@@ -143,6 +144,9 @@ function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
     if (newProps.endDate !== undefined && !isSameDateValue(oldModel.endDate, newProps.endDate)) {
       return true;
     }
+  }
+  if (newProps.searchText !== undefined && newProps.searchText !== oldModel.searchText) {
+    return true;
   }
   return false;
 }

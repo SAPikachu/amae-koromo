@@ -73,6 +73,10 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
     }
   }, [model, mode, customDateFrom, customDateTo, updateModel]);
   const setSelectedMode = useCallback(mode => updateModel({ type: "player", selectedMode: mode }), [updateModel]);
+  const updateSearchTextFromEvent = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ type: "player", searchText: e.currentTarget.value }),
+    [updateModel]
+  );
   return (
     <>
       <div className="row">
@@ -106,6 +110,20 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
                 className="form-control"
               />
               <DatePicker min={Conf.dateMin} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
+            </FormRow>
+          </div>
+        </div>
+      ) : null}
+      {model.searchText ? (
+        <div className="row mb-3">
+          <div className="col-12">
+            <FormRow title="查找玩家">
+              <input
+                type="text"
+                className="form-control"
+                value={model.searchText}
+                onChange={updateSearchTextFromEvent}
+              />
             </FormRow>
           </div>
         </div>

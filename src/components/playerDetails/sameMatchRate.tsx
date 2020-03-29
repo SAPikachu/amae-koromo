@@ -6,9 +6,12 @@ import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
 import { formatPercent } from "../../utils";
 import { SimpleRoutedSubViews, ViewRoutes, RouteDef, NavButtons, ViewSwitch } from "../routing";
+import { IoIosList } from "react-icons/io";
+import { useModel } from "../gameRecords/model";
 
 export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAccountId = 0 }) {
   const adapter = useDataAdapter();
+  const [, updateModel] = useModel();
   const count = adapter.getCount();
   const numProcessedGames = Math.min(count, numGames);
   const rates = useMemo(() => {
@@ -44,12 +47,19 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
   if (!rates) {
     return <Loading />;
   }
+
   return (
     <dl className="row">
       {rates.slice(0, numDisplay).map(x => (
         <React.Fragment key={x.player.accountId}>
           <dt className="col-8 col-lg-4 font-weight-normal">
             <Link to={generatePlayerPathById(x.player.accountId)}>{x.player.nickname}</Link>
+            <button
+              className="button-link ml-2"
+              onClick={() => updateModel({ type: "player", searchText: x.player.nickname })}
+            >
+              <IoIosList />
+            </button>
           </dt>
           <dd className="col-4 col-lg-2 text-right">
             {formatPercent(x.count / numProcessedGames)} ({x.count})

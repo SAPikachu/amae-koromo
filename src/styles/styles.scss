@@ -70,9 +70,15 @@ dl:empty {
 .navbar:hover {
   background: rgba(255, 255, 255, 1);
 }
-button.nav-link {
+button.nav-link,
+button.button-link {
   border: 0 none;
   background: transparent;
+}
+button.button-link {
+  display: inline;
+  padding: 0;
+  color: $link-color;
 }
 .alert h4 {
   font-size: 1.2em;

@@ -135,23 +135,21 @@ function createProvider(model: Model): DataProvider {
 function usePredicate(model: Model): FilterPredicate {
   let memoFunc: () => FilterPredicate = () => null;
   let memoDeps = [null, ""];
-  if (model.type === undefined) {
-    const searchText = (model.searchText || "").trim() || "";
-    const needPredicate = searchText || model.selectedMode;
-    memoFunc = () =>
-      needPredicate
-        ? game => {
-            if (model.selectedMode && model.selectedMode !== game.modeId.toString()) {
-              return false;
-            }
-            if (!game.players.some(player => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
-              return false;
-            }
-            return true;
+  const searchText = (model.searchText || "").trim().toLowerCase() || "";
+  const needPredicate = searchText || model.selectedMode;
+  memoFunc = () =>
+    needPredicate
+      ? game => {
+          if (model.selectedMode && model.selectedMode !== game.modeId.toString()) {
+            return false;
           }
-        : null;
-    memoDeps = [(model.type === undefined && model.selectedMode) || null, searchText];
-  }
+          if (!game.players.some(player => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
+            return false;
+          }
+          return true;
+        }
+      : null;
+  memoDeps = [(model.type === undefined && model.selectedMode) || null, searchText];
   return useMemo(memoFunc, memoDeps);
 }
 
