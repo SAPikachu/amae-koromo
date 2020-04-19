@@ -284,6 +284,13 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
   );
 }
 
+function getTooltip(dataTip: string): React.ReactNode {
+  if (dataTip && dataTip.indexOf && dataTip.indexOf("##") === 0) {
+    return document.getElementById(dataTip.slice(2))?.innerHTML || dataTip;
+  }
+  return dataTip;
+}
+
 export default function PlayerDetails() {
   const { t } = useTranslation();
   const dataAdapter = useDataAdapter();
@@ -316,7 +323,7 @@ export default function PlayerDetails() {
         </div>
       </div>
       <PlayerDetailsSettings showLevel={true} />
-      <ReactTooltip effect="solid" multiline={true} place="top" />
+      <ReactTooltip effect="solid" multiline={true} place="top" getContent={getTooltip} />
     </div>
   );
 }

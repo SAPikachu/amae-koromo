@@ -35,7 +35,16 @@ const MODE_BASE_POINT = {
   [GameMode.三王座]: 35000
 };
 
-type RankRates = [number, number, number, number] | [number, number, number];
+export type RankRates = [number, number, number, number] | [number, number, number];
+export const RankRates = Object.freeze({
+  getAvg(rates: RankRates): number {
+    return sum(rates.map((value, index) => value * (index + 1))) / sum(rates);
+  },
+  normalize(rates: RankRates): RankRates {
+    const total = sum(rates);
+    return rates.map(value => value / total) as RankRates;
+  }
+});
 
 export type FanStatEntry2 = FanStatEntry & {
   役满: number;
