@@ -18,7 +18,11 @@ export default function StatItem({
   return (
     <>
       <dt className={`col-2 col-lg-1 text-nowrap ${className}`}>{t(label)}</dt>
-      <dd className={`col-4 col-lg-3 text-right ${className}`} data-tip={description ? t(description) : ""}>
+      <dd
+        className={`col-4 col-lg-3 text-right ${className}`}
+        data-tip={description ? t(description) : ""}
+        data-html="true"
+      >
         {children}
       </dd>
     </>

@@ -11,7 +11,7 @@ import {
   PlayerMetadata,
   GameRecord,
   FanStatEntry2,
-  FanStatEntryList
+  FanStatEntryList,
 } from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
@@ -25,25 +25,25 @@ import { useTranslation } from "react-i18next";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 const RecentRankChart = Loadable({
   loader: () => import("./charts/recentRank"),
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 const WinLoseDistribution = Loadable({
   loader: () => import("./charts/winLoseDistribution"),
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 const ReactTooltipPromise = import("react-tooltip");
 const ReactTooltip = Loadable({
   loader: () => ReactTooltipPromise,
-  loading: () => null
+  loading: () => null,
 });
 
 function ExtendedStatsViewAsync({
   metadata,
-  view
+  view,
 }: {
   metadata: PlayerMetadata;
   view: React.ComponentType<{ stats: PlayerExtendedStats; metadata: PlayerMetadata }>;
@@ -97,7 +97,7 @@ function fixMaxLevel(level: LevelWithDelta): LevelWithDelta {
     return {
       id: level.id,
       score: levelObj.getStartingPoint(),
-      delta: 0
+      delta: 0,
     };
   }
   return level;
@@ -231,7 +231,7 @@ function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata
         <span>{GameRecord.formatFullStartTime(stats.最近大铳.start_time)}</span>
       </a>
       <dl className="row mt-2">
-        {stats.最近大铳.fans.map(x => (
+        {stats.最近大铳.fans.map((x) => (
           <StatItem key={x.label} label={x.label}>
             {FanStatEntry2.formatFan(x)}
           </StatItem>
@@ -243,7 +243,7 @@ function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata
 function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
   const loc = useLocation();
   useEffect(() => {
-    ReactTooltipPromise.then(x => x.rebuild());
+    ReactTooltipPromise.then((x) => x.rebuild());
   }, [loc.pathname]);
   return (
     <SimpleRoutedSubViews>
@@ -296,7 +296,7 @@ export default function PlayerDetails() {
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
   useEffect(() => {
-    ReactTooltipPromise.then(x => x.rebuild());
+    ReactTooltipPromise.then((x) => x.rebuild());
   });
   useEffect(triggerRelayout, [!!metadata]);
   if (!metadata || !metadata.nickname) {
@@ -323,7 +323,7 @@ export default function PlayerDetails() {
         </div>
       </div>
       <PlayerDetailsSettings showLevel={true} />
-      <ReactTooltip effect="solid" multiline={true} place="top" getContent={getTooltip} />
+      <ReactTooltip effect="solid" multiline={true} place="top" getContent={getTooltip} className="stat-tooltip" />
     </div>
   );
 }
