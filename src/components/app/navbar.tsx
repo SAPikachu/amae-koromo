@@ -9,7 +9,7 @@ import clsx from "clsx";
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
   ["排行榜", "ranking"],
-  ["大数据", "statistics"]
+  ["大数据", "statistics"],
 ]
   .filter(([, path]) => !(path in Conf.features) || Conf.features[path as keyof typeof Conf.features])
   .map(([label, path]) => ({ label, path }));
@@ -17,12 +17,12 @@ const NAV_ITEMS = [
 const SITE_LINKS = [
   ["四麻玉/王座", CONFIGURATIONS.DEFAULT.canonicalDomain],
   ["四麻金", CONFIGURATIONS.ako.canonicalDomain],
-  ["三麻", CONFIGURATIONS.ikeda.canonicalDomain]
+  ["三麻", CONFIGURATIONS.ikeda.canonicalDomain],
 ].map(([label, domain]) => ({ label, domain, active: Conf.canonicalDomain === domain }));
 
 const LANGUAGES = [
   ["中文", "zh-hans"],
-  ["日本語", "ja"]
+  ["日本語", "ja"],
 ].map(([label, code]) => ({ label, code }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,7 +61,7 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-light fixed-top">
       <div className="container">
         <Link className="navbar-brand" to="/">
-          {Conf.siteTitle}
+          {t(Conf.siteTitle)}
         </Link>
         <button
           className="navbar-toggler"
@@ -99,7 +99,7 @@ export default function Navbar() {
               <button
                 key={code}
                 className={clsx("nav-item nav-link", i18n.language === code && "active")}
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   i18n.changeLanguage(code);
                 }}
