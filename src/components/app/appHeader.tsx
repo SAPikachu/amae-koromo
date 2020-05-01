@@ -22,6 +22,7 @@ function AlertDefault() {
           如有问题或建议，请戳 <a href="mailto:i@sapika.ch">SAPikachu (i@sapika.ch)</a> 或{" "}
           <a href="https://github.com/SAPikachu/amae-koromo/">提交 Issue</a>。
         </li>
+        <li>国服目前观战接口不稳定，会遗漏部分对局，如果希望导入遗漏的对局请将对局链接或者对局 ID 发至上面的邮箱。</li>
         <li>
           感谢 <a href="https://github.com/kamicloud/">Kamicloud</a> 提供部分数据。
         </li>
@@ -35,7 +36,9 @@ function AlertJa() {
     <>
       <h4>説明</h4>
       <ul>
-        <li>当サイトは非公式サイトで、データの完全性と正確性が保証できません、予めご了承ください。サイトの内容を悪用しないでください。</li>
+        <li>
+          当サイトは非公式サイトで、データの完全性と正確性が保証できません、予めご了承ください。サイトの内容を悪用しないでください。
+        </li>
         <li>現時点では半荘戦だけ記録しています。東風戦のデータは含まれません。</li>
         <li>データの更新はリアルタイムではありません。対局がサイトに載せるまで数分から数時間がかかります。</li>
         <li>
@@ -61,7 +64,7 @@ function AlertJa() {
 export function AppHeader() {
   const { i18n } = useTranslation();
   return (
-    <Alert container={Container} stateName="topNote20200313">
+    <Alert container={Container} stateName="topNote20200501">
       {i18n.language.indexOf("ja") === 0 ? <AlertJa /> : <AlertDefault />}
     </Alert>
   );
