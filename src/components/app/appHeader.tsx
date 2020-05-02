@@ -22,7 +22,6 @@ function AlertDefault() {
           如有问题或建议，请戳 <a href="mailto:i@sapika.ch">SAPikachu (i@sapika.ch)</a> 或{" "}
           <a href="https://github.com/SAPikachu/amae-koromo/">提交 Issue</a>。
         </li>
-        <li>国服目前观战接口不稳定，会遗漏部分对局，如果希望导入遗漏的对局请将对局链接或者对局 ID 发至上面的邮箱。</li>
         <li>
           感谢 <a href="https://github.com/kamicloud/">Kamicloud</a> 提供部分数据。
         </li>
