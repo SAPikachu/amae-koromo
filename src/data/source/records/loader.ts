@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import dayjs from "dayjs";
 
-import { GameRecord, GameRecordWithEvent, HighlightEvent } from "../../types/record";
+import { GameRecord, GameRecordWithEvent } from "../../types/record";
 import { Metadata, PlayerMetadata, PlayerExtendedStats } from "../../types/metadata";
 import { apiGet } from "../api";
 
@@ -19,10 +19,9 @@ export class RecentHighlightDataLoader implements DataLoader<Metadata> {
           return data; // Old API
         }
         return apiGet<GameRecordWithEvent[]>(`games_by_id/${data.map((x) => x._id).join(",")}`).then((records) => {
-          const eventMap = {} as { [key: string]: { event: HighlightEvent } };
-          data.forEach((x) => (eventMap[x._id || ""] = x));
-          records.forEach((x) => (x.event = eventMap[x._id || ""].event));
-          return records;
+          const recordMap = {} as { [key: string]: GameRecordWithEvent };
+          records.forEach((x) => (recordMap[x._id || ""] = x));
+          return data.map((x) => ({ ...x, ...recordMap[x._id || ""] }));
         });
       })
       .then((data) => data.sort((a, b) => a.startTime - b.startTime));
