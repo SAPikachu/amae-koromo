@@ -9,7 +9,7 @@ import GameRecordTable, {
   makeColumn,
   Column
 } from "../gameRecords/table";
-import { GameRecord, FanStatEntryList } from "../../data/types";
+import { GameRecord, FanStatEntryList, HighlightEvent, GameRecordWithEvent } from "../../data/types";
 import { TableCellProps } from "react-virtualized/dist/es/Table";
 import { sum } from "../../utils";
 import { Trans, useTranslation } from "react-i18next";
@@ -17,20 +17,12 @@ import i18n from "../../i18n";
 
 const t = i18n.t.bind(i18n);
 
-type Event = {
-  type: "役满";
-  fan: FanStatEntryList;
-  player: number;
-};
-type GameRecordWithEvent = GameRecord & {
-  event: Event;
-};
 
 function buildEventInfo({ cellData }: TableCellProps) {
   if (!cellData) {
     return null;
   }
-  const event = cellData as Event;
+  const event = cellData as HighlightEvent;
   if (!event.fan[0].役满) {
     return (
       <span>

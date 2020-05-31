@@ -17,11 +17,11 @@ async function fetchWithTimeout(url: string, opts: RequestInit = {}, timeout = 5
   return Promise.race([
     fetch(url, { ...opts, signal: abortController.signal }),
     new Promise((_, reject) =>
-      setTimeout(function() {
+      setTimeout(function () {
         abortController.abort();
         reject(new Error("Timeout"));
       }, timeout)
-    )
+    ),
   ]) as Promise<Response>;
 }
 
@@ -35,9 +35,9 @@ async function fetchData(path: string): Promise<Response> {
 
   let done = false;
   return Promise.race(
-    DATA_MIRRORS.map(mirror =>
+    DATA_MIRRORS.map((mirror) =>
       fetchWithTimeout(mirror + path, {}, PROBE_TIMEOUT)
-        .then(function(resp) {
+        .then(function (resp) {
           if (done) {
             return resp;
           }
@@ -47,7 +47,7 @@ async function fetchData(path: string): Promise<Response> {
           console.log(`Set ${mirror} as preferred`);
           return resp;
         })
-        .catch(e => new Promise((_, reject) => setTimeout(() => reject(e), PROBE_TIMEOUT)))
+        .catch((e) => new Promise((_, reject) => setTimeout(() => reject(e), PROBE_TIMEOUT)))
     )
   ) as Promise<Response>;
 }
