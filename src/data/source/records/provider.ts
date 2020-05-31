@@ -65,7 +65,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     }
     this._filteredIndices = indices;
     if (numShownItems < 10 && numLoadedItems >= this._itemsPerChunk) {
-      this._triggerFullLoad();
+      // this._triggerFullLoad();
     }
   }
   getMetadataSync(): TMetadata | null {
