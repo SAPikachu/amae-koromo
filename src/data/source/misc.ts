@@ -55,7 +55,11 @@ export async function getRankRateBySeat(): Promise<RankRateBySeat> {
   const counts: {
     [modeId: string]: { [rank: number]: number };
   } = {};
+  let maxRank = 0;
   for (const [[modeId, rank], count] of rawResp) {
+    if (maxRank < rank) {
+      maxRank = rank;
+    }
     const modeIdStr = modeId.toString();
     counts[modeIdStr] = counts[modeIdStr] || [];
     counts[modeIdStr][rank] = counts[modeIdStr][rank] || 0;
@@ -66,7 +70,7 @@ export async function getRankRateBySeat(): Promise<RankRateBySeat> {
     const modeIdStr = modeId.toString();
     result[modeIdStr] = result[modeIdStr] || [];
     result[modeIdStr].numGames = counts[modeIdStr][rank];
-    result[modeIdStr][rank] = result[modeIdStr][rank] || [0, 0, 0, 0];
+    result[modeIdStr][rank] = result[modeIdStr][rank] || Array(maxRank).fill(0);
     result[modeIdStr][rank][seatId] = count / counts[modeIdStr][rank];
   }
   return result;

@@ -5,7 +5,13 @@ import { useRouteMatch, Switch, Route, Redirect, useLocation } from "react-route
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 
-type RouteDefProps = { path: string; exact?: boolean; title: string; children: React.ReactChild | React.ReactChildren };
+type RouteDefProps = {
+  path: string;
+  exact?: boolean;
+  title: string;
+  disabled?: boolean;
+  children: React.ReactChild | React.ReactChildren;
+};
 export const RouteDef: React.FunctionComponent<RouteDefProps> = () => {
   throw new Error("Not intended for rendering");
 };
@@ -24,21 +30,23 @@ export function NavButtons({ className = "", replace = false, keepState = false 
   const urlBase = match.url.replace(/\/+$/, "");
   return (
     <nav className={`nav nav-pills mb-3 ${className}`}>
-      {routes.map(route => (
-        <NavLink
-          key={route.path}
-          to={loc => ({
-            pathname: `${urlBase}/${route.path}`,
-            state: keepState ? loc.state : undefined
-          })}
-          replace={replace}
-          exact={!!route.exact}
-          className="nav-link"
-          activeClassName="active"
-        >
-          {t(route.title)}
-        </NavLink>
-      ))}
+      {routes
+        .filter((x) => !x.disabled)
+        .map((route) => (
+          <NavLink
+            key={route.path}
+            to={(loc) => ({
+              pathname: `${urlBase}/${route.path}`,
+              state: keepState ? loc.state : undefined,
+            })}
+            replace={replace}
+            exact={!!route.exact}
+            className="nav-link"
+            activeClassName="active"
+          >
+            {t(route.title)}
+          </NavLink>
+        ))}
     </nav>
   );
 }
@@ -46,7 +54,7 @@ export function NavButtons({ className = "", replace = false, keepState = false 
 export function ViewSwitch({
   defaultRenderDirectly = false,
   mutateTitle = true,
-  children
+  children,
 }: {
   defaultRenderDirectly?: boolean;
   mutateTitle?: boolean;
@@ -59,16 +67,18 @@ export function ViewSwitch({
   const urlBase = match.url.replace(/\/+$/, "");
   return (
     <Switch>
-      {routes.map(route => (
-        <Route exact={route.exact} key={route.path} path={`${urlBase}/${route.path}`}>
-          {mutateTitle && (
-            <Helmet>
-              <title>{t(route.title)}</title>
-            </Helmet>
-          )}
-          {route.children}
-        </Route>
-      ))}
+      {routes
+        .filter((x) => !x.disabled)
+        .map((route) => (
+          <Route exact={route.exact} key={route.path} path={`${urlBase}/${route.path}`}>
+            {mutateTitle && (
+              <Helmet>
+                <title>{t(route.title)}</title>
+              </Helmet>
+            )}
+            {route.children}
+          </Route>
+        ))}
       <Route>
         {defaultRenderDirectly ? (
           routes[0].children
@@ -82,9 +92,11 @@ export function ViewSwitch({
 }
 
 export function SimpleRoutedSubViews({
-  children
+  children,
 }: {
   children: [React.FunctionComponentElement<RoutesProps>, ...(React.ReactChild | React.ReactChildren)[]];
 }) {
-  return <Context.Provider value={children[0].props.children.map(x => x.props)}>{children.slice(1)}</Context.Provider>;
+  return (
+    <Context.Provider value={children[0].props.children.map((x) => x.props)}>{children.slice(1)}</Context.Provider>
+  );
 }

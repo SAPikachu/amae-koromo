@@ -1,8 +1,8 @@
-import { PlayerMetadataLite2, PlayerExtendedStats } from "./metadata";
+import { PlayerMetadataLite2, PlayerExtendedStats, RankRates } from "./metadata";
 export type RankRateBySeat = {
   [modeId: string]: {
-    [rankId: number]: [number, number, number, number];
-  } & { numGames: number };
+    [rankId: number]: RankRates;
+  } & { numGames: number; length: number };
 };
 export type GlobalStatistics = {
   [modeId: string]: {
