@@ -55,11 +55,12 @@ const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
   return (
     <div className="player-chart-tooltip">
       <h5>
-        {GameRecord.formatFullStartTime(realPayload.game)} {modeLabel(realPayload.game.modeId)}{" "}
-        {RANK_LABELS[realPayload.rank]} {realPayload.delta > 0 ? "+" : ""}
+        {GameRecord.formatFullStartTime(realPayload.game)}{" "}
+        {realPayload.game.modeId ? modeLabel(realPayload.game.modeId) : ""} {RANK_LABELS[realPayload.rank]}{" "}
+        {realPayload.delta > 0 ? "+" : ""}
         {realPayload.delta}pt
       </h5>
-      {realPayload.game.players.map(x => (
+      {realPayload.game.players.map((x) => (
         <p key={x.accountId.toString()}>
           <Player player={x} game={realPayload.game} isActive={realPayload.playerId === x.accountId} />
         </p>
@@ -72,7 +73,7 @@ export default function RecentRankChart({
   dataAdapter,
   playerId,
   aspect = 2,
-  numGames = isMobile() ? 20 : 30
+  numGames = isMobile() ? 20 : 30,
 }: {
   dataAdapter: IDataAdapter;
   playerId: number;
@@ -97,13 +98,16 @@ export default function RecentRankChart({
         delta: 0,
         cumulativeDelta: 0,
         game,
-        playerId
+        playerId,
       });
     }
     let delta = 0;
     for (const point of result) {
       const game = point.game;
-      const playerRecord = game.players.filter(x => x.accountId.toString() === playerId.toString())[0];
+      if (!game.modeId) {
+        continue;
+      }
+      const playerRecord = game.players.filter((x) => x.accountId.toString() === playerId.toString())[0];
       point.delta = calculateDeltaPoint(playerRecord.score, point.rank, game.modeId, new Level(playerRecord.level));
       delta += point.delta;
       point.cumulativeDelta = delta;
@@ -113,22 +117,25 @@ export default function RecentRankChart({
   if (!dataPoints.length) {
     return <Loading />;
   }
+  const haveDelta = dataPoints.some((x) => x.delta !== 0);
   return (
     <ResponsiveContainer width="100%" aspect={aspect} height="auto">
       <LineChart data={dataPoints} margin={{ top: 15, right: 15, bottom: 15, left: 15 }}>
         <YAxis type="number" domain={["dataMin", "dataMax"]} yAxisId={0} hide={true} />
         <YAxis type="number" domain={["dataMin", "dataMax"]} yAxisId={1} hide={true} />
-        <Line
-          isAnimationActive={false}
-          dataKey="cumulativeDelta"
-          type="linear"
-          stroke="#969696"
-          strokeWidth={1.5}
-          yAxisId={1}
-          dot={false}
-          activeDot={false}
-          strokeDasharray="5 5"
-        />
+        {haveDelta && (
+          <Line
+            isAnimationActive={false}
+            dataKey="cumulativeDelta"
+            type="linear"
+            stroke="#969696"
+            strokeWidth={1.5}
+            yAxisId={1}
+            dot={false}
+            activeDot={false}
+            strokeDasharray="5 5"
+          />
+        )}
         <Line
           isAnimationActive={false}
           dataKey="pos"
