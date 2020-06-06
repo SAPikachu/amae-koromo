@@ -70,6 +70,9 @@ dl:empty {
 .navbar:hover {
   background: rgba(255, 255, 255, 1);
 }
+button.nav-link {
+  text-align: left;
+}
 button.nav-link,
 button.button-link {
   border: 0 none;
