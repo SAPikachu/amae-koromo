@@ -19,7 +19,7 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
     return null;
   }
   const mode = parseInt(model.selectedMode) as GameMode;
-  if (!ENABLED_MODES.includes(mode) || !level.isAllowedMode(mode)) {
+  if (!ENABLED_MODES.includes(mode)) {
     return null;
   }
   const notEnoughData = metadata.count < 100;
