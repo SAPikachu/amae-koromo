@@ -410,9 +410,9 @@
       "倍满": "Baiman",
       "三倍满": "Sanbaiman",
 
-      "胜率：": "勝率：",
-      "对手": "相手",
-      "平均得点": "平均得点",
+      "胜率：": "Win rate：",
+      "对手": "Opponent",
+      "平均得点": "Average points",
 
       "类型": "Type",
       "记录和出局数：": "Recorded wins in this category：",
