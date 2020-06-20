@@ -303,7 +303,7 @@
       "玉": "Jade",
       "金": "Gold",
 
-      "玩家：": "Player：",
+      "玩家：": "Player: ",
       "最近走势": "Trends",
       "累计战绩": "Rank distribution",
 
@@ -410,12 +410,12 @@
       "倍满": "Baiman",
       "三倍满": "Sanbaiman",
 
-      "胜率：": "Win rate：",
+      "胜率：": "Win rate: ",
       "对手": "Opponent",
       "平均得点": "Average points",
 
       "类型": "Type",
-      "记录和出局数：": "Recorded wins in this category：",
+      "记录和出局数：": "Recorded wins in this category: ",
       "役": "Yaku",
       "记录数": "Recorded",
       "比率": "Rate",
@@ -426,7 +426,7 @@
       "四位率": "4th rate",
       "对战数": "Matches played",
       "在位记录": "Matches recorded",
-      "统计半庄数：": "Total number of matches：",
+      "统计半庄数：": "Total number of matches: ",
 
       "坐席吃一率": "Seat 1st rate",
       "坐席吃三率": "Seat 3rd rate",
@@ -436,9 +436,9 @@
       "一周": "1 week",
       "四周": "4 weeks",
       "汪汪榜": "Positive ranking",
-      "提示": "提示",
-      "本榜只包含有至少 300 场对局记录的玩家": "本ランキングは 300 戦以上の記録があるプレイヤーだけが入られます",
-      "排行榜非实时更新，可能会有数小时的延迟": "ランキングはリアルタイムではありません、数時間ぐらい遅れることがあります。",
+      "提示": "Notice",
+      "本榜只包含有至少 300 场对局记录的玩家": "The ranking only includes the players with at least 300 recorded matches",
+      "排行榜非实时更新，可能会有数小时的延迟": "The ranking is not renewed in real-time, a delay may occur for several hours",
       "排名": "Rk",
       "对局数": "Matches",
       "连对率": "Top 2 rate",
@@ -453,7 +453,7 @@
       "初士杰豪圣魂": "Novice Adept Expert Master Saint Celestial",
 
       "玩家前缀搜索": "Matching players",
-      "（输入更长名字显示其它结果）": "（入力し続くと他の結果が表示します）",
+      "（输入更长名字显示其它结果）": "(Input longer names to show other results)",
 
       "无满贯或以上大铳": "No mangan or greater deal-in",
 
@@ -465,9 +465,9 @@
       "岭上开花": "After a Kan",
       "海底摸月": "Under the Sea",
       "河底捞鱼": "Under the River",
-      "役牌 白": "White Dragon (白)",
-      "役牌 发": "Green Dragon (發)",
-      "役牌 中": "Red Dragon (中)",
+      "役牌 白": "White Dragon (Haku)",
+      "役牌 发": "Green Dragon (Hatsu)",
+      "役牌 中": "Red Dragon (Chun)",
       "役牌:门风牌": "Seat Wind",
       "役牌:场风牌": "Prevalent Wind",
       "断幺九": "All Simples",
@@ -504,7 +504,7 @@
       "小四喜": "Four Little Winds",
       "四杠子": "Four Quads",
       "九莲宝灯": "Nine Gates",
-      "八连庄": "八連荘",
+      "八连庄": "Paarenchan",
       "纯正九莲宝灯": "True Nine Gates",
       "四暗刻单骑": "Single-wait Four Concealed Triplets",
       "国士无双十三面": "Thirteen-wait Thirteen Orphans",
@@ -549,8 +549,8 @@
       "欧洲人": "Lucky",
       "非洲人": "Unlucky",
 
-      "一/二位平均 Pt": "1/2nd average Pt",
-      "三位平均 Pt/四位平均得点 Pt": "3rd average Pt/4th average Pt"
+      "一/二位平均 Pt": "1st/2nd average Pt",
+      "三位平均 Pt/四位平均得点 Pt": "3rd/4th average Pt"
     }
   }
 }
