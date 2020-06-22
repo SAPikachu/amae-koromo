@@ -23,6 +23,7 @@ const SITE_LINKS = [
 const LANGUAGES = [
   ["中文", "zh-hans"],
   ["日本語", "ja"],
+  ["English", "en"],
 ].map(([label, code]) => ({ label, code }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

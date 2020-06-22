@@ -13,56 +13,60 @@ import Loading from "../misc/loading";
 import GameRecords from "../gameRecords";
 import Tracker, { PageCategory } from "../misc/tracker";
 import Conf from "../../utils/conf";
+import { useTranslation } from "react-i18next";
 
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
-  loading: () => <></>
+  loading: () => <></>,
 });
 const Ranking = Loadable({
   loader: () => import("../ranking"),
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 const Statistics = Loadable({
   loader: () => import("../statistics"),
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 const RecentHighlight = Loadable({
   loader: () => import("../recentHighlight"),
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 
 function App() {
+  const { i18n } = useTranslation();
   return (
-    <Router>
-      <Helmet defaultTitle={Conf.siteTitle} titleTemplate={`%s | ${Conf.siteTitle}`} />
-      <CanonicalLink />
-      <Tracker />
-      <Navbar />
-      <MaintenanceHandler>
-        <Scroller>
-          {Conf.showTopNotice ? <AppHeader /> : <></>}
-          <Container>
-            <Switch>
-              <Route path="/ranking">
-                <PageCategory category="Ranking" />
-                <Ranking />
-              </Route>
-              <Route path="/statistics">
-                <PageCategory category="Statistics" />
-                <Statistics />
-              </Route>
-              <Route path="/highlight">
-                <PageCategory category="RecentHighlight" />
-                <RecentHighlight />
-              </Route>
-              <Route path="/">
-                <GameRecords />
-              </Route>
-            </Switch>
-          </Container>
-        </Scroller>
-      </MaintenanceHandler>
-    </Router>
+    <div className={"lang-" + i18n.language}>
+      <Router>
+        <Helmet defaultTitle={Conf.siteTitle} titleTemplate={`%s | ${Conf.siteTitle}`} />
+        <CanonicalLink />
+        <Tracker />
+        <Navbar />
+        <MaintenanceHandler>
+          <Scroller>
+            {Conf.showTopNotice ? <AppHeader /> : <></>}
+            <Container>
+              <Switch>
+                <Route path="/ranking">
+                  <PageCategory category="Ranking" />
+                  <Ranking />
+                </Route>
+                <Route path="/statistics">
+                  <PageCategory category="Statistics" />
+                  <Statistics />
+                </Route>
+                <Route path="/highlight">
+                  <PageCategory category="RecentHighlight" />
+                  <RecentHighlight />
+                </Route>
+                <Route path="/">
+                  <GameRecords />
+                </Route>
+              </Switch>
+            </Container>
+          </Scroller>
+        </MaintenanceHandler>
+      </Router>
+    </div>
   );
 }
 export default App;
