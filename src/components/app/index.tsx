@@ -33,11 +33,11 @@ const RecentHighlight = Loadable({
 });
 
 function App() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <div className={"lang-" + i18n.language}>
       <Router>
-        <Helmet defaultTitle={Conf.siteTitle} titleTemplate={`%s | ${Conf.siteTitle}`} />
+        <Helmet defaultTitle={t(Conf.siteTitle)} titleTemplate={`%s | ${t(Conf.siteTitle)}`} />
         <CanonicalLink />
         <Tracker />
         <Navbar />
