@@ -30,6 +30,44 @@ function AlertDefault() {
   );
 }
 
+function AlertEn() {
+  return (
+    <>
+      <h4>Notes</h4>
+      <ul>
+        <li>
+          This is a fan site, data accuracy can&apos;t be fully guaranteed, please use the data for reference only and
+          don&apos;t use it for malicious purpose.
+        </li>
+        <li>At this moment, only south matches are recorded, east matches are not included in the data.</li>
+        <li>
+          Data is not updated in real-time, finished matches will show up on the site in a few minutes to a few hours.
+        </li>
+        <li>
+          Data collection was started from {Conf.dateMin.format(" YYYY-MM-DD")}, matches finished before then could no
+          longer be retrived.
+        </li>
+        <li>
+          Main mirror of the site collects small amount of anonymous usage data for improving the site. If you wish to
+          opt-out from this, please use <a href={Conf.mirrorUrl}>the alternative mirror</a>.
+        </li>
+        <li>
+          If you have any question or suggestion, feel free to email{" "}
+          <a href="mailto:i@sapika.ch">SAPikachu (i@sapika.ch)</a> or{" "}
+          <a href="https://github.com/SAPikachu/amae-koromo/">submit an issue</a>.
+        </li>
+        <li>
+          English translation of the site is contributed by <a href="https://github.com/Mjonir">Mjonir</a> and{" "}
+          <a href="https://github.com/kator-278">kator-278</a>. Thank you!
+        </li>
+        <li>
+          感谢 <a href="https://github.com/kamicloud/">Kamicloud</a> 提供部分数据。
+        </li>
+      </ul>
+    </>
+  );
+}
+
 function AlertJa() {
   return (
     <>
@@ -64,7 +102,13 @@ export function AppHeader() {
   const { i18n } = useTranslation();
   return (
     <Alert container={Container} stateName="topNote20200501">
-      {i18n.language.indexOf("ja") === 0 ? <AlertJa /> : <AlertDefault />}
+      {i18n.language.indexOf("ja") === 0 ? (
+        <AlertJa />
+      ) : i18n.language.indexOf("en") === 0 ? (
+        <AlertEn />
+      ) : (
+        <AlertDefault />
+      )}
     </Alert>
   );
 }
