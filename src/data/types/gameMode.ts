@@ -1,3 +1,7 @@
+import i18n from "../../i18n";
+
+const t = i18n.getFixedT(null, "gameModeShort");
+
 export enum GameMode {
   王座 = 16,
   玉 = 12,
@@ -7,5 +11,5 @@ export enum GameMode {
   三王座 = 26,
 }
 export function modeLabel(mode: GameMode) {
-  return GameMode[mode].replace(/^三/, "");
+  return t(GameMode[mode].replace(/^三/, ""));
 }

@@ -230,7 +230,7 @@ function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata
         <span>{FanStatEntryList.formatFanSummary(stats.最近大铳.fans)}</span>
         <span>{GameRecord.formatFullStartTime(stats.最近大铳.start_time)}</span>
       </a>
-      <dl className="row mt-2">
+      <dl className="stats-list mt-2">
         {stats.最近大铳.fans.map((x) => (
           <StatItem key={x.label} label={x.label}>
             {FanStatEntry2.formatFan(x)}
@@ -249,17 +249,17 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
     <SimpleRoutedSubViews>
       <ViewRoutes>
         <RouteDef path="" exact title="基本">
-          <dl className="row">
+          <dl className="stats-list">
             <BasicStats metadata={metadata} />
           </dl>
         </RouteDef>
         <RouteDef path="riichi" title="立直">
-          <dl className="row">
+          <dl className="stats-list">
             <ExtendedStatsViewAsync metadata={metadata} view={RiichiStats} />
           </dl>
         </RouteDef>
         <RouteDef path="extended" title="更多">
-          <dl className="row">
+          <dl className="stats-list">
             <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} />
           </dl>
         </RouteDef>
@@ -267,7 +267,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
           <ExtendedStatsViewAsync metadata={metadata} view={WinLoseDistribution} />
         </RouteDef>
         <RouteDef path="luck" title="血统">
-          <dl className="row">
+          <dl className="stats-list">
             <ExtendedStatsViewAsync metadata={metadata} view={LuckStats} />
           </dl>
         </RouteDef>

@@ -11,14 +11,15 @@ import { RankRates } from "../../data/types";
 const SEAT_LABELS = "东南西北";
 
 function Chart({ rates, numGames, aspect = 1 }: { rates: RankRates; numGames: number; aspect?: number }) {
+  const { t } = useTranslation();
   const items = useMemo(
     () =>
       rates.map((x, index) => ({
         value: x,
-        outerLabel: SEAT_LABELS[index],
+        outerLabel: t(SEAT_LABELS[index]),
         innerLabel: `${(x * 100).toFixed(2)}%\n[${Math.round(x * numGames)}]`,
       })),
-    [rates, numGames]
+    [rates, numGames, t]
   );
   return <SimplePieChart aspect={aspect} items={items} />;
 }

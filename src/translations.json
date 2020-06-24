@@ -278,22 +278,22 @@
   },
   "en": {
     "default": {
-      "雀魂牌谱屋": "Mahjong Soul Stats",
-      "雀魂牌谱屋·金": "Mahjong Soul Stats·Gold",
-      "雀魂牌谱屋·三麻": "Mahjong Soul Stats·3-Player",
+      "雀魂牌谱屋": "MajSoul Stats",
+      "雀魂牌谱屋·金": "MajSoul Stats - Gold",
+      "雀魂牌谱屋·三麻": "MajSoul Stats - 3P",
       "主页": "Top",
       "最近役满": "Recent Yakuman",
       "排行榜": "Ranking",
       "大数据": "Data",
-      "四麻玉/王座": "4-Player Jade/Throne",
-      "四麻金": "4-Player Gold",
-      "三麻": "3-Player",
+      "四麻玉/王座": "4P Jade/Throne",
+      "四麻金": "4P Gold",
+      "三麻": "3P",
 
       "等级": "Lvl",
       "顺位": "Rk",
       "玩家": "Player",
       "时间": "Date and time",
-      "开始": "Start",
+      "开始": "Strt",
       "结束": "End",
 
       "全部": "All",
@@ -450,7 +450,7 @@
       "三位平均 Pt": "3rd average Pt",
       "四位平均得点 Pt": "4th average Pt",
 
-      "初士杰豪圣魂": "Novice Adept Expert Master Saint Celestial",
+      "初士杰豪圣魂": "NoAdExMsStCl",
 
       "玩家前缀搜索": "Matching players",
       "（输入更长名字显示其它结果）": "(Input longer names to show other results)",
@@ -458,6 +458,15 @@
       "无满贯或以上大铳": "No mangan or greater deal-in",
 
       "https://game.maj-soul.com/1/": "https://mahjongsoul.game.yo-star.com/",
+      "一位": "1st",
+      "二位": "2nd",
+      "三位": "3rd",
+      "四位": "4th",
+
+      "东": "E",
+      "南": "S",
+      "西": "W",
+      "北": "N",
 
       "门前清自摸和": "Fully Concealed Hand",
       "立直": "Riichi",
@@ -551,6 +560,11 @@
 
       "一/二位平均 Pt": "1st/2nd average Pt",
       "三位平均 Pt/四位平均得点 Pt": "3rd/4th average Pt"
+    },
+    "gameModeShort": {
+      "金": "Gld",
+      "玉": "Jad",
+      "王座": "Thr"
     }
   }
 }

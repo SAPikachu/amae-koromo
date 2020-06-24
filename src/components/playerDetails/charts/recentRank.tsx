@@ -2,7 +2,7 @@ import React from "react";
 import { ResponsiveContainer, LineChart, Line, Dot, Tooltip, YAxis, TooltipProps } from "recharts";
 
 import { IDataAdapter } from "../../gameRecords/dataAdapterProvider";
-import { GameRecord, RANK_LABELS, Level, modeLabel } from "../../../data/types";
+import { GameRecord, Level, modeLabel, getRankLabelByIndex } from "../../../data/types";
 import { useMemo } from "react";
 import { Player } from "../../gameRecords/player";
 import Loading from "../../misc/loading";
@@ -56,7 +56,7 @@ const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
     <div className="player-chart-tooltip">
       <h5>
         {GameRecord.formatFullStartTime(realPayload.game)}{" "}
-        {realPayload.game.modeId ? modeLabel(realPayload.game.modeId) : ""} {RANK_LABELS[realPayload.rank]}{" "}
+        {realPayload.game.modeId ? modeLabel(realPayload.game.modeId) : ""} {getRankLabelByIndex(realPayload.rank)}{" "}
         {realPayload.delta > 0 ? "+" : ""}
         {realPayload.delta}pt
       </h5>

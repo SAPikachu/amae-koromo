@@ -17,9 +17,9 @@ export default function StatItem({
   const { t } = useTranslation(i18nNamespace);
   return (
     <>
-      <dt className={`col-2 col-lg-1 text-nowrap ${className}`}>{t(label)}</dt>
+      <dt className={`text-nowrap ${className}`}>{t(label)}</dt>
       <dd
-        className={`col-4 col-lg-3 text-right ${className}`}
+        className={`text-right ${className}`}
         data-tip={description ? t(description) : ""}
         data-html="true"
       >

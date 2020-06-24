@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 import { GameMode } from "./gameMode";
-import { RANK_LABELS } from "./constants";
+import { getRankLabelByIndex } from "./utils";
 import Conf from "../../utils/conf";
 
 import i18n from "../../i18n";
@@ -42,7 +42,7 @@ export const GameRecord = Object.freeze({
     return -1;
   },
   getPlayerRankLabel(rec: GameRecord, player: number | string | PlayerRecord): string {
-    return RANK_LABELS[GameRecord.getRankIndexByPlayer(rec, player)] || "";
+    return getRankLabelByIndex(GameRecord.getRankIndexByPlayer(rec, player)) || "";
   },
   getPlayerRankColor(rec: GameRecord, player: number | string | PlayerRecord): string {
     return Conf.rankColors[GameRecord.getRankIndexByPlayer(rec, player)];

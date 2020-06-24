@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { LevelWithDelta, Level } from "./level";
+import { LevelWithDelta, Level, getTranslatedLevelTags } from "./level";
 import { GameMode } from "./gameMode";
 import { FanStatEntry } from "./statistics";
 import { sum } from "../../utils";
 import i18n from "../../i18n";
-import { PLAYER_RANKS } from "./constants";
 
 const t = i18n.t.bind(i18n);
 
@@ -16,7 +15,7 @@ const RANK_DELTA = {
   [GameMode.王座]: RANK_DELTA_4,
   [GameMode.三金]: RANK_DELTA_3,
   [GameMode.三玉]: RANK_DELTA_3,
-  [GameMode.三王座]: RANK_DELTA_3
+  [GameMode.三王座]: RANK_DELTA_3,
 };
 const MODE_DELTA = {
   [GameMode.金]: [80, 40, 0, 0],
@@ -24,7 +23,7 @@ const MODE_DELTA = {
   [GameMode.王座]: [120, 60, 0, 0],
   [GameMode.三金]: [105, 0, 0],
   [GameMode.三玉]: [160, 0, 0],
-  [GameMode.三王座]: [240, 0, 0]
+  [GameMode.三王座]: [240, 0, 0],
 };
 const MODE_BASE_POINT = {
   [GameMode.金]: 25000,
@@ -32,7 +31,7 @@ const MODE_BASE_POINT = {
   [GameMode.王座]: 25000,
   [GameMode.三金]: 35000,
   [GameMode.三玉]: 35000,
-  [GameMode.三王座]: 35000
+  [GameMode.三王座]: 35000,
 };
 
 export type RankRates = [number, number, number, number] | [number, number, number];
@@ -42,8 +41,8 @@ export const RankRates = Object.freeze({
   },
   normalize(rates: RankRates): RankRates {
     const total = sum(rates);
-    return rates.map(value => value / total) as RankRates;
-  }
+    return rates.map((value) => value / total) as RankRates;
+  },
 });
 
 export type FanStatEntry2 = FanStatEntry & {
@@ -58,13 +57,13 @@ export const FanStatEntry2 = Object.freeze({
       return `${entry.役满} ${t("倍役满")}`;
     }
     return `${entry.count} ${t("番")}`;
-  }
+  },
 });
 export type FanStatEntryList = FanStatEntry2[];
 export const FanStatEntryList = Object.freeze({
   formatFanSummary(list: FanStatEntryList): string {
-    const count = sum(list.map(x => x.count));
-    const 役满 = sum(list.map(x => x.役满));
+    const count = sum(list.map((x) => x.count));
+    const 役满 = sum(list.map((x) => x.役满));
     if (役满) {
       if (役满 === 1) {
         return t("役满");
@@ -84,7 +83,7 @@ export const FanStatEntryList = Object.freeze({
       result += " - " + t("满贯");
     }
     return result;
-  }
+  },
 });
 
 export interface PlayerExtendedStats {
@@ -252,7 +251,7 @@ export const PlayerMetadata = Object.freeze({
     }
   },
   formatStableLevel2(level: number): string {
-    const formatNumber = function(x: number): string {
+    const formatNumber = function (x: number): string {
       // Trim after the second digit after decimal point
       let s = x.toString();
       if (s.indexOf(".") === -1) {
@@ -263,7 +262,7 @@ export const PlayerMetadata = Object.freeze({
       }
       return s.slice(0, s.indexOf(".") + 3);
     };
-    const translatedLevelTags = t(PLAYER_RANKS);
+    const translatedLevelTags = getTranslatedLevelTags();
     if (level >= 7) {
       return `${translatedLevelTags[5]}${formatNumber(level - 6)}`;
     }
@@ -285,5 +284,5 @@ export const PlayerMetadata = Object.freeze({
     const estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, undefined, false);
     const result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
     return PlayerMetadata.formatStableLevel2(result);
-  }
+  },
 });

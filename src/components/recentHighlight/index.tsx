@@ -7,7 +7,7 @@ import GameRecordTable, {
   COLUMN_PLAYERS,
   COLUMN_FULLTIME,
   makeColumn,
-  Column
+  Column,
 } from "../gameRecords/table";
 import { GameRecord, FanStatEntryList, HighlightEvent, GameRecordWithEvent } from "../../data/types";
 import { TableCellProps } from "react-virtualized/dist/es/Table";
@@ -17,7 +17,6 @@ import i18n from "../../i18n";
 
 const t = i18n.t.bind(i18n);
 
-
 function buildEventInfo({ cellData }: TableCellProps) {
   if (!cellData) {
     return null;
@@ -26,7 +25,7 @@ function buildEventInfo({ cellData }: TableCellProps) {
   if (!event.fan[0].役满) {
     return (
       <span>
-        {sum(event.fan.map(x => x.count))} <Trans>番</Trans>
+        {sum(event.fan.map((x) => x.count))} <Trans>番</Trans>
         <br />
         <Trans>累计役满</Trans>
       </span>
@@ -34,9 +33,12 @@ function buildEventInfo({ cellData }: TableCellProps) {
   }
   if (event.fan.length === 1) {
     const label = t(event.fan[0].label);
+    if (i18n.language === "en") {
+      return <span title={label}>{label}</span>;
+    }
     if (label.length > 4) {
       return (
-        <span>
+        <span title={label}>
           {label.slice(0, 4)}
           <br />
           {label.slice(4)}
@@ -46,14 +48,14 @@ function buildEventInfo({ cellData }: TableCellProps) {
     return label;
   } else if (event.fan.length === 2) {
     return (
-      <span>
+      <span title={event.fan.map((x) => x.label).join("\n")}>
         <Trans>{event.fan[0].label}</Trans>
         <br />
         <Trans>{event.fan[1].label}</Trans>
       </span>
     );
   }
-  return <span>{FanStatEntryList.formatFanSummary(event.fan)}</span>;
+  return <span title={event.fan.map((x) => x.label).join("\n")}>{FanStatEntryList.formatFanSummary(event.fan)}</span>;
 }
 
 const COLUMN_EVENTINFO = makeColumn(() => (

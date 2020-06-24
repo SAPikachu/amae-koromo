@@ -1,7 +1,7 @@
 import React from "react";
 import { ResponsiveContainer, PieChart, Pie, Cell, LabelList, Curve } from "recharts";
 
-import { PlayerMetadata, RANK_LABELS } from "../../../data/types";
+import { PlayerMetadata, getRankLabelByIndex } from "../../../data/types";
 import { useMemo } from "react";
 import { formatPercent } from "../../../utils/index";
 import Conf from "../../../utils/conf";
@@ -20,8 +20,8 @@ const createLabelLine = (props: any) =>
   props.payload.payload.rate > 0 ? <Curve {...props} type="linear" className="recharts-pie-label-line" /> : null;
 
 export default function RankRateChart({ metadata, aspect = 1 }: { metadata: PlayerMetadata; aspect?: number }) {
-  const ranks = useMemo(() => metadata.rank_rates.map((x, index) => ({ label: RANK_LABELS[index], rate: x })), [
-    metadata
+  const ranks = useMemo(() => metadata.rank_rates.map((x, index) => ({ label: getRankLabelByIndex(index), rate: x })), [
+    metadata,
   ]);
   const startAngle = ranks.filter(x => x.rate > 0).length < 4 ? 45 : 0;
   return (

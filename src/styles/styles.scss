@@ -47,6 +47,14 @@ dl:empty {
   display: inline;
   vertical-align: middle;
 }
+.lang-en .vertical-table-header th > div {
+  letter-spacing: 0;
+}
+@include media-breakpoint-down(md) {
+  .lang-en {
+    font-size: 0.8rem;
+  }
+}
 @include media-breakpoint-down(xs) {
   body {
     font-size: 0.8rem;
@@ -56,6 +64,9 @@ dl:empty {
     letter-spacing: 0.5em;
     padding-top: 0.5em;
     white-space: nowrap;
+  }
+  .lang-en .mobile-vertical {
+    letter-spacing: 0;
   }
 }
 .navbar {
@@ -67,9 +78,12 @@ dl:empty {
   width: 2em;
   height: 1em;
 }
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
   .navbar {
     background: rgba(255, 255, 255, 0.8);
+  }
+  .lang-en .navbar {
+    font-size: 0.8rem;
   }
 }
 .navbar:hover {
@@ -122,6 +136,9 @@ button.button-link {
 .ReactVirtualized__Table__row.loading:nth-of-type(odd) {
   animation-delay: -0.75s;
 }
+svg.recharts-surface {
+  overflow: visible;
+}
 .recharts-label {
   pointer-events: none;
 }
@@ -169,4 +186,33 @@ button.button-link {
 }
 .stat-tooltip {
   text-align: center;
+}
+.stats-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-column-gap: 1em;
+  max-width: 100%;
+}
+.stats-list dd {
+  justify-self: end;
+  text-align: right;
+}
+.stats-list dt {
+  max-width: 1px;
+}
+@include media-breakpoint-down(lg) {
+  .stats-list {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-column-gap: 2em;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .lang-en .stats-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 420px) {
+  .stats-list {
+    grid-template-columns: 1fr 1fr;
+  }
 }

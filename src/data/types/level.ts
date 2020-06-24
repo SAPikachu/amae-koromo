@@ -20,8 +20,18 @@ const LEVEL_ALLOWED_MODES: { [key: number]: GameMode[] } = {
   203: [GameMode.三金],
   204: [GameMode.三金, GameMode.三玉],
   205: [GameMode.三玉, GameMode.三王座],
-  206: [GameMode.三王座]
+  206: [GameMode.三王座],
 };
+
+export function getTranslatedLevelTags(): string[] {
+  const rawTags = t(PLAYER_RANKS) as string;
+  if (rawTags.charCodeAt(0) > 127) {
+    return rawTags.split("");
+  }
+  return Array(rawTags.length / 2)
+    .fill("")
+    .map((_, index) => rawTags.slice(index * 2, index * 2 + 2));
+}
 
 export class Level {
   _majorRank: number;
@@ -43,7 +53,7 @@ export class Level {
     return LEVEL_ALLOWED_MODES[this._numPlayerId * 100 + this._majorRank].includes(mode);
   }
   getTag(): string {
-    const label = t(PLAYER_RANKS)[this._majorRank - 1];
+    const label = getTranslatedLevelTags()[this._majorRank - 1];
     if (this._majorRank === PLAYER_RANKS.length) {
       return label;
     }
@@ -138,5 +148,5 @@ export const LevelWithDelta = Object.freeze({
   },
   getAdjustedLevel(obj: LevelWithDelta): Level {
     return new Level(obj.id).getAdjustedLevel(obj.score + obj.delta);
-  }
+  },
 });
