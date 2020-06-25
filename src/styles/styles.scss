@@ -190,8 +190,11 @@ svg.recharts-surface {
 .stats-list {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-column-gap: 1em;
+  grid-column-gap: 4em;
   max-width: 100%;
+}
+.lang-en .stats-list {
+  grid-column-gap: 1em;
 }
 .stats-list dd {
   justify-self: end;
@@ -203,14 +206,25 @@ svg.recharts-surface {
 @include media-breakpoint-down(lg) {
   .stats-list {
     grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  .lang-en .stats-list {
     grid-column-gap: 2em;
   }
 }
 @include media-breakpoint-down(sm) {
+  .stats-list {
+    grid-column-gap: 3em;
+  }
   .lang-en .stats-list {
     grid-template-columns: 1fr 1fr;
   }
 }
+@media (max-width: 480px) {
+  .stats-list {
+    grid-column-gap: 2em;
+  }
+}
+
 @media (max-width: 360px) {
   .stats-list {
     grid-template-columns: 1fr 1fr;
