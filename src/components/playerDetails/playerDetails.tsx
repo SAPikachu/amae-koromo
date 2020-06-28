@@ -107,7 +107,9 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
   return (
     <>
       <StatItem label="最高等级">{LevelWithDelta.getTag(metadata.max_level)}</StatItem>
-      <StatItem label="最高分数">{LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.max_level))}</StatItem>
+      <StatItem label="最高分数" className="no-width">
+        {LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.max_level))}
+      </StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
       <StatItem label="里宝率" description="中里宝局数 / 立直和了局数">
         {formatPercent(stats.里宝率 || 0)}
@@ -124,7 +126,7 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       <StatItem label="放铳时副露率" description="放铳时副露次数 / 放铳次数">
         {formatPercent(stats.放铳时副露率 || 0)}
       </StatItem>
-      <StatItem label="副露后放铳率" description="放铳时副露次数 / 副露次数">
+      <StatItem label="副露后放铳率" description="放铳时副露次数 / 副露次数" className="no-width">
         {formatPercent(stats.副露后放铳率 || 0)}
       </StatItem>
       <StatItem label="副露后和牌率" description="副露后和牌次数 / 副露次数">
