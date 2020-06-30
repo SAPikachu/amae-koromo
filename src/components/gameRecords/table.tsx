@@ -14,6 +14,7 @@ import { triggerRelayout, isMobile } from "../../utils/index";
 import Loading from "../misc/loading";
 import Conf from "../../utils/conf";
 import { Trans, useTranslation } from "react-i18next";
+import i18n from "../../i18n";
 
 export { Column } from "react-virtualized/dist/es/Table";
 
@@ -21,23 +22,25 @@ const formatTime = (x: number) => (x ? dayjs.unix(x).format("HH:mm") : null);
 
 type ActivePlayerId = number | string | ((x: GameRecord) => number | string);
 
-const Players = React.memo(({ game, activePlayerId }: { game: GameRecord; activePlayerId?: ActivePlayerId }) => {
-  if (typeof activePlayerId === "function") {
-    activePlayerId = activePlayerId(game);
+const Players = React.memo(
+  ({ game, activePlayerId }: { game: GameRecord; activePlayerId?: ActivePlayerId; language?: string }) => {
+    if (typeof activePlayerId === "function") {
+      activePlayerId = activePlayerId(game);
+    }
+    if (typeof activePlayerId !== "string") {
+      activePlayerId = activePlayerId?.toString() || "";
+    }
+    return (
+      <div className="row no-gutters">
+        {game.players.map((x) => (
+          <div key={x.accountId} className="col-12 col-md-6 pr-1">
+            <Player game={game} player={x} isActive={x.accountId.toString() === activePlayerId} />
+          </div>
+        ))}
+      </div>
+    );
   }
-  if (typeof activePlayerId !== "string") {
-    activePlayerId = activePlayerId?.toString() || "";
-  }
-  return (
-    <div className="row no-gutters">
-      {game.players.map(x => (
-        <div key={x.accountId} className="col-12 col-md-6 pr-1">
-          <Player game={game} player={x} isActive={x.accountId.toString() === activePlayerId} />
-        </div>
-      ))}
-    </div>
-  );
-});
+);
 
 const cellFormatTime = ({ cellData }: TableCellProps) => formatTime(cellData);
 const cellFormatFullTime = ({ rowData }: TableCellProps) =>
@@ -117,7 +120,9 @@ export const COLUMN_PLAYERS = makeColumn((activePlayerId: ActivePlayerId) => (
     dataKey="players"
     label={<Trans>玩家</Trans>}
     cellRenderer={({ rowData }: TableCellProps) =>
-      rowData && rowData.players ? <Players game={rowData} activePlayerId={activePlayerId} /> : null
+      rowData && rowData.players ? (
+        <Players game={rowData} activePlayerId={activePlayerId} language={i18n.language} />
+      ) : null
     }
     width={120}
     flexGrow={1}
@@ -160,7 +165,7 @@ export const COLUMN_FULLTIME = makeColumn(() => (
 export default function GameRecordTable({
   columns,
   withActivePlayer = false,
-  alwaysShowDetailLink = false
+  alwaysShowDetailLink = false,
 }: {
   columns: TableColumnDef[];
   withActivePlayer?: boolean;
@@ -182,13 +187,13 @@ export default function GameRecordTable({
     triggerRelayout();
   }, [shouldTriggerLayout]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const memoColumns = useMemo(() => columns.map(x => x()).filter(x => x), [
+  const memoColumns = useMemo(() => columns.map((x) => x()).filter((x) => x), [
     // eslint-disable-next-line react-hooks/exhaustive-deps
     isMobile(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     i18n.language,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    ...columns.map(x => x.key || x)
+    ...columns.map((x) => x.key || x),
   ]);
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
