@@ -2,8 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 
 import { useParams, useLocation, Redirect } from "react-router";
-import { useModel, Model, ModelPlain } from "./model";
-import { generatePath } from "./routes";
+import { Model, useOnRouteModelUpdated } from "./model";
 import { useEffect } from "react";
 import { scrollToTop, triggerRelayout } from "../../utils/index";
 
@@ -19,11 +18,7 @@ type PlayerRouteParams = {
   endDate?: string;
   mode?: string;
   search?: string;
-};
-
-type HistoryState = {
-  model: ModelPlain;
-  pathname: string;
+  rank?: number;
 };
 
 function parseOptionalDate<T>(s: string | null | undefined, defaultValue: T): dayjs.Dayjs | T {
@@ -39,7 +34,7 @@ const ModelBuilders = {
       endDate: parseOptionalDate(params.endDate, null),
       selectedMode: params.mode || "",
       searchText: params.search ? params.search.slice(1) : "",
-      version: 0
+      rank: params.rank || null
     };
   },
   listing(params: ListingRouteParams): Model | string {
@@ -51,55 +46,30 @@ const ModelBuilders = {
       type: undefined,
       date: date ? date.startOf("day").valueOf() : null,
       selectedMode: params.mode || "",
-      searchText: params.search || "",
-      version: 0
+      searchText: params.search || ""
     };
-  }
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React.FunctionComponentElement<any> {
-  const params = useParams();
-  const [model, updateModel] = useModel();
-  const location = useLocation<HistoryState>();
-  useEffect(triggerRelayout, [model.type]);
-  const state = location.state;
-  // console.log(params, model, location, state);
-  if (state && state.model.version === model.version) {
-    /*
-    delete (model as Model).pendingRouteUpdate;
-    if (location.pathname !== state.pathname) {
-      return <Redirect to={{ pathname: state.pathname, state }} />;
-    }*/
-    return <></>;
-  }
-  if (!state) {
-    // Navigation
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const modelResult = ModelBuilders[view](params as any);
-    if (typeof modelResult === "string") {
-      return <Redirect to={modelResult} />;
-    }
-    const newModel: Model = {
-      ...modelResult,
-      version: model.version
-    };
-    updateModel(newModel);
+  useEffect(() => {
+    triggerRelayout();
     scrollToTop();
-    return (
-      <Redirect
-        to={{ pathname: location.pathname, state: { pathname: location.pathname, model: Model.toPlain(newModel) } }}
-      />
-    );
+    return scrollToTop;
+  }, []);
+  const onRouteModelUpdated = useOnRouteModelUpdated();
+  const params = useParams();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  Object.assign(params, {
+    rank: query.get("rank"),
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const modelResult = ModelBuilders[view](params as any);
+  if (typeof modelResult === "string") {
+    return <Redirect to={modelResult} />;
   }
-  if (model.pendingRouteUpdate) {
-    // Model updated
-    const newPath = generatePath(model);
-    delete (model as Model).pendingRouteUpdate; // Do not trigger update
-    return <Redirect to={{ pathname: newPath, state: { pathname: newPath, model: Model.toPlain(model) } }} />;
-  } else {
-    const restoredModel = Model.fromPlain(state.model);
-    updateModel(restoredModel);
-    return <></>;
-  }
+  onRouteModelUpdated(modelResult);
+  return <></>;
 }

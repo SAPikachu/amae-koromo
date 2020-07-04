@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import dayjs from "dayjs";
-import React, { useReducer, useContext, ReactChild } from "react";
-import { useMemo } from "react";
-import { useLocation } from "react-router";
+import React, { useReducer, useContext, ReactChild, useMemo } from "react";
+import { useHistory } from "react-router";
+import { useEventCallback } from "../../utils";
+import { generatePath } from "./routes";
 
-interface WithRuntimeInfo {
-  version: number;
-  pendingRouteUpdate?: boolean;
-}
 export interface ListingModel {
   type: undefined;
   date: dayjs.ConfigType | null;
@@ -21,54 +18,10 @@ export interface PlayerModel {
   endDate: dayjs.ConfigType | null;
   selectedMode: string;
   searchText: string;
+  rank: number | null;
 }
-export type Model = (ListingModel | PlayerModel) & WithRuntimeInfo;
-interface ListingModelPlain {
-  type: undefined;
-  date: number | null;
-  selectedMode: string;
-  searchText: string;
-}
-export interface PlayerModelPlain {
-  type: "player";
-  playerId: string;
-  startDate: number | null;
-  endDate: number | null;
-  selectedMode: string;
-  searchText: string;
-}
-export type ModelPlain = (ListingModelPlain | PlayerModelPlain) & WithRuntimeInfo;
+export type Model = ListingModel | PlayerModel;
 export const Model = Object.freeze({
-  toPlain(model: Model): ModelPlain {
-    if (model.type === "player") {
-      return {
-        ...model,
-        startDate: model.startDate ? dayjs(model.startDate).valueOf() : null,
-        endDate: model.endDate ? dayjs(model.endDate).valueOf() : null
-      };
-    }
-    return {
-      ...model,
-      type: undefined,
-      date: model.date ? dayjs(model.date).valueOf() : null
-    };
-  },
-  fromPlain(model: ModelPlain): ListingModel | PlayerModel {
-    if (model.type === "player") {
-      return model;
-    }
-    if (model.type === undefined) {
-      return {
-        type: undefined,
-        date: model.date || null,
-        searchText: model.searchText || "",
-        selectedMode: model.selectedMode
-      };
-    }
-    console.warn("Unknown model data from location state:", model);
-    // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
-    return DEFAULT_MODEL;
-  },
   removeExtraParams(model: Model): Model {
     if (model.type === "player") {
       return {
@@ -78,7 +31,7 @@ export const Model = Object.freeze({
         startDate: null,
         endDate: null,
         searchText: "",
-        version: 0
+        rank: null,
       };
     }
     return {
@@ -86,18 +39,14 @@ export const Model = Object.freeze({
       searchText: "",
       selectedMode: "",
       date: null,
-      version: 0
     };
-  }
+  },
 });
 type ModelUpdate = Partial<ListingModel> | ({ type: "player" } & Partial<PlayerModel>);
 type DispatchModelUpdate = (props: ModelUpdate) => void;
 
 const DEFAULT_MODEL: ListingModel = { type: undefined, date: null, selectedMode: "", searchText: "" };
-const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([
-  { ...DEFAULT_MODEL, version: 0 },
-  () => {}
-]);
+const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([DEFAULT_MODEL, () => {}]);
 export const useModel = () => useContext(ModelContext);
 
 function normalizeUpdate(newProps: ModelUpdate): ModelUpdate {
@@ -113,63 +62,45 @@ function normalizeUpdate(newProps: ModelUpdate): ModelUpdate {
   }
   return newProps;
 }
-function isSameDateValue(d1?: dayjs.ConfigType | null, d2?: dayjs.ConfigType | null): boolean {
-  if (d1 === d2) {
-    return true;
-  }
-  if (!d1 || !d2) {
-    return false;
-  }
-  return dayjs(d1).isSame(d2, "day");
-}
-function isChanged(oldModel: Model, newProps: ModelUpdate): boolean {
-  if (oldModel.type !== newProps.type) {
-    return true;
-  }
-  if (newProps.selectedMode !== undefined && newProps.selectedMode !== oldModel.selectedMode) {
-    return true;
-  }
-  if (oldModel.type === undefined && newProps.type === oldModel.type) {
-    if (newProps.date !== undefined && !isSameDateValue(newProps.date, oldModel.date)) {
-      return true;
-    }
-  }
-  if (oldModel.type === "player" && newProps.type === oldModel.type) {
-    if (newProps.playerId !== undefined && newProps.playerId !== oldModel.playerId) {
-      return true;
-    }
-    if (newProps.startDate !== undefined && !isSameDateValue(oldModel.startDate, newProps.startDate)) {
-      return true;
-    }
-    if (newProps.endDate !== undefined && !isSameDateValue(oldModel.endDate, newProps.endDate)) {
-      return true;
-    }
-  }
-  if (newProps.searchText !== undefined && newProps.searchText !== oldModel.searchText) {
-    return true;
-  }
-  return false;
+function isSameModel(a: Model, b: Model): boolean {
+  return generatePath(a) === generatePath(b);
 }
 
+const OnRouteModelUpdatedContext = React.createContext((() => {}) as (model: Model) => void);
+export const useOnRouteModelUpdated = () => useContext(OnRouteModelUpdatedContext);
+
 export function ModelProvider({ children }: { children: ReactChild | ReactChild[] }) {
-  const location = useLocation();
-  const [model, updateModel] = useReducer(
-    (oldModel: Model, newProps: ModelUpdate): Model =>
-      isChanged(oldModel, newProps)
-        ? {
-            ...((oldModel.type === newProps.type ? oldModel : {}) as Model),
-            ...(normalizeUpdate(newProps) as Model),
-            version: oldModel.version + 1,
-            pendingRouteUpdate: true
-          }
-        : oldModel,
-    null,
-    (): Model => ({
-      ...DEFAULT_MODEL,
-      ...Model.fromPlain((location.state || {}).model || {}),
-      version: new Date().getTime()
-    })
+  const history = useHistory();
+  const [model, setModel] = useReducer(
+    (oldModel, newModel: Model): Readonly<Model> => {
+      if (isSameModel(oldModel, newModel)) {
+        return oldModel;
+      }
+      return Object.freeze(newModel);
+    },
+    undefined,
+    () => Object.freeze(DEFAULT_MODEL as Model)
   );
-  const value: [Model, DispatchModelUpdate] = useMemo(() => [model, updateModel], [model, updateModel]);
-  return <ModelContext.Provider value={value}>{children}</ModelContext.Provider>;
+  const dispatchModelUpdate = useEventCallback(
+    (newProps: ModelUpdate) => {
+      const newModel = {
+        ...((model.type === newProps.type ? model : {}) as Model),
+        ...(normalizeUpdate(newProps) as Model),
+      };
+      if (isSameModel(model, newModel)) {
+        return;
+      }
+      history.replace(generatePath(newModel));
+    },
+    [model, history]
+  );
+  const value = useMemo(() => [model, dispatchModelUpdate] as [Readonly<Model>, DispatchModelUpdate], [
+    model,
+    dispatchModelUpdate,
+  ]);
+  return (
+    <ModelContext.Provider value={value}>
+      <OnRouteModelUpdatedContext.Provider value={setModel}>{children}</OnRouteModelUpdatedContext.Provider>
+    </ModelContext.Provider>
+  );
 }

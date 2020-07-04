@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 
 export function triggerRelayout() {
   requestAnimationFrame(() => window.dispatchEvent(new UIEvent("resize")));
-  setTimeout(function() {
+  setTimeout(function () {
     window.dispatchEvent(new UIEvent("resize"));
   }, 200);
 }
@@ -24,6 +24,25 @@ export const formatPercent = (x: any) => {
 export const formatFixed3 = (x: number) => x.toFixed(3);
 export const formatIdentity = (x: number) => x.toString();
 
+export function useEventCallback<T extends unknown[]>(fn: (...args: T) => void, dependencies: React.DependencyList) {
+  const ref = useRef<(...args: T) => void>(() => {
+    throw new Error("Cannot call an event handler while rendering.");
+  });
+
+  useEffect(() => {
+    ref.current = fn;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fn, ...dependencies]);
+
+  return useCallback(
+    (...args) => {
+      const fn = ref.current;
+      return fn(...(args as T));
+    },
+    [ref]
+  );
+}
+
 type NotFinished = { notFinished: string };
 const NOT_FINISHED = { notFinished: "yes" };
 
@@ -41,7 +60,7 @@ export function useAsync<T>(maybePromise: T | Promise<T>, cacheKey?: string): T 
     let cancelled = false;
     if (maybePromise instanceof Promise) {
       setFulfilledValue(NOT_FINISHED);
-      maybePromise.then(result => {
+      maybePromise.then((result) => {
         if (cancelled) {
           return;
         }

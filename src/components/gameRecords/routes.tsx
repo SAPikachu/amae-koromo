@@ -30,13 +30,17 @@ const PATH = "/:date(\\d{4}-\\d{2}-\\d{2})/:mode([0-9]+)?/:search?";
 
 export function generatePath(model: Model): string {
   if (model.type === "player") {
-    return genPath(PLAYER_PATH, {
+    let result = genPath(PLAYER_PATH, {
       id: model.playerId,
       startDate: model.startDate ? dayjs(model.startDate).format("YYYY-MM-DD") : undefined,
       endDate: model.endDate ? dayjs(model.endDate).format("YYYY-MM-DD") : undefined,
       mode: model.selectedMode || undefined,
       search: model.searchText ? "-" + model.searchText : undefined
     });
+    if (model.rank) {
+      result += `?rank=${model.rank}`;
+    }
+    return result;
   }
   if (!model.selectedMode && !model.searchText && !model.date) {
     return "/";
@@ -55,7 +59,7 @@ export function generatePlayerPathById(playerId: number | string): string {
     endDate: null,
     selectedMode: "",
     searchText: "",
-    version: 0
+    rank: null
   });
 }
 
