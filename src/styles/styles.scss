@@ -175,6 +175,40 @@ button.button-link {
     display: block;
   }
 }
+.player-details-settings {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  white-space: nowrap;
+  align-items: flex-start;
+  margin-bottom: 5px;
+}
+.player-details-settings label:empty {
+  display: none;
+}
+.player-details-settings .setting {
+  display: inline-grid;
+  grid-template-columns: min-content min-content;
+  align-items: center;
+  grid-column-gap: 20px;
+  padding: 5px 0;
+}
+.player-details-settings .form-inline {
+  flex-wrap: nowrap;
+}
+.player-details-settings .custom-period {
+  grid-column: 1 / span 3;
+  grid-row: 2;
+}
+.player-details-settings input[type="text"] {
+  min-width: 10em;
+  max-width: 100%;
+}
+@media (max-width: 420px) {
+  .player-details-settings .custom-period .form-inline {
+    flex-wrap: wrap;
+  }
+}
 .ReactVirtualized__Table__row.even {
   background-color: rgba(0, 0, 0, 0.05);
 }
