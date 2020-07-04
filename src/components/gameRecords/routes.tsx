@@ -16,12 +16,12 @@ import {
   COLUMN_PLAYERS,
   COLUMN_STARTTIME,
   COLUMN_ENDTIME,
-  COLUMN_FULLTIME
+  COLUMN_FULLTIME,
 } from "./table";
 import { PageCategory } from "../misc/tracker";
 const PlayerDetails = Loadable({
   loader: () => import("../playerDetails/playerDetails"),
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 
 const PLAYER_PATH =
@@ -35,7 +35,7 @@ export function generatePath(model: Model): string {
       startDate: model.startDate ? dayjs(model.startDate).format("YYYY-MM-DD") : undefined,
       endDate: model.endDate ? dayjs(model.endDate).format("YYYY-MM-DD") : undefined,
       mode: model.selectedMode || undefined,
-      search: model.searchText ? "-" + model.searchText : undefined
+      search: model.searchText ? "-" + model.searchText : undefined,
     });
     if (model.rank) {
       result += `?rank=${model.rank}`;
@@ -48,7 +48,7 @@ export function generatePath(model: Model): string {
   return genPath(PATH, {
     date: dayjs(model.date || new Date()).format("YYYY-MM-DD"),
     mode: model.selectedMode || undefined,
-    search: model.searchText || undefined
+    search: model.searchText || undefined,
   });
 }
 export function generatePlayerPathById(playerId: number | string): string {
@@ -59,7 +59,7 @@ export function generatePlayerPathById(playerId: number | string): string {
     endDate: null,
     selectedMode: "",
     searchText: "",
-    rank: null
+    rank: null,
   });
 }
 
@@ -88,9 +88,9 @@ function Routes() {
       <Route exact path={["/", PATH]}>
         <RouteSync view="listing" />
         <PageCategory category="Listing" />
-        <div className="row">
-          <FilterPanel className="col" />
-          <PlayerSearch className="col-12 col-sm-6 col-md-4" />
+        <div className="home-header">
+          <FilterPanel />
+          <PlayerSearch />
         </div>
         <GameRecordTable columns={[COLUMN_GAMEMODE, COLUMN_PLAYERS(""), COLUMN_STARTTIME, COLUMN_ENDTIME]} />
       </Route>

@@ -26,7 +26,7 @@ function findRawResultFromCache(prefix: string): { result: PlayerMetadataLite[];
     }
     return {
       isExactMatch: prefix === normalizedPrefix,
-      result: players
+      result: players,
     };
   }
   return null;
@@ -46,7 +46,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
     const normalizedPrefix = normalizeName(searchText);
     let mayHaveMore = cachedResult.result.length >= NUM_FETCH;
     const filteredPlayers = [] as PlayerMetadataLite[];
-    cachedResult.result.forEach(player => {
+    cachedResult.result.forEach((player) => {
       if (normalizeName(player.nickname).startsWith(normalizedPrefix)) {
         filteredPlayers.push(player);
       } else if (filteredPlayers.length) {
@@ -74,7 +74,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
       if (playerSearchCache[prefix]) {
         return;
       }
-      playerSearchCache[prefix] = searchPlayer(prefix).then(function(players) {
+      playerSearchCache[prefix] = searchPlayer(prefix).then(function (players) {
         playerSearchCache[prefix] = players;
         if (!cancelled) {
           setVersion(new Date().getTime());
@@ -92,9 +92,9 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
   return (
     <>
       <h6 className="text-center mb-2">{t("玩家前缀搜索")}</h6>
-      <ul className="list-unstyled row mb-2">
-        {players.slice(0, NUM_RESULTS_SHOWN).map(x => (
-          <li key={x.id} className="col-6">
+      <ul className="list-unstyled mb-2">
+        {players.slice(0, NUM_RESULTS_SHOWN).map((x) => (
+          <li key={x.id}>
             <Link to={generatePlayerPathById(x.id)}>
               <span>
                 [{getLevelTag(x.level.id)}] {x.nickname}
@@ -111,7 +111,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
   );
 }
 
-export function PlayerSearch({ className = "" }) {
+export function PlayerSearch({ className = "player-search" }) {
   const [model] = useModel();
   if ("playerId" in model || !model.searchText) {
     return <></>;

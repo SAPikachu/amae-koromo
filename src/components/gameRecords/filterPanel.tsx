@@ -9,7 +9,7 @@ import Conf from "../../utils/conf";
 
 const DEFAULT_DATE = dayjs().startOf("day");
 
-export function FilterPanel({ className = "" }) {
+export function FilterPanel() {
   const [model, updateModel] = useModel();
   const updateSearchTextFromEvent = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ searchText: e.currentTarget.value }),
@@ -21,7 +21,7 @@ export function FilterPanel({ className = "" }) {
     return null;
   }
   return (
-    <div className={className}>
+    <>
       <FormRow title="日期">
         <DatePicker min={Conf.dateMin} date={model.date || DEFAULT_DATE} onChange={setDate} className="form-control" />
       </FormRow>
@@ -33,6 +33,6 @@ export function FilterPanel({ className = "" }) {
           <ModeSelector mode={model.selectedMode} onChange={setMode} />
         </FormRow>
       )}
-    </div>
+    </>
   );
 }
