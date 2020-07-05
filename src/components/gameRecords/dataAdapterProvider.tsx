@@ -134,22 +134,29 @@ function createProvider(model: Model): DataProvider {
 
 function usePredicate(model: Model): FilterPredicate {
   let memoFunc: () => FilterPredicate = () => null;
-  let memoDeps = [null, ""];
+  let memoDeps: React.DependencyList = [null, "", false];
   const searchText = (model.searchText || "").trim().toLowerCase() || "";
   const needPredicate = searchText || model.selectedMode;
   memoFunc = () =>
     needPredicate
-      ? game => {
+      ? (game) => {
           if (model.selectedMode && model.selectedMode !== game.modeId.toString()) {
             return false;
           }
-          if (!game.players.some(player => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
+          if (!game.players.some((player) => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
+            return false;
+          }
+          if (
+            "rank" in model &&
+            model.rank &&
+            GameRecord.getRankIndexByPlayer(game, model.playerId) !== model.rank - 1
+          ) {
             return false;
           }
           return true;
         }
       : null;
-  memoDeps = [(model.type === undefined && model.selectedMode) || null, searchText];
+  memoDeps = [(model.type === undefined && model.selectedMode) || null, searchText, "rank" in model && model.rank];
   return useMemo(memoFunc, memoDeps);
 }
 
@@ -184,7 +191,7 @@ function useDataAdapterCommon(dataProvider: DataProvider, onError: () => void, d
     dataProvider.getCountMaybeSync(); // Preload metadata
   }, [dataProvider]);
   return {
-    dataAdapter
+    dataAdapter,
   };
 }
 
@@ -207,7 +214,7 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
 
 export function DataAdapterProviderCustom({
   provider,
-  children
+  children,
 }: {
   provider: DataProvider;
   children: ReactChild | ReactChild[];

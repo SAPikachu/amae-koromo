@@ -6,6 +6,7 @@ import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
 import { ModeSelector } from "../gameRecords/modeSelector";
 import Conf from "../../utils/conf";
+import { getRankLabelByIndex } from "../../data/types";
 
 enum DateRangeOptions {
   All = "全部",
@@ -16,6 +17,18 @@ const DATE_RANGE_ITEMS = Object.keys(DateRangeOptions).map((key: string) => ({
   key: DateRangeOptions[key as keyof typeof DateRangeOptions],
   label: DateRangeOptions[key as keyof typeof DateRangeOptions],
 }));
+
+const RANK_ITEMS = [
+  {
+    key: "All",
+    label: "全部",
+  },
+].concat(
+  Conf.rankColors.map((_, index) => ({
+    key: (index + 1).toString(),
+    label: getRankLabelByIndex(index),
+  }))
+);
 
 export default function PlayerDetailsSettings({ showLevel = false }) {
   const [model, updateModel] = useModel();
@@ -71,6 +84,12 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ type: "player", searchText: e.currentTarget.value }),
     [updateModel]
   );
+  const setRank = useCallback((rank: string) => updateModel({ type: "player", rank: parseInt(rank) || null }), [
+    updateModel,
+  ]);
+  if (model.type !== "player") {
+    return null;
+  }
   return (
     <div className="player-details-settings">
       <div className="setting">
@@ -104,6 +123,17 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
           </FormRow>
         </div>
       )}
+      <div className="setting">
+        <FormRow title="顺位" inline={true}>
+          <CheckboxGroup
+            type="radio"
+            selectedItemKey={(model.rank || "All").toString()}
+            items={RANK_ITEMS}
+            groupKey="PlayerDetailsRankSelector"
+            onChange={setRank}
+          />
+        </FormRow>
+      </div>
       {model.searchText ? (
         <div className="setting">
           <FormRow title="查找玩家">

@@ -205,8 +205,17 @@ button.button-link {
   max-width: 100%;
 }
 @media (max-width: 420px) {
-  .player-details-settings .custom-period .form-inline {
+  .player-details-settings label {
+    padding: 0;
+  }
+  .player-details-settings .setting {
+    align-items: flex-start;
+  }
+  .player-details-settings .form-inline {
     flex-wrap: wrap;
+  }
+  .player-details-settings .form-inline .form-check {
+    margin-bottom: 5px;
   }
 }
 .ReactVirtualized__Table__row.even {

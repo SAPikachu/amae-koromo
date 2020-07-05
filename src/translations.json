@@ -247,7 +247,7 @@
       "石上三年": "石の上にも三年",
       "大七星": "大七星"
     },
-    "formRow": { "日期": "日付", "查找玩家": "プレイヤー検索", "时间": "期間", "等级": "レベル" },
+    "formRow": { "日期": "日付", "查找玩家": "プレイヤー検索", "时间": "期間", "等级": "レベル", "顺位": "順位" },
     "navButtons": {
       "基本": "基本",
       "立直": "立直",
@@ -533,7 +533,7 @@
       "石上三年": "Ishinouenimosannen",
       "大七星": "Big Seven Stars"
     },
-    "formRow": { "日期": "Date", "查找玩家": "Player search", "时间": "Period", "等级": "Level" },
+    "formRow": { "日期": "Date", "查找玩家": "Player search", "时间": "Period", "等级": "Level", "顺位": "Rank" },
     "navButtons": {
       "基本": "Basic",
       "立直": "Riichi",

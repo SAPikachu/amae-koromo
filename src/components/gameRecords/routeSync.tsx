@@ -5,6 +5,7 @@ import { useParams, useLocation, Redirect } from "react-router";
 import { Model, useOnRouteModelUpdated } from "./model";
 import { useEffect } from "react";
 import { scrollToTop, triggerRelayout } from "../../utils/index";
+import Conf from "../../utils/conf";
 
 type ListingRouteParams = {
   date?: string;
@@ -18,7 +19,7 @@ type PlayerRouteParams = {
   endDate?: string;
   mode?: string;
   search?: string;
-  rank?: number;
+  rank?: string;
 };
 
 function parseOptionalDate<T>(s: string | null | undefined, defaultValue: T): dayjs.Dayjs | T {
@@ -27,6 +28,12 @@ function parseOptionalDate<T>(s: string | null | undefined, defaultValue: T): da
 
 const ModelBuilders = {
   player(params: PlayerRouteParams): Model | string {
+    if (params.rank) {
+      const rank = parseInt(params.rank);
+      if (!rank || rank < 1 || rank > Conf.rankColors.length) {
+        delete params.rank;
+      }
+    }
     return {
       type: "player",
       playerId: params.id,
@@ -34,7 +41,7 @@ const ModelBuilders = {
       endDate: parseOptionalDate(params.endDate, null),
       selectedMode: params.mode || "",
       searchText: params.search ? params.search.slice(1) : "",
-      rank: params.rank || null
+      rank: parseInt(params.rank || "") || null
     };
   },
   listing(params: ListingRouteParams): Model | string {
