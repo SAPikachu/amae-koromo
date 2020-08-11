@@ -7,25 +7,12 @@ import { useModel } from "../modeModel/model";
 import { Level } from "../../data/types/level";
 import { ModelModeSelector } from "../modeModel";
 import { useTranslation } from "react-i18next";
+import Conf from "../../utils/conf";
 
-const HEADERS = [
-  "等级",
-  "一位率",
-  "二位率",
-  "三位率",
-  "四位率",
-  "被飞率",
-  "平均顺位",
-  "和牌率",
-  "放铳率",
-  "副露率",
-  "立直率",
-  "自摸率",
-  "流局率",
-  "流听率",
-  "对战数",
-  "在位记录"
-];
+const HEADERS = ["等级"].concat(
+  ["一位率", "二位率", "三位率", "四位率"].slice(0, Conf.rankColors.length),
+  ["被飞率", "平均顺位", "和牌率", "放铳率", "副露率", "立直率", "自摸率", "流局率", "流听率", "对战数", "在位记录"]
+);
 
 export default function DataByRank() {
   const { t } = useTranslation();
@@ -43,7 +30,7 @@ export default function DataByRank() {
       <table className="table table-responsive-xl table-striped table-sm table-hover text-center">
         <thead className="vertical-table-header">
           <tr>
-            {HEADERS.map(x => (
+            {HEADERS.map((x) => (
               <th key={x}>
                 <div>{t(x)}</div>
               </th>
@@ -54,7 +41,7 @@ export default function DataByRank() {
           {modeData.map(([levelId, levelData]) => (
             <tr key={levelId}>
               <td className="text-nowrap">{new Level(parseInt(levelId)).getTag()}</td>
-              {levelData.basic.rank_rates.map((x, i) => (
+              {levelData.basic.rank_rates.slice(0, Conf.rankColors.length).map((x, i) => (
                 <td key={i}>{formatPercent(x)}</td>
               ))}
               <td>{formatPercent(levelData.basic.negative_rate)}</td>

@@ -61,7 +61,7 @@ export const CONFIGURATIONS = {
       estimatedStableLevel: true,
       statisticsSubPages: {
         rankBySeat: true,
-        dataByRank: false,
+        dataByRank: true,
         fanStats: true,
       },
     },
