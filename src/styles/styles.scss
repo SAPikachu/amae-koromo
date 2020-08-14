@@ -27,6 +27,9 @@ body {
   background-color: rgb(34, 34, 34);
   background-image: none;
 }
+#root {
+  overflow: hidden;
+}
 h1 a,
 h1 a:hover {
   color: inherit;
