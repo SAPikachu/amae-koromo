@@ -62,7 +62,9 @@ export default function DataByRank() {
       <div className="row">
         <div className="col text-right">
           {t("统计半庄数：")}
-          {Math.floor(modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) / 4)}
+          {Math.floor(
+            modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) / Conf.rankColors.length
+          )}
         </div>
       </div>
     </>
