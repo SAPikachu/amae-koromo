@@ -31,6 +31,10 @@ const RecentHighlight = Loadable({
   loader: () => import("../recentHighlight"),
   loading: () => <Loading />,
 });
+const ContestTools = Loadable({
+  loader: () => import("../contestTools"),
+  loading: () => <Loading />,
+});
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -58,6 +62,7 @@ function App() {
                   <PageCategory category="RecentHighlight" />
                   <RecentHighlight />
                 </Route>
+                {Conf.features.contestTools ? <Route path="/contest-tools"><ContestTools/></Route> : null}
                 <Route path="/">
                   <GameRecords />
                 </Route>

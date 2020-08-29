@@ -11,6 +11,7 @@ export const CONFIGURATIONS = {
       ranking: true,
       statistics: true,
       estimatedStableLevel: true,
+      contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
         dataByRank: true,
@@ -36,6 +37,7 @@ export const CONFIGURATIONS = {
       ranking: false,
       statistics: true,
       estimatedStableLevel: false,
+      contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
         dataByRank: false,
@@ -59,6 +61,7 @@ export const CONFIGURATIONS = {
       ranking: false,
       statistics: true,
       estimatedStableLevel: true,
+      contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
         dataByRank: true,
@@ -80,6 +83,7 @@ export const CONFIGURATIONS = {
       ranking: false,
       statistics: true,
       estimatedStableLevel: false,
+      contestTools: true,
       statisticsSubPages: {
         rankBySeat: true,
         dataByRank: false,
