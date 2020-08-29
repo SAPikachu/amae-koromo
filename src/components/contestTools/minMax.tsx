@@ -4,71 +4,70 @@ import Conf from "../../utils/conf";
 import Loading from "../misc/loading";
 import dayjs from "dayjs";
 import { ListingDataLoader } from "../../data/source/records/loader";
-import { GameRecord } from "../../data/types";
-import { Player } from "../gameRecords/player";
-
-function Result({ game, title }: { game: GameRecord; title: string }) {
-  return (
-    <div>
-      <h5 className="mb-3">
-        {title}：{GameRecord.formatFullStartTime(game)}
-      </h5>
-      {game.players.map((x) => (
-        <p key={x.accountId.toString()}>
-          <Player player={x} game={game} isActive={false} />
-        </p>
-      ))}
-    </div>
-  );
-}
+import { GameRecord, PlayerRecord } from "../../data/types";
+import { generatePlayerPathById } from "../gameRecords/routes";
 
 export default function MinMax() {
   const [dateStart, setDateStart] = useState(() => dayjs());
   const [dateEnd, setDateEnd] = useState(() => dayjs());
   const [loading, setLoading] = useState(false);
-  const [minGame, setMinGame] = useState(null as GameRecord | null);
-  const [maxGame, setMaxGame] = useState(null as GameRecord | null);
+  const [playerList, setPlayerList] = useState(
+    [] as {
+      id: string;
+      minGame: GameRecord;
+      maxGame: GameRecord;
+      minGamePlayer: PlayerRecord;
+      maxGamePlayer: PlayerRecord;
+      numGames: number;
+      totalPoints: number;
+    }[]
+  );
   const search = useCallback(async () => {
     setLoading(true);
     let cur = dateStart.startOf("day");
     const end = dateEnd.endOf("day");
-
-    let minScore = +Infinity;
-    let maxScore = -Infinity;
-    let minGame: GameRecord | null = null;
-    let maxGame: GameRecord | null = null;
+    const players = {} as {
+      [key: string]: typeof playerList[0];
+    };
     while (cur.isBefore(end)) {
       const loader = new ListingDataLoader(cur);
       const metadata = await loader.getMetadata();
       for (let i = 0; i < metadata.count; i += 100) {
         const records = await loader.getRecords(i, 100);
         for (const rec of records) {
-          let curMax = -Infinity;
-          let curMin = +Infinity;
           for (const player of rec.players) {
-            if (player.score > curMax) {
-              curMax = player.score;
+            const id = player.accountId.toString();
+            if (!(id in players)) {
+              players[id] = {
+                id,
+                minGame: rec,
+                maxGame: rec,
+                minGamePlayer: player,
+                maxGamePlayer: player,
+                numGames: 1,
+                totalPoints: player.score,
+              };
+              continue;
             }
-            if (player.score < curMin) {
-              curMin = player.score;
+            const info = players[id];
+            info.numGames++;
+            info.totalPoints += player.score;
+            if (player.score > info.maxGamePlayer.score) {
+              info.maxGame = rec;
+              info.maxGamePlayer = player;
             }
-          }
-          if (curMax > maxScore) {
-            maxScore = curMax;
-            maxGame = rec;
-          }
-          if (curMin < minScore) {
-            minScore = curMin;
-            minGame = rec;
+            if (player.score < info.minGamePlayer.score) {
+              info.minGame = rec;
+              info.minGamePlayer = player;
+            }
           }
         }
       }
       cur = cur.add(1, "day");
     }
-    setMinGame(minGame);
-    setMaxGame(maxGame);
+    setPlayerList(Object.values(players));
     setLoading(false);
-  }, [setLoading, dateStart, dateEnd, setMaxGame, setMinGame]);
+  }, [setLoading, dateStart, dateEnd, setPlayerList, playerList]);
   return (
     <>
       <FormRow title="开始日期">
@@ -84,10 +83,42 @@ export default function MinMax() {
           <button type="button" className="btn btn-primary mt-3" onClick={search}>
             查询
           </button>
-          <div className="row mt-5">
-            <div className="col">{minGame && <Result game={minGame} title="最低点" />}</div>
-            <div className="col">{maxGame && <Result game={maxGame} title="最高点" />}</div>
-          </div>
+          {playerList && playerList.length ? (
+            <table className="table table-responsive-xl table-striped table-hover mt-3">
+              <thead>
+                <tr>
+                  <th>玩家</th>
+                  <th>最低分</th>
+                  <th>最低分比赛时间</th>
+                  <th>最高分</th>
+                  <th>最高分比赛时间</th>
+                  <th>平均点数</th>
+                </tr>
+              </thead>
+              <tbody>
+                {playerList.map((player) => (
+                  <tr key={player.id}>
+                    <td>
+                      <a href={generatePlayerPathById(player.id)}>{player.maxGamePlayer.nickname}</a>
+                    </td>
+                    <td>
+                      <a href={GameRecord.getRecordLink(player.minGame, player.minGamePlayer)}>
+                        {player.minGamePlayer.score}
+                      </a>
+                    </td>
+                    <td>{GameRecord.formatFullStartTime(player.minGame)}</td>
+                    <td>
+                      <a href={GameRecord.getRecordLink(player.maxGame, player.maxGamePlayer)}>
+                        {player.maxGamePlayer.score}
+                      </a>
+                    </td>
+                    <td>{GameRecord.formatFullStartTime(player.maxGame)}</td>
+                    <td>{Math.round(player.totalPoints / player.numGames)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : null}
         </>
       )}
     </>
