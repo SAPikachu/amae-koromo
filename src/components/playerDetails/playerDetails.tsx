@@ -135,6 +135,9 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       <StatItem label="副露后流局率" description="副露后流局次数 / 副露次数">
         {formatPercent(stats.副露后流局率 || 0)}
       </StatItem>
+      <StatItem label="总计局数">
+        {stats.count}
+      </StatItem>
     </>
   );
 }
