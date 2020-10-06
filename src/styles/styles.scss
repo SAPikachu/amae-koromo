@@ -13,6 +13,12 @@ body {
   overflow-y: scroll;
   padding-top: 50px;
 }
+.lang-ja {
+  font-family: "Meiryo", "Microsoft YaHei", "Segoe UI", sans-serif;
+}
+.lang-en {
+  font-family: "Segoe UI", "Meiryo", "Microsoft YaHei", sans-serif;
+}
 .koromo body {
   background-image: url(../assets/img/koromo.jpg);
 }
