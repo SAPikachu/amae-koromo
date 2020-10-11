@@ -156,7 +156,7 @@ export const COLUMN_FULLTIME = makeColumn(() => (
     dataKey="startTime"
     label={<Trans>时间</Trans>}
     cellRenderer={cellFormatFullTime}
-    width={isMobile() ? 40 : 140}
+    width={isMobile() ? 40 : 150}
     className="text-right"
     headerClassName="text-right"
   />
