@@ -9,21 +9,21 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
   _loader: DataLoader<TMetadata, TRecord>;
   _metadata: TMetadata | Promise<TMetadata> | null;
   _countPromise: Promise<number> | null;
-  _chunks: (TRecord[] | Promise<TRecord[]>)[];
-  _itemsPerChunk: number;
+  _loadingPromise: Promise<unknown> | null;
+  _data: TRecord[];
   _filterPredicate: FilterPredicate<TRecord>;
   _filteredIndices: number[] | null;
   _filterResultCache: { [uuid: string]: boolean };
 
-  constructor(loader: DataLoader<TMetadata, TRecord>, itemsPerChunk = 100) {
+  constructor(loader: DataLoader<TMetadata, TRecord>) {
     this._loader = loader;
     this._metadata = null;
+    this._data = [];
     this._countPromise = null;
-    this._chunks = [];
-    this._itemsPerChunk = itemsPerChunk;
     this._filterPredicate = null;
     this._filteredIndices = null;
     this._filterResultCache = {};
+    this._loadingPromise = null;
   }
   setFilterPredicate(predicate: FilterPredicate<TRecord>) {
     if (this._filterPredicate === predicate) {
@@ -43,30 +43,22 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
       return;
     }
     const count = metadata.count;
-    let numShownItems = 0;
-    let numLoadedItems = 0;
     const indices = [];
     for (let i = 0; i < count; i++) {
-      const chunk = this._chunks[Math.floor(i / this._itemsPerChunk)];
-      if (!chunk || chunk instanceof Promise) {
+      if (i >= this._data.length) {
         indices.push(i);
         continue;
       }
-      numLoadedItems++;
-      const game = chunk[i % this._itemsPerChunk];
+      const game = this._data[i];
       let result = this._filterResultCache[game.uuid];
       if (result === undefined) {
         this._filterResultCache[game.uuid] = result = this._filterPredicate(game);
       }
       if (result) {
         indices.push(i);
-        numShownItems++;
       }
     }
     this._filteredIndices = indices;
-    if (numShownItems < 10 && numLoadedItems >= this._itemsPerChunk) {
-      // this._triggerFullLoad();
-    }
   }
   getMetadataSync(): TMetadata | null {
     return this._metadata && !(this._metadata instanceof Promise) ? this._metadata : null;
@@ -84,7 +76,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
       return this.getCountMaybeSync();
     }
     if (!this._metadata) {
-      this._metadata = this._loader.getMetadata().then(metadata => {
+      this._metadata = this._loader.getMetadata().then((metadata) => {
         if (!metadata) {
           console.log("No metadata returned");
           throw new Error("No metadata returned");
@@ -99,7 +91,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
       return this._countPromise;
     }
     this._countPromise = Promise.resolve(this._metadata)
-      .then(() => new Promise(resolve => setTimeout(resolve, 100)))
+      .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
       .then(() => this.getCountMaybeSync());
     return this._countPromise;
   }
@@ -115,29 +107,31 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     if (mappedIndex === null) {
       return false;
     }
-    const chunkNumber = Math.floor(mappedIndex / this._itemsPerChunk);
-    return !!this._chunks[chunkNumber] && !(this._chunks[chunkNumber] instanceof Promise);
+    return mappedIndex < this._data.length;
   }
   getItem(index: number, skipPreload = false): TRecord | Promise<TRecord | null> {
     const mappedIndex = this._mapItemIndex(index);
     if (mappedIndex === null) {
-      return this.getCount().then(count => {
+      return this.getCount().then((count) => {
         if (index > count - 1 || this._mapItemIndex(index) === null) {
           return null;
         }
-        return this.getItem(index);
+        return this.getItem(index, skipPreload);
       });
     }
-    const chunkNumber = Math.floor(mappedIndex / this._itemsPerChunk);
-    const innerIndex = mappedIndex % this._itemsPerChunk;
-    const chunk = this._chunks[chunkNumber];
-    if (!chunk || chunk instanceof Promise) {
-      return this._getChunk(chunkNumber).then(chunk => chunk[innerIndex]);
+    if (mappedIndex >= this._data.length) {
+      const curLength = this._data.length;
+      return this._loadNextChunk().then(() => {
+        if (this._data.length > curLength) {
+          return this.getItem(index, skipPreload);
+        }
+        return null;
+      });
     }
     if (!skipPreload && !this._filteredIndices) {
-      this.preload(index + this._itemsPerChunk);
+      this.preload(index + this._loader.getChunkSize());
     }
-    return chunk[innerIndex];
+    return this._data[mappedIndex];
   }
   preload(index: number) {
     const count = this.getCountMaybeSync();
@@ -157,53 +151,25 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     if (requestedIndex < 0) {
       return null;
     }
-    // Descending order
-    const reversed = count - requestedIndex - 1;
-    if (reversed < 0) {
-      return null;
-    }
-    return this._filteredIndices ? this._filteredIndices[reversed] : reversed;
+    return this._filteredIndices ? this._filteredIndices[requestedIndex] : requestedIndex;
   }
-  async _getChunk(chunkIndex: number): Promise<TRecord[]> {
-    if (!this._chunks[chunkIndex]) {
-      this._chunks[chunkIndex] = this._loadChunk(chunkIndex);
+  async _loadNextChunk(): Promise<unknown> {
+    if (this._loadingPromise) {
+      return this._loadingPromise;
     }
-    return this._chunks[chunkIndex];
-  }
-  _triggerFullLoad() {
-    const count = this.getCountMaybeSync();
-    if (typeof count !== "number") {
-      return;
-    }
-    const numChunks = Math.ceil(count / this._itemsPerChunk);
-    for (let i = 0; i < numChunks; i++) {
-      if (this._chunks[i]) {
-        continue;
+    this._loadingPromise = (async () => {
+      const count = await this.getCount();
+      if (this._data.length >= count) {
+        return;
       }
-      this._getChunk(i);
-    }
-  }
-  async _loadChunk(chunkIndex: number): Promise<TRecord[]> {
-    const count = await this.getCount();
-    const numChunks = Math.ceil(count / this._itemsPerChunk);
-    if (!numChunks) {
-      return [];
-    }
-    if (chunkIndex >= numChunks) {
-      console.warn(`Loading out-of-index chunk: ${chunkIndex}, number of items: ${count}`);
-      return [];
-    }
-    const chunk = await this._loader.getRecords(
-      this._itemsPerChunk * chunkIndex,
-      this._itemsPerChunk,
-      chunkIndex === numChunks - 1 ? count.toString() : ""
-    );
-    if (chunk.length < this._itemsPerChunk && chunkIndex < numChunks - 1) {
-      console.warn("Unexpected number of items in chunk:", chunk.length);
-    }
-    this._chunks[chunkIndex] = chunk;
-    this.updateFilteredIndices();
-    return chunk;
+      const nextChunk = await this._loader.getNextChunk();
+      if (nextChunk.length) {
+        this._data.splice(this._data.length, 0, ...nextChunk);
+        this.updateFilteredIndices();
+        this._loadingPromise = null;
+      }
+    })();
+    return this._loadingPromise;
   }
 }
 
@@ -232,5 +198,5 @@ export const DataProvider = Object.freeze({
         mode
       )
     );
-  }
+  },
 });

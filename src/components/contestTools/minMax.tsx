@@ -31,9 +31,11 @@ export default function MinMax() {
     };
     while (cur.isBefore(end)) {
       const loader = new ListingDataLoader(cur);
-      const metadata = await loader.getMetadata();
-      for (let i = 0; i < metadata.count; i += 100) {
-        const records = await loader.getRecords(i, 100);
+      for (;;) {
+        const records = await loader.getNextChunk();
+        if (!records.length) {
+          break;
+        }
         for (const rec of records) {
           for (const player of rec.players) {
             const id = player.accountId.toString();
