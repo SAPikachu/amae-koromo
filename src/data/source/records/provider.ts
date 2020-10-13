@@ -168,7 +168,6 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
       this._loadingPromise = null;
       if (nextChunk.length) {
         this._data.splice(this._data.length, 0, ...nextChunk);
-        this.updateFilteredIndices();
       } else {
         const metadata = await this._metadata;
         if (metadata) {
@@ -177,6 +176,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
           this._metadata = metadata;
         }
       }
+      this.updateFilteredIndices();
     })();
     return this._loadingPromise;
   }
