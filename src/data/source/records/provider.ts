@@ -165,10 +165,17 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
         return;
       }
       const nextChunk = await this._loader.getNextChunk();
+      this._loadingPromise = null;
       if (nextChunk.length) {
         this._data.splice(this._data.length, 0, ...nextChunk);
         this.updateFilteredIndices();
-        this._loadingPromise = null;
+      } else {
+        const metadata = await this._metadata;
+        if (metadata) {
+          console.warn("Fixing incorrect item count: " + metadata?.count + " -> " + this._data.length);
+          metadata.count = this._data.length;
+          this._metadata = metadata;
+        }
       }
     })();
     return this._loadingPromise;
