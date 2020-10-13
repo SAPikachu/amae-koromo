@@ -113,7 +113,8 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     const mappedIndex = this._mapItemIndex(index);
     if (mappedIndex === null) {
       return this.getCount().then((count) => {
-        if (index > count - 1 || this._mapItemIndex(index) === null) {
+        const newMappedIndex = this._mapItemIndex(index);
+        if (index > count - 1 || newMappedIndex === null) {
           return null;
         }
         return this.getItem(index, skipPreload);
@@ -129,7 +130,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
       });
     }
     if (!skipPreload && !this._filteredIndices) {
-      this.preload(index + this._loader.getChunkSize());
+      this.preload(index + this._loader.getChunkSize() / 2);
     }
     return this._data[mappedIndex];
   }
@@ -148,7 +149,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     if (count instanceof Promise) {
       return null;
     }
-    if (requestedIndex < 0) {
+    if (requestedIndex < 0 || requestedIndex >= count) {
       return null;
     }
     return this._filteredIndices ? this._filteredIndices[requestedIndex] : requestedIndex;
@@ -158,8 +159,9 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
       return this._loadingPromise;
     }
     this._loadingPromise = (async () => {
-      const count = await this.getCount();
+      const count = this.getUnfilteredCountSync() || 0;
       if (this._data.length >= count) {
+        this._loadingPromise = null;
         return;
       }
       const nextChunk = await this._loader.getNextChunk();

@@ -63,7 +63,7 @@ class DataAdapter implements IDataAdapter {
     promise.then(() => this._callHook(false)).catch(() => this._callHook(true));
   }
   _callHook(isError: boolean) {
-    this._onDataUpdate(isError);
+    setTimeout(() => this._onDataUpdate(isError), 0);
   }
   getCount(): number {
     const maybeCount = this._provider.getCountMaybeSync();
