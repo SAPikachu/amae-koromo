@@ -12,8 +12,8 @@ function buildItems(
   labels: string[],
   total = 0
 ): PieChartItem[] {
-  total = total || sum(keys.map(key => stats[key] as number));
-  return keys.map((key, index) => ({
+  total = total || sum(keys.map(key => stats[key] as number || 0));
+  return keys.filter(key => stats[key]).map((key, index) => ({
     value: stats[key] as number,
     outerLabel: labels[index],
     innerLabel: formatPercent((stats[key] as number) / total)
