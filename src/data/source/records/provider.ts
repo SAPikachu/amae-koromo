@@ -130,7 +130,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
       });
     }
     if (!skipPreload && !this._filteredIndices) {
-      this.preload(index + this._loader.getChunkSize() / 2);
+      this.preload(index + this._loader.getEstimatedChunkSize() / 2);
     }
     return this._data[mappedIndex];
   }

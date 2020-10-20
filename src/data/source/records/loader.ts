@@ -10,7 +10,7 @@ const CHUNK_SIZE = 100;
 export interface DataLoader<T extends Metadata, TRecord = GameRecord> {
   getMetadata(): Promise<T>;
   getNextChunk(): Promise<TRecord[]>;
-  getChunkSize(): number;
+  getEstimatedChunkSize(): number;
 }
 
 export class RecentHighlightDataLoader implements DataLoader<Metadata> {
@@ -31,7 +31,7 @@ export class RecentHighlightDataLoader implements DataLoader<Metadata> {
       })
       .then((data) => data.sort((a, b) => a.startTime - b.startTime));
   }
-  getChunkSize() {
+  getEstimatedChunkSize() {
     return CHUNK_SIZE;
   }
   async getMetadata(): Promise<Metadata> {
@@ -53,7 +53,7 @@ export class ListingDataLoader implements DataLoader<Metadata> {
     this._cursor = dayjs(this._date).endOf("day");
     this._tag = "";
   }
-  getChunkSize() {
+  getEstimatedChunkSize() {
     return CHUNK_SIZE;
   }
   async getMetadata(): Promise<Metadata> {
@@ -66,7 +66,9 @@ export class ListingDataLoader implements DataLoader<Metadata> {
       return [];
     }
     const chunk = await apiGet<GameRecord[]>(
-      `games/${this._cursor.valueOf()}/${this._date.valueOf()}?limit=${CHUNK_SIZE}&descending=true&tag=${this._tag}`
+      `games/${this._cursor.valueOf()}/${this._date.valueOf()}?limit=${
+        CHUNK_SIZE + ((parseInt(this._tag, 10) || 0) % CHUNK_SIZE)
+      }&descending=true&tag=${this._tag}`
     );
     if (chunk.length) {
       this._cursor = dayjs(chunk[chunk.length - 1].startTime * 1000 - 1);
@@ -105,7 +107,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
   _getParams(): string {
     return `${this._playerId}${this._getDatePath()}?mode=${this._mode}`;
   }
-  getChunkSize() {
+  getEstimatedChunkSize() {
     return CHUNK_SIZE;
   }
   async getMetadata(): Promise<PlayerMetadata> {
@@ -122,11 +124,9 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
       return [];
     }
     const chunk = await apiGet<GameRecord[]>(
-      `player_records/${
-        this._playerId
-      }/${this._cursor.valueOf()}/${this._startDate.valueOf()}?limit=${CHUNK_SIZE}&mode=${
-        this._mode
-      }&descending=true&tag=${this._tag}`
+      `player_records/${this._playerId}/${this._cursor.valueOf()}/${this._startDate.valueOf()}?limit=${
+        CHUNK_SIZE + ((parseInt(this._tag, 10) || 0) % CHUNK_SIZE)
+      }&mode=${this._mode}&descending=true&tag=${this._tag}`
     );
     if (chunk.length) {
       this._cursor = dayjs(chunk[chunk.length - 1].startTime * 1000 - 1);
