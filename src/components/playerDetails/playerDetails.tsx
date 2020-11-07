@@ -153,7 +153,6 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
       <StatItem label="立直放铳" description="立直放铳局数 / 立直局数">
         {formatPercent(stats.立直后放铳率 || 0)}
       </StatItem>
-      {/*
       <StatItem label="立直收支" description="立直总收支（含供托） / 立直局数">
         {stats.立直收支 || 0}
       </StatItem>
@@ -163,7 +162,6 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
       <StatItem label="立直支出" description="立直放铳支出（含立直棒） / 立直放铳局数">
         {stats.立直支出 || 0}
       </StatItem>
-      */}
       <StatItem label="先制率" description="先制立直局数 / 立直局数">
         {formatPercent(stats.先制率 || 0)}
       </StatItem>
