@@ -306,31 +306,37 @@ export default function PlayerDetails() {
     ReactTooltipPromise.then((x) => x.rebuild());
   });
   useEffect(triggerRelayout, [!!metadata]);
-  if (!metadata || !metadata.nickname) {
-    return <Loading />;
-  }
+  const hasMetadata = metadata && metadata.nickname;
+  /* eslint-disable @typescript-eslint/no-non-null-assertion */
   return (
     <div>
-      <Helmet>
-        <title>{metadata.nickname}</title>
-      </Helmet>
-      <h2 className="text-center">
-        {t("玩家：")}
-        {metadata.nickname}
-      </h2>
-      <div className="row mt-4">
-        <div className="col-md-8">
-          <h3 className="text-center mb-4">{t("最近走势")}</h3>
-          <RecentRankChart dataAdapter={dataAdapter} playerId={metadata.id} aspect={6} />
-          <PlayerStats metadata={metadata} />
-        </div>
-        <div className="col-md-4">
-          <h3 className="text-center mb-4">{t("累计战绩")}</h3>
-          <RankRateChart metadata={metadata} />
-        </div>
-      </div>
+      {hasMetadata ? (
+        <>
+          <Helmet>
+            <title>{metadata?.nickname}</title>
+          </Helmet>
+          <h2 className="text-center">
+            {t("玩家：")}
+            {metadata?.nickname}
+          </h2>
+          <div className="row mt-4">
+            <div className="col-md-8">
+              <h3 className="text-center mb-4">{t("最近走势")}</h3>
+              <RecentRankChart dataAdapter={dataAdapter} playerId={metadata!.id} aspect={6} />
+              <PlayerStats metadata={metadata!} />
+            </div>
+            <div className="col-md-4">
+              <h3 className="text-center mb-4">{t("累计战绩")}</h3>
+              <RankRateChart metadata={metadata!} />
+            </div>
+          </div>
+        </>
+      ) : (
+        <Loading />
+      )}
       <PlayerDetailsSettings showLevel={true} />
       <ReactTooltip effect="solid" multiline={true} place="top" getContent={getTooltip} className="stat-tooltip" />
     </div>
   );
+  /* eslint-enable @typescript-eslint/no-non-null-assertion */
 }
