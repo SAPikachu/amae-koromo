@@ -91,7 +91,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
   constructor(playerId: string, startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs, mode = "") {
     this._playerId = playerId;
     this._startDate = startDate || dayjs("2010-01-01T00:00:00.000Z");
-    this._endDate = endDate || dayjs();
+    this._endDate = endDate || dayjs().endOf("day");
     this._cursor = this._endDate;
     this._mode = mode;
     this._initialParams = this._getParams();
