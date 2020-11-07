@@ -11,10 +11,6 @@ const DEFAULT_DATE = dayjs().startOf("day");
 
 export function FilterPanel() {
   const [model, updateModel] = useModel();
-  const updateSearchTextFromEvent = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ searchText: e.currentTarget.value }),
-    [updateModel]
-  );
   const setMode = useCallback((mode: string) => updateModel({ selectedMode: mode }), [updateModel]);
   const setDate = useCallback((date: dayjs.ConfigType) => updateModel({ date }), [updateModel]);
   if (model.type !== undefined) {
@@ -24,9 +20,6 @@ export function FilterPanel() {
     <>
       <FormRow title="日期">
         <DatePicker min={Conf.dateMin} date={model.date || DEFAULT_DATE} onChange={setDate} className="form-control" />
-      </FormRow>
-      <FormRow title="查找玩家">
-        <input type="text" className="form-control" value={model.searchText} onChange={updateSearchTextFromEvent} />
       </FormRow>
       {Conf.availableModes.length > 1 && (
         <FormRow>

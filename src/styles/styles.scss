@@ -116,8 +116,8 @@ button.button-link {
 }
 .home-header {
   display: grid;
-  grid-template-columns: auto 1fr fit-content(40%);
-  grid-gap: 20px 40px;
+  grid-template-columns: auto 40px 1fr fit-content(40%);
+  grid-gap: 20px 0;
   grid-auto-flow: dense;
   margin-bottom: 20px;
 }
@@ -127,11 +127,12 @@ button.button-link {
   white-space: nowrap;
 }
 .home-header .col-form-control {
-  grid-column: 2;
+  grid-column: 3;
 }
 .home-header .player-search {
-  grid-column: 3;
+  grid-column: 4;
   grid-row: 1 / span 4;
+  margin-left: 40px;
 }
 .player-search ul {
   display: grid;
@@ -160,6 +161,7 @@ button.button-link {
     grid-column: 2;
     grid-row: 1 / span 5;
     margin-top: 10px;
+    margin-left: 10px;
   }
   .player-search ul {
     display: block;

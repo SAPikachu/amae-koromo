@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Switch, Route, Redirect, generatePath as genPath } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Model, useModel } from "./model";
 import dayjs from "dayjs";
@@ -19,6 +20,7 @@ import {
   COLUMN_FULLTIME,
 } from "./table";
 import { PageCategory } from "../misc/tracker";
+import { FormRow } from "../form";
 const PlayerDetails = Loadable({
   loader: () => import("../playerDetails/playerDetails"),
   loading: () => <Loading />,
@@ -77,6 +79,8 @@ function GameRecordTablePlayerView() {
 }
 
 function Routes() {
+  const { t } = useTranslation("formRow");
+  const [searchText, setSearchText] = useState("");
   return (
     <Switch>
       <Route path={PLAYER_PATH}>
@@ -88,9 +92,21 @@ function Routes() {
       <Route exact path={["/", PATH]}>
         <RouteSync view="listing" />
         <PageCategory category="Listing" />
+        <h2 className="text-center mb-3">{t("查找玩家")}</h2>
+        <div className="home-header mb-5">
+          <FormRow title="名字">
+            <input
+              type="text"
+              className="form-control"
+              value={searchText}
+              onChange={(e) => setSearchText(e.currentTarget.value)}
+            />
+          </FormRow>
+          <PlayerSearch searchText={searchText} />
+        </div>
+        <h2 className="text-center mb-3">{t("对局浏览")}</h2>
         <div className="home-header">
           <FilterPanel />
-          <PlayerSearch />
         </div>
         <GameRecordTable columns={[COLUMN_GAMEMODE, COLUMN_PLAYERS(""), COLUMN_STARTTIME, COLUMN_ENDTIME]} />
       </Route>

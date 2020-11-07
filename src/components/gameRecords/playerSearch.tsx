@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect, useState, useMemo } from "react";
 
-import { useModel } from "./model";
 import Loading from "../misc/loading";
 import { PlayerMetadataLite, getLevelTag } from "../../data/types";
 import { searchPlayer } from "../../data/source/misc";
@@ -91,7 +90,6 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
   }, [searchText, isLoading]);
   return (
     <>
-      <h6 className="text-center mb-2">{t("玩家前缀搜索")}</h6>
       <ul className="list-unstyled mb-2">
         {players.slice(0, NUM_RESULTS_SHOWN).map((x) => (
           <li key={x.id}>
@@ -111,14 +109,13 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
   );
 }
 
-export function PlayerSearch({ className = "player-search" }) {
-  const [model] = useModel();
-  if ("playerId" in model || !model.searchText) {
+export function PlayerSearch({ className = "player-search", searchText = "" }) {
+  if (!searchText) {
     return <></>;
   }
   return (
     <div className={className}>
-      <PlayerSearchResult searchText={model.searchText} />
+      <PlayerSearchResult searchText={searchText} />
     </div>
   );
 }
