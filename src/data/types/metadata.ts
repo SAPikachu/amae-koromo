@@ -107,6 +107,7 @@ export interface PlayerExtendedStats {
   放铳时立直率: number;
   放铳时副露率: number;
   立直后放铳率: number;
+  立直后非瞬间放铳率: number;
   副露后放铳率: number;
   立直后和牌率: number;
   副露后和牌率: number;

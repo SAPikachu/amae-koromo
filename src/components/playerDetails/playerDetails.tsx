@@ -135,9 +135,7 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       <StatItem label="副露后流局率" description="副露后流局次数 / 副露次数">
         {formatPercent(stats.副露后流局率 || 0)}
       </StatItem>
-      <StatItem label="总计局数">
-        {stats.count}
-      </StatItem>
+      <StatItem label="总计局数">{stats.count}</StatItem>
     </>
   );
 }
@@ -150,8 +148,12 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
       <StatItem label="立直和了" description="立直和了局数 / 立直局数">
         {formatPercent(stats.立直后和牌率 || 0)}
       </StatItem>
-      <StatItem label="立直放铳" description="立直放铳局数 / 立直局数">
-        {formatPercent(stats.立直后放铳率 || 0)}
+      <StatItem label="立直放铳" description="立直放铳局数（含立直瞬间 / 不含立直瞬间） / 立直局数">
+        <>
+          {formatPercent(stats.立直后放铳率 || 0)}
+          <br />
+          {formatPercent(stats.立直后非瞬间放铳率 || 0)}
+        </>
       </StatItem>
       <StatItem label="立直收支" description="立直总收支（含供托） / 立直局数">
         {stats.立直收支 || 0}
