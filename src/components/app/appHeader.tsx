@@ -10,11 +10,6 @@ function AlertDefault() {
     <>
       <h4>说明</h4>
       <ul>
-        <li>
-          <strong>
-            因发现「立直放铳」的算法（立直瞬间放铳的处理）有误，「立直放銃」「立直収入」与「立直収支」暂时从详情页隐藏，待数据修复后再重新显示。非常抱歉为您带来不便。
-          </strong>
-        </li>
         <li>本页面数据由第三方维护，不能绝对保证完整和正确，信息仅供参考，请勿用于不良用途。</li>
         <li>{Conf.siteSpecificNotice}</li>
         <li>页面不是实时更新，对局一般会在结束后数分钟至数小时内出现。</li>
@@ -40,13 +35,6 @@ function AlertEn() {
     <>
       <h4>Notes</h4>
       <ul>
-        <li>
-          <strong>
-            Algorithm of &ldquo;Avg riichi deal-in&rdquo; is found to be incorrect, so we are temporarily removing &ldquo;Avg riichi
-            deal-in&rdquo;, &ldquo;Avg riichi hand value&rdquo; and &ldquo;Riichi payment&rdquo; from player detail page. They will be available again
-            after data is fixed. Sorry for the inconvenience.
-          </strong>
-        </li>
         <li>
           This is a fan site, data accuracy can&apos;t be fully guaranteed, please use the data for reference only and
           don&apos;t use it for malicious purpose.
@@ -86,11 +74,6 @@ function AlertJa() {
       <h4>説明</h4>
       <ul>
         <li>
-          <strong>
-            ただいま、「立直放銃」の計算の誤り（立直瞬間放銃の立直棒の扱い）を発見しましたので、「立直放銃」「立直収入」と「立直収支」をサイトから暫く隠しました。データを修正する後改めて掲載します。ご迷惑をかけて申し訳ございません。
-          </strong>
-        </li>
-        <li>
           当サイトは非公式サイトで、データの完全性と正確性が保証できません、予めご了承ください。サイトの内容を悪用しないでください。
         </li>
         <li>現時点では半荘戦だけ記録しています。東風戦のデータは含まれません。</li>
@@ -118,7 +101,7 @@ function AlertJa() {
 export function AppHeader() {
   const { i18n } = useTranslation();
   return (
-    <Alert container={Container} stateName="topNote20201024">
+    <Alert container={Container} stateName="topNote20201107">
       {i18n.language.indexOf("ja") === 0 ? (
         <AlertJa />
       ) : i18n.language.indexOf("en") === 0 ? (
