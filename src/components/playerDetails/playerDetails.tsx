@@ -224,7 +224,7 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
 function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   const { t } = useTranslation();
   if (!stats.最近大铳) {
-    return <p className="text-center">{t("无满贯或以上大铳")}</p>;
+    return <p className="text-center">{t("无超过满贯大铳")}</p>;
   }
   return (
     <div>
