@@ -13,7 +13,7 @@ export function scrollToTop() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const formatPercent = (x: any) => {
   if (!x) {
-    return "";
+    return "0%";
   }
   if (x < 0.0001) {
     return "<0.01%";
