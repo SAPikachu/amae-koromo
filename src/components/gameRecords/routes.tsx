@@ -27,7 +27,7 @@ const PlayerDetails = Loadable({
 });
 
 const PLAYER_PATH =
-  "/player/:id/:mode([0-9]+)?/:search(-[^/]+)?/:startDate(\\d{4}-\\d{2}-\\d{2})?/:endDate(\\d{4}-\\d{2}-\\d{2})?";
+  "/player/:id/:mode([0-9.]+)?/:search(-[^/]+)?/:startDate(\\d{4}-\\d{2}-\\d{2})?/:endDate(\\d{4}-\\d{2}-\\d{2})?";
 const PATH = "/:date(\\d{4}-\\d{2}-\\d{2})/:mode([0-9]+)?/:search?";
 
 export function generatePath(model: Model): string {
@@ -36,7 +36,7 @@ export function generatePath(model: Model): string {
       id: model.playerId,
       startDate: model.startDate ? dayjs(model.startDate).format("YYYY-MM-DD") : undefined,
       endDate: model.endDate ? dayjs(model.endDate).format("YYYY-MM-DD") : undefined,
-      mode: model.selectedMode || undefined,
+      mode: model.selectedModes.join(".") || undefined,
       search: model.searchText ? "-" + model.searchText : undefined,
     });
     if (model.rank) {
@@ -59,7 +59,7 @@ export function generatePlayerPathById(playerId: number | string): string {
     playerId: playerId.toString(),
     startDate: null,
     endDate: null,
-    selectedMode: "",
+    selectedModes: [],
     searchText: "",
     rank: null,
   });

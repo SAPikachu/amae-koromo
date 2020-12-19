@@ -6,6 +6,7 @@ import { Model, useOnRouteModelUpdated } from "./model";
 import { useEffect } from "react";
 import { scrollToTop, triggerRelayout } from "../../utils/index";
 import Conf from "../../utils/conf";
+import { parseCombinedMode } from "../../data/types";
 
 type ListingRouteParams = {
   date?: string;
@@ -39,9 +40,9 @@ const ModelBuilders = {
       playerId: params.id,
       startDate: parseOptionalDate(params.startDate, null),
       endDate: parseOptionalDate(params.endDate, null),
-      selectedMode: params.mode || "",
+      selectedModes: parseCombinedMode(params.mode || ""),
       searchText: params.search ? params.search.slice(1) : "",
-      rank: parseInt(params.rank || "") || null
+      rank: parseInt(params.rank || "") || null,
     };
   },
   listing(params: ListingRouteParams): Model | string {
@@ -52,8 +53,8 @@ const ModelBuilders = {
     return {
       type: undefined,
       date: date ? date.startOf("day").valueOf() : null,
-      selectedMode: params.mode || "",
-      searchText: params.search || ""
+      selectedMode: parseCombinedMode(params.mode || "")[0] || null,
+      searchText: params.search || "",
     };
   },
 };

@@ -65,7 +65,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
       return;
     }
     let cancelled = false;
-    let debounceToken: NodeJS.Timeout | undefined = setTimeout(() => {
+    let debounceToken: ReturnType<typeof setTimeout> | undefined = setTimeout(() => {
       debounceToken = undefined;
       if (cancelled) {
         return;

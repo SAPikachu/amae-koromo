@@ -38,7 +38,7 @@ export default function RankRateChart({ metadata, aspect = 1 }: { metadata: Play
           endAngle={startAngle + 360}
         >
           {CELLS}
-          <LabelList dataKey="rate" formatter={formatPercent} position="inside" fill="#fff" />
+          <LabelList dataKey="rate" formatter={formatPercent} position="inside" {...{ fill: "#fff" }} />
         </Pie>
       </PieChart>
     </ResponsiveContainer>

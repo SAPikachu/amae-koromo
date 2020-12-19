@@ -186,6 +186,20 @@ button.button-link {
     display: block;
   }
 }
+.checkbox-group {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: row;
+}
+.checkbox-group-checkbox .form-check-label {
+  cursor: pointer;
+}
+.checkbox-group-checkbox .form-check {
+  transition: opacity 0.3s;
+}
+.checkbox-group-checkbox.checkbox-group-has-active .form-check:not(.active) {
+  opacity: 0.1;
+}
 .player-details-settings {
   display: flex;
   justify-content: space-between;

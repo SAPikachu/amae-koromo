@@ -21,7 +21,7 @@ export default function DataByRank() {
   if (!data) {
     return <Loading />;
   }
-  const modeData = Object.entries(data[model.selectedMode || "0"]);
+  const modeData = Object.entries(data[model.selectedModes.join(".")]);
   modeData.sort((a, b) => a[0].localeCompare(b[0]));
 
   return (

@@ -29,6 +29,7 @@ export type HighlightEvent = {
 export type GameRecordWithEvent = GameRecord & {
   event: HighlightEvent;
 };
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GameRecord = Object.freeze({
   getRankIndexByPlayer(rec: GameRecord, player: number | string | PlayerRecord): number {
     const playerId = (typeof player === "object" ? player.accountId : player).toString();

@@ -1,6 +1,8 @@
 const { editWebpackPlugin } = require("@rescripts/utilities");
 
-module.exports = [
+module.exports = [/*
+  config => { console.log(config); return config; },
+  
   process.env.NODE_ENV === "production"
     ? config =>
         editWebpackPlugin(
@@ -12,6 +14,6 @@ module.exports = [
           "GenerateSW",
           config
         )
-    : x => x
+    : x => x*/
 ];
 // vim: sts=2:sw=2:ts=2:expandtab

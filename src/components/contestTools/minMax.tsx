@@ -30,7 +30,7 @@ export default function MinMax() {
       [key: string]: typeof playerList[0];
     };
     while (cur.isBefore(end)) {
-      const loader = new ListingDataLoader(cur);
+      const loader = new ListingDataLoader(cur, null);
       for (;;) {
         const records = await loader.getNextChunk();
         if (!records.length) {
@@ -69,6 +69,7 @@ export default function MinMax() {
     }
     setPlayerList(Object.values(players));
     setLoading(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setLoading, dateStart, dateEnd, setPlayerList, playerList]);
   return (
     <>

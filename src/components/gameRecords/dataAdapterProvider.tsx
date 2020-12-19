@@ -13,9 +13,9 @@ interface ItemLoadingPlaceholder {
 
 const loadingPlaceholder = { loading: true };
 
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
 export interface IDataAdapter {
   getCount(): number;
+  hasCount(): boolean;
   getUnfilteredCount(): number;
   getMetadata<T extends Metadata>(): T | null;
   getItem(index: number): GameRecord | ItemLoadingPlaceholder;
@@ -25,6 +25,9 @@ export interface IDataAdapter {
 class DummyDataAdapter implements IDataAdapter {
   getCount(): number {
     return 0;
+  }
+  hasCount(): boolean {
+    return true;
   }
   getUnfilteredCount(): number {
     return 0;
@@ -73,6 +76,9 @@ class DataAdapter implements IDataAdapter {
     }
     return maybeCount;
   }
+  hasCount(): boolean {
+    return !(this._provider.getCountMaybeSync() instanceof Promise);
+  }
   getUnfilteredCount(): number {
     return this._provider.getUnfilteredCountSync() || 0;
   }
@@ -112,10 +118,10 @@ export const DataAdapterConsumer = DataAdapterContext.Consumer;
 
 function getProviderKey(model: Model): string {
   if (model.type === undefined) {
-    return dayjs(model.date || dayjs())
+    return `${dayjs(model.date || dayjs())
       .startOf("day")
       .valueOf()
-      .toString();
+      .toString()}_${model.selectedMode}`;
   } else if (model.type === "player") {
     return generatePath(model);
   }
@@ -124,10 +130,13 @@ function getProviderKey(model: Model): string {
 
 function createProvider(model: Model): DataProvider {
   if (model.type === undefined) {
-    return DataProvider.createListing(model.date || dayjs().startOf("day"));
+    return DataProvider.createListing(
+      model.date || dayjs().startOf("day"),
+      model.selectedMode || null
+    );
   }
   if (model.type === "player") {
-    return DataProvider.createPlayer(model.playerId, model.startDate, model.endDate, model.selectedMode);
+    return DataProvider.createPlayer(model.playerId, model.startDate, model.endDate, model.selectedModes);
   }
   throw new Error("Not implemented");
 }
@@ -136,13 +145,10 @@ function usePredicate(model: Model): FilterPredicate {
   let memoFunc: () => FilterPredicate = () => null;
   let memoDeps: React.DependencyList = [null, "", false];
   const searchText = (model.searchText || "").trim().toLowerCase() || "";
-  const needPredicate = searchText || model.selectedMode;
+  const needPredicate = searchText;
   memoFunc = () =>
     needPredicate
       ? (game) => {
-          if (model.selectedMode && model.selectedMode !== game.modeId.toString()) {
-            return false;
-          }
           if (!game.players.some((player) => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
             return false;
           }
@@ -157,6 +163,7 @@ function usePredicate(model: Model): FilterPredicate {
         }
       : null;
   memoDeps = [(model.type === undefined && model.selectedMode) || null, searchText, "rank" in model && model.rank];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(memoFunc, memoDeps);
 }
 

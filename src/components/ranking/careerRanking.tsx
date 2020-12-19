@@ -20,7 +20,7 @@ type ExtraColumnInternal = {
 
 type ExtraColumn = {
   label: string;
-  value: (item: CareerRankingItem, mode: GameMode) => string;
+  value: (item: CareerRankingItem, mode: GameMode[]) => string;
 };
 
 function RankingTable({
@@ -91,9 +91,9 @@ export function CareerRankingColumn({
 }) {
   const { t } = useTranslation();
   const [model] = useModel();
-  const modeId = model.selectedMode;
-  const isMixedMode = !modeId || modeId === "0";
-  const data = useAsyncFactory(() => getCareerRanking(type, modeId), [type, modeId], "getCareerRanking");
+  const modes = model.selectedModes;
+  const isMixedMode = modes.length > 1;
+  const data = useAsyncFactory(() => getCareerRanking(type, modes.join(".")), [type, modes.join(".")], "getCareerRanking");
   return (
     <div className="col-lg">
       <h3 className="text-center mb-2">{t(title)}</h3>
@@ -103,7 +103,7 @@ export function CareerRankingColumn({
           formatter={formatter}
           valueLabel={t(valueLabel || title)}
           showNumGames={showNumGames}
-          extraColumns={extraColumns.map(x => ({ ...x, value: item => x.value(item, parseInt(modeId, 10)) }))}
+          extraColumns={extraColumns.map(x => ({ ...x, value: item => x.value(item, modes) }))}
         />
       ) : (
         <p className="text-center mt-4">{t("请选择模式")}</p>

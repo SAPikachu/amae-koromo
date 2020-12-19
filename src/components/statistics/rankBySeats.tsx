@@ -31,7 +31,7 @@ export default function RankBySeats() {
   if (!data) {
     return <Loading />;
   }
-  const selectedData = data[model.selectedMode || "0"];
+  const selectedData = data[model.selectedModes.join(".")];
   return (
     <>
       <ModelModeSelector />

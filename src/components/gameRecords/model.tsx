@@ -4,11 +4,12 @@ import React, { useReducer, useContext, ReactChild, useMemo } from "react";
 import { useHistory } from "react-router";
 import { useEventCallback } from "../../utils";
 import { generatePath } from "./routes";
+import { GameMode } from "../../data/types";
 
 export interface ListingModel {
   type: undefined;
   date: dayjs.ConfigType | null;
-  selectedMode: string;
+  selectedMode: GameMode | null;
   searchText: string;
 }
 export interface PlayerModel {
@@ -16,18 +17,19 @@ export interface PlayerModel {
   playerId: string;
   startDate: dayjs.ConfigType | null;
   endDate: dayjs.ConfigType | null;
-  selectedMode: string;
+  selectedModes: GameMode[];
   searchText: string;
   rank: number | null;
 }
 export type Model = ListingModel | PlayerModel;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Model = Object.freeze({
   removeExtraParams(model: Model): Model {
     if (model.type === "player") {
       return {
         type: "player",
         playerId: model.playerId,
-        selectedMode: "",
+        selectedModes: [],
         startDate: null,
         endDate: null,
         searchText: "",
@@ -37,7 +39,7 @@ export const Model = Object.freeze({
     return {
       type: undefined,
       searchText: "",
-      selectedMode: "",
+      selectedMode: null,
       date: null,
     };
   },
@@ -45,7 +47,7 @@ export const Model = Object.freeze({
 type ModelUpdate = Partial<ListingModel> | ({ type: "player" } & Partial<PlayerModel>);
 type DispatchModelUpdate = (props: ModelUpdate) => void;
 
-const DEFAULT_MODEL: ListingModel = { type: undefined, date: null, selectedMode: "", searchText: "" };
+const DEFAULT_MODEL: ListingModel = { type: undefined, date: null, selectedMode: null, searchText: "" };
 const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([DEFAULT_MODEL, () => {}]);
 export const useModel = () => useContext(ModelContext);
 
@@ -72,7 +74,7 @@ export const useOnRouteModelUpdated = () => useContext(OnRouteModelUpdatedContex
 export function ModelProvider({ children }: { children: ReactChild | ReactChild[] }) {
   const history = useHistory();
   const [model, setModel] = useReducer(
-    (oldModel, newModel: Model): Readonly<Model> => {
+    (oldModel: Model, newModel: Model): Readonly<Model> => {
       if (isSameModel(oldModel, newModel)) {
         return oldModel;
       }
@@ -87,6 +89,9 @@ export function ModelProvider({ children }: { children: ReactChild | ReactChild[
         ...((model.type === newProps.type ? model : {}) as Model),
         ...(normalizeUpdate(newProps) as Model),
       };
+      if (newModel.type === "player" && !newModel.selectedModes) {
+        newModel.selectedModes = [];
+      }
       if (isSameModel(model, newModel)) {
         return;
       }

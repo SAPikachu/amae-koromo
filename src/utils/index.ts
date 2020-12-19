@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 
 export function triggerRelayout() {
   requestAnimationFrame(() => window.dispatchEvent(new UIEvent("resize")));
@@ -86,6 +86,7 @@ export function useAsyncFactory<T>(
   deps: React.DependencyList,
   cacheKey?: string
 ): T | undefined {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const promise = useMemo(factory, deps);
   return useAsync(promise, cacheKey ? `${cacheKey}-${deps.join(",")}` : undefined);
 }

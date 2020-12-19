@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render } from "react-dom";
-import * as serviceWorker from "./serviceWorker";
+import * as serviceWorker from "./serviceWorkerRegistration";
 import "./i18n";
 
 import "./styles/bootstrap-custom.scss";
@@ -20,7 +20,7 @@ serviceWorker.register({
         window.location.reload();
         return;
       }
-      waitingServiceWorker.addEventListener("statechange", event => {
+      waitingServiceWorker.addEventListener("statechange", (event) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (event.target && (event.target as any).state === "activated") {
           window.location.reload();
@@ -28,5 +28,5 @@ serviceWorker.register({
       });
       waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
     }
-  }
+  },
 });

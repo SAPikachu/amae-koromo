@@ -15,11 +15,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "lib": [
       "dom",
       "es2015",
-      "es2017"
-    ]
+      "es2017",
+      "DOM"
+    ],
+    "noFallthroughCasesInSwitch": true
   }
 }

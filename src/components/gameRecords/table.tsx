@@ -74,6 +74,7 @@ type TableColumnDefKey = {
 export type TableColumn = React.FunctionComponentElement<Column> | false | undefined | null;
 export type TableColumnDef = TableColumnDefKey & (() => TableColumn);
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function makeColumn<T extends (string | number | Function)[]>(
   builder: (...args: T) => TableColumn
 ): (...args: T) => TableColumnDef {
@@ -180,7 +181,7 @@ export default function GameRecordTable({
     ({ index }: Index) => (index >= 0 ? clsx({ loading: !data.isItemLoaded(index), even: (index & 1) === 0 }) : ""),
     [data]
   );
-  const noRowsRenderer = useCallback(() => (data.getUnfilteredCount() ? null : <Loading />), [data]);
+  const noRowsRenderer = useCallback(() => (data.hasCount() ? null : <Loading />), [data]);
   const unfilteredCount = data.getUnfilteredCount();
   const shouldTriggerLayout = !!unfilteredCount;
   useEffect(() => {
@@ -195,6 +196,9 @@ export default function GameRecordTable({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ...columns.map((x) => x.key || x),
   ]);
+  if (data.hasCount() && !data.getCount()) {
+    return <></>;
+  }
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <div ref={registerChild as any} className="font-xs-adjust">

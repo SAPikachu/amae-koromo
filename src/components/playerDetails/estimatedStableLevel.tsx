@@ -6,7 +6,7 @@ import Conf from "../../utils/conf";
 import { useTranslation } from "react-i18next";
 import { formatFixed3 } from "../../utils";
 
-const ENABLED_MODES = [GameMode.玉, GameMode.王座, GameMode.三玉, GameMode.三王座];
+const ENABLED_MODES = [GameMode.玉, GameMode.王座, GameMode.三玉, GameMode.三王座, GameMode.王座东, GameMode.玉东, GameMode.三王座东, GameMode.三玉东];
 
 export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMetadata }) {
   const [model] = useModel();
@@ -15,10 +15,10 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
     return null;
   }
   const level = LevelWithDelta.getAdjustedLevel(metadata.level);
-  if (!model.selectedMode) {
+  if (!("selectedModes" in model) || model.selectedModes.length !== 1) {
     return null;
   }
-  const mode = parseInt(model.selectedMode) as GameMode;
+  const mode = model.selectedModes[0];
   if (!ENABLED_MODES.includes(mode)) {
     return null;
   }
@@ -48,9 +48,9 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
           "{{ levelNames1 }}位平均 Pt / {{ levelName2 }}位平均得点 Pt：",
           {
             levelNames1: levelNames.slice(0, levelNames.length - 1),
-            levelName2: levelNames[levelNames.length - 1]
+            levelName2: levelNames[levelNames.length - 1],
           }
-        )}[${levelComponents.map(x => x.toFixed(2)).join("/")}]<br/>${t(
+        )}[${levelComponents.map((x) => x.toFixed(2)).join("/")}]<br/>${t(
           "得点效率（各顺位平均 Pt 及平均得点 Pt 的加权平均值）："
         )}${formatFixed3(PlayerMetadata.calculateExpectedGamePoint(metadata, mode, undefined, false))}`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
@@ -64,7 +64,7 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
         label="分数期望"
         description={`${t("在{{ modeL }}之间每局获得点数的数学期望值{{ changeLevelMsg }}", {
           changeLevelMsg,
-          modeL
+          modeL,
         })}${notEnoughData ? t("（数据量不足，计算结果可能有较大偏差）") : ""}`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >

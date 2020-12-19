@@ -1,29 +1,39 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { CheckboxGroup } from "../form";
-import { modeLabel } from "../../data/types";
+import { modeLabel, GameMode } from "../../data/types";
 import Conf from "../../utils/conf";
 
-const MODE_CHECKBOXES = Conf.availableModes.map(x => ({
-  key: String(x),
-  label: modeLabel(x)
-}));
-MODE_CHECKBOXES.unshift({
-  key: "",
-  label: "全部"
-});
-
-export function ModeSelector({ mode, onChange }: { mode: string; onChange: (x: string) => void }) {
-  if (MODE_CHECKBOXES.length < 3) {
+export function ModeSelector({
+  mode,
+  onChange,
+  type = "radio",
+  availableModes = Conf.availableModes,
+}: {
+  mode: GameMode[];
+  onChange: (x: GameMode[]) => void;
+  type?: "checkbox" | "radio";
+  availableModes?: GameMode[];
+}) {
+  const items = useMemo(
+    () =>
+      availableModes.map((x) => ({
+        key: String(x),
+        label: modeLabel(x),
+        value: x,
+      })),
+    [availableModes]
+  );
+  if (items.length < 1) {
     return null;
   }
   return (
     <CheckboxGroup
-      type="radio"
+      type={type}
       groupKey="ModeSelector"
-      items={MODE_CHECKBOXES}
-      selectedItemKey={mode || ""}
-      onChange={onChange}
+      items={items}
+      selectedItems={mode.map((x) => x.toString())}
+      onChange={(newItems) => onChange(newItems.map((x) => x.value))}
     />
   );
 }

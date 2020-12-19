@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { GameRecord } from "../../types/record";
 import { Metadata, PlayerMetadata } from "../../types/metadata";
 import { ListingDataLoader, PlayerDataLoader, DataLoader, RecentHighlightDataLoader } from "./loader";
+import { GameMode } from "../../types";
 
 export type FilterPredicate<TRecord = GameRecord> = ((record: TRecord) => boolean) | null;
 class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: string } = GameRecord> {
@@ -42,7 +43,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     if (!metadata) {
       return;
     }
-    const count = metadata.count;
+    const count = this.getEstimatedCountSync();
     const indices = [];
     for (let i = 0; i < count; i++) {
       if (i >= this._data.length) {
@@ -63,10 +64,18 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
   getMetadataSync(): TMetadata | null {
     return this._metadata && !(this._metadata instanceof Promise) ? this._metadata : null;
   }
+  getEstimatedCountSync(): number {
+    const metadata = this.getMetadataSync();
+    const count = metadata ? metadata.count : this._data.length + 100;
+    if (count === +Infinity) {
+      return this._data.length + 100;
+    }
+    return count;
+  }
   getCountMaybeSync(): number | Promise<number> {
     const metadata = this.getMetadataSync();
     if (metadata) {
-      return this._filteredIndices ? this._filteredIndices.length : metadata.count;
+      return this._filteredIndices ? this._filteredIndices.length : this.getEstimatedCountSync();
     }
     return this.getCount();
   }
@@ -100,7 +109,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     if (!metadata) {
       return null;
     }
-    return metadata.count;
+    return this.getEstimatedCountSync();
   }
   isItemLoaded(index: number): boolean {
     const mappedIndex = this._mapItemIndex(index);
@@ -186,9 +195,10 @@ export type ListingDataProvider = DataProviderImpl<Metadata>;
 export type PlayerDataProvider = DataProviderImpl<PlayerMetadata>;
 
 export type DataProvider = ListingDataProvider | PlayerDataProvider;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DataProvider = Object.freeze({
-  createListing(date: dayjs.ConfigType): ListingDataProvider {
-    return new DataProviderImpl(new ListingDataLoader(date));
+  createListing(date: dayjs.ConfigType, mode: GameMode | null): ListingDataProvider {
+    return new DataProviderImpl(new ListingDataLoader(date, mode));
   },
   createHightlight(): ListingDataProvider {
     return new DataProviderImpl(new RecentHighlightDataLoader());
@@ -197,7 +207,7 @@ export const DataProvider = Object.freeze({
     playerId: string,
     startDate: dayjs.ConfigType | null,
     endDate: dayjs.ConfigType | null,
-    mode: string
+    mode: GameMode[]
   ): PlayerDataProvider {
     return new DataProviderImpl(
       new PlayerDataLoader(

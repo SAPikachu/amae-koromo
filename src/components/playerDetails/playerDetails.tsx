@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Loadable from "../misc/customizedLoadable";
 import { Helmet } from "react-helmet";
 
@@ -22,6 +22,10 @@ import { ViewRoutes, RouteDef, SimpleRoutedSubViews, NavButtons, ViewSwitch } fr
 import { useLocation } from "react-router-dom";
 import SameMatchRate from "./sameMatchRate";
 import { useTranslation } from "react-i18next";
+import { useModel } from "../gameRecords/model";
+import Conf from "../../utils/conf";
+import { GameMode } from "../../data/types/gameMode";
+import { loadPlayerPreference } from "../../utils/preference";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -106,9 +110,11 @@ function fixMaxLevel(level: LevelWithDelta): LevelWithDelta {
 function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   return (
     <>
-      <StatItem label="最高等级">{LevelWithDelta.getTag(metadata.max_level)}</StatItem>
+      <StatItem label="最高等级">
+        {LevelWithDelta.getTag(metadata.cross_stats?.max_level || metadata.max_level)}
+      </StatItem>
       <StatItem label="最高分数" className="no-width">
-        {LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.max_level))}
+        {LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.cross_stats?.max_level || metadata.max_level))}
       </StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
       <StatItem label="里宝率" description="中里宝局数 / 立直和了局数">
@@ -190,8 +196,10 @@ function BasicStats({ metadata }: { metadata: PlayerMetadata }) {
   return (
     <>
       <StatItem label="记录场数">{metadata.count}</StatItem>
-      <StatItem label="记录等级">{LevelWithDelta.getTag(metadata.level)}</StatItem>
-      <StatItem label="记录分数">{LevelWithDelta.formatAdjustedScore(metadata.level)}</StatItem>
+      <StatItem label="记录等级">{LevelWithDelta.getTag(metadata.cross_stats?.level || metadata.level)}</StatItem>
+      <StatItem label="记录分数">
+        {LevelWithDelta.formatAdjustedScore(metadata.cross_stats?.level || metadata.level)}
+      </StatItem>
       <ExtendedStatsViewAsync metadata={metadata} view={PlayerExtendedStatsView} />
       <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
       <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
@@ -250,7 +258,8 @@ function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata
 function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
   const loc = useLocation();
   useEffect(() => {
-    ReactTooltipPromise.then((x) => x.rebuild());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ReactTooltipPromise.then((x) => x.default.rebuild());
   }, [loc.pathname]);
   return (
     <SimpleRoutedSubViews>
@@ -302,8 +311,35 @@ export default function PlayerDetails() {
   const { t } = useTranslation();
   const dataAdapter = useDataAdapter();
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
+  const [model, updateModel] = useModel();
+  const availableModes = useMemo(() => metadata?.cross_stats?.played_modes || [], [metadata]);
   useEffect(() => {
-    ReactTooltipPromise.then((x) => x.rebuild());
+    if (model.type !== "player" || Conf.availableModes.length < 2) {
+      return;
+    }
+    if (!model.selectedModes.length) {
+      const savedMode = loadPlayerPreference<GameMode[]>("modePreference", model.playerId, []);
+      console.log(savedMode);
+      if (savedMode && savedMode.length) {
+        updateModel({ type: "player", selectedModes: savedMode });
+        return;
+      }
+    }
+    if (availableModes.length) {
+      const newSelectedModes = model.selectedModes.filter((x) => availableModes.includes(x));
+      if (!newSelectedModes.length) {
+        newSelectedModes.push(Conf.modePreference.find((x) => availableModes.includes(x)) || availableModes[0]);
+      }
+      if (
+        newSelectedModes.length !== model.selectedModes.length ||
+        newSelectedModes.some((x) => !model.selectedModes.includes(x))
+      ) {
+        updateModel({ type: "player", selectedModes: newSelectedModes });
+      }
+    }
+  }, [availableModes, model, updateModel]);
+  useEffect(() => {
+    ReactTooltipPromise.then((x) => x.default.rebuild());
   });
   useEffect(triggerRelayout, [!!metadata]);
   const hasMetadata = metadata && metadata.nickname;
@@ -334,7 +370,7 @@ export default function PlayerDetails() {
       ) : (
         <Loading />
       )}
-      <PlayerDetailsSettings showLevel={true} />
+      <PlayerDetailsSettings showLevel={true} availableModes={availableModes} />
       <ReactTooltip effect="solid" multiline={true} place="top" getContent={getTooltip} className="stat-tooltip" />
     </div>
   );

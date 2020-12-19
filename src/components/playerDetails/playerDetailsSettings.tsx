@@ -6,7 +6,8 @@ import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
 import { ModeSelector } from "../gameRecords/modeSelector";
 import Conf from "../../utils/conf";
-import { getRankLabelByIndex } from "../../data/types";
+import { GameMode, getRankLabelByIndex } from "../../data/types";
+import { savePlayerPreference } from "../../utils/preference";
 
 enum DateRangeOptions {
   All = "全部",
@@ -16,21 +17,24 @@ enum DateRangeOptions {
 const DATE_RANGE_ITEMS = Object.keys(DateRangeOptions).map((key: string) => ({
   key: DateRangeOptions[key as keyof typeof DateRangeOptions],
   label: DateRangeOptions[key as keyof typeof DateRangeOptions],
+  value: DateRangeOptions[key as keyof typeof DateRangeOptions],
 }));
 
 const RANK_ITEMS = [
   {
     key: "All",
     label: "全部",
+    value: "全部",
   },
 ].concat(
   Conf.rankColors.map((_, index) => ({
     key: (index + 1).toString(),
     label: getRankLabelByIndex(index),
+    value: (index + 1).toString(),
   }))
 );
 
-export default function PlayerDetailsSettings({ showLevel = false }) {
+export default function PlayerDetailsSettings({ showLevel = false, availableModes = [] as GameMode[] }) {
   const [model, updateModel] = useModel();
   const [mode, setMode] = useState(() => {
     if (model.type !== "player") {
@@ -58,7 +62,6 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
           playerId: model.playerId,
           startDate: null,
           endDate: null,
-          selectedMode: undefined,
         });
         break;
       case DateRangeOptions.Last4Weeks:
@@ -79,7 +82,15 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
         break;
     }
   }, [model, mode, customDateFrom, customDateTo, updateModel]);
-  const setSelectedMode = useCallback((mode) => updateModel({ type: "player", selectedMode: mode }), [updateModel]);
+  const setSelectedMode = useCallback(
+    (mode) => {
+      if (mode.length && model.type === "player") {
+        savePlayerPreference("modePreference", model.playerId, mode);
+      }
+      updateModel({ type: "player", selectedModes: mode });
+    },
+    [model, updateModel]
+  );
   const updateSearchTextFromEvent = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ type: "player", searchText: e.currentTarget.value }),
     [updateModel]
@@ -96,10 +107,10 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
         <FormRow title="时间" inline={true}>
           <CheckboxGroup
             type="radio"
-            selectedItemKey={mode}
+            selectedItems={[mode]}
             items={DATE_RANGE_ITEMS}
             groupKey="PlayerDetailsDateRangeSelector"
-            onChange={setMode as (x: string) => void}
+            onChange={(items) => setMode(items[0].value)}
           />
         </FormRow>
         {mode === DateRangeOptions.Custom ? (
@@ -116,10 +127,15 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
           </div>
         ) : null}
       </div>
-      {showLevel && Conf.availableModes.length > 1 && (
+      {showLevel && availableModes.length > 0 && (
         <div className="setting">
           <FormRow title="等级" inline={true}>
-            <ModeSelector mode={model.selectedMode} onChange={setSelectedMode} />
+            <ModeSelector
+              type="checkbox"
+              mode={model.selectedModes}
+              onChange={setSelectedMode}
+              availableModes={availableModes}
+            />
           </FormRow>
         </div>
       )}
@@ -127,10 +143,10 @@ export default function PlayerDetailsSettings({ showLevel = false }) {
         <FormRow title="顺位" inline={true}>
           <CheckboxGroup
             type="radio"
-            selectedItemKey={(model.rank || "All").toString()}
+            selectedItems={[(model.rank || "All").toString()]}
             items={RANK_ITEMS}
             groupKey="PlayerDetailsRankSelector"
-            onChange={setRank}
+            onChange={(items) => setRank(items[0].key)}
           />
         </FormRow>
       </div>

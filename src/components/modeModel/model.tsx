@@ -1,14 +1,16 @@
 import React, { useReducer, useContext, ReactChild } from "react";
 import { useMemo } from "react";
+import { GameMode } from "../../data/types";
 
 export interface Model {
-  selectedMode: string;
+  selectedModes: GameMode[];
 }
 
 type ModelUpdate = Partial<Model>;
 type DispatchModelUpdate = (props: ModelUpdate) => void;
 
-const DEFAULT_MODEL: Model = { selectedMode: "" };
+const DEFAULT_MODEL: Model = { selectedModes: [] };
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const ModelContext = React.createContext<[Readonly<Model>, DispatchModelUpdate]>([{ ...DEFAULT_MODEL }, () => {}]);
 export const useModel = () => useContext(ModelContext);
 

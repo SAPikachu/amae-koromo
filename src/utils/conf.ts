@@ -6,7 +6,7 @@ const domain =
 
 export const CONFIGURATIONS = {
   DEFAULT: {
-    apiSuffix: process.env.NODE_ENV === "development" ? "api-test/" : "api/",
+    apiSuffix: process.env.NODE_ENV === "development" ? "api-test/v2/pl4/" : "api/v2/pl4/",
     features: {
       ranking: true,
       statistics: true,
@@ -21,7 +21,8 @@ export const CONFIGURATIONS = {
     table: {
       showGameMode: true,
     },
-    availableModes: [GameMode.王座, GameMode.玉],
+    availableModes: [GameMode.王座, GameMode.玉, GameMode.金, GameMode.王座东, GameMode.玉东, GameMode.金东],
+    modePreference: [GameMode.王座, GameMode.玉, GameMode.王座东, GameMode.玉东, GameMode.金, GameMode.金东],
     dateMin: dayjs("2019-08-23", "YYYY-MM-DD"),
     siteTitle: "雀魂牌谱屋",
     canonicalDomain: "amae-koromo.sapk.ch",
@@ -30,30 +31,6 @@ export const CONFIGURATIONS = {
     siteSpecificNotice: "记录包含雀魂四人半庄段位战玉之间及王座之间的牌谱。",
     rootClassName: "koromo",
     rankColors: ["#28a745", "#17a2b8", "#6c757d", "#dc3545"],
-  },
-  ako: {
-    apiSuffix: "api/2_9/",
-    features: {
-      ranking: false,
-      statistics: true,
-      estimatedStableLevel: false,
-      contestTools: false,
-      statisticsSubPages: {
-        rankBySeat: true,
-        dataByRank: false,
-        fanStats: true,
-      },
-    },
-    table: {
-      showGameMode: false,
-    },
-    availableModes: [GameMode.金],
-    dateMin: dayjs("2019-11-29", "YYYY-MM-DD"),
-    siteTitle: "雀魂牌谱屋·金",
-    canonicalDomain: "ako.sapk.ch",
-    mirrorUrl: "https://kuro.sapk.ch/",
-    siteSpecificNotice: "记录包含雀魂四人半庄段位战金之间的牌谱。",
-    rootClassName: "achiga",
   },
   ikeda: {
     apiSuffix: "api/12/",
@@ -68,7 +45,22 @@ export const CONFIGURATIONS = {
         fanStats: true,
       },
     },
-    availableModes: [GameMode.三王座, GameMode.三玉, GameMode.三金],
+    availableModes: [
+      GameMode.三王座,
+      GameMode.三玉,
+      GameMode.三金,
+      GameMode.三王座东,
+      GameMode.三玉东,
+      GameMode.三王座东,
+    ],
+    modePreference: [
+      GameMode.三王座,
+      GameMode.三玉,
+      GameMode.三王座东,
+      GameMode.三玉东,
+      GameMode.三金,
+      GameMode.三王座东,
+    ],
     dateMin: dayjs("2019-11-29", "YYYY-MM-DD"),
     siteTitle: "雀魂牌谱屋·三麻",
     canonicalDomain: "ikeda.sapk.ch",
@@ -128,9 +120,6 @@ function mergeDeep<T extends { [key: string]: any }>(...objects: Partial<T>[]): 
 }
 
 const ConfBase: Partial<Configuration> = (() => {
-  if (/^(ako|kuro)\./i.test(domain)) {
-    return CONFIGURATIONS.ako;
-  }
   if (/^(ikeda|momoko)\./i.test(domain)) {
     return CONFIGURATIONS.ikeda;
   }

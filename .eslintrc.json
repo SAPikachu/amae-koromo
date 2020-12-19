@@ -38,11 +38,18 @@
     "no-fallthrough": 2,
     "no-octal-escape": 2,
     "no-octal": 2,
-    "no-redeclare": 2,
+    "no-redeclare": "off",
+    "@typescript-eslint/no-redeclare": [
+      "error", {"ignoreDeclarationMerge": true}
+    ],
     "no-with": 2,
     "no-catch-shadow": 2,
     "no-undef": 2,
-    "no-use-before-define": 2,
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": [
+      "error"
+    ],
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "brace-style": [1, "1tbs", { "allowSingleLine": true }],
     "comma-spacing": [2, { "after": true }],
     "comma-style": [2, "last"],
