@@ -95,6 +95,10 @@ export default function Navbar() {
               </a>
             ))}
             <span className="sep"></span>
+            <a className="nav-item nav-link" href="https://twitter.com/AmaeKoromo_MajS">
+              {t("Twitter")}
+            </a>
+            <span className="sep"></span>
             {LANGUAGES.map(({ label, code }) => (
               <button
                 key={code}
