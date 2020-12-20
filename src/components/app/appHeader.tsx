@@ -13,7 +13,7 @@ function AlertDefault() {
         <li>本页面数据由第三方维护，不能绝对保证完整和正确，信息仅供参考，请勿用于不良用途。</li>
         <li>{Conf.siteSpecificNotice}</li>
         <li>页面不是实时更新，对局一般会在结束后数分钟至数小时内出现。</li>
-        <li>对局数据收集从{Conf.dateMin.format(" YYYY 年 M 月 D 日")}开始，之前的对局已无法获取。</li>
+        <li>对局数据收集从 2020 年 11 月 29 日开始（玉南及王座南为 2020 年 8 月 23 日），之前的对局已无法获取。</li>
         <li>
           网站主线路会收集少量匿名浏览数据作后续改进及优化之用，如不希望被收集数据，请使用
           <a href={Conf.mirrorUrl}>镜像线路</a>。
@@ -44,8 +44,8 @@ function AlertEn() {
           Data is not updated in real-time, finished matches will show up on the site in a few minutes to a few hours.
         </li>
         <li>
-          Data collection was started from {Conf.dateMin.format(" YYYY-MM-DD")}, matches finished before then could no
-          longer be retrived.
+          Data collection was started from 2020-11-29 (2020-08-23 for Jade South and Throne South matches), matches
+          finished before then could no longer be retrived.
         </li>
         <li>
           Main mirror of the site collects small amount of anonymous usage data for improving the site. If you wish to
@@ -79,7 +79,8 @@ function AlertJa() {
         <li>現時点では半荘戦だけ記録しています。東風戦のデータは含まれません。</li>
         <li>データの更新はリアルタイムではありません。対局がサイトに載るまで数分から数時間がかかります。</li>
         <li>
-          データの収集は{Conf.dateMin.format(" YYYY 年 M 月 D 日")}からです。収集開始以前の対局は検索できません。
+          データの収集は 2020 年 11 月 29 日から（玉南と王座南は 2020 年 8 月 23
+          日）です。収集開始以前の対局は検索できません。
         </li>
         <li>
           <a href={"https://" + Conf.canonicalDomain}>メインサイト</a>
@@ -101,7 +102,7 @@ function AlertJa() {
 export function AppHeader() {
   const { i18n } = useTranslation();
   return (
-    <Alert container={Container} stateName="topNote20201107">
+    <Alert container={Container} stateName="topNote20201220">
       {i18n.language.indexOf("ja") === 0 ? (
         <AlertJa />
       ) : i18n.language.indexOf("en") === 0 ? (
