@@ -8,7 +8,7 @@ export const CONFIGURATIONS = {
   DEFAULT: {
     apiSuffix: process.env.NODE_ENV === "development" ? "api-test/v2/pl4/" : "api/v2/pl4/",
     features: {
-      ranking: true,
+      ranking: [GameMode.王座, GameMode.玉] as GameMode[] | false,
       statistics: true,
       estimatedStableLevel: true,
       contestTools: false,
@@ -33,9 +33,9 @@ export const CONFIGURATIONS = {
     rankColors: ["#28a745", "#17a2b8", "#6c757d", "#dc3545"],
   },
   ikeda: {
-    apiSuffix: "api/12/",
+    apiSuffix: "api/v2/pl3/",
     features: {
-      ranking: false,
+      ranking: false as const,
       statistics: true,
       estimatedStableLevel: true,
       contestTools: false,
@@ -51,7 +51,7 @@ export const CONFIGURATIONS = {
       GameMode.三金,
       GameMode.三王座东,
       GameMode.三玉东,
-      GameMode.三王座东,
+      GameMode.三金东,
     ],
     modePreference: [
       GameMode.三王座,
@@ -59,7 +59,7 @@ export const CONFIGURATIONS = {
       GameMode.三王座东,
       GameMode.三玉东,
       GameMode.三金,
-      GameMode.三王座东,
+      GameMode.三金东,
     ],
     dateMin: dayjs("2019-11-29", "YYYY-MM-DD"),
     siteTitle: "雀魂牌谱屋·三麻",
@@ -72,7 +72,7 @@ export const CONFIGURATIONS = {
   contest: {
     apiSuffix: (s: string) => `api/contest/${s}/`,
     features: {
-      ranking: false,
+      ranking: false as const,
       statistics: true,
       estimatedStableLevel: false,
       contestTools: true,

@@ -17,12 +17,15 @@ export enum GameMode {
   三王座东 = 25,
 }
 export function modeLabel(mode: GameMode) {
+  if (!mode) {
+    return t("全部");
+  }
   return t(GameMode[mode].replace(/^三/, ""));
 }
 export function parseCombinedMode(modeString?: string): GameMode[] {
   return (modeString || "")
     .split(".")
     .map((x) => parseInt(x.trim(), 10) as GameMode)
-    .map((x) => (GameMode[x] ? x : 0 as GameMode))
+    .map((x) => (GameMode[x] ? x : (0 as GameMode)))
     .filter((x) => x);
 }

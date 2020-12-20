@@ -43,6 +43,7 @@ export default function DeltaRanking() {
   );
   const [model] = useModel();
   const modes = model.selectedModes;
+  const modeKey = modes.length !== 1 ? 0 : modes[0];
   if (!data1w || !data4w) {
     return <Loading />;
   }
@@ -54,11 +55,11 @@ export default function DeltaRanking() {
           <div className="row">
             <div className="col-md-6">
               <h4 className="text-center">{t("一周")}</h4>
-              <RankingTable rows={data1w[modes.join(".")].bottom} />
+              <RankingTable rows={data1w[modeKey].bottom} />
             </div>
             <div className="col-md-6">
               <h4 className="text-center">{t("四周")}</h4>
-              <RankingTable rows={data4w[modes.join(".")].bottom} />
+              <RankingTable rows={data4w[modeKey].bottom} />
             </div>
           </div>
         </div>
@@ -67,11 +68,11 @@ export default function DeltaRanking() {
           <div className="row">
             <div className="col-md-6">
               <h4 className="text-center">{t("一周")}</h4>
-              <RankingTable rows={data1w[modes.join(".")].top} />
+              <RankingTable rows={data1w[modeKey].top} />
             </div>
             <div className="col-md-6">
               <h4 className="text-center">{t("四周")}</h4>
-              <RankingTable rows={data4w[modes.join(".")].top} />
+              <RankingTable rows={data4w[modeKey].top} />
             </div>
           </div>
         </div>

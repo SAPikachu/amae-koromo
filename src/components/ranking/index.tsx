@@ -10,6 +10,7 @@ import { formatFixed3, formatIdentity } from "../../utils/index";
 import { ViewRoutes, SimpleRoutedSubViews, NavButtons, RouteDef } from "../routing";
 import { ViewSwitch } from "../routing/index";
 import { useTranslation } from "react-i18next";
+import Conf from "../../utils/conf";
 
 const ROUTES = (
   <ViewRoutes>
@@ -115,6 +116,9 @@ const ROUTES = (
 
 export default function Routes() {
   const { t } = useTranslation();
+  if (!Array.isArray(Conf.features.ranking)) {
+    return <></>;
+  }
   return (
     <SimpleRoutedSubViews>
       {ROUTES}
@@ -124,7 +128,7 @@ export default function Routes() {
           {t("排行榜非实时更新，可能会有数小时的延迟")}
         </Alert>
         <NavButtons />
-        <ModelModeSelector />
+        <ModelModeSelector type="checkbox" oneOrAll={true} availableModes={Conf.features.ranking} />
         <ViewSwitch />
       </ModelModeProvider>
     </SimpleRoutedSubViews>

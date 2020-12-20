@@ -12,17 +12,18 @@ export function setMaintenanceHandler(handler: (msg: string) => void) {
   onMaintenance = handler;
 }
 
-async function fetchWithTimeout(url: string, opts: Parameters<typeof fetch>[1] = {}, timeout = 5000): Promise<Response> {
+async function fetchWithTimeout(
+  url: string,
+  opts: Parameters<typeof fetch>[1] = {},
+  timeout = 5000
+): Promise<Response> {
   const abortController = window.AbortController ? new AbortController() : { signal: undefined, abort: () => {} };
-  return Promise.race([
-    fetch(url, { ...opts, signal: abortController.signal }),
-    new Promise((_, reject) =>
-      setTimeout(function () {
-        abortController.abort();
-        reject(new Error("Timeout"));
-      }, timeout)
-    ),
-  ]) as Promise<Response>;
+  const timeoutToken = setTimeout(function () {
+    abortController.abort();
+  }, timeout);
+  const ret = fetch(url, { ...opts, signal: abortController.signal }) as Promise<Response>;
+  ret.finally(() => clearTimeout(timeoutToken));
+  return ret;
 }
 
 async function fetchData(path: string): Promise<Response> {
@@ -52,7 +53,7 @@ async function fetchData(path: string): Promise<Response> {
   ) as Promise<Response>;
 }
 
-let apiCache = {} as {[path: string]: unknown};
+let apiCache = {} as { [path: string]: unknown };
 
 export async function apiGet<T>(path: string): Promise<T> {
   if (path in apiCache) {

@@ -17,12 +17,12 @@ export interface DataLoader<T extends Metadata, TRecord = GameRecord> {
 export class RecentHighlightDataLoader implements DataLoader<Metadata> {
   _data: Promise<GameRecord[]>;
   _index: number;
-  constructor(numItems = 100) {
+  constructor(mode: GameMode | undefined, numItems = 100) {
     this._index = 0;
-    this._data = apiGet<GameRecordWithEvent[]>(`recent_highlight_games?limit=${numItems}`)
+    this._data = apiGet<GameRecordWithEvent[]>(`recent_highlight_games?limit=${numItems}&mode=${mode || ""}`)
       .then((data) => {
         if (data.every((x) => x.uuid)) {
-          return data; // Old API
+          return data;
         }
         return apiGet<GameRecordWithEvent[]>(`games_by_id/${data.map((x) => x._id).join(",")}`).then((records) => {
           const recordMap = {} as { [key: string]: GameRecordWithEvent };
@@ -30,7 +30,13 @@ export class RecentHighlightDataLoader implements DataLoader<Metadata> {
           return data.map((x) => ({ ...x, ...recordMap[x._id || ""] }));
         });
       })
-      .then((data) => data.sort((a, b) => a.startTime - b.startTime));
+      .then((data) => data.sort((a, b) => b.startTime - a.startTime))
+      .catch((e) => {
+        if (e.status === 404) {
+          return [];
+        }
+        return Promise.reject(e);
+      });
   }
   getEstimatedChunkSize() {
     return CHUNK_SIZE;

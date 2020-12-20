@@ -75,9 +75,13 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const modelResult = ModelBuilders[view](params as any);
+  useEffect(() => {
+    if (typeof modelResult !== "string") {
+      onRouteModelUpdated(modelResult);
+    }
+  }, [modelResult, onRouteModelUpdated]);
   if (typeof modelResult === "string") {
     return <Redirect to={modelResult} />;
   }
-  onRouteModelUpdated(modelResult);
   return <></>;
 }

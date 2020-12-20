@@ -28,7 +28,7 @@ function RankingTable({
   formatter = formatPercent as (x: number) => string,
   showNumGames = true,
   valueLabel = "",
-  extraColumns = [] as ExtraColumnInternal[]
+  extraColumns = [] as ExtraColumnInternal[],
 }) {
   const { t } = useTranslation();
   if (!rows || !rows.length) {
@@ -41,7 +41,7 @@ function RankingTable({
           <th className="text-right">{t("排名")}</th>
           <th>{t("玩家")}</th>
           {showNumGames && <th className="text-right">{t("对局数")}</th>}
-          {extraColumns.map(x => (
+          {extraColumns.map((x) => (
             <th className="text-right" key={x.label}>
               {t(x.label)}
             </th>
@@ -59,7 +59,7 @@ function RankingTable({
               </Link>
             </td>
             {showNumGames && <td className="text-right">{x.count}</td>}
-            {extraColumns.map(col => (
+            {extraColumns.map((col) => (
               <td className="text-right" key={col.label}>
                 {col.value(x)}
               </td>
@@ -79,7 +79,7 @@ export function CareerRankingColumn({
   showNumGames = true,
   valueLabel = "",
   disableMixedMode = false,
-  extraColumns = []
+  extraColumns = [],
 }: {
   type: CareerRankingType;
   title: string;
@@ -92,8 +92,12 @@ export function CareerRankingColumn({
   const { t } = useTranslation();
   const [model] = useModel();
   const modes = model.selectedModes;
-  const isMixedMode = modes.length > 1;
-  const data = useAsyncFactory(() => getCareerRanking(type, modes.join(".")), [type, modes.join(".")], "getCareerRanking");
+  const isMixedMode = modes.length !== 1;
+  const data = useAsyncFactory(
+    () => getCareerRanking(type, modes.length !== 1 ? undefined : modes[0].toString()),
+    [type, model],
+    "getCareerRanking"
+  );
   return (
     <div className="col-lg">
       <h3 className="text-center mb-2">{t(title)}</h3>
@@ -103,7 +107,7 @@ export function CareerRankingColumn({
           formatter={formatter}
           valueLabel={t(valueLabel || title)}
           showNumGames={showNumGames}
-          extraColumns={extraColumns.map(x => ({ ...x, value: item => x.value(item, modes) }))}
+          extraColumns={extraColumns.map((x) => ({ ...x, value: (item) => x.value(item, modes) }))}
         />
       ) : (
         <p className="text-center mt-4">{t("请选择模式")}</p>
@@ -112,7 +116,7 @@ export function CareerRankingColumn({
   );
 }
 export function CareerRanking({
-  children
+  children,
 }: {
   children:
     | React.ReactElement<ReturnType<typeof CareerRankingColumn>>
@@ -129,7 +133,7 @@ export function CareerRanking({
         {t("本榜只包含有至少 300 场对局记录的玩家")}
       </Alert>
       <div className="row">
-        { children.map((x, i) => (
+        {children.map((x, i) => (
           <React.Fragment key={i}>{x}</React.Fragment>
         ))}
       </div>

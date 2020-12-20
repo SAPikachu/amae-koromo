@@ -200,8 +200,8 @@ export const DataProvider = Object.freeze({
   createListing(date: dayjs.ConfigType, mode: GameMode | null): ListingDataProvider {
     return new DataProviderImpl(new ListingDataLoader(date, mode));
   },
-  createHightlight(): ListingDataProvider {
-    return new DataProviderImpl(new RecentHighlightDataLoader());
+  createHightlight(mode: GameMode | undefined): ListingDataProvider {
+    return new DataProviderImpl(new RecentHighlightDataLoader(mode));
   },
   createPlayer(
     playerId: string,

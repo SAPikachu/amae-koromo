@@ -89,8 +89,12 @@ export function ModelProvider({ children }: { children: ReactChild | ReactChild[
         ...((model.type === newProps.type ? model : {}) as Model),
         ...(normalizeUpdate(newProps) as Model),
       };
-      if (newModel.type === "player" && !newModel.selectedModes) {
-        newModel.selectedModes = [];
+      if (newModel.type === "player" && (!newModel.selectedModes || !newModel.selectedModes.length)) {
+        if (model.type === undefined && model.selectedMode) {
+          newModel.selectedModes = [model.selectedMode];
+        } else {
+          newModel.selectedModes = [];
+        }
       }
       if (isSameModel(model, newModel)) {
         return;
