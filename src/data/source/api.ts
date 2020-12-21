@@ -22,7 +22,7 @@ async function fetchWithTimeout(
     abortController.abort();
   }, timeout);
   const ret = fetch(url, { ...opts, signal: abortController.signal }) as Promise<Response>;
-  ret.finally(() => clearTimeout(timeoutToken));
+  ret.then(() => clearTimeout(timeoutToken)).catch(() => clearTimeout(timeoutToken));
   return ret;
 }
 
