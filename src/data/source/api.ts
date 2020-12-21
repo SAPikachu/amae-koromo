@@ -34,21 +34,31 @@ async function fetchData(path: string): Promise<Response> {
     console.warn(`Failed to fetch data from mirror ${selectedMirror}, trying other mirror...`);
   }
 
-  let done = false;
+  let completedResponse = null as null | Response;
   return Promise.race(
     DATA_MIRRORS.map((mirror) =>
       fetchWithTimeout(mirror + path, {}, PROBE_TIMEOUT)
         .then(function (resp) {
-          if (done) {
+          if (completedResponse) {
             return resp;
           }
-          done = true;
+          completedResponse = resp;
           selectedMirror = mirror;
           localStorage.setItem("selectedMirror", selectedMirror);
           console.log(`Set ${mirror} as preferred`);
           return resp;
         })
-        .catch((e) => new Promise((_, reject) => setTimeout(() => reject(e), PROBE_TIMEOUT)))
+        .catch(
+          (e) =>
+            new Promise((resolve, reject) =>
+              setTimeout(() => {
+                if (completedResponse) {
+                  return resolve(completedResponse);
+                }
+                reject(e);
+              }, PROBE_TIMEOUT)
+            )
+        )
     )
   ) as Promise<Response>;
 }
