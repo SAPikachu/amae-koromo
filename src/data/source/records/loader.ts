@@ -138,7 +138,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     stats.cross_stats = {
       id: crossStats.id,
       level: crossStats.level,
-      max_level: crossStats.level,
+      max_level: crossStats.max_level,
       played_modes:
         crossStats.played_modes
           ?.map((x) => (typeof x === "string" ? (parseInt(x, 10) as GameMode) : x))
