@@ -37,8 +37,10 @@ export default function WinLoseDistribution({ stats }: { stats: PlayerExtendedSt
       value: 1 - (stats.放铳时副露率 || 0) - (stats.放铳时立直率 || 0),
       outerLabel: "门清",
     } as PieChartItem;
-    selfOther.innerLabel = formatPercent(selfOther.value / 1);
-    result.push(selfOther);
+    if (selfOther.value > 0.00001) {
+      selfOther.innerLabel = formatPercent(selfOther.value / 1);
+      result.push(selfOther);
+    }
     return result.filter((item) => item.value);
   }, [stats]);
   return (
