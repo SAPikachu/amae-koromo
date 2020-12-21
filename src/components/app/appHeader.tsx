@@ -11,7 +11,7 @@ function AlertDefault() {
       <h4>说明</h4>
       <ul>
         <li>本页面数据由第三方维护，不能绝对保证完整和正确，信息仅供参考，请勿用于不良用途。</li>
-        <li>{Conf.siteSpecificNotice}</li>
+        <li>记录包含雀魂段位战金之间、玉之间及王座之间的牌谱。</li>
         <li>页面不是实时更新，对局一般会在结束后数分钟至数小时内出现。</li>
         <li>对局数据收集从 2020 年 11 月 29 日开始（玉南及王座南为 2020 年 8 月 23 日），之前的对局已无法获取。</li>
         <li>
@@ -39,7 +39,6 @@ function AlertEn() {
           This is a fan site, data accuracy can&apos;t be fully guaranteed, please use the data for reference only and
           don&apos;t use it for malicious purpose.
         </li>
-        <li>At this moment, only south matches are recorded, east matches are not included in the data.</li>
         <li>
           Data is not updated in real-time, finished matches will show up on the site in a few minutes to a few hours.
         </li>
@@ -76,7 +75,6 @@ function AlertJa() {
         <li>
           当サイトは非公式サイトで、データの完全性と正確性が保証できません、予めご了承ください。サイトの内容を悪用しないでください。
         </li>
-        <li>現時点では半荘戦だけ記録しています。東風戦のデータは含まれません。</li>
         <li>データの更新はリアルタイムではありません。対局がサイトに載るまで数分から数時間がかかります。</li>
         <li>
           データの収集は 2020 年 11 月 29 日から（玉南と王座南は 2020 年 8 月 23
