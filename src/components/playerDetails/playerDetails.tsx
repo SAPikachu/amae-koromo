@@ -319,7 +319,6 @@ export default function PlayerDetails() {
     }
     if (!model.selectedModes.length) {
       const savedMode = loadPlayerPreference<GameMode[]>("modePreference", model.playerId, []);
-      console.log(savedMode);
       if (savedMode && savedMode.length) {
         updateModel({ type: "player", selectedModes: savedMode });
         return;
