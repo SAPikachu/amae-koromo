@@ -30,12 +30,23 @@ const PLAYER_PATH =
   "/player/:id/:mode([0-9.]+)?/:search(-[^/]+)?/:startDate(\\d{4}-\\d{2}-\\d{2})?/:endDate(\\d{4}-\\d{2}-\\d{2})?";
 const PATH = "/:date(\\d{4}-\\d{2}-\\d{2})/:mode([0-9]+)?/:search?";
 
+function dateToStringSafe(value: dayjs.ConfigType | null | undefined): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const dateObj = dayjs(value);
+  if (!dateObj.isValid()) {
+    return undefined;
+  }
+  return dateObj.format("YYYY-MM-DD");
+}
+
 export function generatePath(model: Model): string {
   if (model.type === "player") {
     let result = genPath(PLAYER_PATH, {
       id: model.playerId,
-      startDate: model.startDate ? dayjs(model.startDate).format("YYYY-MM-DD") : undefined,
-      endDate: model.endDate ? dayjs(model.endDate).format("YYYY-MM-DD") : undefined,
+      startDate: dateToStringSafe(model.startDate),
+      endDate: dateToStringSafe(model.endDate),
       mode: model.selectedModes.join(".") || undefined,
       search: model.searchText ? "-" + model.searchText : undefined,
     });
@@ -48,7 +59,7 @@ export function generatePath(model: Model): string {
     return "/";
   }
   return genPath(PATH, {
-    date: dayjs(model.date || new Date()).format("YYYY-MM-DD"),
+    date: dateToStringSafe(model.date || new Date()),
     mode: model.selectedMode || undefined,
     search: model.searchText || undefined,
   });
