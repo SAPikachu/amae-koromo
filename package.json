@@ -6,6 +6,7 @@
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
+    "@sentry/react": "^5.29.2",
     "bootstrap": "4.4.1",
     "clsx": "1.1.1",
     "dayjs": "^1.9.7",
