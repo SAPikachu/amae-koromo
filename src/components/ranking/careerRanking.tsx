@@ -96,7 +96,7 @@ export function CareerRankingColumn({
   const data = useAsyncFactory(
     () => getCareerRanking(type, modes.length !== 1 ? undefined : modes[0].toString()),
     [type, model],
-    "getCareerRanking"
+    `getCareerRanking-${modes.join(".")}`
   );
   return (
     <div className="col-lg">
