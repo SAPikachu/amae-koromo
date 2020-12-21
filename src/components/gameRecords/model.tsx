@@ -90,7 +90,11 @@ export function ModelProvider({ children }: { children: ReactChild | ReactChild[
         ...(normalizeUpdate(newProps) as Model),
       };
       if (newModel.type === "player" && (!newModel.selectedModes || !newModel.selectedModes.length)) {
-        if (model.type === undefined && model.selectedMode) {
+        if (
+          model.type === undefined &&
+          model.selectedMode &&
+          (!newModel.selectedModes || !newModel.selectedModes.length)
+        ) {
           newModel.selectedModes = [model.selectedMode];
         } else {
           newModel.selectedModes = [];
