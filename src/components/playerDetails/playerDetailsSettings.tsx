@@ -51,8 +51,36 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
   const [customDateTo, setCustomDateTo] = useState(() =>
     model.type === "player" && model.endDate ? model.endDate : dayjs()
   );
+  const updateModeFromUi = useCallback(
+    (newMode: DateRangeOptions) => {
+      if (mode === newMode) {
+        return;
+      }
+      if (newMode === DateRangeOptions.Custom) {
+        if (model.type !== "player") {
+          return;
+        }
+        const startDate = dayjs(mode === DateRangeOptions.Last4Weeks ? model.startDate || Conf.dateMin : Conf.dateMin);
+        updateModel({
+          type: "player",
+          playerId: model.playerId,
+          startDate,
+          endDate: dayjs(),
+        });
+        setCustomDateFrom(startDate);
+        setCustomDateTo(dayjs());
+      }
+      setMode(newMode);
+    },
+    [mode, model, updateModel]
+  );
   useEffect(() => {
     if (model.type !== "player") {
+      return;
+    }
+    if (model.startDate === null && model.endDate === null && mode === DateRangeOptions.Custom) {
+      setCustomDateFrom(Conf.dateMin);
+      setCustomDateTo(dayjs());
       return;
     }
     switch (mode) {
@@ -121,7 +149,7 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
             selectedItems={[mode]}
             items={DATE_RANGE_ITEMS}
             groupKey="PlayerDetailsDateRangeSelector"
-            onChange={(items) => setMode(items[0].value)}
+            onChange={(items) => updateModeFromUi(items[0].value)}
           />
         </FormRow>
         {mode === DateRangeOptions.Custom ? (
