@@ -320,7 +320,7 @@ export default function PlayerDetails() {
     if (!model.selectedModes.length) {
       const savedMode = loadPlayerPreference<GameMode[]>("modePreference", model.playerId, []);
       if (savedMode && savedMode.length) {
-        updateModel({ type: "player", selectedModes: savedMode });
+        updateModel({ type: "player", playerId: model.playerId, selectedModes: savedMode });
         return;
       }
     }
@@ -333,7 +333,7 @@ export default function PlayerDetails() {
         newSelectedModes.length !== model.selectedModes.length ||
         newSelectedModes.some((x) => !model.selectedModes.includes(x))
       ) {
-        updateModel({ type: "player", selectedModes: newSelectedModes });
+        updateModel({ type: "player", playerId: model.playerId, selectedModes: newSelectedModes });
       }
     }
   }, [availableModes, model, updateModel]);
