@@ -122,6 +122,9 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     return CHUNK_SIZE;
   }
   async getMetadata(): Promise<PlayerMetadata> {
+    if (this._endDate.isBefore(this._startDate)) {
+      return Promise.reject(new Error("Invalid date range"));
+    }
     const stats = await apiGet<PlayerMetadata>(`player_stats/${this._initialParams}`);
     if (this._mode.length || !Conf.availableModes.length) {
       stats.extended_stats = apiGet<PlayerExtendedStats>(`player_extended_stats/${this._initialParams}`).then(

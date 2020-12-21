@@ -73,6 +73,10 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
         });
         break;
       case DateRangeOptions.Custom:
+        if (dayjs(customDateTo).isBefore(customDateFrom)) {
+          setCustomDateTo(dayjs().endOf("day"));
+          return;
+        }
         updateModel({
           type: "player",
           playerId: model.playerId,
