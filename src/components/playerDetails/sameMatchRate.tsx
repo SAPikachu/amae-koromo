@@ -36,7 +36,7 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
       if (!("uuid" in game)) {
         return null; // Not loaded, try again later
       }
-      const currentPlayer = game.players.find(p => p.accountId === currentAccountId);
+      const currentPlayer = game.players.find((p) => p.accountId === currentAccountId);
       if (!currentPlayer) {
         throw new Error("Can't find current player, shouldn't happen");
       }
@@ -52,7 +52,7 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
             resultOpponent: new Array<number>(game.players.length).fill(0) as RankRates,
             pointSelf: 0,
             pointOpponent: 0,
-            win: 0
+            win: 0,
           };
         }
         const entry = map[player.accountId];
@@ -64,22 +64,24 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
         if (selfRank < opponentRank) {
           entry.win++;
         }
-        entry.pointSelf += calculateDeltaPoint(
-          currentPlayer.score,
-          selfRank,
-          game.modeId,
-          new Level(currentPlayer.level),
-          true,
-          true
-        );
-        entry.pointOpponent += calculateDeltaPoint(
-          player.score,
-          opponentRank,
-          game.modeId,
-          new Level(player.level),
-          true,
-          true
-        );
+        if (game.modeId) {
+          entry.pointSelf += calculateDeltaPoint(
+            currentPlayer.score,
+            selfRank,
+            game.modeId,
+            new Level(currentPlayer.level),
+            true,
+            true
+          );
+          entry.pointOpponent += calculateDeltaPoint(
+            player.score,
+            opponentRank,
+            game.modeId,
+            new Level(player.level),
+            true,
+            true
+          );
+        }
       }
     }
     const result = Object.values(map);
@@ -94,7 +96,7 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
   }
   return (
     <dl className="row">
-      {rates.slice(0, numDisplay).map(x => (
+      {rates.slice(0, numDisplay).map((x) => (
         <React.Fragment key={x.player.accountId}>
           <div style={{ display: "none" }} id={`smr-statistic-tip-${currentAccountId}-${x.player.accountId}`}>
             <p className="mt-2">
