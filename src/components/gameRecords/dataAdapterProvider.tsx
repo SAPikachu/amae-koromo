@@ -242,7 +242,9 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
     return dataProviders[key];
   }, [model, dataProviders]);
   useEffect(() => dataProvider.setFilterPredicate(searchPredicate), [dataProvider, searchPredicate]);
-  const onError = useCallback(() => updateModel(Model.removeExtraParams(model)), [model, updateModel]);
+  const onError = useCallback(() => {
+    updateModel(Model.removeExtraParams(model));
+  }, [model, updateModel]);
   const { dataAdapter } = useDataAdapterCommon(dataProvider, onError, [model, searchPredicate]);
   return <DataAdapterContext.Provider value={dataAdapter}>{children}</DataAdapterContext.Provider>;
 }

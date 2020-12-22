@@ -8,6 +8,8 @@ import { ModeSelector } from "../gameRecords/modeSelector";
 import Conf from "../../utils/conf";
 import { GameMode, getRankLabelByIndex } from "../../data/types";
 import { savePlayerPreference } from "../../utils/preference";
+import { useLocation } from "react-router-dom";
+import { generatePath } from "../gameRecords/routes";
 
 enum DateRangeOptions {
   All = "全部",
@@ -36,6 +38,7 @@ const RANK_ITEMS = [
 
 export default function PlayerDetailsSettings({ showLevel = false, availableModes = [] as GameMode[] }) {
   const [model, updateModel] = useModel();
+  const location = useLocation();
   const [mode, setMode] = useState(() => {
     if (model.type !== "player") {
       return DateRangeOptions.All;
@@ -56,7 +59,27 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
       if (mode === newMode) {
         return;
       }
-      if (newMode === DateRangeOptions.Custom) {
+      if (model.type !== "player") {
+        return;
+      }
+      if (newMode === DateRangeOptions.All) {
+        updateModel({
+          type: "player",
+          playerId: model.playerId,
+          startDate: null,
+          endDate: null,
+        });
+      } else if (newMode === DateRangeOptions.Last4Weeks) {
+        const startDate = dayjs().subtract(27, "day");
+        updateModel({
+          type: "player",
+          playerId: model.playerId,
+          startDate,
+          endDate: null,
+        });
+        setCustomDateFrom(startDate);
+        setCustomDateTo(dayjs());
+      } else if (newMode === DateRangeOptions.Custom) {
         if (model.type !== "player") {
           return;
         }
@@ -78,49 +101,38 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
     if (model.type !== "player") {
       return;
     }
-    if (model.startDate === null && model.endDate === null && mode === DateRangeOptions.Custom) {
-      setCustomDateFrom(Conf.dateMin);
-      setCustomDateTo(dayjs());
+    if (location.pathname.replace(/\/[^/]*[a-z][^/]*$/i, "") !== generatePath(model)) {
       return;
     }
-    switch (mode) {
-      case DateRangeOptions.All:
-        updateModel({
-          type: "player",
-          playerId: model.playerId,
-          startDate: null,
-          endDate: null,
-        });
-        break;
-      case DateRangeOptions.Last4Weeks:
-        updateModel({
-          type: "player",
-          playerId: model.playerId,
-          startDate: dayjs().subtract(27, "day"),
-          endDate: null,
-        });
-        break;
-      case DateRangeOptions.Custom:
-        if (dayjs(customDateTo).isBefore(customDateFrom)) {
-          let to = dayjs(customDateFrom).endOf("day");
-          if (to.isAfter(new Date())) {
-            to = dayjs().endOf("day");
-          }
-          setCustomDateTo(to);
-          if (dayjs(customDateTo).isBefore(customDateFrom)) {
-            setCustomDateFrom(dayjs(to).startOf("day"));
-          }
-          return;
-        }
-        updateModel({
-          type: "player",
-          playerId: model.playerId,
-          startDate: customDateFrom,
-          endDate: customDateTo,
-        });
-        break;
+    if (model.startDate === null && model.endDate === null && mode !== DateRangeOptions.All) {
+      if (mode === DateRangeOptions.Custom) {
+        setCustomDateFrom(Conf.dateMin);
+        setCustomDateTo(dayjs());
+      } else if (mode === DateRangeOptions.Last4Weeks) {
+        setMode(DateRangeOptions.All);
+      }
+      return;
     }
-  }, [model, mode, customDateFrom, customDateTo, updateModel]);
+    if (mode === DateRangeOptions.Custom) {
+      if (dayjs(customDateTo).isBefore(customDateFrom)) {
+        let to = dayjs(customDateFrom).endOf("day");
+        if (to.isAfter(new Date())) {
+          to = dayjs().endOf("day");
+        }
+        setCustomDateTo(to);
+        if (dayjs(customDateTo).isBefore(customDateFrom)) {
+          setCustomDateFrom(dayjs(to).startOf("day"));
+        }
+        return;
+      }
+      updateModel({
+        type: "player",
+        playerId: model.playerId,
+        startDate: customDateFrom,
+        endDate: customDateTo,
+      });
+    }
+  }, [model, mode, customDateFrom, customDateTo, updateModel, location.pathname]);
   const setSelectedMode = useCallback(
     (mode) => {
       if (mode.length && model.type === "player") {
