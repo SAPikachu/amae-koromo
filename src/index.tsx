@@ -11,7 +11,10 @@ import "./styles/styles.scss";
 import App from "./components/app";
 
 if (process.env.NODE_ENV === "production") {
-  Sentry.init({ dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31" });
+  Sentry.init({
+    dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31",
+    release: process.env.REACT_APP_VERSION || "unknown",
+  });
 }
 
 const rootElement = document.getElementById("root");
