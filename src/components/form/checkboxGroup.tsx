@@ -15,6 +15,7 @@ type GroupParams<T> = {
   groupKey: string;
   selectedItems: Iterable<string | CheckboxItem<T>> | null;
   onChange: (selectedItems: CheckboxItem<T>[]) => void;
+  i18nNamespace?: string | undefined;
 };
 export function CheckboxGroup<T>(
   props: GroupParams<T> = {
@@ -24,9 +25,10 @@ export function CheckboxGroup<T>(
     selectedItems: null,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onChange: () => {},
+    i18nNamespace: undefined,
   }
 ) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(props.i18nNamespace);
   const [activeKey, setActiveKey] = useState(null as string | null);
   const selectedItemKeys = useMemo(() => {
     const ret = new Set<string>();

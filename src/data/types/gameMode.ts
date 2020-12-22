@@ -16,11 +16,14 @@ export enum GameMode {
   三玉东 = 23,
   三王座东 = 25,
 }
-export function modeLabel(mode: GameMode) {
+export function modeLabelNonTranslated(mode: GameMode) {
   if (!mode) {
-    return t("全部");
+    return "全部";
   }
-  return t(GameMode[mode].replace(/^三/, ""));
+  return GameMode[mode].replace(/^三/, "");
+}
+export function modeLabel(mode: GameMode) {
+  return t(modeLabelNonTranslated(mode));
 }
 export function parseCombinedMode(modeString?: string): GameMode[] {
   return (modeString || "")

@@ -3,7 +3,7 @@ import React from "react";
 import { useAsyncFactory, formatPercent } from "../../utils/index";
 import { getFanStats } from "../../data/source/misc";
 import Loading from "../misc/loading";
-import { FanStatEntry, FanStats, GameMode, modeLabel } from "../../data/types";
+import { FanStatEntry, FanStats, GameMode, modeLabelNonTranslated } from "../../data/types";
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
@@ -45,7 +45,7 @@ export default function FanStatsView() {
           .sort(([id1], [id2]) => Conf.availableModes.indexOf(id1) - Conf.availableModes.indexOf(id2))
           .map(([mode, value]) => (
             <div className="col-xl-4" key={mode}>
-              <h2 className="text-center">{modeLabel(mode)}</h2>
+              <h2 className="text-center">{t(modeLabelNonTranslated(mode))}</h2>
               <p className="text-center">
                 {t("记录和出局数：")}
                 {value.count}

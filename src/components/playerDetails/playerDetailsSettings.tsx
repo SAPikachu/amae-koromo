@@ -174,6 +174,7 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
               mode={model.selectedModes}
               onChange={setSelectedMode}
               availableModes={availableModes}
+              i18nNamespace="gameModeShort"
             />
           </FormRow>
         </div>

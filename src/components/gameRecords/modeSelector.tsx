@@ -1,25 +1,29 @@
 import React, { useMemo } from "react";
 
 import { CheckboxGroup } from "../form";
-import { modeLabel, GameMode } from "../../data/types";
+import { GameMode, modeLabelNonTranslated } from "../../data/types";
 import Conf from "../../utils/conf";
+import { useTranslation } from "react-i18next";
 
 export function ModeSelector({
   mode,
   onChange,
   type = "radio",
   availableModes = Conf.availableModes,
+  i18nNamespace = undefined,
 }: {
   mode: GameMode[];
   onChange: (x: GameMode[]) => void;
   type?: "checkbox" | "radio";
   availableModes?: GameMode[];
+  i18nNamespace?: string | undefined;
 }) {
+  useTranslation();
   const items = useMemo(
     () =>
       availableModes.map((x) => ({
         key: String(x),
-        label: modeLabel(x),
+        label: modeLabelNonTranslated(x),
         value: x,
       })),
     [availableModes]
@@ -34,6 +38,7 @@ export function ModeSelector({
       items={items}
       selectedItems={mode.map((x) => x.toString())}
       onChange={(newItems) => onChange(newItems.map((x) => x.value))}
+      i18nNamespace={i18nNamespace}
     />
   );
 }
