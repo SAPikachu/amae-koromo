@@ -9,6 +9,7 @@ export type FilterPredicate<TRecord = GameRecord> = ((record: TRecord) => boolea
 class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: string } = GameRecord> {
   _loader: DataLoader<TMetadata, TRecord>;
   _metadata: TMetadata | Promise<TMetadata> | null;
+  _metadataError?: unknown;
   _countPromise: Promise<number> | null;
   _loadingPromise: Promise<unknown> | null;
   _data: TRecord[];
@@ -62,6 +63,9 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     this._filteredIndices = indices;
   }
   getMetadataSync(): TMetadata | null {
+    if (this._metadataError) {
+      throw this._metadataError;
+    }
     return this._metadata && !(this._metadata instanceof Promise) ? this._metadata : null;
   }
   getEstimatedCountSync(): number {
@@ -77,7 +81,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     if (metadata) {
       return this._filteredIndices ? this._filteredIndices.length : this.getEstimatedCountSync();
     }
-    return this.getCount();
+    return this.getCount().catch(() => 0);
   }
   async getCount(): Promise<number> {
     const metadata = this.getMetadataSync();
@@ -95,6 +99,10 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
         this._countPromise = null;
         return metadata;
       });
+      this._metadata.catch((e) => {
+        console.error(e);
+        this._metadataError = e;
+      });
     }
     if (this._countPromise) {
       return this._countPromise;
@@ -102,6 +110,9 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     this._countPromise = Promise.resolve(this._metadata)
       .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
       .then(() => this.getCountMaybeSync());
+    this._countPromise.catch(() => {
+      /* Kill unhandled rejection */
+    });
     return this._countPromise;
   }
   getUnfilteredCountSync(): number | null {
@@ -121,13 +132,15 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
   getItem(index: number, skipPreload = false): TRecord | Promise<TRecord | null> {
     const mappedIndex = this._mapItemIndex(index);
     if (mappedIndex === null) {
-      return this.getCount().then((count) => {
-        const newMappedIndex = this._mapItemIndex(index);
-        if (index > count - 1 || newMappedIndex === null) {
-          return null;
-        }
-        return this.getItem(index, skipPreload);
-      });
+      return this.getCount()
+        .then((count) => {
+          const newMappedIndex = this._mapItemIndex(index);
+          if (index > count - 1 || newMappedIndex === null) {
+            return null;
+          }
+          return this.getItem(index, skipPreload);
+        })
+        .catch(() => null);
     }
     if (mappedIndex >= this._data.length) {
       const curLength = this._data.length;

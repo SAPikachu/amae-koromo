@@ -71,7 +71,16 @@ export async function apiGet<T>(path: string): Promise<T> {
   }
   const resp = await fetchData(Conf.apiSuffix + path);
   if (!resp.ok) {
-    throw resp;
+    const error = new Error("Failed API call");
+    Object.assign(error, {
+      response: resp,
+      status: resp.status,
+      statusText: resp.statusText,
+      headers: resp.headers,
+      url: resp.url,
+      json: resp.json.bind(resp),
+    });
+    throw error;
   }
   const data = await resp.json();
   if (data.maintenance) {

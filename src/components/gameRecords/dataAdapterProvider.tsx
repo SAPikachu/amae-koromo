@@ -66,24 +66,47 @@ class DataAdapter implements IDataAdapter {
     promise.then(() => this._callHook(false)).catch(() => this._callHook(true));
   }
   _callHook(isError: boolean) {
-    setTimeout(() => this._onDataUpdate(isError), 0);
+    setTimeout(() => {
+      this._onDataUpdate(isError);
+      this._onDataUpdate = noop;
+    }, 0);
   }
   getCount(): number {
-    const maybeCount = this._provider.getCountMaybeSync();
-    if (maybeCount instanceof Promise) {
-      this._installHook(maybeCount);
+    try {
+      const maybeCount = this._provider.getCountMaybeSync();
+      if (maybeCount instanceof Promise) {
+        this._installHook(maybeCount);
+        return 0;
+      }
+      return maybeCount;
+    } catch (e) {
+      this._callHook(true);
       return 0;
     }
-    return maybeCount;
   }
   hasCount(): boolean {
-    return !(this._provider.getCountMaybeSync() instanceof Promise);
+    try {
+      return !(this._provider.getCountMaybeSync() instanceof Promise);
+    } catch (e) {
+      this._callHook(true);
+      return false;
+    }
   }
   getUnfilteredCount(): number {
-    return this._provider.getUnfilteredCountSync() || 0;
+    try {
+      return this._provider.getUnfilteredCountSync() || 0;
+    } catch (e) {
+      this._callHook(true);
+      return 0;
+    }
   }
   getMetadata<T extends Metadata>(): T | null {
-    return this._provider.getMetadataSync() as T | null;
+    try {
+      return this._provider.getMetadataSync() as T | null;
+    } catch (e) {
+      this._callHook(true);
+      return null;
+    }
   }
   getItem(index: number): GameRecord | ItemLoadingPlaceholder {
     if (index >= this.getCount()) {
@@ -130,10 +153,7 @@ function getProviderKey(model: Model): string {
 
 function createProvider(model: Model): DataProvider {
   if (model.type === undefined) {
-    return DataProvider.createListing(
-      model.date || dayjs().startOf("day"),
-      model.selectedMode || null
-    );
+    return DataProvider.createListing(model.date || dayjs().startOf("day"), model.selectedMode || null);
   }
   if (model.type === "player") {
     return DataProvider.createPlayer(model.playerId, model.startDate, model.endDate, model.selectedModes);
@@ -195,8 +215,16 @@ function useDataAdapterCommon(dataProvider: DataProvider, onError: () => void, d
     }
   }, [dataAdapter, refreshDataAdapter]);
   useEffect(() => {
-    dataProvider.getCountMaybeSync(); // Preload metadata
-  }, [dataProvider]);
+    try {
+      // Preload metadata
+      const result = dataProvider.getCountMaybeSync();
+      if (result instanceof Promise) {
+        result.catch(() => onError());
+      }
+    } catch (e) {
+      onError();
+    }
+  }, [dataProvider, onError]);
   return {
     dataAdapter,
   };
