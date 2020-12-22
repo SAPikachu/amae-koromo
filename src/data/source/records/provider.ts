@@ -81,7 +81,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
     if (metadata) {
       return this._filteredIndices ? this._filteredIndices.length : this.getEstimatedCountSync();
     }
-    return this.getCount().catch(() => 0);
+    return this.getCount().catch(() => 0); // Have to catch here to avoid unhandled promise rejection
   }
   async getCount(): Promise<number> {
     const metadata = this.getMetadataSync();
