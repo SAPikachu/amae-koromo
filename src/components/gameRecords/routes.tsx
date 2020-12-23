@@ -35,7 +35,7 @@ function dateToStringSafe(value: dayjs.ConfigType | null | undefined): string | 
     return undefined;
   }
   const dateObj = dayjs(value);
-  if (!dateObj.isValid()) {
+  if (!dateObj.isValid() || dateObj.year() < 2019 || dateObj.year() > 9999) {
     return undefined;
   }
   return dateObj.format("YYYY-MM-DD");
