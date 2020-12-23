@@ -320,6 +320,10 @@ export default function PlayerDetails() {
     if (!metadata) {
       return;
     }
+    if (dataAdapter.getMetadata()?.count === 0) {
+      setDataAdapter(latestDataAdapter);
+      return;
+    }
     if (!latestDataAdapter.isItemLoaded(0)) {
       latestDataAdapter.getItem(0);
       return;
@@ -376,7 +380,7 @@ export default function PlayerDetails() {
     ReactTooltipPromise.then((x) => x.default.rebuild());
   });
   useEffect(triggerRelayout, [!!metadata]);
-  const hasMetadata = metadata && metadata.nickname;
+  const hasMetadata = metadata && metadata.nickname && metadata.count;
   const isChangingSettings = !!(
     hasMetadata &&
     latestDataAdapter !== dataAdapter &&

@@ -131,6 +131,9 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
         (extendedStats) => (stats.extended_stats = extendedStats)
       );
     }
+    if (!this._mode.length) {
+      stats.count = 0;
+    }
     let crossStats = stats;
     if (this._mode.length && !Conf.availableModes.every((x) => this._mode.includes(x))) {
       crossStats = await apiGet<PlayerMetadata>(`player_stats/${this._getParams([])}`);
