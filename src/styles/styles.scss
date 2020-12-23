@@ -200,6 +200,16 @@ button.button-link {
 .checkbox-group-checkbox.checkbox-group-has-active .form-check:not(.active) {
   opacity: 0.1;
 }
+.player-details-changing {
+  opacity: 0.1;
+  pointer-events: none;
+  position: relative;
+}
+.player-details-changing-spinner {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
 .player-details-settings {
   display: flex;
   justify-content: space-between;

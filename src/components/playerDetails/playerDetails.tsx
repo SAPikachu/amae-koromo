@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Loadable from "../misc/customizedLoadable";
 import { Helmet } from "react-helmet";
 
@@ -309,10 +309,45 @@ function getTooltip(dataTip: string): React.ReactNode {
 
 export default function PlayerDetails() {
   const { t } = useTranslation();
-  const dataAdapter = useDataAdapter();
+  const latestDataAdapter = useDataAdapter();
+  const [dataAdapter, setDataAdapter] = useState(latestDataAdapter);
+  useEffect(() => {
+    if (latestDataAdapter === dataAdapter) {
+      return;
+    }
+    latestDataAdapter.getCount();
+    const metadata = latestDataAdapter.getMetadata<PlayerMetadata>();
+    if (!metadata) {
+      return;
+    }
+    if (!latestDataAdapter.isItemLoaded(0)) {
+      latestDataAdapter.getItem(0);
+      return;
+    }
+    if (metadata.extended_stats instanceof Promise) {
+      let changed = false;
+      metadata.extended_stats.then(() => {
+        if (changed) {
+          return;
+        } else {
+          setDataAdapter(latestDataAdapter);
+        }
+      });
+      return () => {
+        changed = true;
+      };
+    }
+    setDataAdapter(latestDataAdapter);
+  }, [latestDataAdapter, dataAdapter]);
   const metadata = dataAdapter.getMetadata<PlayerMetadata>();
   const [model, updateModel] = useModel();
-  const availableModes = useMemo(() => metadata?.cross_stats?.played_modes || [], [metadata]);
+  const availableModes = useMemo(
+    () =>
+      latestDataAdapter.getMetadata<PlayerMetadata>()?.cross_stats?.played_modes ||
+      metadata?.cross_stats?.played_modes ||
+      [],
+    [metadata, latestDataAdapter]
+  );
   useEffect(() => {
     if (model.type !== "player" || Conf.availableModes.length < 2) {
       return;
@@ -342,11 +377,14 @@ export default function PlayerDetails() {
   });
   useEffect(triggerRelayout, [!!metadata]);
   const hasMetadata = metadata && metadata.nickname;
+  const isChangingSettings =
+    hasMetadata && latestDataAdapter !== dataAdapter && metadata !== latestDataAdapter.getMetadata();
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   return (
     <div>
+      {isChangingSettings && <Loading className="player-details-changing-spinner" />}
       {hasMetadata ? (
-        <>
+        <div className={isChangingSettings ? "player-details-changing" : ""}>
           <Helmet>
             <title>{metadata?.nickname}</title>
           </Helmet>
@@ -365,7 +403,7 @@ export default function PlayerDetails() {
               <RankRateChart metadata={metadata!} />
             </div>
           </div>
-        </>
+        </div>
       ) : (
         <Loading />
       )}
