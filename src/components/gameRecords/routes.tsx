@@ -58,8 +58,12 @@ export function generatePath(model: Model): string {
   if (!model.selectedMode && !model.searchText && !model.date) {
     return "/";
   }
+  const dateString = dateToStringSafe(model.date || new Date());
+  if (!dateString) {
+    return "/";
+  }
   return genPath(PATH, {
-    date: dateToStringSafe(model.date || new Date()),
+    date: dateString,
     mode: model.selectedMode || undefined,
     search: model.searchText || undefined,
   });
