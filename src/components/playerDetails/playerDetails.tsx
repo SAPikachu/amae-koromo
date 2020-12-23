@@ -255,7 +255,7 @@ function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata
     </div>
   );
 }
-function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
+function PlayerStats({ metadata, isChangingSettings }: { metadata: PlayerMetadata; isChangingSettings: boolean }) {
   const loc = useLocation();
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -291,7 +291,7 @@ function PlayerStats({ metadata }: { metadata: PlayerMetadata }) {
           <ExtendedStatsViewAsync metadata={metadata} view={LargestLost} />
         </RouteDef>
         <RouteDef path="same-match" title="最常同桌">
-          <SameMatchRate currentAccountId={metadata.id} />
+          {!isChangingSettings ? <SameMatchRate currentAccountId={metadata.id} /> : <></>}
         </RouteDef>
       </ViewRoutes>
       <NavButtons className="mt-3" replace keepState />
@@ -377,8 +377,11 @@ export default function PlayerDetails() {
   });
   useEffect(triggerRelayout, [!!metadata]);
   const hasMetadata = metadata && metadata.nickname;
-  const isChangingSettings =
-    hasMetadata && latestDataAdapter !== dataAdapter && metadata !== latestDataAdapter.getMetadata();
+  const isChangingSettings = !!(
+    hasMetadata &&
+    latestDataAdapter !== dataAdapter &&
+    metadata !== latestDataAdapter.getMetadata()
+  );
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   return (
     <div>
@@ -396,7 +399,7 @@ export default function PlayerDetails() {
             <div className="col-md-8">
               <h3 className="text-center mb-4">{t("最近走势")}</h3>
               <RecentRankChart dataAdapter={dataAdapter} playerId={metadata!.id} aspect={6} />
-              <PlayerStats metadata={metadata!} />
+              <PlayerStats metadata={metadata!} isChangingSettings={isChangingSettings} />
             </div>
             <div className="col-md-4">
               <h3 className="text-center mb-4">{t("累计战绩")}</h3>

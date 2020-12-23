@@ -36,9 +36,13 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
       if (!("uuid" in game)) {
         return null; // Not loaded, try again later
       }
-      const currentPlayer = game.players.find((p) => p.accountId === currentAccountId);
+      const currentPlayer = game.players.find((p) => p.accountId.toString() === currentAccountId.toString());
       if (!currentPlayer) {
-        throw new Error("Can't find current player, shouldn't happen");
+        throw new Error(
+          `Can't find current player, shouldn't happen. Current: ${currentAccountId}, Players: ${game.players
+            .map((p) => p.accountId)
+            .join(", ")}`
+        );
       }
       for (const player of game.players) {
         if (player.accountId === currentAccountId) {
