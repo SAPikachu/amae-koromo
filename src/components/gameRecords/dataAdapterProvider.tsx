@@ -6,6 +6,8 @@ import { DataProvider, FilterPredicate } from "../../data/source/records/provide
 import { useModel, Model } from "./model";
 import { Metadata, GameRecord } from "../../data/types";
 import { generatePath } from "./routes";
+import notify from "../../utils/notify";
+import { useTranslation } from "react-i18next";
 
 interface ItemLoadingPlaceholder {
   loading: boolean;
@@ -231,7 +233,7 @@ function useDataAdapterCommon(dataProvider: DataProvider, onError: () => void, d
 }
 
 export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {
-  const [model, updateModel] = useModel();
+  const [model] = useModel();
   const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
   const searchPredicate = usePredicate(model);
   const dataProvider = useMemo(() => {
@@ -241,10 +243,12 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
     }
     return dataProviders[key];
   }, [model, dataProviders]);
+  const { t } = useTranslation();
   useEffect(() => dataProvider.setFilterPredicate(searchPredicate), [dataProvider, searchPredicate]);
   const onError = useCallback(() => {
-    updateModel(Model.removeExtraParams(model));
-  }, [model, updateModel]);
+    notify.error(t("加载数据失败"));
+    // updateModel(Model.removeExtraParams(model));
+  }, [t]);
   const { dataAdapter } = useDataAdapterCommon(dataProvider, onError, [model, searchPredicate]);
   return <DataAdapterContext.Provider value={dataAdapter}>{children}</DataAdapterContext.Provider>;
 }
