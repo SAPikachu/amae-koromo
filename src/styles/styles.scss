@@ -200,6 +200,18 @@ button.button-link {
 .checkbox-group-checkbox.checkbox-group-has-active .form-check:not(.active) {
   opacity: 0.1;
 }
+@include media-breakpoint-down(xs) {
+  .checkbox-group {
+    display: block;
+    white-space: normal;
+  }
+  .checkbox-group .form-check {
+    width: auto;
+  }
+  .checkbox-group label {
+    white-space: nowrap;
+  }
+}
 .player-details-changing {
   opacity: 0.1;
   pointer-events: none;
@@ -239,12 +251,12 @@ button.button-link {
   min-width: 10em;
   max-width: 100%;
 }
-@media (max-width: 420px) {
+@include media-breakpoint-down(xs) {
   .player-details-settings label {
     padding: 0;
   }
   .player-details-settings .setting {
-    align-items: flex-start;
+    display: block;
   }
   .player-details-settings .form-inline {
     flex-wrap: wrap;
