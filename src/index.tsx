@@ -17,6 +17,10 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+if (!Object.values) {
+  import("./utils/polyfill");
+}
+
 const rootElement = document.getElementById("root");
 render(
   <Sentry.ErrorBoundary>
