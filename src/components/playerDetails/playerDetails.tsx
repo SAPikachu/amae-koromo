@@ -294,7 +294,7 @@ function PlayerStats({ metadata, isChangingSettings }: { metadata: PlayerMetadat
           {!isChangingSettings ? <SameMatchRate currentAccountId={metadata.id} /> : <></>}
         </RouteDef>
       </ViewRoutes>
-      <NavButtons className="mt-3" replace keepState />
+      <NavButtons className="mt-3" replace keepState withQueryString />
       <ViewSwitch mutateTitle={false} />
     </SimpleRoutedSubViews>
   );

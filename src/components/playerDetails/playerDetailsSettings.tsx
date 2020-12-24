@@ -101,7 +101,9 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
     if (model.type !== "player") {
       return;
     }
-    if (location.pathname.replace(/\/[^/]*[a-z][^/]*$/i, "") !== generatePath(model)) {
+    if (
+      location.pathname.replace(/\/[^/]*[a-z][^/]*(\?[^?]*)?$/i, "") !== generatePath(model).replace(/(\?[^?]*)?$/i, "")
+    ) {
       return;
     }
     if (model.startDate === null && model.endDate === null && mode !== DateRangeOptions.All) {

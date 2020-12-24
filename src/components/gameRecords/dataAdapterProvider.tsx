@@ -167,7 +167,7 @@ function usePredicate(model: Model): FilterPredicate {
   let memoFunc: () => FilterPredicate = () => null;
   let memoDeps: React.DependencyList = [null, "", false];
   const searchText = (model.searchText || "").trim().toLowerCase() || "";
-  const needPredicate = searchText;
+  const needPredicate = searchText || ("rank" in model && model.rank);
   memoFunc = () =>
     needPredicate
       ? (game) => {

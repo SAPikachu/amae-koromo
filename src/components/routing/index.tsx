@@ -23,7 +23,7 @@ export const ViewRoutes: React.FunctionComponent<RoutesProps> = () => {
 
 const Context = React.createContext<RouteDefProps[]>([]);
 
-export function NavButtons({ className = "", replace = false, keepState = false }) {
+export function NavButtons({ className = "", replace = false, keepState = false, withQueryString = false }) {
   const { t } = useTranslation("navButtons");
   const routes = useContext(Context);
   const match = useRouteMatch() || { url: "" };
@@ -38,6 +38,7 @@ export function NavButtons({ className = "", replace = false, keepState = false 
             to={(loc) => ({
               pathname: `${urlBase}/${route.path}`,
               state: keepState ? loc.state : undefined,
+              ...(withQueryString && loc.search ? { search: loc.search } : {}),
             })}
             replace={replace}
             exact={!!route.exact}
