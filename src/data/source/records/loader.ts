@@ -131,7 +131,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
         (extendedStats) => (stats.extended_stats = extendedStats)
       );
     }
-    if (!this._mode.length) {
+    if (!this._mode.length && Conf.availableModes.length) {
       stats.count = 0;
     }
     let crossStats = stats;
