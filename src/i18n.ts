@@ -5,7 +5,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import resources from "./translations.json";
 import { triggerRelayout } from "./utils";
 
-const DEBUG = process.env.NODE_ENV === "development";
+const DEBUG = process.env.NODE_ENV === "development" && sessionStorage.i18nDebug;
 
 if (DEBUG) {
   sessionStorage.removeItem("__i18nMissingKeys");
@@ -24,7 +24,7 @@ i18n
     detection: {
       order: ["localStorage", "navigator"],
       caches: ["localStorage"],
-      checkWhitelist: true
+      checkWhitelist: true,
     },
 
     returnEmptyString: false,
@@ -32,7 +32,7 @@ i18n
 
     saveMissing: DEBUG,
     missingKeyHandler: DEBUG
-      ? function(lng, ns, key) {
+      ? function (lng, ns, key) {
           const missingKeys = JSON.parse(sessionStorage.getItem("__i18nMissingKeys") || "{}") || {};
           const l = i18n.language;
           if (l === "zh-hans") {
@@ -49,11 +49,11 @@ i18n
     keySeparator: false,
 
     interpolation: {
-      escapeValue: false
-    }
+      escapeValue: false,
+    },
   });
 
-i18n.on("languageChanged", function() {
+i18n.on("languageChanged", function () {
   triggerRelayout();
 });
 
