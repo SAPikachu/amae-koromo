@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import Conf from "../../utils/conf";
 
-const DATA_MIRRORS = ["https://ak-data-2.sapk.ch/", "https://ak-data-1.sapk.ch/", "https://ak-data-3.sapk.ch/"];
+const DATA_MIRRORS = [
+  "https://ak-data-2.sapk.ch/",
+  "https://ak-data-1.sapk.ch/",
+  "https://ak-data-3.sapk.ch/",
+  "https://ak-data-5.sapk.ch/",
+];
 const PROBE_TIMEOUT = 15000;
 
 let selectedMirror = localStorage.getItem("selectedMirror") || DATA_MIRRORS[0];
