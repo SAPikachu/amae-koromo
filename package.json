@@ -23,7 +23,8 @@
     "react-scripts": "4.0.1",
     "react-tooltip": "^3.11.1",
     "react-virtualized": "9.22.2",
-    "recharts": "^1.8.5"
+    "recharts": "^1.8.5",
+    "webpack-retry-chunk-load-plugin": "^1.4.0"
   },
   "devDependencies": {
     "@rescripts/cli": "0.0.15",

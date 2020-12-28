@@ -1,19 +1,17 @@
-const { editWebpackPlugin } = require("@rescripts/utilities");
+const { prependWebpackPlugin } = require("@rescripts/utilities");
+const { RetryChunkLoadPlugin } = require("webpack-retry-chunk-load-plugin");
 
-module.exports = [/*
-  config => { console.log(config); return config; },
-  
+module.exports = [
   process.env.NODE_ENV === "production"
-    ? config =>
-        editWebpackPlugin(
-          p => {
-            p.config.importWorkboxFrom = "local";
-            p.config.skipWaiting = true;
-            return p;
-          },
-          "GenerateSW",
+    ? (config) =>
+        prependWebpackPlugin(
+          new RetryChunkLoadPlugin({
+            cacheBust: `function() { return Date.now(); }`,
+            maxRetries: 5,
+            lastResortScript: "window.location.href='?t=' + Date.now();",
+          }),
           config
         )
-    : x => x*/
+    : (x) => x,
 ];
 // vim: sts=2:sw=2:ts=2:expandtab
