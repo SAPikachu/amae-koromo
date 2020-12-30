@@ -181,7 +181,7 @@
       "汪汪榜": "好調ランキング",
       "提示": "提示",
       "本榜只包含有至少 300 场对局记录的玩家": "本ランキングは 300 戦以上の記録があるプレイヤーだけが入られます",
-      "排行榜非实时更新，可能会有数小时的延迟": "ランキングはリアルタイムではありません、数時間ぐらい遅れることがあります。",
+      "排行榜非实时更新，可能会有数小时的延迟。排行榜目前只统计半庄战对局。": "ランキングはリアルタイムではありません、数時間ぐらい遅れることがあります。現在、半荘戦だけの記録が集計されます。",
       "排名": "順位",
       "对局数": "対戦",
       "连对率": "連対率",
@@ -192,6 +192,7 @@
       "二位平均 Pt": "二位平均 Pt",
       "三位平均 Pt": "三位平均 Pt",
       "四位平均得点 Pt": "四位平均得点 Pt",
+      "和铳差": "和銃差",
 
       "初士杰豪圣魂": "初士傑豪聖魂",
 
@@ -301,6 +302,7 @@
       "和率/铳率": "和了率/放銃率",
       "欧洲人": "ラッキー",
       "非洲人": "アンラッキー",
+      "和铳差": "和銃差",
 
       "一/二位平均 Pt": "一/二位平均 Pt",
       "三位平均 Pt/四位平均得点 Pt": "三位平均 Pt/四位平均得点 Pt"
@@ -481,11 +483,12 @@
       "汪汪榜": "Positive ranking",
       "提示": "Notice",
       "本榜只包含有至少 300 场对局记录的玩家": "The ranking only includes the players with at least 300 recorded matches",
-      "排行榜非实时更新，可能会有数小时的延迟": "The ranking is not renewed in real-time, a delay may occur for several hours",
+      "排行榜非实时更新，可能会有数小时的延迟。排行榜目前只统计半庄战对局。": "The ranking is not renewed in real-time, a delay may occur for several hours. Currently only south matches are included",
       "排名": "Rk",
       "对局数": "Matches",
       "连对率": "Top 2 rate",
       "得点效率": "Point efficiency",
+      "和铳差": "Win-lose diff",
 
       "一位平均 Pt": "1st average Pt",
       "请选择模式": "Please choose a level",
@@ -610,6 +613,7 @@
       "和率/铳率": "Win rate/Deal-in rate",
       "欧洲人": "Lucky",
       "非洲人": "Unlucky",
+      "和铳差": "Win-lose diff",
 
       "一/二位平均 Pt": "1st/2nd average Pt",
       "三位平均 Pt/四位平均得点 Pt": "3rd/4th average Pt"

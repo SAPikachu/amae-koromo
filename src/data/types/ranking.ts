@@ -32,6 +32,7 @@ export enum CareerRankingType {
   PointEfficiency = "point_efficiency",
   Win = "win",
   Lose = "lose",
+  WinLoseDiff = "win_lose_diff",
   WinRev = "win_rev",
   LoseRev = "lose_rev",
   ExpectedGamePoint0 = "expected_game_point_0",
@@ -43,5 +44,5 @@ export enum CareerRankingType {
   一发率 = "一发率",
   里宝率Rev = "里宝率_rev",
   被炸率Rev = "被炸率_rev",
-  一发率Rev = "一发率_rev"
+  一发率Rev = "一发率_rev",
 }

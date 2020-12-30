@@ -6,7 +6,7 @@ import { CareerRanking, CareerRankingColumn } from "./careerRanking";
 import { ModelModeProvider, ModelModeSelector } from "../modeModel";
 import { CareerRankingType } from "../../data/types";
 import { PlayerMetadata } from "../../data/types/metadata";
-import { formatFixed3, formatIdentity } from "../../utils/index";
+import { formatFixed3, formatIdentity, formatPercent } from "../../utils/index";
 import { ViewRoutes, SimpleRoutedSubViews, NavButtons, RouteDef } from "../routing";
 import { ViewSwitch } from "../routing/index";
 import { useTranslation } from "react-i18next";
@@ -49,6 +49,26 @@ const ROUTES = (
       <CareerRanking>
         <CareerRankingColumn type={CareerRankingType.Win} title="和牌率" />
         <CareerRankingColumn type={CareerRankingType.Lose} title="放铳率" />
+      </CareerRanking>
+    </RouteDef>
+    <RouteDef path="winlosediff" title="和铳差">
+      <CareerRanking>
+        <CareerRankingColumn
+          type={CareerRankingType.WinLoseDiff}
+          title="和铳差"
+          extraColumns={[
+            {
+              label: "和牌率",
+              value: (x) =>
+                x.extended_stats && "和牌率" in x.extended_stats ? formatPercent(x.extended_stats.和牌率) : "",
+            },
+            {
+              label: "放铳率",
+              value: (x) =>
+                x.extended_stats && "放铳率" in x.extended_stats ? formatPercent(x.extended_stats.放铳率) : "",
+            },
+          ]}
+        />
       </CareerRanking>
     </RouteDef>
     <RouteDef path="ept12" title="一/二位平均 Pt">
@@ -123,9 +143,9 @@ export default function Routes() {
     <SimpleRoutedSubViews>
       {ROUTES}
       <ModelModeProvider>
-        <Alert stateName="rankingNotice">
+        <Alert stateName="rankingNotice20201229">
           <h4 className="mb-2">{t("提示")}</h4>
-          {t("排行榜非实时更新，可能会有数小时的延迟")}
+          {t("排行榜非实时更新，可能会有数小时的延迟。排行榜目前只统计半庄战对局。")}
         </Alert>
         <NavButtons />
         <ModelModeSelector type="checkbox" oneOrAll={true} availableModes={Conf.features.ranking} />
