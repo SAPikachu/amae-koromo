@@ -12,6 +12,7 @@ import {
   GameRecord,
   FanStatEntry2,
   FanStatEntryList,
+  getAccountZoneTag,
 } from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
@@ -396,8 +397,7 @@ export default function PlayerDetails() {
             <title>{metadata?.nickname}</title>
           </Helmet>
           <h2 className="text-center">
-            {t("玩家：")}
-            {metadata?.nickname}
+            {getAccountZoneTag(metadata!.id)} {metadata?.nickname}
           </h2>
           <div className="row mt-4">
             <div className="col-md-8">
