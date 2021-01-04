@@ -357,7 +357,7 @@ export default function PlayerDetails() {
     if (model.type !== "player" || Conf.availableModes.length < 2) {
       return;
     }
-    if (!model.selectedModes.length) {
+    if (!model.selectedModes.length && !model.startDate && !model.endDate) {
       const savedMode = loadPlayerPreference<GameMode[]>("modePreference", model.playerId, []);
       if (savedMode && savedMode.length) {
         updateModel({ type: "player", playerId: model.playerId, selectedModes: savedMode });

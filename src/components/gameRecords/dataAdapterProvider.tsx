@@ -8,6 +8,7 @@ import { Metadata, GameRecord } from "../../data/types";
 import { generatePath } from "./routes";
 import notify from "../../utils/notify";
 import { useTranslation } from "react-i18next";
+import { ApiError } from "../../data/source/api";
 
 interface ItemLoadingPlaceholder {
   loading: boolean;
@@ -52,7 +53,7 @@ const noop = () => {};
 
 class DataAdapter implements IDataAdapter {
   _provider: DataProvider;
-  _onDataUpdate: (isError: boolean) => void;
+  _onDataUpdate: (error: Error | ApiError | false) => void;
   _triggeredRequest: boolean;
 
   constructor(provider: DataProvider, onDataUpdate = noop) {
@@ -65,11 +66,11 @@ class DataAdapter implements IDataAdapter {
       return;
     }
     this._triggeredRequest = true;
-    promise.then(() => this._callHook(false)).catch(() => this._callHook(true));
+    promise.then(() => this._callHook(false)).catch((reason) => this._callHook(reason));
   }
-  _callHook(isError: boolean) {
+  _callHook(error: Error | ApiError | false) {
     setTimeout(() => {
-      this._onDataUpdate(isError);
+      this._onDataUpdate(error);
       this._onDataUpdate = noop;
     }, 0);
   }
@@ -82,7 +83,7 @@ class DataAdapter implements IDataAdapter {
       }
       return maybeCount;
     } catch (e) {
-      this._callHook(true);
+      this._callHook(e);
       return 0;
     }
   }
@@ -90,7 +91,7 @@ class DataAdapter implements IDataAdapter {
     try {
       return !(this._provider.getCountMaybeSync() instanceof Promise);
     } catch (e) {
-      this._callHook(true);
+      this._callHook(e);
       return false;
     }
   }
@@ -98,7 +99,7 @@ class DataAdapter implements IDataAdapter {
     try {
       return this._provider.getUnfilteredCountSync() || 0;
     } catch (e) {
-      this._callHook(true);
+      this._callHook(e);
       return 0;
     }
   }
@@ -106,7 +107,7 @@ class DataAdapter implements IDataAdapter {
     try {
       return this._provider.getMetadataSync() as T | null;
     } catch (e) {
-      this._callHook(true);
+      this._callHook(e);
       return null;
     }
   }
@@ -189,12 +190,16 @@ function usePredicate(model: Model): FilterPredicate {
   return useMemo(memoFunc, memoDeps);
 }
 
-function useDataAdapterCommon(dataProvider: DataProvider, onError: () => void, deps: React.DependencyList) {
+function useDataAdapterCommon(
+  dataProvider: DataProvider,
+  onError: (error: Error | ApiError | false) => void,
+  deps: React.DependencyList
+) {
   const [dataAdapter, setDataAdapter] = useState(() => DUMMY_DATA_ADAPTER);
   const refreshDataAdapter = useCallback(
-    (isError?: boolean) => {
-      if (isError) {
-        onError();
+    (error?: Error | ApiError | false) => {
+      if (error) {
+        onError(error);
         return;
       }
       const adapter = new DataAdapter(dataProvider);
@@ -221,10 +226,10 @@ function useDataAdapterCommon(dataProvider: DataProvider, onError: () => void, d
       // Preload metadata
       const result = dataProvider.getCountMaybeSync();
       if (result instanceof Promise) {
-        result.catch(() => onError());
+        result.catch((e) => onError(e));
       }
     } catch (e) {
-      onError();
+      onError(e);
     }
   }, [dataProvider, onError]);
   return {
@@ -233,7 +238,7 @@ function useDataAdapterCommon(dataProvider: DataProvider, onError: () => void, d
 }
 
 export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {
-  const [model] = useModel();
+  const [model, updateModel] = useModel();
   const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
   const searchPredicate = usePredicate(model);
   const dataProvider = useMemo(() => {
@@ -245,10 +250,19 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
   }, [model, dataProviders]);
   const { t } = useTranslation();
   useEffect(() => dataProvider.setFilterPredicate(searchPredicate), [dataProvider, searchPredicate]);
-  const onError = useCallback(() => {
-    notify.error(t("加载数据失败"));
-    // updateModel(Model.removeExtraParams(model));
-  }, [t]);
+  const onError = useCallback(
+    (e) => {
+      if (e && "status" in e && e.status === 404) {
+        if (model.type === "player" && model.selectedModes.length) {
+          updateModel({ type: "player", playerId: model.playerId, selectedModes: [] });
+          return;
+        }
+      }
+      notify.error(t("加载数据失败"));
+      // updateModel(Model.removeExtraParams(model));
+    },
+    [t, model, updateModel]
+  );
   const { dataAdapter } = useDataAdapterCommon(dataProvider, onError, [model, searchPredicate]);
   return <DataAdapterContext.Provider value={dataAdapter}>{children}</DataAdapterContext.Provider>;
 }

@@ -70,6 +70,12 @@ async function fetchData(path: string): Promise<Response> {
 
 let apiCache = {} as { [path: string]: unknown };
 
+export type ApiError = Error & {
+  status: number;
+  statusText: string;
+  url: string;
+};
+
 export async function apiGet<T>(path: string): Promise<T> {
   if (path in apiCache) {
     return apiCache[path] as T;
