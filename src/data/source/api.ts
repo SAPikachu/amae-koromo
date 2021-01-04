@@ -55,17 +55,22 @@ async function fetchData(path: string): Promise<Response> {
         })
         .catch(
           (e) =>
-            new Promise((resolve, reject) =>
+            new Promise((resolve) =>
               setTimeout(() => {
                 if (completedResponse) {
                   return resolve(completedResponse);
                 }
-                reject(e);
+                resolve(e); // Do not reject here, may cause unhandled promise rejection
               }, PROBE_TIMEOUT)
             )
         )
     )
-  ) as Promise<Response>;
+  ).then((result) => {
+    if ("ok" in (result as Response | Error)) {
+      return result;
+    }
+    return Promise.reject(result);
+  }) as Promise<Response>;
 }
 
 let apiCache = {} as { [path: string]: unknown };
