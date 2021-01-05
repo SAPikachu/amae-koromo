@@ -12,18 +12,26 @@ import { ViewSwitch } from "../routing/index";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
 
+const SANMA = Conf.rankColors.length === 3;
+
 const ROUTES = (
   <ViewRoutes>
-    <RouteDef path="delta" title="苦主及汪汪">
+    <RouteDef path="delta" title="苦主及汪汪" disabled={SANMA}>
       <DeltaRanking />
     </RouteDef>
-    <RouteDef path="career1" title="一位率/四位率">
+    <RouteDef path="career1" title="一位率/四位率" disabled={SANMA}>
       <CareerRanking>
         <CareerRankingColumn type={CareerRankingType.Rank1} title="一位率" />
         <CareerRankingColumn type={CareerRankingType.Rank4} title="四位率" />
       </CareerRanking>
     </RouteDef>
-    <RouteDef path="career2" title="连对率/安定段位">
+    <RouteDef path="career1" title="一位率/三位率" disabled={!SANMA}>
+      <CareerRanking>
+        <CareerRankingColumn type={CareerRankingType.Rank1} title="一位率" />
+        <CareerRankingColumn type={CareerRankingType.Rank3} title="三位率" />
+      </CareerRanking>
+    </RouteDef>
+    <RouteDef path="career2" title="连对率/安定段位" disabled={SANMA}>
       <CareerRanking>
         <CareerRankingColumn type={CareerRankingType.Rank12} title="连对率" />
         <CareerRankingColumn
@@ -71,7 +79,7 @@ const ROUTES = (
         />
       </CareerRanking>
     </RouteDef>
-    <RouteDef path="ept12" title="一/二位平均 Pt">
+    <RouteDef path="ept12" title="一/二位平均 Pt" disabled={SANMA}>
       <CareerRanking>
         <CareerRankingColumn
           type={CareerRankingType.ExpectedGamePoint0}
@@ -89,7 +97,7 @@ const ROUTES = (
         />
       </CareerRanking>
     </RouteDef>
-    <RouteDef path="ept34" title="三位平均 Pt/四位平均得点 Pt">
+    <RouteDef path="ept34" title="三位平均 Pt/四位平均得点 Pt" disabled={SANMA}>
       <CareerRanking>
         <CareerRankingColumn
           type={CareerRankingType.ExpectedGamePoint2}
@@ -107,7 +115,7 @@ const ROUTES = (
         />
       </CareerRanking>
     </RouteDef>
-    <RouteDef path="efficiency" title="得点效率">
+    <RouteDef path="efficiency" title="得点效率" disabled={SANMA}>
       <CareerRanking>
         <CareerRankingColumn
           type={CareerRankingType.PointEfficiency}

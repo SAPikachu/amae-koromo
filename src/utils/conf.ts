@@ -34,7 +34,7 @@ export const CONFIGURATIONS = {
   ikeda: {
     apiSuffix: "api/v2/pl3/",
     features: {
-      ranking: false as const,
+      ranking: [GameMode.三王座, GameMode.三玉, GameMode.三金],
       statistics: true,
       estimatedStableLevel: true,
       contestTools: false,
