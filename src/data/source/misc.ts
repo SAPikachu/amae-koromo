@@ -3,7 +3,7 @@
 import dayjs from "dayjs";
 
 import { apiGet } from "./api";
-import { PlayerMetadataLite, PlayerExtendedStats } from "../types";
+import { PlayerMetadataLite, PlayerExtendedStats, GameMode } from "../types";
 import { RankingTimeSpan, DeltaRankingResponse } from "../types";
 import { RankRateBySeat } from "../types";
 import { CareerRankingItem, CareerRankingType } from "../types/ranking";
@@ -41,8 +41,8 @@ export async function getCareerRanking(type: CareerRankingType, modeId?: string)
   return await apiGet<CareerRankingItem[]>(`career_ranking/${type}?mode=${modeId || ""}`);
 }
 
-export async function getGlobalStatistics(): Promise<GlobalStatistics> {
-  return await apiGet<GlobalStatistics>("global_statistics");
+export async function getGlobalStatistics(modes: GameMode[]): Promise<GlobalStatistics> {
+  return await apiGet<GlobalStatistics>(`global_statistics_2?mode=${modes.join(".")}`);
 }
 export async function getFanStats(): Promise<FanStats> {
   return await apiGet<FanStats>("fan_stats");

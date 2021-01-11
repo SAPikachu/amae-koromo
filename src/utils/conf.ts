@@ -14,7 +14,7 @@ export const CONFIGURATIONS = {
       contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
-        dataByRank: true,
+        dataByRank: [GameMode.王座, GameMode.玉] as GameMode[] | false,
         fanStats: true,
       },
     },
@@ -40,7 +40,14 @@ export const CONFIGURATIONS = {
       contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
-        dataByRank: true,
+        dataByRank: [
+          GameMode.三王座,
+          GameMode.三玉,
+          GameMode.三金,
+          GameMode.三王座东,
+          GameMode.三玉东,
+          GameMode.三金东,
+        ],
         fanStats: true,
       },
     },
@@ -76,7 +83,7 @@ export const CONFIGURATIONS = {
       contestTools: true,
       statisticsSubPages: {
         rankBySeat: true,
-        dataByRank: false,
+        dataByRank: false as const,
         fanStats: true,
       },
     },
