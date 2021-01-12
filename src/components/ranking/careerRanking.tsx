@@ -24,14 +24,14 @@ type ExtraColumn = {
 };
 
 function RankingTable({
-  rows = [] as CareerRankingItem[],
+  rows = null as CareerRankingItem[] | null,
   formatter = formatPercent as (x: number) => string,
   showNumGames = true,
   valueLabel = "",
   extraColumns = [] as ExtraColumnInternal[],
 }) {
   const { t } = useTranslation();
-  if (!rows || !rows.length) {
+  if (!rows) {
     return <Loading />;
   }
   return (
@@ -91,10 +91,10 @@ export function CareerRankingColumn({
 }) {
   const { t } = useTranslation();
   const [model] = useModel();
-  const modes = model.selectedModes;
+  const modes = model.selectedModes.sort((a, b) => a - b);
   const isMixedMode = modes.length !== 1;
   const data = useAsyncFactory(
-    () => getCareerRanking(type, modes.length !== 1 ? undefined : modes[0].toString()),
+    () => getCareerRanking(type, modes.join(".")),
     [type, model],
     `getCareerRanking-${modes.join(".")}`
   );

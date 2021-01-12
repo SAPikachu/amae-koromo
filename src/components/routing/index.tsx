@@ -82,9 +82,9 @@ export function ViewSwitch({
         ))}
       <Route>
         {defaultRenderDirectly ? (
-          routes[0].children
+          routes.filter((x) => !x.disabled)[0].children
         ) : (
-          <Redirect to={{ ...loc, pathname: `${urlBase}/${routes[0].path}` }} push={false} />
+          <Redirect to={{ ...loc, pathname: `${urlBase}/${routes.filter((x) => !x.disabled)[0].path}` }} push={false} />
         )}
       </Route>
       {children}

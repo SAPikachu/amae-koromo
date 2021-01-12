@@ -9,6 +9,7 @@ export const CONFIGURATIONS = {
     apiSuffix: process.env.NODE_ENV === "development" ? "api-test/v2/pl4/" : "api/v2/pl4/",
     features: {
       ranking: [GameMode.王座, GameMode.玉] as GameMode[] | false,
+      rankingGroups: [[GameMode.王座, GameMode.玉]] as GameMode[][] | null,
       statistics: true,
       estimatedStableLevel: true,
       contestTools: false,
@@ -34,7 +35,11 @@ export const CONFIGURATIONS = {
   ikeda: {
     apiSuffix: "api/v2/pl3/",
     features: {
-      ranking: [GameMode.三王座, GameMode.三玉, GameMode.三金],
+      ranking: [GameMode.三王座, GameMode.三玉, GameMode.三金, GameMode.三王座东, GameMode.三玉东, GameMode.三金东],
+      rankingGroups: [
+        [GameMode.三王座, GameMode.三玉, GameMode.三金],
+        [GameMode.三王座东, GameMode.三玉东, GameMode.三金东],
+      ],
       statistics: true,
       estimatedStableLevel: true,
       contestTools: false,
@@ -78,6 +83,7 @@ export const CONFIGURATIONS = {
     apiSuffix: (s: string) => `api/contest/${s}/`,
     features: {
       ranking: false as const,
+      rankingGroups: null,
       statistics: true,
       estimatedStableLevel: false,
       contestTools: true,

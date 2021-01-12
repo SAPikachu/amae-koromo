@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 
 import { useAsyncFactory, formatPercent, formatFixed3 } from "../../utils/index";
 import { getGlobalStatistics } from "../../data/source/misc";
@@ -25,12 +25,7 @@ const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四�
 
 export default function DataByRank() {
   const { t } = useTranslation();
-  const [model, updateModel] = useModel();
-  useEffect(() => {
-    if (!model.selectedModes.length && Conf.features.statisticsSubPages.dataByRank) {
-      updateModel({ selectedModes: [Conf.features.statisticsSubPages.dataByRank[0]] });
-    }
-  }, [model, updateModel]);
+  const [model] = useModel();
   const modes = useMemo(() => [...model.selectedModes].sort((a, b) => a - b), [model]);
   const data = useAsyncFactory(
     () => (modes && modes.length ? getGlobalStatistics(modes) : Promise.resolve(null)),
@@ -59,7 +54,7 @@ export default function DataByRank() {
   }
   return (
     <>
-      <ModelModeSelector type="checkbox" availableModes={Conf.features.statisticsSubPages.dataByRank} />
+      <ModelModeSelector type="checkbox" availableModes={Conf.features.statisticsSubPages.dataByRank} autoSelectFirst />
       {modeData ? (
         <>
           <table className="table table-responsive-xl table-striped table-sm table-hover text-center">

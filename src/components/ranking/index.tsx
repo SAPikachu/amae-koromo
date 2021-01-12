@@ -156,7 +156,11 @@ export default function Routes() {
           {t("排行榜非实时更新，可能会有数小时的延迟。排行榜目前只统计半庄战对局。")}
         </Alert>
         <NavButtons />
-        <ModelModeSelector type="checkbox" oneOrAll={true} availableModes={Conf.features.ranking} />
+        <ModelModeSelector
+          type="checkbox"
+          availableModes={Conf.features.ranking}
+          allowedCombinations={Conf.features.rankingGroups}
+        />
         <ViewSwitch />
       </ModelModeProvider>
     </SimpleRoutedSubViews>
