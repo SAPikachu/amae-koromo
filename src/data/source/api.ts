@@ -31,46 +31,57 @@ async function fetchWithTimeout(
   return ret;
 }
 
+let mirrorProbePromise = null as null | Promise<Response>;
+
 async function fetchData(path: string): Promise<Response> {
   try {
     return await fetchWithTimeout(selectedMirror + path);
   } catch (e) {
     console.warn(e);
+    if (mirrorProbePromise) {
+      console.warn(`Failed to fetch data from mirror ${selectedMirror}, waiting for probe in progress...`);
+      await mirrorProbePromise.then(() => {});
+      return fetchData(path);
+    }
     console.warn(`Failed to fetch data from mirror ${selectedMirror}, trying other mirror...`);
   }
 
-  let completedResponse = null as null | Response;
-  return Promise.race(
-    DATA_MIRRORS.map((mirror) =>
-      fetchWithTimeout(mirror + path, {}, PROBE_TIMEOUT)
-        .then(function (resp) {
-          if (completedResponse) {
+  mirrorProbePromise = (async function () {
+    let completedResponse = null as null | Response;
+    return Promise.race(
+      DATA_MIRRORS.map((mirror) =>
+        fetchWithTimeout(mirror + path, {}, PROBE_TIMEOUT)
+          .then(function (resp) {
+            if (completedResponse) {
+              return resp;
+            }
+            completedResponse = resp;
+            selectedMirror = mirror;
+            localStorage.setItem("selectedMirror", selectedMirror);
+            console.log(`Set ${mirror} as preferred`);
             return resp;
-          }
-          completedResponse = resp;
-          selectedMirror = mirror;
-          localStorage.setItem("selectedMirror", selectedMirror);
-          console.log(`Set ${mirror} as preferred`);
-          return resp;
-        })
-        .catch(
-          (e) =>
-            new Promise((resolve) =>
-              setTimeout(() => {
-                if (completedResponse) {
-                  return resolve(completedResponse);
-                }
-                resolve(e); // Do not reject here, may cause unhandled promise rejection
-              }, PROBE_TIMEOUT)
-            )
-        )
-    )
-  ).then((result) => {
-    if ("ok" in (result as Response | Error)) {
-      return result;
-    }
-    return Promise.reject(result);
-  }) as Promise<Response>;
+          })
+          .catch(
+            (e) =>
+              new Promise((resolve) =>
+                setTimeout(() => {
+                  if (completedResponse) {
+                    return resolve(completedResponse);
+                  }
+                  resolve(e); // Do not reject here, may cause unhandled promise rejection
+                }, PROBE_TIMEOUT)
+              )
+          )
+      )
+    ).then((result) => {
+      if ("ok" in (result as Response | Error)) {
+        return result;
+      }
+      return Promise.reject(result);
+    }) as Promise<Response>;
+  })();
+  mirrorProbePromise.then(() => (mirrorProbePromise = null)).catch(() => (mirrorProbePromise = null));
+  return mirrorProbePromise;
 }
 
 let apiCache = {} as { [path: string]: unknown };
