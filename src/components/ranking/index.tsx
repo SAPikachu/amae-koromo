@@ -42,6 +42,16 @@ const ROUTES = (
         />
       </CareerRanking>
     </RouteDef>
+    <RouteDef path="career2" title="安定段位" disabled={!SANMA}>
+      <CareerRanking>
+        <CareerRankingColumn
+          type={CareerRankingType.StableLevel}
+          title="安定段位"
+          formatter={(_, metadata, modes) => PlayerMetadata.estimateStableLevel(metadata, modes[0])}
+          disableMixedMode
+        />
+      </CareerRanking>
+    </RouteDef>
     <RouteDef path="career3" title="平均顺位/对局数">
       <CareerRanking>
         <CareerRankingColumn type={CareerRankingType.AvgRank} title="平均顺位" formatter={formatFixed3} />
@@ -153,7 +163,7 @@ export default function Routes() {
       <ModelModeProvider>
         <Alert stateName="rankingNotice20201229">
           <h4 className="mb-2">{t("提示")}</h4>
-          {t("排行榜非实时更新，可能会有数小时的延迟。排行榜目前只统计半庄战对局。")}
+          {t("排行榜非实时更新，可能会有数小时的延迟。")}
         </Alert>
         <NavButtons />
         <ModelModeSelector

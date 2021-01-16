@@ -25,10 +25,11 @@ type ExtraColumn = {
 
 function RankingTable({
   rows = null as CareerRankingItem[] | null,
-  formatter = formatPercent as (x: number) => string,
+  formatter = formatPercent as (x: number, item: CareerRankingItem, modes: GameMode[]) => string,
   showNumGames = true,
   valueLabel = "",
   extraColumns = [] as ExtraColumnInternal[],
+  modes = [] as GameMode[],
 }) {
   const { t } = useTranslation();
   if (!rows) {
@@ -64,7 +65,7 @@ function RankingTable({
                 {col.value(x)}
               </td>
             ))}
-            <td className="text-right">{formatter(x.rank_key)}</td>
+            <td className="text-right">{formatter(x.rank_key, x, modes)}</td>
           </tr>
         ))}
       </tbody>
@@ -83,7 +84,7 @@ export function CareerRankingColumn({
 }: {
   type: CareerRankingType;
   title: string;
-  formatter?: (x: number) => string;
+  formatter?: (x: number, item: CareerRankingItem, modes: GameMode[]) => string;
   showNumGames?: boolean;
   valueLabel?: string;
   disableMixedMode?: boolean;
@@ -107,6 +108,7 @@ export function CareerRankingColumn({
           formatter={formatter}
           valueLabel={t(valueLabel || title)}
           showNumGames={showNumGames}
+          modes={model.selectedModes}
           extraColumns={extraColumns.map((x) => ({ ...x, value: (item) => x.value(item, modes) }))}
         />
       ) : (
