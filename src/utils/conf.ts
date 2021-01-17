@@ -8,17 +8,14 @@ export const CONFIGURATIONS = {
   DEFAULT: {
     apiSuffix: process.env.NODE_ENV === "development" ? "api-test/v2/pl4/" : "api/v2/pl4/",
     features: {
-      ranking: [GameMode.王座, GameMode.玉, GameMode.王座东, GameMode.玉东] as GameMode[] | false,
-      rankingGroups: [
-        [GameMode.王座, GameMode.玉],
-        [GameMode.王座东, GameMode.玉东],
-      ] as GameMode[][] | null,
+      ranking: [GameMode.王座, GameMode.玉] as GameMode[] | false,
+      rankingGroups: [[GameMode.王座, GameMode.玉]] as GameMode[][] | null,
       statistics: true,
       estimatedStableLevel: true,
       contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
-        dataByRank: [GameMode.王座, GameMode.玉] as GameMode[] | false,
+        dataByRank: [GameMode.王座, GameMode.玉, GameMode.王座东, GameMode.玉东] as GameMode[] | false,
         fanStats: true,
       },
     },
