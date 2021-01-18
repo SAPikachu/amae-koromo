@@ -26,7 +26,13 @@ const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四�
 export default function DataByRank() {
   const { t } = useTranslation();
   const [model] = useModel();
-  const modes = useMemo(() => [...model.selectedModes].sort((a, b) => a - b), [model]);
+  const modes = useMemo(
+    () =>
+      model.selectedModes
+        .filter((x) => (Conf.features.statisticsSubPages.dataByRank || []).includes(x))
+        .sort((a, b) => a - b),
+    [model]
+  );
   const data = useAsyncFactory(
     () => (modes && modes.length ? getGlobalStatistics(modes) : Promise.resolve(null)),
     [modes],
