@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [{ "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "build" } }],
+  "routes": [
+    {
+      "src": "/(static|favicon2)/.*",
+      "headers": { "Cache-Control": "public, immutable, max-age=604800, s-maxage=604800" },
+      "continue": true
+    },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
