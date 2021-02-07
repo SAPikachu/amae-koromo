@@ -8,7 +8,7 @@ const links = builtHTMLContent.match(bundlesRegExp);
 
 let preloadLines = [];
 
-links.forEach(link => {
+links.forEach((link) => {
   let fileType = "script";
 
   if (/\.css$/.test(link)) {
@@ -39,7 +39,7 @@ fs.writeFileSync(
   headerTemplate +
     paths
       .map(
-        path => `
+        (path) => `
 ${path}
   ${cacheHeader}
   ${preloadLines.join("\n  ")}
@@ -47,3 +47,14 @@ ${path}
       )
       .join("")
 );
+
+if (process.env.VERCEL) {
+  const vercelJson = JSON.parse(fs.readFileSync("vercel.json"));
+  vercelJson.routes.forEach((route) => {
+    if (!route.headers || route.headers.Link !== "") {
+      return;
+    }
+    route.headers.Link = preloadLines.map((x) => x.replace(/^Link: /i, "")).join(", ");
+  });
+  fs.writeFileSync("vercel.json", JSON.stringify(vercelJson));
+}
