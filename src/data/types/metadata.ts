@@ -263,10 +263,6 @@ export const PlayerMetadata = Object.freeze({
         break;
       }
     }
-    if (!level.getMaxPoint()) {
-      // 魂天不会掉段
-      return `${level.getTag()}- (${calcPoint(level).toFixed(2)})`;
-    }
     for (;;) {
       const prevLevel = level.getPreviousLevel();
       if (!prevLevel.isAllowedMode(mode) || prevLevel === level) {
