@@ -10,8 +10,9 @@ import { generatePlayerPathById } from "../gameRecords/routes";
 import { LevelWithDelta, GameMode } from "../../data/types";
 import { formatPercent } from "../../utils/index";
 import { Alert } from "../misc/alert";
-import { useModel } from "../modeModel";
+import { ModelModeSelector, useModel } from "../modeModel";
 import { useTranslation } from "react-i18next";
+import Conf from "../../utils/conf";
 
 type ExtraColumnInternal = {
   label: string;
@@ -81,6 +82,7 @@ export function CareerRankingColumn({
   valueLabel = "",
   disableMixedMode = false,
   extraColumns = [],
+  forceMode = undefined,
 }: {
   type: CareerRankingType;
   title: string;
@@ -89,10 +91,11 @@ export function CareerRankingColumn({
   valueLabel?: string;
   disableMixedMode?: boolean;
   extraColumns?: ExtraColumn[];
+  forceMode?: undefined | GameMode | number;
 }) {
   const { t } = useTranslation();
   const [model] = useModel();
-  const modes = model.selectedModes.sort((a, b) => a - b);
+  const modes = forceMode === undefined ? model.selectedModes.sort((a, b) => a - b) : [forceMode];
   const isMixedMode = modes.length !== 1;
   const data = useAsyncFactory(
     () => getCareerRanking(type, modes.join(".")),
@@ -117,6 +120,24 @@ export function CareerRankingColumn({
     </div>
   );
 }
+export function CareerRankingPlain({
+  children,
+}: {
+  children:
+    | React.ReactElement<ReturnType<typeof CareerRankingColumn>>
+    | React.ReactElement<ReturnType<typeof CareerRankingColumn>>[];
+}) {
+  if (!("length" in children)) {
+    children = [children];
+  }
+  return (
+    <div className="row">
+      {children.map((x, i) => (
+        <React.Fragment key={i}>{x}</React.Fragment>
+      ))}
+    </div>
+  );
+}
 export function CareerRanking({
   children,
 }: {
@@ -130,15 +151,16 @@ export function CareerRanking({
   }
   return (
     <>
+      <ModelModeSelector
+        type="checkbox"
+        availableModes={Conf.features.ranking || []}
+        allowedCombinations={Conf.features.rankingGroups}
+      />
       <Alert stateName="careerRankingNotice">
         <h4 className="mb-2">{t("提示")}</h4>
         {t("本榜只包含有至少 300 场对局记录的玩家")}
       </Alert>
-      <div className="row">
-        {children.map((x, i) => (
-          <React.Fragment key={i}>{x}</React.Fragment>
-        ))}
-      </div>
+      <CareerRankingPlain>{children}</CareerRankingPlain>
     </>
   );
 }

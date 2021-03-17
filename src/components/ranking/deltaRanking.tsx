@@ -7,8 +7,9 @@ import { getDeltaRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
 import { LevelWithDelta } from "../../data/types";
-import { useModel } from "../modeModel";
+import { useModel, ModelModeSelector } from "../modeModel";
 import { useTranslation } from "react-i18next";
+import Conf from "../../utils/conf";
 
 function RankingTable({ rows = [] as DeltaRankingItem[] }) {
   return (
@@ -49,6 +50,11 @@ export default function DeltaRanking() {
   }
   return (
     <>
+      <ModelModeSelector
+        type="checkbox"
+        availableModes={Conf.features.ranking || []}
+        allowedCombinations={Conf.features.rankingGroups}
+      />
       <div className="row">
         <div className="col-lg-6">
           <h3 className="text-center">{t("苦主榜")}</h3>

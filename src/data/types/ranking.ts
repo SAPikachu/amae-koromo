@@ -28,6 +28,7 @@ export enum CareerRankingType {
   Rank3 = "rank3",
   Rank4 = "rank4",
   AvgRank = "avg_rank",
+  MaxLevelGlobal = "max_level_global",
   NumGames = "num_games",
   StableLevel = "stable_level",
   PointEfficiency = "point_efficiency",

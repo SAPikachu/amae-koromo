@@ -2,9 +2,9 @@ import React from "react";
 
 import { Alert } from "../misc/alert";
 import DeltaRanking from "./deltaRanking";
-import { CareerRanking, CareerRankingColumn } from "./careerRanking";
-import { ModelModeProvider, ModelModeSelector } from "../modeModel";
-import { CareerRankingType } from "../../data/types";
+import { CareerRanking, CareerRankingColumn, CareerRankingPlain } from "./careerRanking";
+import { ModelModeProvider } from "../modeModel";
+import { CareerRankingType, LevelWithDelta } from "../../data/types";
 import { PlayerMetadata } from "../../data/types/metadata";
 import { formatFixed3, formatIdentity, formatPercent } from "../../utils/index";
 import { ViewRoutes, SimpleRoutedSubViews, NavButtons, RouteDef } from "../routing";
@@ -51,6 +51,17 @@ const ROUTES = (
           disableMixedMode
         />
       </CareerRanking>
+    </RouteDef>
+    <RouteDef path="maxlevel" title="最高等级">
+      <CareerRankingPlain>
+        <CareerRankingColumn
+          type={CareerRankingType.MaxLevelGlobal}
+          title="最高等级"
+          forceMode={0}
+          showNumGames={false}
+          formatter={(_, metadata) => `${LevelWithDelta.format(metadata.max_level)}`}
+        />
+      </CareerRankingPlain>
     </RouteDef>
     <RouteDef path="career3" title="平均顺位/对局数">
       <CareerRanking>
@@ -166,11 +177,6 @@ export default function Routes() {
           {t("排行榜非实时更新，可能会有数小时的延迟。")}
         </Alert>
         <NavButtons />
-        <ModelModeSelector
-          type="checkbox"
-          availableModes={Conf.features.ranking}
-          allowedCombinations={Conf.features.rankingGroups}
-        />
         <ViewSwitch />
       </ModelModeProvider>
     </SimpleRoutedSubViews>

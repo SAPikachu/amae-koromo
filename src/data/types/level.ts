@@ -136,7 +136,7 @@ export class Level {
   }
   formatAdjustedScoreWithTag(score: number) {
     const level = this.getAdjustedLevel(score);
-    return `${level.getTag()} - ${this.formatAdjustedScore(score)}`;
+    return `${level.getTag()} ${this.formatAdjustedScore(score)}`;
   }
   formatAdjustedScore(score: number) {
     const level = this.getAdjustedLevel(score);
