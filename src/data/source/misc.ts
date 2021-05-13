@@ -50,7 +50,11 @@ export async function getFanStats(): Promise<FanStats> {
 
 export async function getRankRateBySeat(): Promise<RankRateBySeat> {
   type RawResponse = [[number, number, number], number][];
-  const rawResp = await apiGet<RawResponse>("rank_rate_by_seat");
+  let rawResp = await apiGet<RawResponse>("rank_rate_by_seat");
+  if (rawResp.some((x) => x[0][0] === null)) {
+    // Contest
+    rawResp = rawResp.filter((x) => x[0][0] !== 0);
+  }
   const counts: {
     [modeId: string]: { [rank: number]: number };
   } = {};
