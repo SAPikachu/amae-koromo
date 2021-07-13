@@ -48,3 +48,8 @@ serviceWorker.register({
     }
   },
 });
+
+const statusPageScript = document.createElement("script");
+statusPageScript.async = true;
+statusPageScript.src = "https://qltr0c2md09b.statuspage.io/embed/script.js";
+document.body.appendChild(statusPageScript);
