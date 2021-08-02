@@ -416,12 +416,18 @@ svg.recharts-surface {
   .stats-list dt {
     min-width: 17vw;
   }
+  .lang-ko .stats-list {
+    grid-template-columns: auto 1fr;
+  }
+  .lang-ko .stats-list::after {
+    content: none;
+  }
 }
 @media (max-width: 360px) {
   .stats-list {
     grid-template-columns: auto 1fr;
   }
-  .lang-en .stats-list::after {
+  .stats-list::after {
     content: none;
   }
 }
