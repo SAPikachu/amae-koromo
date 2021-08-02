@@ -97,6 +97,36 @@ function AlertJa() {
   );
 }
 
+function AlertKo() {
+  return (
+    <>
+      <h4>안내</h4>
+      <ul>
+        <li>
+          본 사이트는 비공식 사이트로, 데이터의 완전성과 정확성이 보증되지 않습니다. 사이트 내용을 악용하지 말아 주십시오.
+        </li>
+        <li>데이터 갱신은 실시간으로 이루어지지 않습니다. 대국이 사이트에 반영되기까지는 수 분에서 수 시간이 걸립니다.</li>
+        <li>
+          데이터 수집은 2019년 11월 29일부터(옥탁 반장과 왕좌탁 반장은 2019년 8월 23일) 시작되었습니다.
+          수집 개시 이전의 대국은 검색할 수 없습니다.
+        </li>
+        <li>
+          <a href={"https://" + Conf.canonicalDomain}>메인 사이트</a>
+          는 서비스 향상을 위해 약간의 익명 사용 데이터를 수집하고 있습니다. 원치 않는 분은{" "}
+          <a href={Conf.mirrorUrl}>미러 사이트</a>를 이용해 주십시오.
+        </li>
+        <li>
+          잘못된 내용 등이 있는 경우 <a href="mailto:i@sapika.ch">SAPikachu (i@sapika.ch)</a>{" "}
+          또는 <a href="https://github.com/SAPikachu/amae-koromo/">GitHub</a>로 연락해주시길 바랍니다.
+        </li>
+        <li>
+          感谢 <a href="https://github.com/kamicloud/">Kamicloud</a> 提供部分数据。
+        </li>
+      </ul>
+    </>
+  );
+}
+
 export function AppHeader() {
   const { i18n } = useTranslation();
   return (
@@ -105,6 +135,8 @@ export function AppHeader() {
         <AlertJa />
       ) : i18n.language.indexOf("en") === 0 ? (
         <AlertEn />
+      ) : i18n.language.indexOf("ko") === 0 ? (
+        <AlertKo />
       ) : (
         <AlertDefault />
       )}

@@ -23,6 +23,7 @@ const LANGUAGES = [
   ["中文", "zh-hans"],
   ["日本語", "ja"],
   ["English", "en"],
+  ["한국어", "ko"],
 ].map(([label, code]) => ({ label, code }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

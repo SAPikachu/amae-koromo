@@ -20,7 +20,7 @@ i18n
     fallbackLng: "zh-hans",
     defaultNS: "default",
     debug: DEBUG,
-    whitelist: ["ja", "zh-hans", "en"],
+    whitelist: ["ja", "zh-hans", "en", "ko"],
     detection: {
       order: ["localStorage", "navigator"],
       caches: ["localStorage"],
