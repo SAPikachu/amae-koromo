@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState, useMemo } from "react";
 
 import Loading from "../misc/loading";
-import { PlayerMetadataLite, getLevelTag } from "../../data/types";
+import { PlayerMetadataLite, LevelWithDelta } from "../../data/types";
 import { searchPlayer } from "../../data/source/misc";
 import { Link } from "react-router-dom";
 import { generatePlayerPathById } from "./routes";
@@ -95,7 +95,7 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
           <li key={x.id}>
             <Link to={generatePlayerPathById(x.id)}>
               <span>
-                [{getLevelTag(x.level.id)}] {x.nickname}
+                [{LevelWithDelta.getTag(x.level)}] {x.nickname}
               </span>
             </Link>
           </li>
