@@ -70,7 +70,9 @@ export class Level {
   }
   isSame(other: Level): boolean {
     if (this.isKonten() && other.isKonten()) {
-      return this._majorRank === LEVEL_KONTEN - 1 || other._majorRank === LEVEL_KONTEN - 1;
+      if (this._majorRank === LEVEL_KONTEN - 1 || other._majorRank === LEVEL_KONTEN - 1) {
+        return true;
+      }
     }
     return this._majorRank === other._majorRank && this._minorRank === other._minorRank;
   }
