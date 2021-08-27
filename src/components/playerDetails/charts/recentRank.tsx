@@ -105,7 +105,10 @@ export default function RecentRankChart({
         continue;
       }
       const playerRecord = game.players.filter((x) => x.accountId.toString() === playerId.toString())[0];
-      point.delta = calculateDeltaPoint(playerRecord.score, point.rank, game.modeId, new Level(playerRecord.level));
+      point.delta =
+        typeof playerRecord.gradingScore === "number"
+          ? playerRecord.gradingScore
+          : calculateDeltaPoint(playerRecord.score, point.rank, game.modeId, new Level(playerRecord.level));
       delta += point.delta;
       point.cumulativeDelta = delta;
     }

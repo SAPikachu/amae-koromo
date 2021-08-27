@@ -10,6 +10,9 @@ const LEVEL_PENALTY_3 = [0, 0, 0, 20, 40, 60, 80, 100, 120, 165, 190, 215, 240, 
 const LEVEL_PENALTY_E = [0, 0, 0, 10, 20, 30, 40, 50, 60, 80, 90, 100, 110, 120, 130, 140];
 const LEVEL_PENALTY_E_3 = [0, 0, 0, 10, 20, 30, 40, 50, 60, 80, 95, 110, 125, 140, 160, 175];
 
+const LEVEL_KONTEN = 7;
+const LEVEL_MAX_POINT_KONTEN = 2000;
+
 const LEVEL_ALLOWED_MODES: { [key: number]: GameMode[] } = {
   101: [],
   102: [],
@@ -17,12 +20,14 @@ const LEVEL_ALLOWED_MODES: { [key: number]: GameMode[] } = {
   104: [GameMode.金, GameMode.玉, GameMode.金东, GameMode.玉东],
   105: [GameMode.玉, GameMode.王座, GameMode.玉东, GameMode.王座东],
   106: [GameMode.王座, GameMode.王座东],
+  107: [GameMode.王座, GameMode.王座东],
   201: [],
   202: [],
   203: [GameMode.三金, GameMode.三金东],
   204: [GameMode.三金, GameMode.三玉, GameMode.三金东, GameMode.三玉东],
   205: [GameMode.三玉, GameMode.三王座, GameMode.三玉东, GameMode.三王座东],
   206: [GameMode.三王座, GameMode.三王座东],
+  207: [GameMode.三王座, GameMode.三王座东],
 };
 
 const MODE_PENALTY: { [mode in GameMode]: typeof LEVEL_PENALTY } = {
@@ -37,7 +42,7 @@ const MODE_PENALTY: { [mode in GameMode]: typeof LEVEL_PENALTY } = {
   [GameMode.三王座]: LEVEL_PENALTY_3,
   [GameMode.三金东]: LEVEL_PENALTY_E_3,
   [GameMode.三玉东]: LEVEL_PENALTY_E_3,
-  [GameMode.三王座东]: LEVEL_PENALTY_E_3
+  [GameMode.三王座东]: LEVEL_PENALTY_E_3,
 };
 
 export function getTranslatedLevelTags(): string[] {
@@ -69,70 +74,97 @@ export class Level {
   isAllowedMode(mode: GameMode): boolean {
     return LEVEL_ALLOWED_MODES[this._numPlayerId * 100 + this._majorRank].includes(mode);
   }
+  isKonten(): boolean {
+    return this._majorRank >= LEVEL_KONTEN - 1;
+  }
   getTag(): string {
-    const label = getTranslatedLevelTags()[this._majorRank - 1];
-    if (this._majorRank === PLAYER_RANKS.length) {
-      return label;
-    }
+    const label = getTranslatedLevelTags()[this.isKonten() ? LEVEL_KONTEN - 2 : this._majorRank - 1];
     return label + this._minorRank;
   }
   getMaxPoint(): number {
+    if (this.isKonten()) {
+      return LEVEL_MAX_POINT_KONTEN;
+    }
     return LEVEL_MAX_POINTS[(this._majorRank - 1) * 3 + this._minorRank - 1];
   }
   getPenaltyPoint(mode: GameMode): number {
+    if (this.isKonten()) {
+      return 0;
+    }
     return MODE_PENALTY[mode][(this._majorRank - 1) * 3 + this._minorRank - 1];
   }
   getStartingPoint(): number {
     if (this._majorRank === 1) {
       return 0;
     }
-    if (this._majorRank === PLAYER_RANKS.length) {
-      return 10000;
-    }
     return this.getMaxPoint() / 2;
   }
   getNextLevel(): Level {
-    if (this._majorRank === PLAYER_RANKS.length) {
-      return this;
-    }
-    let majorRank = this._majorRank;
-    let minorRank = this._minorRank + 1;
-    if (minorRank > 3) {
+    const level = this.getVersionAdjustedLevel();
+    let majorRank = level._majorRank;
+    let minorRank = level._minorRank + 1;
+    if (minorRank > 3 && !level.isKonten()) {
       majorRank++;
       minorRank = 1;
     }
-    return new Level(this._numPlayerId * 10000 + majorRank * 100 + minorRank);
+    if (majorRank === LEVEL_KONTEN - 1) {
+      majorRank = LEVEL_KONTEN;
+    }
+    return new Level(level._numPlayerId * 10000 + majorRank * 100 + minorRank);
   }
   getPreviousLevel(): Level {
     if (this._majorRank === 1 && this._minorRank === 1) {
       return this;
     }
-    let majorRank = this._majorRank;
-    let minorRank = this._minorRank - 1;
+    const level = this.getVersionAdjustedLevel();
+    let majorRank = level._majorRank;
+    let minorRank = level._minorRank - 1;
     if (minorRank < 1) {
       majorRank--;
       minorRank = 3;
     }
-    return new Level(this._numPlayerId * 10000 + majorRank * 100 + minorRank);
+    if (majorRank === LEVEL_KONTEN - 1) {
+      majorRank = LEVEL_KONTEN - 2;
+    }
+    return new Level(level._numPlayerId * 10000 + majorRank * 100 + minorRank);
   }
   getAdjustedLevel(score: number): Level {
-    let maxPoints = this.getMaxPoint();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let level: Level = this;
+    let level: Level = this.getVersionAdjustedLevel();
+    let maxPoints = level.getMaxPoint();
     if (maxPoints && score >= maxPoints) {
-      level = this.getNextLevel();
+      level = level.getNextLevel();
       maxPoints = level.getMaxPoint();
       score = level.getStartingPoint();
     } else if (score < 0) {
       if (!maxPoints || level._majorRank === 1 || (level._majorRank === 2 && level._minorRank === 1)) {
         score = 0;
       } else {
-        level = this.getPreviousLevel();
+        level = level.getPreviousLevel();
         maxPoints = level.getMaxPoint();
         score = level.getStartingPoint();
       }
     }
     return level;
+  }
+  getVersionAdjustedLevel() {
+    if (this._majorRank !== LEVEL_KONTEN - 1) {
+      return this;
+    }
+    return new Level(this._numPlayerId * 10000 + LEVEL_KONTEN * 100 + 1);
+  }
+  getVersionAdjustedScore(score: number) {
+    if (this._majorRank === LEVEL_KONTEN - 1) {
+      return Math.ceil(score / 100) * 10 + 200;
+    }
+    return score;
+  }
+  getScoreDisplay(score: number) {
+    score = this.getVersionAdjustedScore(score);
+    if (this.isKonten()) {
+      return (score / 100).toString();
+    }
+    return score.toString();
   }
   formatAdjustedScoreWithTag(score: number) {
     const level = this.getAdjustedLevel(score);
@@ -140,8 +172,8 @@ export class Level {
   }
   formatAdjustedScore(score: number) {
     const level = this.getAdjustedLevel(score);
-    return `${level === this ? Math.max(score, 0) : level.getStartingPoint()}${
-      level.getMaxPoint() ? "/" + level.getMaxPoint() : ""
+    return `${level.getScoreDisplay(level === this ? Math.max(score, 0) : level.getStartingPoint())}${
+      level.getMaxPoint() ? "/" + level.getScoreDisplay(level.getMaxPoint()) : ""
     }`;
   }
 }

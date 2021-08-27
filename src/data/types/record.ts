@@ -12,6 +12,7 @@ export interface PlayerRecord {
   nickname: string;
   level: number;
   score: number;
+  gradingScore?: number;
 }
 export interface GameRecord {
   _id?: string;
