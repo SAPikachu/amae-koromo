@@ -37,7 +37,7 @@ const ROUTES = (
         <CareerRankingColumn
           type={CareerRankingType.StableLevel}
           title="安定段位"
-          formatter={PlayerMetadata.formatStableLevel2}
+          formatter={(_, metadata, modes) => PlayerMetadata.estimateStableLevel2(metadata, modes[0])}
           disableMixedMode
         />
       </CareerRanking>

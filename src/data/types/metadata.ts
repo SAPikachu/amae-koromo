@@ -1,4 +1,3 @@
-
 import { LevelWithDelta, Level, getTranslatedLevelTags } from "./level";
 import { GameMode } from "./gameMode";
 import { FanStatEntry } from "./statistics";
@@ -36,6 +35,12 @@ const MODE_DELTA = {
   [GameMode.三金东]: [55, 0, 0],
   [GameMode.三玉东]: [75, 0, 0],
   [GameMode.三王座东]: [120, 0, 0],
+};
+const KONTEN_DELTA: { [mode in GameMode]?: number[] } = {
+  [GameMode.王座]: [50, 20, -20, -50],
+  [GameMode.王座东]: [30, 10, -10, -30],
+  [GameMode.三王座]: [50, 0, -50],
+  [GameMode.三王座东]: [30, 0, -30],
 };
 const MODE_BASE_POINT = {
   [GameMode.金]: 25000,
@@ -193,6 +198,13 @@ export function calculateDeltaPoint(
   includePenalty = true,
   trimNumber = true
 ): number {
+  if (level.isKonten()) {
+    const delta = KONTEN_DELTA[mode];
+    if (!delta) {
+      throw new Error("Invalid mode");
+    }
+    return delta[rank];
+  }
   let result =
     (trimNumber ? Math.ceil : (x: number) => x)((score - MODE_BASE_POINT[mode]) / 1000 + RANK_DELTA[mode][rank]) +
     MODE_DELTA[mode][rank];
@@ -251,6 +263,9 @@ export const PlayerMetadata = Object.freeze({
         return level.getTag() + " (0)";
       }
       if (expectedGamePoint >= 0) {
+        if (level.isKonten()) {
+          return level.getTag().replace(/\d+/g, "") + "+" + expectedGamePoint.toFixed(2);
+        }
         lastPositiveLevel = level;
         level = level.getNextLevel();
         if (!level.isAllowedMode(mode) || level === lastPositiveLevel) {
@@ -288,9 +303,6 @@ export const PlayerMetadata = Object.freeze({
       return s.slice(0, s.indexOf(".") + 3);
     };
     const translatedLevelTags = getTranslatedLevelTags();
-    if (level >= 7) {
-      return `${translatedLevelTags[5]}${formatNumber(level - 6)}`;
-    }
     if (level >= 4) {
       return `${translatedLevelTags[4]}${formatNumber(level - 3)}`;
     }
@@ -306,7 +318,18 @@ export const PlayerMetadata = Object.freeze({
     if (!metadata.rank_rates[3]) {
       return "";
     }
-    const estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, undefined, false);
+    let estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, undefined, false);
+    const level = new Level(metadata.level.id);
+    if (level.isKonten()) {
+      const tag = level.getTag().replace(/\d+/g, "");
+      if (Math.abs(estimatedPoints) < 0.001) {
+        return tag;
+      }
+      if (estimatedPoints > 0) {
+        return tag + "+" + estimatedPoints.toFixed(2);
+      }
+      estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, level.getPreviousLevel(), false);
+    }
     const result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
     return PlayerMetadata.formatStableLevel2(result);
   },
