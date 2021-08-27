@@ -69,6 +69,9 @@ export class Level {
     return this._majorRank === other._majorRank;
   }
   isSame(other: Level): boolean {
+    if (this.isKonten() && other.isKonten()) {
+      return this._majorRank === LEVEL_KONTEN - 1 || other._majorRank === LEVEL_KONTEN - 1;
+    }
     return this._majorRank === other._majorRank && this._minorRank === other._minorRank;
   }
   isAllowedMode(mode: GameMode): boolean {
@@ -129,6 +132,7 @@ export class Level {
     return new Level(level._numPlayerId * 10000 + majorRank * 100 + minorRank);
   }
   getAdjustedLevel(score: number): Level {
+    score = this.getVersionAdjustedScore(score);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let level: Level = this.getVersionAdjustedLevel();
     let maxPoints = level.getMaxPoint();
@@ -162,7 +166,7 @@ export class Level {
   getScoreDisplay(score: number) {
     score = this.getVersionAdjustedScore(score);
     if (this.isKonten()) {
-      return (score / 100).toString();
+      return (score / 100).toFixed(1);
     }
     return score.toString();
   }
@@ -172,7 +176,8 @@ export class Level {
   }
   formatAdjustedScore(score: number) {
     const level = this.getAdjustedLevel(score);
-    return `${level.getScoreDisplay(level === this ? Math.max(score, 0) : level.getStartingPoint())}${
+    score = this.getVersionAdjustedScore(score);
+    return `${level.getScoreDisplay(level.isSame(this) ? Math.max(score, 0) : level.getStartingPoint())}${
       level.getMaxPoint() ? "/" + level.getScoreDisplay(level.getMaxPoint()) : ""
     }`;
   }
