@@ -57,6 +57,8 @@ const MODE_BASE_POINT = {
   [GameMode.三王座东]: 35000,
 };
 
+const KONTEN_FALLBACK_LEVEL_ID = 503;
+
 export type RankRates = [number, number, number, number] | [number, number, number];
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RankRates = Object.freeze({
@@ -200,10 +202,10 @@ export function calculateDeltaPoint(
 ): number {
   if (level.isKonten()) {
     const delta = KONTEN_DELTA[mode];
-    if (!delta) {
-      throw new Error("Invalid mode");
+    if (delta) {
+      return delta[rank];
     }
-    return delta[rank];
+    level = level.withLevelId(KONTEN_FALLBACK_LEVEL_ID);
   }
   let result =
     (trimNumber ? Math.ceil : (x: number) => x)((score - MODE_BASE_POINT[mode]) / 1000 + RANK_DELTA[mode][rank]) +
@@ -328,7 +330,12 @@ export const PlayerMetadata = Object.freeze({
       if (estimatedPoints > 0) {
         return tag + "+" + estimatedPoints.toFixed(2);
       }
-      estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, level.getPreviousLevel(), false);
+      estimatedPoints = this.calculateExpectedGamePoint(
+        metadata,
+        mode,
+        level.withLevelId(KONTEN_FALLBACK_LEVEL_ID),
+        false
+      );
     }
     const result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
     return PlayerMetadata.formatStableLevel2(result);

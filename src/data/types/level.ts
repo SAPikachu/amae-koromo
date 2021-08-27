@@ -80,6 +80,12 @@ export class Level {
   isKonten(): boolean {
     return this._majorRank >= LEVEL_KONTEN - 1;
   }
+  getNumPlayerId(): number {
+    return this._numPlayerId;
+  }
+  withLevelId(newLevelId: number): Level {
+    return new Level(this._numPlayerId * 10000 + newLevelId);
+  }
   getTag(): string {
     const label = getTranslatedLevelTags()[this.isKonten() ? LEVEL_KONTEN - 2 : this._majorRank - 1];
     return label + this._minorRank;
