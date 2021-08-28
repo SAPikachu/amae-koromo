@@ -321,6 +321,7 @@ export const PlayerMetadata = Object.freeze({
       return "";
     }
     let estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, undefined, false);
+    let result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
     const level = new Level(metadata.level.id);
     if (level.isKonten()) {
       const tag = level.getTag().replace(/\d+/g, "");
@@ -336,8 +337,10 @@ export const PlayerMetadata = Object.freeze({
         level.withLevelId(KONTEN_FALLBACK_LEVEL_ID),
         false
       );
+    } else if (result > 7 && KONTEN_DELTA[mode]) {
+      return this.estimateStableLevel(metadata, mode);
     }
-    const result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
+    result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
     return PlayerMetadata.formatStableLevel2(result);
   },
 });
