@@ -90,6 +90,9 @@ export class Level {
   }
   getTag(): string {
     const label = getTranslatedLevelTags()[this.isKonten() ? LEVEL_KONTEN - 2 : this._majorRank - 1];
+    if (this._majorRank === LEVEL_KONTEN - 1) {
+      return label;
+    }
     return label + this._minorRank;
   }
   getMaxPoint(): number {
