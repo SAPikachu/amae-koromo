@@ -78,7 +78,7 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span>
-          {expectedGamePoint.toFixed(1)}
+          {level.isKonten() ? (expectedGamePoint / 100).toFixed(3) : expectedGamePoint.toFixed(1)}
           {estimatedNumGamesToChangeLevel ? ` (${Math.abs(estimatedNumGamesToChangeLevel).toFixed(0)})` : ""}
           {notEnoughData && "?"}
         </span>
