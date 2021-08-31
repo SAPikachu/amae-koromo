@@ -53,15 +53,16 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
         label="安定段位"
         description={`${t("在{{ modeL }}之间一直进行对局，预测最终能达到的段位。", { modeL })}${
           levelNames.length === 3 ? t("括号内为安定段位时的分数期望。") : ""
-        }${notEnoughData ? t("（数据量不足，计算结果可能有较大偏差）") : ""}<br/>${t(
-          "{{ levelNames1 }}位平均 Pt / {{ levelName2 }}位平均得点 Pt：",
-          {
-            levelNames1: t(levelNames.slice(0, levelNames.length - 1)),
-            levelName2: t(levelNames[levelNames.length - 1]),
-          }
-        )}[${levelComponents.map((x) => x.toFixed(2)).join("/")}]<br/>${t(
-          "得点效率（各顺位平均 Pt 及平均得点 Pt 的加权平均值）："
-        )}${formatFixed3(PlayerMetadata.calculateExpectedGamePoint(metadata, mode, undefined, false))}`}
+        }${notEnoughData ? t("（数据量不足，计算结果可能有较大偏差）") : ""}${
+          level.isKonten()
+            ? ""
+            : `<br/>${t("{{ levelNames1 }}位平均 Pt / {{ levelName2 }}位平均得点 Pt：", {
+                levelNames1: t(levelNames.slice(0, levelNames.length - 1)),
+                levelName2: t(levelNames[levelNames.length - 1]),
+              })}[${levelComponents.map((x) => x.toFixed(2)).join("/")}]`
+        }<br/>${t("得点效率（各顺位平均 Pt 及平均得点 Pt 的加权平均值）：")}${formatFixed3(
+          PlayerMetadata.calculateExpectedGamePoint(metadata, mode, undefined, false)
+        )}`}
         className={notEnoughData ? "font-italic font-lighter text-muted" : ""}
       >
         <span>
