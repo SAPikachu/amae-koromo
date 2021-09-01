@@ -126,7 +126,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
       return Promise.reject(new Error("Invalid date range"));
     }
     const stats = await apiGet<PlayerMetadata>(
-      `player_stats/${this._initialParams}?tag=${Math.floor(new Date().getTime() / 1000 / 60 / 60)}`
+      `player_stats/${this._initialParams}&tag=${Math.floor(new Date().getTime() / 1000 / 60 / 60)}`
     );
     if (this._mode.length || !Conf.availableModes.length) {
       stats.extended_stats = apiGet<PlayerExtendedStats>(`player_extended_stats/${this._initialParams}`).then(
