@@ -125,20 +125,23 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     if (this._endDate.isBefore(this._startDate)) {
       return Promise.reject(new Error("Invalid date range"));
     }
+    const timeTag = Math.floor(new Date().getTime() / 1000 / 60 / 60);
     const stats = await apiGet<PlayerMetadata>(
-      `player_stats/${this._initialParams}&tag=${Math.floor(new Date().getTime() / 1000 / 60 / 60)}`
+      `player_stats/${this._initialParams}&tag=${timeTag}`
     );
     if (this._mode.length || !Conf.availableModes.length) {
-      stats.extended_stats = apiGet<PlayerExtendedStats>(`player_extended_stats/${this._initialParams}`).then(
-        (extendedStats) => (stats.extended_stats = extendedStats)
-      );
+      stats.extended_stats = apiGet<PlayerExtendedStats>(
+        `player_extended_stats/${this._initialParams}&tag=${timeTag}`
+      ).then((extendedStats) => (stats.extended_stats = extendedStats));
     }
     if (!this._mode.length && Conf.availableModes.length) {
       stats.count = 0;
     }
     let crossStats = stats;
     if (this._mode.length && !Conf.availableModes.every((x) => this._mode.includes(x))) {
-      crossStats = await apiGet<PlayerMetadata>(`player_stats/${this._getParams([])}`);
+      crossStats = await apiGet<PlayerMetadata>(
+        `player_stats/${this._getParams([])}&tag=${timeTag}`
+      );
     }
     stats.cross_stats = {
       id: crossStats.id,
