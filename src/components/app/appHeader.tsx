@@ -120,6 +120,9 @@ function AlertKo() {
           또는 <a href="https://github.com/SAPikachu/amae-koromo/">GitHub</a>로 연락해주시길 바랍니다.
         </li>
         <li>
+          한국어 번역은 <a href="https://github.com/limgit">limgit</a>가 도움을 주었습니다. 감사합니다!
+        </li>
+        <li>
           感谢 <a href="https://github.com/kamicloud/">Kamicloud</a> 提供部分数据。
         </li>
       </ul>
