@@ -322,7 +322,7 @@ export const PlayerMetadata = Object.freeze({
     }
     let estimatedPoints = this.calculateExpectedGamePoint(metadata, mode, undefined, false);
     let result = estimatedPoints / (metadata.rank_rates[3] * 15) - 10;
-    const level = new Level(metadata.level.id);
+    const level = LevelWithDelta.getAdjustedLevel(metadata.level);
     if (level.isKonten() && KONTEN_DELTA[mode]) {
       const tag = level.getTag().replace(/\d+/g, "");
       if (Math.abs(estimatedPoints) < 0.001) {
