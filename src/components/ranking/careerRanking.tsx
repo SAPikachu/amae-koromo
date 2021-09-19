@@ -9,10 +9,10 @@ import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
 import { LevelWithDelta, GameMode } from "../../data/types";
 import { formatPercent } from "../../utils/index";
-import { Alert } from "../misc/alert";
 import { ModelModeSelector, useModel } from "../modeModel";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
+import { CheckboxGroup } from "../form";
 
 type ExtraColumnInternal = {
   label: string;
@@ -98,9 +98,9 @@ export function CareerRankingColumn({
   const modes = forceMode === undefined ? model.selectedModes.sort((a, b) => a - b) : [forceMode];
   const isMixedMode = modes.length !== 1;
   const data = useAsyncFactory(
-    () => getCareerRanking(type, modes.join(".")),
+    () => getCareerRanking(type, modes.join("."), model.careerRankingMinGames),
     [type, model],
-    `getCareerRanking-${modes.join(".")}`
+    `getCareerRanking-${modes.join(".")}-${model.careerRankingMinGames || 300}`
   );
   return (
     <div className="col-lg">
@@ -145,21 +145,35 @@ export function CareerRanking({
     | React.ReactElement<ReturnType<typeof CareerRankingColumn>>
     | React.ReactElement<ReturnType<typeof CareerRankingColumn>>[];
 }) {
+  const [model, updateModel] = useModel();
   const { t } = useTranslation();
   if (!("length" in children)) {
     children = [children];
   }
   return (
     <>
+      <div className="row mb-2">
+        <div className="col">
+          <CheckboxGroup
+            type="radio"
+            groupKey="MinGamesSelector"
+            items={[
+              { key: "300", value: 300, label: "300 " + t("局") },
+              { key: "600", value: 600, label: "600 " + t("局") },
+              { key: "1000", value: 1000, label: "1000 " + t("局") },
+            ]}
+            selectedItems={[(model.careerRankingMinGames || 300).toString()]}
+            onChange={(newItems) => {
+              updateModel({ careerRankingMinGames: newItems[0].value });
+            }}
+          />
+        </div>
+      </div>
       <ModelModeSelector
         type="checkbox"
         availableModes={Conf.features.ranking || []}
         allowedCombinations={Conf.features.rankingGroups}
       />
-      <Alert stateName="careerRankingNotice">
-        <h4 className="mb-2">{t("提示")}</h4>
-        {t("本榜只包含有至少 300 场对局记录的玩家")}
-      </Alert>
       <CareerRankingPlain>{children}</CareerRankingPlain>
     </>
   );

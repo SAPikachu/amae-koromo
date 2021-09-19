@@ -37,8 +37,14 @@ export async function getDeltaRanking(timespan: RankingTimeSpan): Promise<DeltaR
   return await apiGet<DeltaRankingResponse>(`player_delta_ranking/${timespan}`);
 }
 
-export async function getCareerRanking(type: CareerRankingType, modeId?: string): Promise<CareerRankingItem[]> {
-  return await apiGet<CareerRankingItem[]>(`career_ranking/${type}?mode=${modeId || ""}`);
+export async function getCareerRanking(
+  type: CareerRankingType,
+  modeId?: string,
+  minGames?: number
+): Promise<CareerRankingItem[]> {
+  minGames = minGames || 300;
+  const suffix = minGames === 300 ? "" : `_${minGames}`;
+  return await apiGet<CareerRankingItem[]>(`career_ranking/${type + suffix}?mode=${modeId || ""}`);
 }
 
 export async function getGlobalStatistics(modes: GameMode[]): Promise<GlobalStatistics> {

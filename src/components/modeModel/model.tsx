@@ -4,6 +4,7 @@ import { GameMode } from "../../data/types";
 
 export interface Model {
   selectedModes: GameMode[];
+  careerRankingMinGames?: number;
 }
 
 type ModelUpdate = Partial<Model>;
@@ -18,11 +19,11 @@ export function ModelModeProvider({ children }: { children: ReactChild | ReactCh
   const [model, updateModel] = useReducer(
     (oldModel: Model, newProps: ModelUpdate): Model => ({
       ...oldModel,
-      ...newProps
+      ...newProps,
     }),
     null,
     (): Model => ({
-      ...DEFAULT_MODEL
+      ...DEFAULT_MODEL,
     })
   );
   const value: [Model, DispatchModelUpdate] = useMemo(() => [model, updateModel], [model, updateModel]);
