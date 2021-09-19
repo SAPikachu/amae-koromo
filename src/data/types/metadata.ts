@@ -314,6 +314,7 @@ export const PlayerMetadata = Object.freeze({
     return this.calculateRankDeltaPoints(metadata, mode, undefined, false, false);
   },
   estimateStableLevel2(metadata: PlayerMetadata, mode: GameMode): string {
+    console.log(metadata, mode);
     if (![GameMode.玉, GameMode.王座].includes(mode)) {
       return this.estimateStableLevel(metadata, mode);
     }

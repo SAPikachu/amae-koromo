@@ -37,7 +37,9 @@ const ROUTES = (
         <CareerRankingColumn
           type={CareerRankingType.StableLevel}
           title="安定段位"
-          formatter={(_, metadata, modes) => PlayerMetadata.estimateStableLevel2(metadata, modes[0])}
+          formatter={(_, metadata, modes) =>
+            PlayerMetadata.estimateStableLevel2({ ...metadata, level: metadata.ranking_level }, modes[0])
+          }
           disableMixedMode
         />
       </CareerRanking>
@@ -47,7 +49,9 @@ const ROUTES = (
         <CareerRankingColumn
           type={CareerRankingType.StableLevel}
           title="安定段位"
-          formatter={(_, metadata, modes) => PlayerMetadata.estimateStableLevel(metadata, modes[0])}
+          formatter={(_, metadata, modes) =>
+            PlayerMetadata.estimateStableLevel({ ...metadata, level: metadata.ranking_level }, modes[0])
+          }
           disableMixedMode
         />
       </CareerRanking>

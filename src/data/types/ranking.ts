@@ -19,6 +19,7 @@ export type DeltaRankingResponse = {
 };
 export interface CareerRankingItem extends PlayerMetadata {
   rank_key: number;
+  ranking_level: LevelWithDelta;
   count: number;
 }
 export enum CareerRankingType {
