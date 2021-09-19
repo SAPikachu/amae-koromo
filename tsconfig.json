@@ -1,9 +1,8 @@
 {
-  "include": [
-    "./src/**/*"
-  ],
+  "include": ["./src/**/*"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "useUnknownInCatchVariables": false,
     "moduleResolution": "node",
     "target": "es2017",
     "strict": true,
@@ -16,12 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "lib": [
-      "dom",
-      "es2015",
-      "es2017",
-      "DOM"
-    ],
+    "lib": ["dom", "es2015", "es2017", "DOM"],
     "noFallthroughCasesInSwitch": true
   }
 }

@@ -34,10 +34,9 @@ const createDot = (props: { payload: DotPayload }, active?: boolean) => {
   return (
     <Dot
       {...props}
-      r={2.5 * scale}
       stroke={Conf.rankColors[props.payload.rank]}
       onClick={() => window.open(GameRecord.getRecordLink(props.payload.game, props.payload.playerId), "_blank")}
-      {...(active ? { fill: Conf.rankColors[props.payload.rank], r: 5 * scale } : {})}
+      {...(active ? { fill: Conf.rankColors[props.payload.rank], r: 5 * scale } : { r: 2.5 * scale })}
     />
   );
 };
