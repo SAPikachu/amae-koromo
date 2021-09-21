@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "lib": ["dom", "es2015", "es2017", "DOM"],
+    "lib": ["dom", "es2015", "es2017", "DOM", "webworker"],
     "noFallthroughCasesInSwitch": true
   }
 }

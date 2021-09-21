@@ -30,21 +30,26 @@ render(
 );
 
 serviceWorker.register({
+  onControllerChange() {
+    window.location.reload();
+  },
   onUpdate(registration) {
     const waitingServiceWorker = registration.waiting || navigator.serviceWorker.controller;
 
     if (waitingServiceWorker) {
-      if (waitingServiceWorker.state === "activated") {
+      if (waitingServiceWorker.state === "activated" || waitingServiceWorker.state === "activating") {
         window.location.reload();
         return;
       }
       waitingServiceWorker.addEventListener("statechange", (event) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (event.target && (event.target as any).state === "activated") {
+        const state = (event.target as any)?.state;
+        if (state === "activated" || state === "activating") {
           window.location.reload();
         }
       });
       waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+      window.location.reload();
     }
   },
 });

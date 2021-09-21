@@ -23,6 +23,7 @@ const isLocalhost = Boolean(
 type Config = {
   onSuccess?: (registration: ServiceWorkerRegistration) => void;
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
+  onControllerChange?: (container: ServiceWorkerContainer) => void;
 };
 
 export function register(config?: Config) {
@@ -63,6 +64,13 @@ function registerValidSW(swUrl: string, config?: Config) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.oncontrollerchange = () => {
+          if (config?.onControllerChange) {
+            config.onControllerChange(navigator.serviceWorker);
+          }
+        };
+      }
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) {
