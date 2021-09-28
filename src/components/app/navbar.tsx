@@ -267,8 +267,8 @@ export default function Navbar() {
         <AppBar position="fixed">
           <Toolbar variant="dense">
             <Container>
-              <Box display="flex">
-                <Button href="/" size="large">
+              <Box display="flex" alignItems="center">
+                <Button href="/" size="large" variant="text" sx={{ padding: 0 }} disableRipple>
                   {t(Conf.siteTitle)}
                 </Button>
                 <Box flexGrow={1}></Box>

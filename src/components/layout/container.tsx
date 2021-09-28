@@ -1,12 +1,14 @@
 import React, { ReactNode } from "react";
 
-export const Container = ({ title = undefined, children = undefined as ReactNode, fluid = false }) => (
-  <div className={`my-5 container${fluid ? "-fluid" : ""}`}>
-    <div className="row">
-      <div className="col-sm-12">
-        {title && <h2 className="mb-4">{title}</h2>}
-        {children}
-      </div>
-    </div>
-  </div>
+import { Container as MuiContainer, Typography } from "@mui/material";
+
+export const Container = ({ title = undefined, children = undefined as ReactNode }) => (
+  <MuiContainer sx={{ my: 5 }}>
+    {title && (
+      <Typography variant="h2" sx={{ mb: 4 }}>
+        {title}
+      </Typography>
+    )}
+    {children}
+  </MuiContainer>
 );
