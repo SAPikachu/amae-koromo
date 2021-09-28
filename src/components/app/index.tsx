@@ -15,6 +15,10 @@ import Tracker, { PageCategory } from "../misc/tracker";
 import Conf from "../../utils/conf";
 import { useTranslation } from "react-i18next";
 
+import "./theme";
+import RootThemeProvider from "./theme";
+import { CssBaseline } from "@mui/material";
+
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
   loading: () => <></>,
@@ -39,39 +43,46 @@ const ContestTools = Loadable({
 function App() {
   const { t, i18n } = useTranslation();
   return (
-    <div className={"lang-" + i18n.language}>
-      <Router>
-        <Helmet defaultTitle={t(Conf.siteTitle)} titleTemplate={`%s | ${t(Conf.siteTitle)}`} />
-        <CanonicalLink />
-        <Tracker />
-        <Navbar />
-        <MaintenanceHandler>
-          <Scroller>
-            {Conf.showTopNotice ? <AppHeader /> : <></>}
-            <Container>
-              <Switch>
-                <Route path="/ranking">
-                  <PageCategory category="Ranking" />
-                  <Ranking />
-                </Route>
-                <Route path="/statistics">
-                  <PageCategory category="Statistics" />
-                  <Statistics />
-                </Route>
-                <Route path="/highlight">
-                  <PageCategory category="RecentHighlight" />
-                  <RecentHighlight />
-                </Route>
-                {Conf.features.contestTools ? <Route path="/contest-tools"><ContestTools/></Route> : null}
-                <Route path="/">
-                  <GameRecords />
-                </Route>
-              </Switch>
-            </Container>
-          </Scroller>
-        </MaintenanceHandler>
-      </Router>
-    </div>
+    <RootThemeProvider>
+      <CssBaseline />
+      <div className={"lang-" + i18n.language}>
+        <Router>
+          <Helmet defaultTitle={t(Conf.siteTitle)} titleTemplate={`%s | ${t(Conf.siteTitle)}`} />
+          <CanonicalLink />
+          <Tracker />
+          <Navbar />
+          <MaintenanceHandler>
+            <Scroller>
+              {Conf.showTopNotice ? <AppHeader /> : <></>}
+              <Container>
+                <Switch>
+                  <Route path="/ranking">
+                    <PageCategory category="Ranking" />
+                    <Ranking />
+                  </Route>
+                  <Route path="/statistics">
+                    <PageCategory category="Statistics" />
+                    <Statistics />
+                  </Route>
+                  <Route path="/highlight">
+                    <PageCategory category="RecentHighlight" />
+                    <RecentHighlight />
+                  </Route>
+                  {Conf.features.contestTools ? (
+                    <Route path="/contest-tools">
+                      <ContestTools />
+                    </Route>
+                  ) : null}
+                  <Route path="/">
+                    <GameRecords />
+                  </Route>
+                </Switch>
+              </Container>
+            </Scroller>
+          </MaintenanceHandler>
+        </Router>
+      </div>
+    </RootThemeProvider>
   );
 }
 export default App;

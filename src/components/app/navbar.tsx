@@ -1,10 +1,33 @@
-import React from "react";
+import React, { ReactElement, ReactNode, useState } from "react";
 import { Location } from "history";
-import { Link, NavLink } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
 import Conf, { CONFIGURATIONS } from "../../utils/conf";
 import { useTranslation } from "react-i18next";
+import {
+  AppBar,
+  Button,
+  ButtonGroup,
+  Container,
+  Toolbar,
+  MenuItem,
+  Menu,
+  MenuItemProps,
+  ButtonProps,
+  Box,
+  IconButton,
+  useScrollTrigger,
+  Slide,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemText,
+  Divider,
+  ListItemIcon,
+  ListItem,
+} from "@mui/material";
+import { ArrowDropDown, Language, Twitter, Menu as MenuIcon } from "@mui/icons-material";
+import { OverrideTheme } from "./theme";
 import clsx from "clsx";
+import { NavLink, NavLinkProps } from "react-router-dom";
 
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
@@ -34,87 +57,232 @@ function isActive(match: any, location: Location): boolean {
   return !NAV_ITEMS.some(({ path }) => location.pathname.startsWith("/" + path));
 }
 
-export default function Navbar() {
-  const { t, i18n } = useTranslation();
-  const [mobileVisible, setMobileVisible] = useState(false);
-  const onToggleButtonClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setMobileVisible(!mobileVisible);
-    },
-    [mobileVisible, setMobileVisible]
-  );
-  useEffect(() => {
-    if (!mobileVisible) {
-      return;
-    }
-    const handler = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).classList.contains("navbar-toggler")) {
-        return;
-      }
-      setMobileVisible(false);
-    };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, [mobileVisible, setMobileVisible]);
+function HideOnScroll({ children }: { children: ReactElement | undefined }) {
+  const trigger = useScrollTrigger();
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light fixed-top">
-      <div className="container">
-        <Link className="navbar-brand" to="/">
-          {t(Conf.siteTitle)}
-        </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-          onClick={onToggleButtonClick}
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div
-          className={`collapse navbar-collapse justify-content-end ${mobileVisible ? "" : "d-none"} d-lg-block`}
-          id="navbarNavAltMarkup"
-        >
-          <div className="navbar-nav">
-            <NavLink className="nav-item nav-link" activeClassName="active" to="/" isActive={isActive}>
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
+
+const NavButton = ({ href, children, ...props }: ButtonProps & Omit<NavLinkProps, "to">) => (
+  <Button LinkComponent={NavLink} {...{ to: href, activeClassName: "active" }} {...props}>
+    {children}
+  </Button>
+);
+
+const MobileNavButton = ({ href, children, ...props }: ButtonProps & Omit<NavLinkProps, "to">) => (
+  <ListItem disablePadding>
+    <ListItemButton component={NavLink} {...{ to: href, activeClassName: "Mui-selected" }} {...props}>
+      <ListItemIcon></ListItemIcon>
+      <ListItemText>{children}</ListItemText>
+    </ListItemButton>
+  </ListItem>
+);
+
+function MenuButton({
+  label,
+  children,
+  ...props
+}: {
+  label: ReactNode;
+  children: ReactElement<MenuItemProps>[];
+} & ButtonProps) {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleItemClick = (item: ReactElement<MenuItemProps>) => {
+    const onClick = item.props.onClick;
+    if (!onClick) {
+      return handleClose;
+    }
+    return (e: React.MouseEvent<HTMLLIElement>) => {
+      handleClose();
+      onClick(e);
+    };
+  };
+  return (
+    <>
+      <Button {...props} onClick={handleClick}>
+        {label}
+      </Button>
+      <Menu
+        open={open}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        disableScrollLock
+      >
+        {React.Children.map(children, (x) => React.cloneElement(x, { onClick: handleItemClick(x) }))}
+      </Menu>
+    </>
+  );
+}
+
+function DesktopItems() {
+  const { t, i18n } = useTranslation();
+  return (
+    <>
+      <ButtonGroup>
+        <NavButton href="/" isActive={isActive}>
+          {t("主页")}
+        </NavButton>
+        {NAV_ITEMS.map(({ label, path }) => (
+          <NavButton key={path} href={`/${path}`}>
+            {t(label)}
+          </NavButton>
+        ))}
+      </ButtonGroup>
+      <ButtonGroup>
+        {SITE_LINKS.map(({ label, domain, active }) => (
+          <Button className={clsx(active && "active")} key={domain} href={`https://${domain}/`}>
+            {t(label)}
+          </Button>
+        ))}
+      </ButtonGroup>
+      <MenuButton
+        startIcon={<Language />}
+        endIcon={<ArrowDropDown />}
+        label={LANGUAGES.find((x) => x.code === i18n.language)?.label}
+      >
+        {LANGUAGES.map(({ label, code }) => (
+          <MenuItem key={code} onClick={() => i18n.changeLanguage(code)} selected={code === i18n.language}>
+            {label}
+          </MenuItem>
+        ))}
+      </MenuButton>
+      <IconButton href="https://twitter.com/AmaeKoromo_MajS">
+        <Twitter />
+      </IconButton>
+    </>
+  );
+}
+function MobileItems() {
+  const { t, i18n } = useTranslation();
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <IconButton onClick={() => setOpen(true)}>
+        <MenuIcon />
+      </IconButton>
+      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+        <Box width={250} onClick={() => setOpen(false)}>
+          <List>
+            <MobileNavButton href="/" isActive={isActive}>
               {t("主页")}
-            </NavLink>
+            </MobileNavButton>
             {NAV_ITEMS.map(({ label, path }) => (
-              <NavLink key={path} className="nav-item nav-link" activeClassName="active" to={`/${path}`}>
+              <MobileNavButton key={path} href={`/${path}`}>
                 {t(label)}
-              </NavLink>
+              </MobileNavButton>
             ))}
-            <span className="sep"></span>
+          </List>
+          <Divider />
+          <List>
             {SITE_LINKS.map(({ label, domain, active }) => (
-              <a key={domain} className={clsx("nav-item nav-link", active && "active")} href={`https://${domain}/`}>
-                {t(label)}
-              </a>
+              <ListItem disablePadding key={domain}>
+                <ListItemButton selected={active} href={`https://${domain}/`}>
+                  <ListItemIcon></ListItemIcon>
+                  <ListItemText>{t(label)}</ListItemText>
+                </ListItemButton>
+              </ListItem>
             ))}
-            <span className="sep"></span>
-            <a className="nav-item nav-link" href="https://twitter.com/AmaeKoromo_MajS">
-              {t("Twitter")}
-            </a>
-            <span className="sep"></span>
+          </List>
+          <Divider />
+          <List>
             {LANGUAGES.map(({ label, code }) => (
-              <button
-                key={code}
-                className={clsx("nav-item nav-link", i18n.language === code && "active")}
-                onClick={(e) => {
-                  e.preventDefault();
-                  i18n.changeLanguage(code);
-                }}
-              >
-                {label}
-              </button>
+              <ListItem disablePadding key={code}>
+                <ListItemButton onClick={() => i18n.changeLanguage(code)} selected={code === i18n.language}>
+                  <ListItemIcon></ListItemIcon>
+                  <ListItemText>{label}</ListItemText>
+                </ListItemButton>
+              </ListItem>
             ))}
-          </div>
-        </div>
-      </div>
-    </nav>
+          </List>
+          <Divider />
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton href="https://twitter.com/AmaeKoromo_MajS">
+                <ListItemIcon>
+                  <Twitter />
+                </ListItemIcon>
+                <ListItemText>{t("Twitter")}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
+    </>
+  );
+}
+
+export default function Navbar() {
+  const { t } = useTranslation();
+  return (
+    <OverrideTheme
+      theme={{
+        components: {
+          MuiIconButton: {
+            defaultProps: {
+              color: "inherit",
+            },
+          },
+          MuiButtonGroup: {
+            defaultProps: {
+              variant: "text",
+              sx: {
+                mr: 3,
+              },
+            },
+            styleOverrides: {
+              root: {
+                "& .MuiButton-root": {
+                  opacity: 0.5,
+                  "&:hover, &.active": {
+                    opacity: 1,
+                  },
+                },
+              },
+            },
+          },
+        },
+      }}
+    >
+      {" "}
+      <HideOnScroll>
+        <AppBar position="fixed">
+          <Toolbar variant="dense">
+            <Container>
+              <Box display="flex">
+                <Button href="/" size="large">
+                  {t(Conf.siteTitle)}
+                </Button>
+                <Box flexGrow={1}></Box>
+                <Box display={["none", null, "flex"]} alignItems="center">
+                  <DesktopItems />
+                </Box>
+                <Box display={["block", null, "none"]}>
+                  <MobileItems />
+                </Box>
+              </Box>
+            </Container>
+          </Toolbar>
+        </AppBar>
+      </HideOnScroll>
+    </OverrideTheme>
   );
 }

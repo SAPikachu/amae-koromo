@@ -1,7 +1,26 @@
-const { prependWebpackPlugin } = require("@rescripts/utilities");
+const { prependWebpackPlugin, getPaths, edit } = require("@rescripts/utilities");
 const { RetryChunkLoadPlugin } = require("webpack-retry-chunk-load-plugin");
+const isBabelLoader = (inQuestion) => inQuestion && inQuestion.loader && inQuestion.loader.includes("babel-loader");
 
 module.exports = [
+  process.env.NODE_ENV !== "production"
+    ? (config) => {
+        const babelLoaderPaths = getPaths(isBabelLoader, config);
+        return edit(
+          (section) => {
+            if (section.test.toString().includes("tsx")) {
+              section.options.plugins.unshift([
+                "babel-plugin-direct-import",
+                { modules: ["@mui/material", "@mui/icons-material"] },
+              ]);
+            }
+            return section;
+          },
+          babelLoaderPaths,
+          config
+        );
+      }
+    : (config) => config,
   process.env.NODE_ENV === "production"
     ? (config) =>
         prependWebpackPlugin(

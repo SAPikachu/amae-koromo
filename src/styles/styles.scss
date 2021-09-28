@@ -9,18 +9,18 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
-  font-family: "Microsoft YaHei", "Meiryo", "Segoe UI", sans-serif;
+  font-family: "Microsoft YaHei", "Meiryo", "Roboto", sans-serif;
   overflow-y: scroll;
   padding-top: 50px;
 }
 .lang-ja {
-  font-family: "Meiryo", "Microsoft YaHei", "Segoe UI", sans-serif;
+  font-family: "Meiryo", "Microsoft YaHei", "Roboto", sans-serif;
 }
 .lang-ko {
-  font-family: "Malgun Gothic", "Meiryo", "Microsoft YaHei", "Segoe UI", sans-serif;
+  font-family: "Malgun Gothic", "Meiryo", "Microsoft YaHei", "Roboto", sans-serif;
 }
 .lang-en {
-  font-family: "Segoe UI", "Meiryo", "Microsoft YaHei", sans-serif;
+  font-family: "Roboto", "Meiryo", "Microsoft YaHei", sans-serif;
 }
 .koromo body {
   background-image: url(../assets/img/koromo.jpg);
@@ -80,30 +80,6 @@ dl:empty {
   .lang-en .mobile-vertical {
     letter-spacing: 0;
   }
-}
-.navbar {
-  transition: background-color 0.3s;
-  background: rgba(255, 255, 255, 0.45);
-}
-.navbar .sep {
-  display: block;
-  width: 2em;
-  height: 1em;
-}
-@include media-breakpoint-down(lg) {
-  .navbar {
-    background: rgba(255, 255, 255, 0.8);
-  }
-  .lang-ja .navbar,
-  .lang-en .navbar {
-    font-size: 0.8rem;
-  }
-}
-.navbar:hover {
-  background: rgba(255, 255, 255, 1);
-}
-button.nav-link {
-  text-align: left;
 }
 button.nav-link,
 button.button-link {
