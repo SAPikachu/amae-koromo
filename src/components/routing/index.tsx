@@ -1,9 +1,10 @@
 import React from "react";
 import { useContext } from "react";
-import { NavLink } from "react-router-dom";
 import { useRouteMatch, Switch, Route, Redirect, useLocation } from "react-router";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
+import { Stack, StackProps } from "@mui/material";
+import NavButton from "../misc/navButton";
 
 type RouteDefProps = {
   path: string;
@@ -23,32 +24,39 @@ export const ViewRoutes: React.FunctionComponent<RoutesProps> = () => {
 
 const Context = React.createContext<RouteDefProps[]>([]);
 
-export function NavButtons({ className = "", replace = false, keepState = false, withQueryString = false }) {
+export function NavButtons({
+  replace = false,
+  keepState = false,
+  withQueryString = false,
+  sx = {} as StackProps["sx"],
+}) {
   const { t } = useTranslation("navButtons");
   const routes = useContext(Context);
   const match = useRouteMatch() || { url: "" };
   const urlBase = match.url.replace(/\/+$/, "");
   return (
-    <nav className={`nav nav-pills mb-3 ${className}`}>
+    <Stack direction="row" spacing={0} sx={{ mb: 2, ...sx }} flexWrap="wrap">
       {routes
         .filter((x) => !x.disabled)
         .map((route) => (
-          <NavLink
+          <NavButton
             key={route.path}
-            to={(loc) => ({
+            href={(loc) => ({
               pathname: `${urlBase}/${route.path}`,
               state: keepState ? loc.state : undefined,
               ...(withQueryString && loc.search ? { search: loc.search } : {}),
             })}
             replace={replace}
             exact={!!route.exact}
-            className="nav-link"
-            activeClassName="active"
+            color="info"
+            activeProps={{ variant: "contained" }}
+            disableElevation
+            sx={{ mr: 1 }}
           >
             {t(route.title)}
-          </NavLink>
+          </NavButton>
         ))}
-    </nav>
+    </Stack>
   );
 }
 

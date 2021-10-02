@@ -69,15 +69,15 @@ export default function MinMax() {
     }
     setPlayerList(Object.values(players));
     setLoading(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setLoading, dateStart, dateEnd, setPlayerList, playerList]);
   return (
     <>
       <FormRow title="开始日期">
-        <DatePicker min={Conf.dateMin} date={dateStart} onChange={setDateStart} className="form-control" />
+        <DatePicker min={Conf.dateMin} date={dateStart} onChange={setDateStart} />
       </FormRow>
       <FormRow title="结束日期">
-        <DatePicker min={Conf.dateMin} date={dateEnd} onChange={setDateEnd} className="form-control" />
+        <DatePicker min={Conf.dateMin} date={dateEnd} onChange={setDateEnd} />
       </FormRow>
       {loading ? (
         <Loading />

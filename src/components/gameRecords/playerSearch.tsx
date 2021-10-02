@@ -1,12 +1,12 @@
 import React from "react";
 import { useEffect, useState, useMemo } from "react";
 
-import Loading from "../misc/loading";
 import { PlayerMetadataLite, LevelWithDelta } from "../../data/types";
 import { searchPlayer } from "../../data/source/misc";
-import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { generatePlayerPathById } from "./routes";
 import { useTranslation } from "react-i18next";
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 
 const playerSearchCache = {} as { [prefix: string]: PlayerMetadataLite[] | Promise<PlayerMetadataLite[]> };
 const NUM_RESULTS_SHOWN = 6;
@@ -31,10 +31,16 @@ function findRawResultFromCache(prefix: string): { result: PlayerMetadataLite[];
   return null;
 }
 
-function PlayerSearchResult({ searchText }: { searchText: string }) {
+export function PlayerSearch() {
   const { t } = useTranslation();
+  const [selectedItem, setSelectedItem] = useState(null as PlayerMetadataLite | null);
   const [version, setVersion] = useState(0);
-  const [players, isLoading, mayHaveMore] = useMemo(() => {
+  const [searchText, setSearchText] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const [players, isLoading] = useMemo(() => {
+    if (!searchText) {
+      return [[], false];
+    }
     const cachedResult = findRawResultFromCache(searchText);
     if (!cachedResult) {
       return [[], true];
@@ -54,9 +60,11 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
       }
     });
     return [filteredPlayers, mayHaveMore && filteredPlayers.length < NUM_RESULTS_SHOWN, mayHaveMore];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchText, version]);
+  }, [searchText, version]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
+    if (!searchText.trim()) {
+      return;
+    }
     const prefix = normalizeName(searchText);
     if (playerSearchCache[prefix]) {
       return;
@@ -88,34 +96,40 @@ function PlayerSearchResult({ searchText }: { searchText: string }) {
       }
     };
   }, [searchText, isLoading]);
-  return (
-    <>
-      <ul className="list-unstyled mb-2">
-        {players.slice(0, NUM_RESULTS_SHOWN).map((x) => (
-          <li key={x.id}>
-            <Link to={generatePlayerPathById(x.id)}>
-              <span>
-                [{LevelWithDelta.getTag(x.level)}] {x.nickname}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-      {(isLoading && <Loading size="small" />) ||
-        ((players.length > NUM_RESULTS_SHOWN || mayHaveMore) && (
-          <small className="d-block text-center text-muted">{t("（输入更长名字显示其它结果）")}</small>
-        ))}
-    </>
-  );
-}
-
-export function PlayerSearch({ className = "player-search", searchText = "" }) {
-  if (!searchText) {
-    return <></>;
+  if (selectedItem) {
+    return <Redirect to={generatePlayerPathById(selectedItem.id)} push />;
   }
   return (
-    <div className={className}>
-      <PlayerSearchResult searchText={searchText} />
-    </div>
+    <Autocomplete
+      fullWidth
+      blurOnSelect
+      open={open && !!searchText.trim()}
+      onOpen={() => {
+        setOpen(true);
+      }}
+      onClose={() => {
+        setOpen(false);
+      }}
+      inputValue={searchText}
+      onInputChange={(_, value, reason) => setSearchText(reason === "reset" ? "" : value)}
+      onChange={(_, value, reason) => reason === "selectOption" && setSelectedItem(value)}
+      options={players}
+      getOptionLabel={(x) => `[${LevelWithDelta.getTag(x.level)}] ${x.nickname}`}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+      loading={isLoading}
+      filterOptions={(x) => x}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={t("名字")}
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <React.Fragment>{isLoading ? <CircularProgress color="inherit" size={20} /> : null}</React.Fragment>
+            ),
+          }}
+        />
+      )}
+    />
   );
 }

@@ -2,14 +2,16 @@ import { useState, useEffect, ReactNode } from "react";
 import React from "react";
 import { ReactComponentLike } from "prop-types";
 import { triggerRelayout } from "../../utils/index";
+import { Alert as MuiAlert, AlertColor, AlertTitle, Fade, AlertProps } from "@mui/material";
 
 export function Alert({
-  className = "",
-  type = "info",
+  type = "info" as AlertColor,
   container = React.Fragment as ReactComponentLike,
   stateName = "",
   closable = true,
-  children = undefined as ReactNode
+  title = "",
+  children = undefined as ReactNode,
+  sx = { mb: 2 } as AlertProps["sx"],
 }) {
   const stateKey = `alertState_${stateName}`;
   const [closed, setClosed] = useState(() => stateName && !!localStorage.getItem(stateKey));
@@ -24,24 +26,12 @@ export function Alert({
   const Cont = container;
   return (
     <Cont>
-      <div className={`alert alert-${type} alert-dismissible fade show ${className}`} role="alert">
-        {children}
-        {closable && (
-          <button
-            type="button"
-            className="close"
-            data-dismiss="alert"
-            aria-label="Close"
-            onClick={event => {
-              event.preventDefault();
-              setClosed(true);
-              triggerRelayout();
-            }}
-          >
-            <span aria-hidden="true">×</span>
-          </button>
-        )}
-      </div>
+      <Fade in={!closed} onEntering={() => triggerRelayout()} onExited={() => triggerRelayout()}>
+        <MuiAlert severity={type} onClose={closable ? () => setClosed(true) : undefined} sx={sx}>
+          {title && <AlertTitle>{title} </AlertTitle>}
+          {children}
+        </MuiAlert>
+      </Fade>
     </Cont>
   );
 }

@@ -1,26 +1,15 @@
-import React, { useState } from "react";
-
 import { Switch, Route, Redirect, generatePath as genPath } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
 import { Model, useModel } from "./model";
 import dayjs from "dayjs";
 import { RouteSync } from "./routeSync";
-import { FilterPanel } from "./filterPanel";
 import Loadable from "../misc/customizedLoadable";
 import Loading from "../misc/loading";
-import { PlayerSearch } from "./playerSearch";
 import { COLUMN_RANK } from "./table";
-import {
-  default as GameRecordTable,
-  COLUMN_GAMEMODE,
-  COLUMN_PLAYERS,
-  COLUMN_STARTTIME,
-  COLUMN_ENDTIME,
-  COLUMN_FULLTIME,
-} from "./table";
+import { default as GameRecordTable, COLUMN_GAMEMODE, COLUMN_PLAYERS, COLUMN_FULLTIME } from "./table";
 import { PageCategory } from "../misc/tracker";
-import { FormRow } from "../form";
+import Home from "./home";
+
 const PlayerDetails = Loadable({
   loader: () => import("../playerDetails/playerDetails"),
   loading: () => <Loading />,
@@ -94,8 +83,6 @@ function GameRecordTablePlayerView() {
 }
 
 function Routes() {
-  const { t } = useTranslation("formRow");
-  const [searchText, setSearchText] = useState("");
   return (
     <Switch>
       <Route path={PLAYER_PATH}>
@@ -107,23 +94,7 @@ function Routes() {
       <Route exact path={["/", PATH]}>
         <RouteSync view="listing" />
         <PageCategory category="Listing" />
-        <h2 className="text-center mb-3">{t("查找玩家")}</h2>
-        <div className="home-header mb-5">
-          <FormRow title="名字">
-            <input
-              type="text"
-              className="form-control"
-              value={searchText}
-              onChange={(e) => setSearchText(e.currentTarget.value)}
-            />
-          </FormRow>
-          <PlayerSearch searchText={searchText} />
-        </div>
-        <h2 className="text-center mb-3">{t("对局浏览")}</h2>
-        <div className="home-header">
-          <FilterPanel />
-        </div>
-        <GameRecordTable columns={[COLUMN_GAMEMODE, COLUMN_PLAYERS(""), COLUMN_STARTTIME, COLUMN_ENDTIME]} />
+        <Home />
       </Route>
       <Route>
         <Redirect to="/" />

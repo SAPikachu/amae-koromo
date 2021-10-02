@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/indent */
 import React from "react";
-import { Link } from "react-router-dom";
 
 import { CareerRankingItem, CareerRankingType } from "../../data/types/ranking";
 import { useAsyncFactory } from "../../utils";
@@ -13,6 +12,18 @@ import { ModelModeSelector, useModel } from "../modeModel";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
 import { CheckboxGroup } from "../form";
+import {
+  Box,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Link,
+} from "@mui/material";
 
 type ExtraColumnInternal = {
   label: string;
@@ -37,40 +48,42 @@ function RankingTable({
     return <Loading />;
   }
   return (
-    <table className="table table-striped">
-      <thead>
-        <tr>
-          <th className="text-right">{t("排名")}</th>
-          <th>{t("玩家")}</th>
-          {showNumGames && <th className="text-right">{t("对局数")}</th>}
-          {extraColumns.map((x) => (
-            <th className="text-right" key={x.label}>
-              {t(x.label)}
-            </th>
-          ))}
-          <th className="text-right">{valueLabel}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((x, index) => (
-          <tr key={x.id}>
-            <td className="text-right">{index + 1}</td>
-            <td>
-              <Link to={generatePlayerPathById(x.id)}>
-                [{LevelWithDelta.getTag(x.level)}] {x.nickname}
-              </Link>
-            </td>
-            {showNumGames && <td className="text-right">{x.count}</td>}
-            {extraColumns.map((col) => (
-              <td className="text-right" key={col.label}>
-                {col.value(x)}
-              </td>
+    <TableContainer>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ textAlign: "right" }}>{t("排名")}</TableCell>
+            <TableCell>{t("玩家")}</TableCell>
+            {showNumGames && <TableCell sx={{ textAlign: "right" }}>{t("对局数")}</TableCell>}
+            {extraColumns.map((x) => (
+              <TableCell sx={{ textAlign: "right" }} key={x.label}>
+                {t(x.label)}
+              </TableCell>
             ))}
-            <td className="text-right">{formatter(x.rank_key, x, modes)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+            <TableCell sx={{ textAlign: "right" }}>{valueLabel}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((x, index) => (
+            <TableRow key={x.id}>
+              <TableCell sx={{ textAlign: "right" }}>{index + 1}</TableCell>
+              <TableCell>
+                <Link href={generatePlayerPathById(x.id)}>
+                  [{LevelWithDelta.getTag(x.level)}] {x.nickname}
+                </Link>
+              </TableCell>
+              {showNumGames && <TableCell sx={{ textAlign: "right" }}>{x.count}</TableCell>}
+              {extraColumns.map((col) => (
+                <TableCell sx={{ textAlign: "right" }} key={col.label}>
+                  {col.value(x)}
+                </TableCell>
+              ))}
+              <TableCell sx={{ textAlign: "right" }}>{formatter(x.rank_key, x, modes)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
 
@@ -103,8 +116,10 @@ export function CareerRankingColumn({
     `getCareerRanking-${modes.join(".")}-${model.careerRankingMinGames || 300}`
   );
   return (
-    <div className="col-lg">
-      <h3 className="text-center mb-2">{t(title)}</h3>
+    <>
+      <Typography textAlign="center" mb={2} variant="h5">
+        {t(title)}
+      </Typography>
       {!disableMixedMode || !isMixedMode ? (
         <RankingTable
           rows={data}
@@ -115,9 +130,11 @@ export function CareerRankingColumn({
           extraColumns={extraColumns.map((x) => ({ ...x, value: (item) => x.value(item, modes) }))}
         />
       ) : (
-        <p className="text-center mt-4">{t("请选择模式")}</p>
+        <Box textAlign="center" mt={4}>
+          {t("请选择模式")}
+        </Box>
       )}
-    </div>
+    </>
   );
 }
 export function CareerRankingPlain({
@@ -131,11 +148,13 @@ export function CareerRankingPlain({
     children = [children];
   }
   return (
-    <div className="row">
+    <Grid container spacing={2} rowSpacing={3}>
       {children.map((x, i) => (
-        <React.Fragment key={i}>{x}</React.Fragment>
+        <Grid item lg key={i}>
+          {x}
+        </Grid>
       ))}
-    </div>
+    </Grid>
   );
 }
 export function CareerRanking({
@@ -152,23 +171,19 @@ export function CareerRanking({
   }
   return (
     <>
-      <div className="row mb-2">
-        <div className="col">
-          <CheckboxGroup
-            type="radio"
-            groupKey="MinGamesSelector"
-            items={[
-              { key: "300", value: 300, label: "300 " + t("局") },
-              { key: "600", value: 600, label: "600 " + t("局") },
-              { key: "1000", value: 1000, label: "1000 " + t("局") },
-            ]}
-            selectedItems={[(model.careerRankingMinGames || 300).toString()]}
-            onChange={(newItems) => {
-              updateModel({ careerRankingMinGames: newItems[0].value });
-            }}
-          />
-        </div>
-      </div>
+      <CheckboxGroup
+        type="radio"
+        groupKey="MinGamesSelector"
+        items={[
+          { key: "300", value: 300, label: "300 " + t("局") },
+          { key: "600", value: 600, label: "600 " + t("局") },
+          { key: "1000", value: 1000, label: "1000 " + t("局") },
+        ]}
+        selectedItems={[(model.careerRankingMinGames || 300).toString()]}
+        onChange={(newItems) => {
+          updateModel({ careerRankingMinGames: newItems[0].value });
+        }}
+      />
       <ModelModeSelector
         type="checkbox"
         availableModes={Conf.features.ranking || []}

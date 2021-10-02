@@ -4,11 +4,12 @@ import { Container } from "../layout";
 import { Alert } from "../misc/alert";
 import Conf from "../../utils/conf";
 import { useTranslation } from "react-i18next";
+import { AlertTitle } from "@mui/material";
 
 function AlertDefault() {
   return (
     <>
-      <h4>说明</h4>
+      <AlertTitle>说明</AlertTitle>
       <ul>
         <li>本页面数据由第三方维护，不能绝对保证完整和正确，信息仅供参考，请勿用于不良用途。</li>
         <li>记录包含雀魂段位战金之间、玉之间及王座之间的牌谱。</li>
@@ -33,7 +34,7 @@ function AlertDefault() {
 function AlertEn() {
   return (
     <>
-      <h4>Notes</h4>
+      <AlertTitle>Notes</AlertTitle>
       <ul>
         <li>
           This is a fan site, data accuracy can&apos;t be fully guaranteed, please use the data for reference only and
@@ -70,7 +71,7 @@ function AlertEn() {
 function AlertJa() {
   return (
     <>
-      <h4>説明</h4>
+      <AlertTitle>説明</AlertTitle>
       <ul>
         <li>
           当サイトは非公式サイトで、データの完全性と正確性が保証できません、予めご了承ください。サイトの内容を悪用しないでください。
@@ -100,24 +101,26 @@ function AlertJa() {
 function AlertKo() {
   return (
     <>
-      <h4>안내</h4>
+      <AlertTitle>안내</AlertTitle>
       <ul>
         <li>
-          본 사이트는 비공식 사이트로, 데이터의 완전성과 정확성이 보증되지 않습니다. 사이트 내용을 악용하지 말아 주십시오.
-        </li>
-        <li>데이터 갱신은 실시간으로 이루어지지 않습니다. 대국이 사이트에 반영되기까지는 수 분에서 수 시간이 걸립니다.</li>
-        <li>
-          데이터 수집은 2019년 11월 29일부터(옥탁 반장과 왕좌탁 반장은 2019년 8월 23일) 시작되었습니다.
-          수집 개시 이전의 대국은 검색할 수 없습니다.
+          본 사이트는 비공식 사이트로, 데이터의 완전성과 정확성이 보증되지 않습니다. 사이트 내용을 악용하지 말아
+          주십시오.
         </li>
         <li>
-          <a href={"https://" + Conf.canonicalDomain}>메인 사이트</a>
-          는 서비스 향상을 위해 약간의 익명 사용 데이터를 수집하고 있습니다. 원치 않는 분은{" "}
-          <a href={Conf.mirrorUrl}>미러 사이트</a>를 이용해 주십시오.
+          데이터 갱신은 실시간으로 이루어지지 않습니다. 대국이 사이트에 반영되기까지는 수 분에서 수 시간이 걸립니다.
         </li>
         <li>
-          잘못된 내용 등이 있는 경우 <a href="mailto:i@sapika.ch">SAPikachu (i@sapika.ch)</a>{" "}
-          또는 <a href="https://github.com/SAPikachu/amae-koromo/">GitHub</a>로 연락해주시길 바랍니다.
+          데이터 수집은 2019년 11월 29일부터(옥탁 반장과 왕좌탁 반장은 2019년 8월 23일) 시작되었습니다. 수집 개시 이전의
+          대국은 검색할 수 없습니다.
+        </li>
+        <li>
+          <a href={"https://" + Conf.canonicalDomain}>메인 사이트</a>는 서비스 향상을 위해 약간의 익명 사용 데이터를
+          수집하고 있습니다. 원치 않는 분은 <a href={Conf.mirrorUrl}>미러 사이트</a>를 이용해 주십시오.
+        </li>
+        <li>
+          잘못된 내용 등이 있는 경우 <a href="mailto:i@sapika.ch">SAPikachu (i@sapika.ch)</a> 또는{" "}
+          <a href="https://github.com/SAPikachu/amae-koromo/">GitHub</a>로 연락해주시길 바랍니다.
         </li>
         <li>
           한국어 번역은 <a href="https://github.com/limgit">limgit</a>가 도움을 주었습니다. 감사합니다!

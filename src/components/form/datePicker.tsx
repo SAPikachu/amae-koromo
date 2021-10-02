@@ -4,25 +4,45 @@ import React from "react";
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
+import AdapterDayJs from "@mui/lab/AdapterDayjs";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { DatePicker as MuiDatePicker } from "@mui/lab";
+import { TextField } from "@mui/material";
+
 export function DatePicker({
   date = dayjs() as dayjs.ConfigType,
   onChange = (() => {}) as (_: dayjs.Dayjs) => void,
-  className = "",
   min = 0 as dayjs.ConfigType,
-  max = dayjs() as dayjs.ConfigType
+  max = dayjs() as dayjs.ConfigType,
+  label = "",
+  fullWidth = false,
 }) {
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => onChange(dayjs(e.currentTarget.value, "YYYY-MM-DD")),
-    [onChange]
-  );
+  const handleChange = useCallback((value: dayjs.Dayjs | null) => onChange(value || dayjs(date)), [date, onChange]);
   return (
-    <input
-      className={className}
-      type="date"
-      value={dayjs(date).format("YYYY-MM-DD")}
-      min={min ? dayjs(min).format("YYYY-MM-DD") : undefined}
-      max={max ? dayjs(max).format("YYYY-MM-DD") : undefined}
-      onChange={handleChange}
-    />
+    <LocalizationProvider
+      dateAdapter={AdapterDayJs}
+      dateFormats={{
+        month: "MM",
+        monthShort: "MM",
+        monthAndDate: "MM-DD",
+        monthAndYear: "YYYY-MM",
+        fullDate: "YYYY-MM-DD",
+        keyboardDate: "YYYY-MM-DD",
+      }}
+    >
+      <MuiDatePicker
+        disableCloseOnSelect={false}
+        label={label}
+        value={dayjs(date)}
+        onChange={handleChange}
+        ignoreInvalidInputs
+        toolbarFormat=" "
+        toolbarTitle=""
+        mask="____-__-__"
+        renderInput={(params: any) => <TextField fullWidth={fullWidth} {...params} />} // eslint-disable-line @typescript-eslint/no-explicit-any
+        minDate={dayjs(min)}
+        maxDate={dayjs(max)}
+      />
+    </LocalizationProvider>
   );
 }

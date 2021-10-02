@@ -1,6 +1,3 @@
-import React from "react";
-import { Link } from "react-router-dom";
-
 import { DeltaRankingItem, RankingTimeSpan } from "../../data/types/ranking";
 import { useAsyncFactory } from "../../utils";
 import { getDeltaRanking } from "../../data/source/misc";
@@ -10,25 +7,42 @@ import { LevelWithDelta } from "../../data/types";
 import { useModel, ModelModeSelector } from "../modeModel";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
+import {
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
+  Link,
+  TypographyProps,
+  GridProps,
+} from "@mui/material";
 
 function RankingTable({ rows = [] as DeltaRankingItem[] }) {
   return (
-    <table className="table table-striped">
-      <tbody>
-        {rows.map(x => (
-          <tr key={x.id}>
-            <td>
-              <Link to={generatePlayerPathById(x.id)}>
-                [{LevelWithDelta.getTag(x.level)}] {x.nickname}
-              </Link>
-            </td>
-            <td className="text-right">{x.delta}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <TableContainer>
+      <Table>
+        <TableBody>
+          {rows.map((x) => (
+            <TableRow key={x.id}>
+              <TableCell>
+                <Link href={generatePlayerPathById(x.id)}>
+                  [{LevelWithDelta.getTag(x.level)}] {x.nickname}
+                </Link>
+              </TableCell>
+              <TableCell sx={{ textAlign: "right" }}>{x.delta}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
+
+const Title = (props: TypographyProps) => <Typography mb={1} textAlign="center" {...props} />;
+const GridContainer = (props: GridProps) => <Grid container spacing={2} rowSpacing={3} {...props} />;
 
 export default function DeltaRanking() {
   const { t } = useTranslation();
@@ -55,34 +69,34 @@ export default function DeltaRanking() {
         availableModes={Conf.features.ranking || []}
         allowedCombinations={Conf.features.rankingGroups}
       />
-      <div className="row">
-        <div className="col-lg-6">
-          <h3 className="text-center">{t("苦主榜")}</h3>
-          <div className="row">
-            <div className="col-md-6">
-              <h4 className="text-center">{t("一周")}</h4>
+      <GridContainer>
+        <Grid item xs={12} lg={6}>
+          <Title variant="h4">{t("苦主榜")}</Title>
+          <GridContainer>
+            <Grid item xs={12} md={6}>
+              <Title variant="h5">{t("一周")}</Title>
               <RankingTable rows={data1w[modeKey].bottom} />
-            </div>
-            <div className="col-md-6">
-              <h4 className="text-center">{t("四周")}</h4>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Title variant="h5">{t("四周")}</Title>
               <RankingTable rows={data4w[modeKey].bottom} />
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-6">
-          <h3 className="text-center">{t("汪汪榜")}</h3>
-          <div className="row">
-            <div className="col-md-6">
-              <h4 className="text-center">{t("一周")}</h4>
+            </Grid>
+          </GridContainer>
+        </Grid>
+        <Grid item xs={12} lg={6}>
+          <Title variant="h4">{t("汪汪榜")}</Title>
+          <GridContainer>
+            <Grid item xs={12} md={6}>
+              <Title variant="h5">{t("一周")}</Title>
               <RankingTable rows={data1w[modeKey].top} />
-            </div>
-            <div className="col-md-6">
-              <h4 className="text-center">{t("四周")}</h4>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Title variant="h5">{t("四周")}</Title>
               <RankingTable rows={data4w[modeKey].top} />
-            </div>
-          </div>
-        </div>
-      </div>
+            </Grid>
+          </GridContainer>
+        </Grid>
+      </GridContainer>
     </>
   );
 }

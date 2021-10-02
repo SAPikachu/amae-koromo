@@ -11,7 +11,7 @@ module.exports = [
             if (section.test.toString().includes("tsx")) {
               section.options.plugins.unshift([
                 "babel-plugin-direct-import",
-                { modules: ["@mui/material", "@mui/icons-material"] },
+                { modules: ["@mui/material", "@mui/icons-material", "@mui/lab"] },
               ]);
             }
             return section;

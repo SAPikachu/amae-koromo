@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 import { useAsyncFactory, formatPercent, formatFixed3 } from "../../utils/index";
 import { getGlobalStatistics } from "../../data/source/misc";
@@ -8,6 +8,18 @@ import { Level } from "../../data/types/level";
 import { ModelModeSelector } from "../modeModel";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
+import {
+  Box,
+  Table,
+  TableCell as MuiTableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCellProps,
+  TableBody,
+  Typography,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 
 const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四位率"].slice(0, Conf.rankColors.length), [
   "被飞率",
@@ -22,6 +34,19 @@ const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四�
   "对战数",
   "在位记录",
 ]);
+
+const TableCell = (props: TableCellProps) => <MuiTableCell {...props} sx={{ textAlign: "center", ...props.sx }} />;
+
+const HeaderBox = styled(Box)({
+  display: "inline",
+  letterSpacing: "0.5em",
+  writingMode: "vertical-lr",
+  verticalAlign: "middle",
+  ".lang-en &": {
+    letterSpacing: "0.05em",
+    marginBottom: "0.75em",
+  },
+});
 
 export default function DataByRank() {
   const { t } = useTranslation();
@@ -63,47 +88,46 @@ export default function DataByRank() {
       <ModelModeSelector type="checkbox" availableModes={Conf.features.statisticsSubPages.dataByRank} autoSelectFirst />
       {modeData ? (
         <>
-          <table className="table table-responsive-xl table-striped table-sm table-hover text-center">
-            <thead className="vertical-table-header">
-              <tr>
-                {headers.map((x) => (
-                  <th key={x}>
-                    <div>{t(x)}</div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {modeData.map(([levelId, levelData]) => (
-                <tr key={levelId}>
-                  <td className="text-nowrap">{new Level(parseInt(levelId)).getTag()}</td>
-                  {levelData.basic.rank_rates.slice(0, Conf.rankColors.length).map((x, i) => (
-                    <td key={i}>{formatPercent(x)}</td>
+          <TableContainer sx={{ mt: 2 }}>
+            <Table sx={{ textAlign: "center" }}>
+              <TableHead>
+                <TableRow sx={{ boxShadow: "none" }}>
+                  {headers.map((x) => (
+                    <TableCell key={x} sx={{ verticalAlign: "bottom", padding: "1em 0 0" }}>
+                      <HeaderBox>{t(x)}</HeaderBox>
+                    </TableCell>
                   ))}
-                  <td>{formatPercent(levelData.basic.negative_rate)}</td>
-                  <td>{formatFixed3(levelData.basic.avg_rank)}</td>
-                  <td>{formatPercent(levelData.extended.和牌率)}</td>
-                  <td>{formatPercent(levelData.extended.放铳率)}</td>
-                  <td>{formatPercent(levelData.extended.副露率)}</td>
-                  <td>{formatPercent(levelData.extended.立直率)}</td>
-                  <td>{formatPercent(levelData.extended.自摸率)}</td>
-                  <td>{formatPercent(levelData.extended.流局率)}</td>
-                  <td>{formatPercent(levelData.extended.流听率)}</td>
-                  <td>{levelData.basic.count}</td>
-                  {haveNumPlayers && <td>{levelData.num_players}</td>}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="row">
-            <div className="col text-right">
-              {t("统计半庄数：")}
-              {Math.floor(
-                modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) /
-                  Conf.rankColors.length
-              )}
-            </div>
-          </div>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {modeData.map(([levelId, levelData]) => (
+                  <TableRow key={levelId}>
+                    <TableCell className="text-nowrap">{new Level(parseInt(levelId)).getTag()}</TableCell>
+                    {levelData.basic.rank_rates.slice(0, Conf.rankColors.length).map((x, i) => (
+                      <TableCell key={i}>{formatPercent(x)}</TableCell>
+                    ))}
+                    <TableCell>{formatPercent(levelData.basic.negative_rate)}</TableCell>
+                    <TableCell>{formatFixed3(levelData.basic.avg_rank)}</TableCell>
+                    <TableCell>{formatPercent(levelData.extended.和牌率)}</TableCell>
+                    <TableCell>{formatPercent(levelData.extended.放铳率)}</TableCell>
+                    <TableCell>{formatPercent(levelData.extended.副露率)}</TableCell>
+                    <TableCell>{formatPercent(levelData.extended.立直率)}</TableCell>
+                    <TableCell>{formatPercent(levelData.extended.自摸率)}</TableCell>
+                    <TableCell>{formatPercent(levelData.extended.流局率)}</TableCell>
+                    <TableCell>{formatPercent(levelData.extended.流听率)}</TableCell>
+                    <TableCell>{levelData.basic.count}</TableCell>
+                    {haveNumPlayers && <TableCell>{levelData.num_players}</TableCell>}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Typography mt={2} textAlign="right">
+            {t("统计半庄数：")}
+            {Math.floor(
+              modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) / Conf.rankColors.length
+            )}
+          </Typography>
         </>
       ) : (
         <Loading />

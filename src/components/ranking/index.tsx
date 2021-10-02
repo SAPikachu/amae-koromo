@@ -176,8 +176,7 @@ export default function Routes() {
     <SimpleRoutedSubViews>
       {ROUTES}
       <ModelModeProvider>
-        <Alert stateName="rankingNotice20201229">
-          <h4 className="mb-2">{t("提示")}</h4>
+        <Alert stateName="rankingNotice20201229" title={t("提示")}>
           {t("排行榜非实时更新，可能会有数小时的延迟。")}
         </Alert>
         <NavButtons />

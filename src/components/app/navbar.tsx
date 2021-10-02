@@ -23,11 +23,13 @@ import {
   Divider,
   ListItemIcon,
   ListItem,
+  ThemeOptions,
 } from "@mui/material";
 import { ArrowDropDown, Language, Twitter, Menu as MenuIcon } from "@mui/icons-material";
 import { OverrideTheme } from "./theme";
 import clsx from "clsx";
 import { NavLink, NavLinkProps } from "react-router-dom";
+import NavButton from "../misc/navButton";
 
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
@@ -66,12 +68,6 @@ function HideOnScroll({ children }: { children: ReactElement | undefined }) {
     </Slide>
   );
 }
-
-const NavButton = ({ href, children, ...props }: ButtonProps & Omit<NavLinkProps, "to">) => (
-  <Button LinkComponent={NavLink} {...{ to: href, activeClassName: "active" }} {...props}>
-    {children}
-  </Button>
-);
 
 const MobileNavButton = ({ href, children, ...props }: ButtonProps & Omit<NavLinkProps, "to">) => (
   <ListItem disablePadding>
@@ -230,39 +226,45 @@ function MobileItems() {
   );
 }
 
+const NAVBAR_THEME: ThemeOptions = {
+  components: {
+    MuiIconButton: {
+      defaultProps: {
+        color: "inherit",
+      },
+    },
+    MuiButton: {
+      defaultProps: {
+        sx: {
+          transition: (theme) => theme.transitions.create("opacity"),
+        },
+      },
+    },
+    MuiButtonGroup: {
+      defaultProps: {
+        variant: "text",
+        sx: {
+          mr: 2,
+        },
+      },
+      styleOverrides: {
+        grouped: {
+          opacity: 0.5,
+          "&:hover, &.active": {
+            opacity: 1,
+          },
+          "&:not(:last-of-type)": {
+            borderColor: "transparent",
+          },
+        },
+      },
+    },
+  },
+} as const;
 export default function Navbar() {
   const { t } = useTranslation();
   return (
-    <OverrideTheme
-      theme={{
-        components: {
-          MuiIconButton: {
-            defaultProps: {
-              color: "inherit",
-            },
-          },
-          MuiButtonGroup: {
-            defaultProps: {
-              variant: "text",
-              sx: {
-                mr: 3,
-              },
-            },
-            styleOverrides: {
-              root: {
-                "& .MuiButton-root": {
-                  opacity: 0.5,
-                  "&:hover, &.active": {
-                    opacity: 1,
-                  },
-                },
-              },
-            },
-          },
-        },
-      }}
-    >
-      {" "}
+    <OverrideTheme theme={NAVBAR_THEME}>
       <HideOnScroll>
         <AppBar position="fixed">
           <Toolbar variant="dense">

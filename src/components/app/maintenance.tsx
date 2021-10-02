@@ -12,9 +12,8 @@ export function MaintenanceHandler({ children }: { children: React.ReactElement 
     return children;
   }
   return (
-    <Alert container={Container} closable={false}>
-      <h4>临时维护公告</h4>
-      <p>{msg}</p>
+    <Alert container={Container} closable={false} title="临时维护公告">
+      {msg}
     </Alert>
   );
 }

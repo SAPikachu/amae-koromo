@@ -10,6 +10,7 @@
     "@emotion/styled": "^11.3.0",
     "@fontsource/roboto": "^4.5.1",
     "@mui/icons-material": "^5.0.0",
+    "@mui/lab": "^5.0.0-alpha.49",
     "@mui/material": "^5.0.0",
     "@sentry/react": "^5.29.2",
     "bootstrap": "4.4.1",

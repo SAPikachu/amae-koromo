@@ -8,6 +8,7 @@ import SimplePieChart from "../charts/simplePieChart";
 import { useTranslation } from "react-i18next";
 import { RankRates } from "../../data/types";
 import Conf from "../../utils/conf";
+import { Grid, Typography } from "@mui/material";
 
 const SEAT_LABELS = "东南西北";
 
@@ -40,22 +41,24 @@ export default function RankBySeats() {
       <ModelModeSelector autoSelectFirst={true} />
       {selectedData ? (
         <>
-          <div className="row">
-            <div className="col-lg-6">
-              <h3 className="text-center">{t("坐席吃一率")}</h3>
+          <Grid container mt={2}>
+            <Grid item lg>
+              <Typography variant="h5" textAlign="center">
+                {t("坐席吃一率")}
+              </Typography>
               <Chart rates={selectedData[1]} numGames={selectedData.numGames} />
-            </div>
-            <div className="col-lg-6">
-              <h3 className="text-center">{t(`坐席吃${selectedData.length > 4 ? "四" : "三"}率`)}</h3>
+            </Grid>
+            <Grid item lg>
+              <Typography variant="h5" textAlign="center">
+                {t(`坐席吃${selectedData.length > 4 ? "四" : "三"}率`)}
+              </Typography>
               <Chart rates={selectedData[selectedData.length - 1]} numGames={selectedData.numGames} />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col text-right">
-              {t("统计半庄数：")}
-              {selectedData.numGames}
-            </div>
-          </div>
+            </Grid>
+          </Grid>
+          <Typography textAlign="right">
+            {t("统计半庄数：")}
+            {selectedData.numGames}
+          </Typography>
         </>
       ) : (
         <></>

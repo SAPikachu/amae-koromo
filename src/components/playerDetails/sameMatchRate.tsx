@@ -179,7 +179,7 @@ export default function SameMatchRate({ numDisplay = 10, currentAccountId = 0 })
           <SameMatchRateTable currentAccountId={currentAccountId} numDisplay={numDisplay} numGames={0x7fffffff} />
         </RouteDef>
       </ViewRoutes>
-      <NavButtons className="mt-n3" />
+      <NavButtons sx={{ mt: -3 }} />
       <ViewSwitch mutateTitle={false} />
     </SimpleRoutedSubViews>
   );

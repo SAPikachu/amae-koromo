@@ -295,7 +295,7 @@ function PlayerStats({ metadata, isChangingSettings }: { metadata: PlayerMetadat
           {!isChangingSettings ? <SameMatchRate currentAccountId={metadata.id} /> : <></>}
         </RouteDef>
       </ViewRoutes>
-      <NavButtons className="mt-3" replace keepState withQueryString />
+      <NavButtons sx={{ mt: 3 }} replace keepState withQueryString />
       <ViewSwitch mutateTitle={false} />
     </SimpleRoutedSubViews>
   );
@@ -390,7 +390,7 @@ export default function PlayerDetails() {
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   return (
     <div>
-      {isChangingSettings && <Loading className="player-details-changing-spinner" />}
+      {isChangingSettings && <Loading />}
       {hasMetadata ? (
         <div className={isChangingSettings ? "player-details-changing" : ""}>
           <Helmet>

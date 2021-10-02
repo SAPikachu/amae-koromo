@@ -148,9 +148,10 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ type: "player", searchText: e.currentTarget.value }),
     [updateModel]
   );
-  const setRank = useCallback((rank: string) => updateModel({ type: "player", rank: parseInt(rank) || null }), [
-    updateModel,
-  ]);
+  const setRank = useCallback(
+    (rank: string) => updateModel({ type: "player", rank: parseInt(rank) || null }),
+    [updateModel]
+  );
   if (model.type !== "player") {
     return null;
   }
@@ -169,13 +170,8 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
         {mode === DateRangeOptions.Custom ? (
           <div className="custom-period">
             <FormRow inline={true}>
-              <DatePicker
-                min={Conf.dateMin}
-                onChange={setCustomDateFrom}
-                date={customDateFrom}
-                className="form-control"
-              />
-              <DatePicker min={Conf.dateMin} onChange={setCustomDateTo} date={customDateTo} className="form-control" />
+              <DatePicker min={Conf.dateMin} onChange={setCustomDateFrom} date={customDateFrom} />
+              <DatePicker min={Conf.dateMin} onChange={setCustomDateTo} date={customDateTo} />
             </FormRow>
           </div>
         ) : null}
