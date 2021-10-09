@@ -105,6 +105,9 @@ export const COLUMN_GAMEMODE = makeColumn(
           mobileProps: {
             label: "",
             width: 20,
+            style: {
+              writingMode: "vertical-lr",
+            },
           },
         }}
       />
