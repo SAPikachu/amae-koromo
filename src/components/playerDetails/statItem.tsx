@@ -30,6 +30,12 @@ export const StatList = styled(Box)(({ theme }) => ({
   justifyContent: "space-between",
   gridGap: theme.spacing(1.5),
   gridTemplateColumns: "1fr",
+  [theme.breakpoints.down("sm")]: {
+    "& > div": {
+      borderBottom: `1px dashed ${theme.palette.grey[700]}`,
+      paddingBottom: theme.spacing(1.5),
+    },
+  },
   [theme.breakpoints.up("sm")]: {
     gridTemplateColumns: "repeat(2, min-content)",
   },
