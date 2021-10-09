@@ -35,7 +35,9 @@ const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四�
   "在位记录",
 ]);
 
-const TableCell = (props: TableCellProps) => <MuiTableCell {...props} sx={{ textAlign: "center", ...props.sx }} />;
+const TableCell = (props: TableCellProps) => (
+  <MuiTableCell {...props} sx={{ textAlign: "center", padding: 1, ...props.sx }} />
+);
 
 const HeaderBox = styled(Box)({
   display: "inline",
