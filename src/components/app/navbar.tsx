@@ -270,7 +270,18 @@ export default function Navbar() {
           <Toolbar variant="dense">
             <Container>
               <Box display="flex" alignItems="center">
-                <Button href="/" size="large" variant="text" sx={{ padding: 0 }} disableRipple>
+                <Button
+                  href="/"
+                  size="large"
+                  variant="text"
+                  sx={{
+                    padding: 0,
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  }}
+                  disableRipple
+                >
                   {t(Conf.siteTitle)}
                 </Button>
                 <Box flexGrow={1}></Box>
