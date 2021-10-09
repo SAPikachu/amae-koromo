@@ -2,11 +2,12 @@ import { useTranslation } from "react-i18next";
 
 import { FilterPanel } from "./filterPanel";
 import { PlayerSearch } from "./playerSearch";
-import { default as GameRecordTable, COLUMN_GAMEMODE, COLUMN_PLAYERS, COLUMN_STARTTIME, COLUMN_ENDTIME } from "./table";
+import { default as GameRecordTable } from "./table";
+import { COLUMN_GAMEMODE, COLUMN_PLAYERS, COLUMN_STARTTIME, COLUMN_ENDTIME } from "./columns";
 import { Box, Typography } from "@mui/material";
 
 export default function Home() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("form");
   return (
     <>
       <Typography variant="h4" mb={3} textAlign="center">
@@ -21,7 +22,7 @@ export default function Home() {
       <Box mb={5}>
         <FilterPanel />
       </Box>
-      <GameRecordTable columns={[COLUMN_GAMEMODE, COLUMN_PLAYERS(""), COLUMN_STARTTIME, COLUMN_ENDTIME]} />
+      <GameRecordTable columns={[COLUMN_GAMEMODE, COLUMN_PLAYERS(), COLUMN_STARTTIME, COLUMN_ENDTIME]} />
     </>
   );
 }

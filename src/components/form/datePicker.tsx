@@ -8,6 +8,7 @@ import AdapterDayJs from "@mui/lab/AdapterDayjs";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { DatePicker as MuiDatePicker } from "@mui/lab";
 import { TextField } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 export function DatePicker({
   date = dayjs() as dayjs.ConfigType,
@@ -16,8 +17,10 @@ export function DatePicker({
   max = dayjs() as dayjs.ConfigType,
   label = "",
   fullWidth = false,
+  size = "medium" as "medium" | "small",
 }) {
   const handleChange = useCallback((value: dayjs.Dayjs | null) => onChange(value || dayjs(date)), [date, onChange]);
+  const { t } = useTranslation("form");
   return (
     <LocalizationProvider
       dateAdapter={AdapterDayJs}
@@ -32,14 +35,14 @@ export function DatePicker({
     >
       <MuiDatePicker
         disableCloseOnSelect={false}
-        label={label}
+        label={t(label)}
         value={dayjs(date)}
         onChange={handleChange}
         ignoreInvalidInputs
         toolbarFormat=" "
         toolbarTitle=""
         mask="____-__-__"
-        renderInput={(params: any) => <TextField fullWidth={fullWidth} {...params} />} // eslint-disable-line @typescript-eslint/no-explicit-any
+        renderInput={(params: any) => <TextField fullWidth={fullWidth} size={size} {...params} />} // eslint-disable-line @typescript-eslint/no-explicit-any
         minDate={dayjs(min)}
         maxDate={dayjs(max)}
       />

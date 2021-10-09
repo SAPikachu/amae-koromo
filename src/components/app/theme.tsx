@@ -1,5 +1,12 @@
 import React, { ReactNode, useMemo } from "react";
-import { alpha, createTheme, Theme, ThemeOptions, ThemeProvider as MaterialThemeProvider } from "@mui/material";
+import {
+  alpha,
+  createTheme,
+  responsiveFontSizes,
+  Theme,
+  ThemeOptions,
+  ThemeProvider as MaterialThemeProvider,
+} from "@mui/material";
 import { enUS, jaJP, koKR, Localization, zhCN } from "@mui/material/locale";
 import { Link, LinkProps } from "react-router-dom";
 import { deepmerge } from "@mui/utils";
@@ -143,6 +150,12 @@ const THEME: ThemeOptions = {
         },
       },
     },
+    MuiTooltip: {
+      defaultProps: {
+        enterTouchDelay: 100,
+        leaveTouchDelay: 3000,
+      },
+    },
     MuiUseMediaQuery: {
       defaultProps: {
         noSsr: true,
@@ -180,12 +193,21 @@ export default function RootThemeProvider({ children }: { children: ReactNode })
   const { i18n } = useTranslation();
   const theme = useMemo(
     () =>
-      createTheme(
+      responsiveFontSizes(
+        createTheme(
+          {
+            ...THEME,
+            typography: {
+              ...THEME.typography,
+              fontFamily: FONTS[i18n.language] || DEFAULT_FONT,
+              fontWeightMedium: i18n.language === "en" ? 500 : 700,
+            },
+          },
+          LOCALES[i18n.language] || DEFAULT_LOCALE
+        ),
         {
-          ...THEME,
-          typography: { ...THEME.typography, fontFamily: FONTS[i18n.language] || DEFAULT_FONT },
-        },
-        LOCALES[i18n.language] || DEFAULT_LOCALE
+          variants: ["h1", "h2", "h3", "h4", "h5", "h6"],
+        }
       ),
     [i18n.language]
   );

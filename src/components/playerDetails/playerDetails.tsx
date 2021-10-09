@@ -16,17 +16,17 @@ import {
 } from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
-import StatItem from "./statItem";
+import StatItem, { StatList } from "./statItem";
 import EstimatedStableLevel from "./estimatedStableLevel";
 import { Level } from "../../data/types/level";
 import { ViewRoutes, RouteDef, SimpleRoutedSubViews, NavButtons, ViewSwitch } from "../routing";
-import { useLocation } from "react-router-dom";
 import SameMatchRate from "./sameMatchRate";
 import { useTranslation } from "react-i18next";
 import { useModel } from "../gameRecords/model";
 import Conf from "../../utils/conf";
 import { GameMode } from "../../data/types/gameMode";
 import { loadPlayerPreference } from "../../utils/preference";
+import { Box, Grid, Link, Typography } from "@mui/material";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -39,11 +39,6 @@ const RecentRankChart = Loadable({
 const WinLoseDistribution = Loadable({
   loader: () => import("./charts/winLoseDistribution"),
   loading: () => <Loading />,
-});
-const ReactTooltipPromise = import("react-tooltip");
-const ReactTooltip = Loadable({
-  loader: () => ReactTooltipPromise,
-  loading: () => null,
 });
 
 function ExtendedStatsViewAsync({
@@ -114,7 +109,7 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       <StatItem label="最高等级">
         {LevelWithDelta.getTag(metadata.cross_stats?.max_level || metadata.max_level)}
       </StatItem>
-      <StatItem label="最高分数" className="no-width">
+      <StatItem label="最高分数">
         {LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.cross_stats?.max_level || metadata.max_level))}
       </StatItem>
       <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
@@ -133,7 +128,7 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       <StatItem label="放铳时副露率" description="放铳时副露次数 / 放铳次数">
         {formatPercent(stats.放铳时副露率 || 0)}
       </StatItem>
-      <StatItem label="副露后放铳率" description="放铳时副露次数 / 副露次数" className="no-width">
+      <StatItem label="副露后放铳率" description="放铳时副露次数 / 副露次数">
         {formatPercent(stats.副露后放铳率 || 0)}
       </StatItem>
       <StatItem label="副露后和牌率" description="副露后和牌次数 / 副露次数">
@@ -233,60 +228,59 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
 function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   const { t } = useTranslation();
   if (!stats.最近大铳) {
-    return <p className="text-center">{t("无超过满贯大铳")}</p>;
+    return <Typography textAlign="center">{t("无超过满贯大铳")}</Typography>;
   }
   return (
-    <div>
-      <a
+    <Box>
+      <Link
         target="_blank"
         rel="noopener noreferrer"
-        className="d-flex justify-content-between font-weight-bold"
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontWeight: "bold",
+        }}
         href={GameRecord.getRecordLink(stats.最近大铳.id, metadata.id)}
       >
-        <span>{FanStatEntryList.formatFanSummary(stats.最近大铳.fans)}</span>
-        <span>{GameRecord.formatFullStartTime(stats.最近大铳.start_time)}</span>
-      </a>
-      <dl className="stats-list mt-2">
+        <Box>{FanStatEntryList.formatFanSummary(stats.最近大铳.fans)}</Box>
+        <Box>{GameRecord.formatFullStartTime(stats.最近大铳.start_time)}</Box>
+      </Link>
+      <StatList mt={2}>
         {stats.最近大铳.fans.map((x) => (
           <StatItem key={x.label} label={x.label}>
             {FanStatEntry2.formatFan(x)}
           </StatItem>
         ))}
-      </dl>
-    </div>
+      </StatList>
+    </Box>
   );
 }
 function PlayerStats({ metadata, isChangingSettings }: { metadata: PlayerMetadata; isChangingSettings: boolean }) {
-  const loc = useLocation();
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ReactTooltipPromise.then((x) => x.default.rebuild());
-  }, [loc.pathname]);
   return (
     <SimpleRoutedSubViews>
       <ViewRoutes>
         <RouteDef path="" exact title="基本">
-          <dl className="stats-list">
+          <StatList>
             <BasicStats metadata={metadata} />
-          </dl>
+          </StatList>
         </RouteDef>
         <RouteDef path="riichi" title="立直">
-          <dl className="stats-list">
+          <StatList>
             <ExtendedStatsViewAsync metadata={metadata} view={RiichiStats} />
-          </dl>
+          </StatList>
         </RouteDef>
         <RouteDef path="extended" title="更多">
-          <dl className="stats-list">
+          <StatList>
             <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} />
-          </dl>
+          </StatList>
         </RouteDef>
         <RouteDef path="win-lose" title="和铳分布">
           <ExtendedStatsViewAsync metadata={metadata} view={WinLoseDistribution} />
         </RouteDef>
         <RouteDef path="luck" title="血统">
-          <dl className="stats-list">
+          <StatList>
             <ExtendedStatsViewAsync metadata={metadata} view={LuckStats} />
-          </dl>
+          </StatList>
         </RouteDef>
         <RouteDef path="largest-lost" title="最近大铳">
           <ExtendedStatsViewAsync metadata={metadata} view={LargestLost} />
@@ -299,13 +293,6 @@ function PlayerStats({ metadata, isChangingSettings }: { metadata: PlayerMetadat
       <ViewSwitch mutateTitle={false} />
     </SimpleRoutedSubViews>
   );
-}
-
-function getTooltip(dataTip: string): React.ReactNode {
-  if (dataTip && dataTip.indexOf && dataTip.indexOf("##") === 0) {
-    return document.getElementById(dataTip.slice(2))?.innerHTML || dataTip;
-  }
-  return dataTip;
 }
 
 export default function PlayerDetails() {
@@ -377,9 +364,6 @@ export default function PlayerDetails() {
       }
     }
   }, [availableModes, model, updateModel]);
-  useEffect(() => {
-    ReactTooltipPromise.then((x) => x.default.rebuild());
-  });
   useEffect(triggerRelayout, [!!metadata]);
   const hasMetadata = metadata && metadata.nickname && metadata.count;
   const isChangingSettings = !!(
@@ -389,34 +373,43 @@ export default function PlayerDetails() {
   );
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   return (
-    <div>
-      {isChangingSettings && <Loading />}
+    <Box mb={3} position="relative">
+      {isChangingSettings && (
+        <Box position="absolute" top="50%" left="50%" sx={{ transform: "translate(-50%, -50%)" }}>
+          <Loading />
+        </Box>
+      )}
       {hasMetadata ? (
-        <div className={isChangingSettings ? "player-details-changing" : ""}>
+        <Box sx={isChangingSettings ? { opacity: 0.2, pointerEvents: "none" } : {}}>
           <Helmet>
             <title>{metadata?.nickname}</title>
           </Helmet>
-          <h2 className="text-center">
+          <Typography variant="h4" textAlign="center">
             {getAccountZoneTag(metadata!.id)} {metadata?.nickname}
-          </h2>
-          <div className="row mt-4">
-            <div className="col-md-8">
-              <h3 className="text-center mb-4">{t("最近走势")}</h3>
+          </Typography>
+          <Grid container mt={2} rowSpacing={2} spacing={2}>
+            <Grid item xs={12} md={8}>
+              <Typography variant="h5" mb={2} textAlign="center">
+                {t("最近走势")}
+              </Typography>
               <RecentRankChart dataAdapter={dataAdapter} playerId={metadata!.id} aspect={6} />
               <PlayerStats metadata={metadata!} isChangingSettings={isChangingSettings} />
-            </div>
-            <div className="col-md-4">
-              <h3 className="text-center mb-4">{t("累计战绩")}</h3>
-              <RankRateChart metadata={metadata!} />
-            </div>
-          </div>
-        </div>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Typography variant="h5" textAlign="center">
+                {t("累计战绩")}
+              </Typography>
+              <Box maxWidth={480} margin="auto">
+                <RankRateChart metadata={metadata!} />
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
       ) : (
         <Loading />
       )}
       <PlayerDetailsSettings showLevel={true} availableModes={availableModes} />
-      <ReactTooltip effect="solid" multiline={true} place="top" getContent={getTooltip} className="stat-tooltip" />
-    </div>
+    </Box>
   );
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
 }

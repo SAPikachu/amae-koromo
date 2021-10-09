@@ -5,8 +5,9 @@ import dayjs from "dayjs";
 import { RouteSync } from "./routeSync";
 import Loadable from "../misc/customizedLoadable";
 import Loading from "../misc/loading";
-import { COLUMN_RANK } from "./table";
-import { default as GameRecordTable, COLUMN_GAMEMODE, COLUMN_PLAYERS, COLUMN_FULLTIME } from "./table";
+import { COLUMN_RANK } from "./columns";
+import { default as GameRecordTable } from "./table";
+import { COLUMN_GAMEMODE, COLUMN_PLAYERS, COLUMN_FULLTIME } from "./columns";
 import { PageCategory } from "../misc/tracker";
 import Home from "./home";
 
@@ -76,8 +77,12 @@ function GameRecordTablePlayerView() {
   }
   return (
     <GameRecordTable
-      withActivePlayer
-      columns={[COLUMN_GAMEMODE, COLUMN_RANK(model.playerId), COLUMN_PLAYERS(model.playerId), COLUMN_FULLTIME]}
+      columns={[
+        COLUMN_GAMEMODE,
+        COLUMN_RANK(model.playerId),
+        COLUMN_PLAYERS({ activePlayerId: model.playerId }),
+        COLUMN_FULLTIME,
+      ]}
     />
   );
 }

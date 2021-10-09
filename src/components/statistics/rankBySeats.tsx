@@ -42,13 +42,13 @@ export default function RankBySeats() {
       {selectedData ? (
         <>
           <Grid container mt={2}>
-            <Grid item lg>
+            <Grid item xs={12} sm overflow="hidden">
               <Typography variant="h5" textAlign="center">
                 {t("坐席吃一率")}
               </Typography>
               <Chart rates={selectedData[1]} numGames={selectedData.numGames} />
             </Grid>
-            <Grid item lg>
+            <Grid item xs={12} sm overflow="hidden">
               <Typography variant="h5" textAlign="center">
                 {t(`坐席吃${selectedData.length > 4 ? "四" : "三"}率`)}
               </Typography>

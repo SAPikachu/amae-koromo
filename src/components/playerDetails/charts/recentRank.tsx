@@ -1,4 +1,3 @@
-import React from "react";
 import { ResponsiveContainer, LineChart, Line, Dot, Tooltip, YAxis, TooltipProps } from "recharts";
 
 import { IDataAdapter } from "../../gameRecords/dataAdapterProvider";
@@ -7,8 +6,9 @@ import { useMemo } from "react";
 import { Player } from "../../gameRecords/player";
 import Loading from "../../misc/loading";
 import { calculateDeltaPoint } from "../../../data/types/metadata";
-import { isMobile } from "../../../utils/index";
+import { useIsMobile } from "../../../utils/index";
 import Conf from "../../../utils/conf";
+import { alpha, Box, styled, Typography } from "@mui/material";
 
 declare module "recharts" {
   interface DotProps {
@@ -29,8 +29,8 @@ type DotPayload = {
   playerId: number;
 };
 
-const createDot = (props: { payload: DotPayload }, active?: boolean) => {
-  const scale = isMobile() ? 1.5 : 2;
+const createDot = (isMobile: boolean) => (props: { payload: DotPayload }, active?: boolean) => {
+  const scale = isMobile ? 1.5 : 2;
   return (
     <Dot
       {...props}
@@ -41,7 +41,18 @@ const createDot = (props: { payload: DotPayload }, active?: boolean) => {
   );
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const createActiveDot = (props: any) => createDot(props, true);
+const createActiveDot = (isMobile: boolean) => (props: Parameters<ReturnType<typeof createDot>>[0]) =>
+  createDot(isMobile)(props, true);
+
+const TooltipBox = styled(Box)(({ theme }) => ({
+  backgroundColor: alpha(theme.palette.grey[700], 0.92),
+  borderRadius: theme.shape.borderRadius,
+  color: theme.palette.common.white,
+  fontFamily: theme.typography.fontFamily,
+  padding: "16px",
+  fontSize: theme.typography.pxToRem(11),
+  fontWeight: theme.typography.fontWeightMedium,
+}));
 
 const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
   if (!active || !payload || !payload.length) {
@@ -49,19 +60,25 @@ const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
   }
   const realPayload = payload[0].payload as DotPayload;
   return (
-    <div className="player-chart-tooltip">
-      <h5>
+    <TooltipBox>
+      <Typography variant="h6">
         {GameRecord.formatFullStartTime(realPayload.game)}{" "}
         {realPayload.game.modeId ? modeLabel(realPayload.game.modeId) : ""} {getRankLabelByIndex(realPayload.rank)}{" "}
         {realPayload.delta > 0 ? "+" : ""}
         {realPayload.delta}pt
-      </h5>
+      </Typography>
       {realPayload.game.players.map((x) => (
-        <p key={x.accountId.toString()}>
-          <Player player={x} game={realPayload.game} isActive={realPayload.playerId === x.accountId} />
-        </p>
+        <Typography key={x.accountId.toString()} variant="body2">
+          <Player
+            player={x}
+            game={realPayload.game}
+            sx={{ textDecoration: realPayload.playerId === x.accountId ? "underline" : "none" }}
+            color="inherit"
+            hideDetailIcon
+          />
+        </Typography>
       ))}
-    </div>
+    </TooltipBox>
   );
 };
 
@@ -69,13 +86,17 @@ export default function RecentRankChart({
   dataAdapter,
   playerId,
   aspect = 2,
-  numGames = isMobile() ? 20 : 30,
+  numGames = 0,
 }: {
   dataAdapter: IDataAdapter;
   playerId: number;
   aspect?: number;
   numGames?: number;
 }) {
+  const isMobile = useIsMobile();
+  if (!numGames) {
+    numGames = isMobile ? 20 : 30;
+  }
   const dataPoints = useMemo(() => {
     const result = [] as DotPayload[];
     const totalGames = dataAdapter.getCount();
@@ -113,6 +134,8 @@ export default function RecentRankChart({
     }
     return result;
   }, [dataAdapter, numGames, playerId]);
+  const dot = useMemo(() => createDot(isMobile), [isMobile]);
+  const activeDot = useMemo(() => createActiveDot(isMobile), [isMobile]);
   if (!dataPoints.length) {
     return <Loading />;
   }
@@ -141,8 +164,8 @@ export default function RecentRankChart({
           type="linear"
           stroke="#b5c2ce"
           strokeWidth={3}
-          dot={createDot}
-          activeDot={createActiveDot}
+          dot={dot}
+          activeDot={activeDot}
         />
         <Tooltip cursor={false} content={<RankChartTooltip />} />
       </LineChart>

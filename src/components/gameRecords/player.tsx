@@ -1,29 +1,53 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { IoMdBook } from "react-icons/io";
+import { ReadMore } from "@mui/icons-material";
+import { Link, Typography, TypographyProps, useTheme } from "@mui/material";
 
 import { GameRecord, PlayerRecord, getLevelTag } from "../../data/types";
 import { generatePlayerPathById } from "./routes";
 
-export const Player = function({
+export const Player = function ({
   player,
   game,
-  isActive
+  hideDetailIcon,
+  ...props
 }: {
   player: PlayerRecord;
   game: GameRecord;
-  isActive: boolean;
-}) {
+  hideDetailIcon?: boolean;
+} & TypographyProps) {
+  const theme = useTheme();
   const { nickname, level, score, accountId } = player;
   const isTop = GameRecord.getRankIndexByPlayer(game, player) === 0;
   return (
-    <span className={`player ${isTop && "font-weight-bold"} ${isActive && "active-player"}`}>
-      <a href={GameRecord.getRecordLink(game, player)} title="查看牌谱" target="_blank" rel="noopener noreferrer">
+    <Typography
+      variant="body2"
+      component="span"
+      fontWeight={isTop ? "bold" : "normal"}
+      display="inline-flex"
+      alignItems="center"
+      color={theme.palette.info.main}
+      {...props}
+    >
+      <Link
+        href={GameRecord.getRecordLink(game, player)}
+        title="查看牌谱"
+        target="_blank"
+        rel="noopener noreferrer"
+        display="block"
+        color="inherit"
+      >
         [{getLevelTag(level)}] {nickname} {score !== undefined && `[${score}]`}
-      </a>{" "}
-      <Link className="detail-link" title="玩家记录" to={generatePlayerPathById(accountId)}>
-        <IoMdBook />
       </Link>
-    </span>
+      {!hideDetailIcon && (
+        <Link
+          className="detail-link"
+          title="玩家记录"
+          href={generatePlayerPathById(accountId)}
+          display="block"
+          color="inherit"
+        >
+          <ReadMore fontSize="small" sx={{ ml: 1, display: "block" }} />
+        </Link>
+      )}
+    </Typography>
   );
 };

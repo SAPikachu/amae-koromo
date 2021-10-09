@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { FormRow, DatePicker } from "../form";
+import { useState, useCallback } from "react";
+import { DatePicker } from "../form";
 import Conf from "../../utils/conf";
 import Loading from "../misc/loading";
 import dayjs from "dayjs";
@@ -73,12 +73,8 @@ export default function MinMax() {
   }, [setLoading, dateStart, dateEnd, setPlayerList, playerList]);
   return (
     <>
-      <FormRow title="开始日期">
-        <DatePicker min={Conf.dateMin} date={dateStart} onChange={setDateStart} />
-      </FormRow>
-      <FormRow title="结束日期">
-        <DatePicker min={Conf.dateMin} date={dateEnd} onChange={setDateEnd} />
-      </FormRow>
+      <DatePicker min={Conf.dateMin} date={dateStart} onChange={setDateStart} />
+      <DatePicker min={Conf.dateMin} date={dateEnd} onChange={setDateEnd} />
       {loading ? (
         <Loading />
       ) : (

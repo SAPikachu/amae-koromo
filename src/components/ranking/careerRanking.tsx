@@ -150,7 +150,7 @@ export function CareerRankingPlain({
   return (
     <Grid container spacing={2} rowSpacing={3}>
       {children.map((x, i) => (
-        <Grid item lg key={i}>
+        <Grid item xs={12} md={6} lg key={i}>
           {x}
         </Grid>
       ))}
@@ -173,7 +173,6 @@ export function CareerRanking({
     <>
       <CheckboxGroup
         type="radio"
-        groupKey="MinGamesSelector"
         items={[
           { key: "300", value: 300, label: "300 " + t("局") },
           { key: "600", value: 600, label: "600 " + t("局") },

@@ -1,6 +1,5 @@
 import React from "react";
 import { useEffect, useState, useCallback } from "react";
-import { FormRow } from "../form/formRow";
 import { useModel } from "../gameRecords/model";
 import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
@@ -10,6 +9,7 @@ import { GameMode, getRankLabelByIndex } from "../../data/types";
 import { savePlayerPreference } from "../../utils/preference";
 import { useLocation } from "react-router-dom";
 import { generatePath } from "../gameRecords/routes";
+import { Box, styled } from "@mui/material";
 
 enum DateRangeOptions {
   All = "全部",
@@ -35,6 +35,16 @@ const RANK_ITEMS = [
     value: (index + 1).toString(),
   }))
 );
+
+const SettingContainer = styled(Box)(({ theme }) => ({
+  "& > .MuiFormControl-root": {
+    display: "flex",
+  },
+  [theme.breakpoints.up("md")]: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+}));
 
 export default function PlayerDetailsSettings({ showLevel = false, availableModes = [] as GameMode[] }) {
   const [model, updateModel] = useModel();
@@ -156,57 +166,46 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
     return null;
   }
   return (
-    <div className="player-details-settings">
-      <div className="setting">
-        <FormRow title="时间" inline={true}>
-          <CheckboxGroup
-            type="radio"
-            selectedItems={[mode]}
-            items={DATE_RANGE_ITEMS}
-            groupKey="PlayerDetailsDateRangeSelector"
-            onChange={(items) => updateModeFromUi(items[0].value)}
-          />
-        </FormRow>
+    <SettingContainer mt={3}>
+      <Box>
+        <CheckboxGroup
+          type="radio"
+          label="时间"
+          selectedItems={[mode]}
+          items={DATE_RANGE_ITEMS}
+          onChange={(items) => updateModeFromUi(items[0].value)}
+        />
         {mode === DateRangeOptions.Custom ? (
-          <div className="custom-period">
-            <FormRow inline={true}>
-              <DatePicker min={Conf.dateMin} onChange={setCustomDateFrom} date={customDateFrom} />
-              <DatePicker min={Conf.dateMin} onChange={setCustomDateTo} date={customDateTo} />
-            </FormRow>
-          </div>
+          <Box display="grid" gridTemplateColumns="10rem 10rem">
+            <DatePicker size="small" min={Conf.dateMin} onChange={setCustomDateFrom} date={customDateFrom} />
+            <DatePicker size="small" min={Conf.dateMin} onChange={setCustomDateTo} date={customDateTo} />
+          </Box>
         ) : null}
-      </div>
+      </Box>
       {showLevel && availableModes.length > 0 && (
-        <div className="setting">
-          <FormRow title="等级" inline={true}>
-            <ModeSelector
-              type="checkbox"
-              mode={model.selectedModes}
-              onChange={setSelectedMode}
-              availableModes={availableModes}
-              i18nNamespace="gameModeShort"
-            />
-          </FormRow>
-        </div>
+        <ModeSelector
+          type="checkbox"
+          label="等级"
+          mode={model.selectedModes}
+          onChange={setSelectedMode}
+          availableModes={availableModes}
+          i18nNamespace="gameModeShort"
+        />
       )}
-      <div className="setting">
-        <FormRow title="顺位" inline={true}>
-          <CheckboxGroup
-            type="radio"
-            selectedItems={[(model.rank || "All").toString()]}
-            items={RANK_ITEMS}
-            groupKey="PlayerDetailsRankSelector"
-            onChange={(items) => setRank(items[0].key)}
-          />
-        </FormRow>
-      </div>
+      <CheckboxGroup
+        type="radio"
+        label="顺位"
+        selectedItems={[(model.rank || "All").toString()]}
+        items={RANK_ITEMS}
+        onChange={(items) => setRank(items[0].key)}
+      />
       {model.searchText ? (
         <div className="setting">
-          <FormRow title="查找玩家">
+          <Box title="查找玩家">
             <input type="text" className="form-control" value={model.searchText} onChange={updateSearchTextFromEvent} />
-          </FormRow>
+          </Box>
         </div>
       ) : null}
-    </div>
+    </SettingContainer>
   );
 }

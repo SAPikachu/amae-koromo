@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 import React from "react";
 import {
   ResponsiveContainer,
@@ -7,6 +8,7 @@ import {
   LabelList,
   LabelProps,
   PolarViewBox,
+  ResponsiveContainerProps,
 } from "recharts";
 import { useMemo } from "react";
 
@@ -26,36 +28,38 @@ const polarToCartesian = (cx: number, cy: number, radius: number, angle: number)
   y: cy + Math.sin(-RADIAN * angle) * radius,
 });
 
-const renderCustomizedLabelFactory = ({ lineHeight = 24, innerLabelFontSize = "1rem" }) => (props: LabelProps) => {
-  const { value } = props;
-  if (!value) {
-    return null;
-  }
-  const lines = value.toString().trim().split("\n");
-  const { cx, cy, outerRadius, startAngle, endAngle } = props.viewBox as Required<PolarViewBox>;
-  const labelAngle = startAngle + getDeltaAngle(startAngle, endAngle) / 2;
-  const { x, y } = polarToCartesian(cx, cy, outerRadius / 2, labelAngle);
-  const yStart = y - (lines.length - 1) * (lineHeight / 2);
-  return (
-    <g>
-      {lines.map((text, index) => (
-        <text
-          key={index}
-          x={x}
-          y={yStart + index * lineHeight}
-          stroke="#fff"
-          strokeWidth="0.5"
-          fill="#fff"
-          fontSize={innerLabelFontSize}
-          textAnchor="middle"
-          dominantBaseline="central"
-        >
-          {text}
-        </text>
-      ))}
-    </g>
-  );
-};
+const renderCustomizedLabelFactory =
+  ({ lineHeight = 24, innerLabelFontSize = "1rem" }) =>
+  (props: LabelProps) => {
+    const { value } = props;
+    if (!value) {
+      return null;
+    }
+    const lines = value.toString().trim().split("\n");
+    const { cx, cy, outerRadius, startAngle, endAngle } = props.viewBox as Required<PolarViewBox>;
+    const labelAngle = startAngle + getDeltaAngle(startAngle, endAngle) / 2;
+    const { x, y } = polarToCartesian(cx, cy, outerRadius / 2, labelAngle);
+    const yStart = y - (lines.length - 1) * (lineHeight / 2);
+    return (
+      <g>
+        {lines.map((text, index) => (
+          <text
+            key={index}
+            x={x}
+            y={yStart + index * lineHeight}
+            stroke="#fff"
+            strokeWidth="0.5"
+            fill="#fff"
+            fontSize={innerLabelFontSize}
+            textAnchor="middle"
+            dominantBaseline="central"
+          >
+            {text}
+          </text>
+        ))}
+      </g>
+    );
+  };
 
 export type PieChartItem = {
   value: number;
@@ -80,6 +84,7 @@ export default function SimplePieChart<T extends PieChartItem>({
   colors = DEFAULT_COLORS,
   innerLabelFontSize = "1rem",
   aspect = 1,
+  ...props
 }: {
   items: T[];
   innerLabel?: (item: T) => string;
@@ -90,7 +95,7 @@ export default function SimplePieChart<T extends PieChartItem>({
   colors?: string[];
   innerLabelFontSize?: string;
   aspect?: number;
-}) {
+} & Partial<ResponsiveContainerProps>) {
   const cells = useMemo(
     () =>
       Array(items.length)
@@ -109,7 +114,7 @@ export default function SimplePieChart<T extends PieChartItem>({
     return ret;
   }, [outerLabel, outerLabelOffset]);
   return (
-    <ResponsiveContainer width="100%" aspect={aspect} height="auto">
+    <ResponsiveContainer width="100%" aspect={aspect} height="auto" {...props}>
       <PieChart>
         <Pie
           isAnimationActive={false}

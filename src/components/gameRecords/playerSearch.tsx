@@ -32,7 +32,7 @@ function findRawResultFromCache(prefix: string): { result: PlayerMetadataLite[];
 }
 
 export function PlayerSearch() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("form");
   const [selectedItem, setSelectedItem] = useState(null as PlayerMetadataLite | null);
   const [version, setVersion] = useState(0);
   const [searchText, setSearchText] = useState("");

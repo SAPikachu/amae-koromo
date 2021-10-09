@@ -8,15 +8,17 @@ import { useTranslation } from "react-i18next";
 export function ModeSelector({
   mode,
   onChange,
+  label = "",
   type = "radio",
   availableModes = Conf.availableModes,
   i18nNamespace = undefined,
 }: {
   mode: GameMode[];
   onChange: (x: GameMode[]) => void;
+  label?: string;
   type?: "checkbox" | "radio";
   availableModes?: GameMode[];
-  i18nNamespace?: string | undefined;
+  i18nNamespace?: string | string[] | undefined;
 }) {
   useTranslation();
   const items = useMemo(
@@ -34,7 +36,7 @@ export function ModeSelector({
   return (
     <CheckboxGroup
       type={type}
-      groupKey="ModeSelector"
+      label={label}
       items={items}
       selectedItems={mode.map((x) => x.toString())}
       onChange={(newItems) => onChange(newItems.map((x) => x.value))}

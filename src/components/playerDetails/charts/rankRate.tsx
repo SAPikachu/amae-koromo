@@ -5,6 +5,7 @@ import { PlayerMetadata, getRankLabelByIndex } from "../../../data/types";
 import { useMemo } from "react";
 import { formatPercent } from "../../../utils/index";
 import Conf from "../../../utils/conf";
+import { useTranslation } from "react-i18next";
 
 const generateCells = (activeIndex: number) =>
   Conf.rankColors.map((color, index) => (
@@ -20,10 +21,13 @@ const createLabelLine = (props: any) =>
   props.payload.payload.rate > 0 ? <Curve {...props} type="linear" className="recharts-pie-label-line" /> : null;
 
 export default function RankRateChart({ metadata, aspect = 1 }: { metadata: PlayerMetadata; aspect?: number }) {
-  const ranks = useMemo(() => metadata.rank_rates.map((x, index) => ({ label: getRankLabelByIndex(index), rate: x })), [
-    metadata,
-  ]);
-  const startAngle = ranks.filter(x => x.rate > 0).length < 4 ? 45 : 0;
+  const { i18n } = useTranslation();
+  const ranks = useMemo(
+    () => metadata.rank_rates.map((x, index) => ({ label: getRankLabelByIndex(index), rate: x })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [metadata, i18n.language]
+  );
+  const startAngle = ranks.filter((x) => x.rate > 0).length < 4 ? 45 : 0;
   return (
     <ResponsiveContainer width="100%" aspect={aspect} height="auto">
       <PieChart margin={{ left: 20, right: 20 }}>

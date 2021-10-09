@@ -1,3 +1,4 @@
+import { useMediaQuery, useTheme } from "@mui/material";
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 
 export function triggerRelayout() {
@@ -95,6 +96,8 @@ export function sum(numbers: number[]): number {
   return numbers.reduce((a, b) => a + b, 0);
 }
 
-export function isMobile() {
-  return !!window.matchMedia("(max-width: 575.75px)").matches;
+export function useIsMobile() {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("sm"));
+  return !matches;
 }

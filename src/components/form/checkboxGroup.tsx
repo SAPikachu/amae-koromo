@@ -20,10 +20,9 @@ export interface CheckboxItem<T> {
 type GroupParams<T> = {
   type: "checkbox" | "radio";
   items: CheckboxItem<T>[];
-  groupKey: string;
   selectedItems: Iterable<string | CheckboxItem<T>> | null;
   onChange: (selectedItems: CheckboxItem<T>[]) => void;
-  i18nNamespace?: string | undefined;
+  i18nNamespace?: string | string[] | undefined;
   label?: string;
 };
 function InternalRadioGroup<T>({
@@ -149,7 +148,6 @@ export function CheckboxGroup<T>(
   props: GroupParams<T> = {
     type: "checkbox",
     items: [],
-    groupKey: "default",
     selectedItems: null,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onChange: () => {},

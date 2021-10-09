@@ -1,17 +1,103 @@
-import React, { useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
 import { PlayerRecord, RankRates, GameRecord, calculateDeltaPoint, Level } from "../../data/types";
 import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
-import { formatPercent, formatFixed3, isMobile } from "../../utils";
+import { formatPercent, formatFixed3 } from "../../utils";
 import { SimpleRoutedSubViews, ViewRoutes, RouteDef, NavButtons, ViewSwitch } from "../routing";
-import { IoIosList } from "react-icons/io";
 import { useModel } from "../gameRecords/model";
 import { useTranslation } from "react-i18next";
+import { StatList, StatTooltip } from "./statItem";
+import {
+  Box,
+  IconButton,
+  Link,
+  styled,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import { FormatListBulleted } from "@mui/icons-material";
 
-export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAccountId = 0 }) {
+type RateItem = {
+  player: PlayerRecord;
+  count: number;
+  resultSelf: RankRates;
+  resultOpponent: RankRates;
+  pointSelf: number;
+  pointOpponent: number;
+  win: number;
+};
+const StyledTable = styled(Table)(({ theme }) => ({
+  display: "inline-table",
+  whiteSpace: "nowrap",
+
+  "& .MuiTableRow-root.MuiTableRow-root .MuiTableCell-root, & .MuiTableHead-root": {
+    boxShadow: "none",
+  },
+  "& .MuiTableHead-root .MuiTableCell-root": {
+    lineHeight: 1.25,
+  },
+  "& .MuiTableCell-root": {
+    fontSize: "inherit",
+    color: "inherit",
+    padding: theme.spacing(0.5),
+  },
+  "& .MuiTableCell-root:not(:first-child)": {
+    textAlign: "right",
+  },
+  "& .MuiTableBody-root .MuiTableRow-root:last-child .MuiTableCell-root": {
+    border: "0 none",
+  },
+}));
+function TipTable({ item }: { item: RateItem }) {
   const { t } = useTranslation();
+  return (
+    <Box>
+      <Typography textAlign="center" variant="body2" my={1}>
+        {t("胜率：")}
+        {formatPercent(item.win / item.count)}
+      </Typography>
+      <StyledTable>
+        <TableHead>
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell>{t("玩家")}</TableCell>
+            <TableCell>{t("对手")}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell>{t("平均顺位")}</TableCell>
+            <TableCell>{formatFixed3(RankRates.getAvg(item.resultSelf))}</TableCell>
+            <TableCell>{formatFixed3(RankRates.getAvg(item.resultOpponent))}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{t("平均得点")}</TableCell>
+            <TableCell>{formatFixed3(item.pointSelf / item.count)}</TableCell>
+            <TableCell>{formatFixed3(item.pointOpponent / item.count)}</TableCell>
+          </TableRow>
+          {["一", "二", "三", "四"].slice(0, item.resultSelf.length).map((label, index) => (
+            <TableRow key={index}>
+              <TableCell>{t(label + "位")}</TableCell>
+              <TableCell>
+                {formatPercent(item.resultSelf[index] / item.count)} ({item.resultSelf[index]})
+              </TableCell>
+              <TableCell>
+                {formatPercent(item.resultOpponent[index] / item.count)} ({item.resultOpponent[index]})
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </StyledTable>
+    </Box>
+  );
+}
+
+export function SameMatchRateTable({ numGames = 100, numDisplay = 12, currentAccountId = 0 }) {
   const adapter = useDataAdapter();
   const [, updateModel] = useModel();
   const count = adapter.getCount();
@@ -21,15 +107,7 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
       return null;
     }
     const map: {
-      [key: number]: {
-        player: PlayerRecord;
-        count: number;
-        resultSelf: RankRates;
-        resultOpponent: RankRates;
-        pointSelf: number;
-        pointOpponent: number;
-        win: number;
-      };
+      [key: number]: RateItem;
     } = {};
     for (let i = 0; i < numProcessedGames; i++) {
       const game = adapter.getItem(i);
@@ -99,76 +177,40 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 10, currentAcc
     return <Loading />;
   }
   return (
-    <dl className="row">
+    <StatList>
       {rates.slice(0, numDisplay).map((x) => (
-        <React.Fragment key={x.player.accountId}>
-          <div style={{ display: "none" }} id={`smr-statistic-tip-${currentAccountId}-${x.player.accountId}`}>
-            <p className="mt-2">
-              {t("胜率：")}
-              {formatPercent(x.win / x.count)}
-            </p>
-            <table
-              className="table table-dark mb-1 text-nowrap table-sm text-right"
-              style={{ display: "inline-table", backgroundColor: "transparent" }}
-            >
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>{t("玩家")}</th>
-                  <th>{t("对手")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="text-left">{t("平均顺位")}</td>
-                  <td>{formatFixed3(RankRates.getAvg(x.resultSelf))}</td>
-                  <td>{formatFixed3(RankRates.getAvg(x.resultOpponent))}</td>
-                </tr>
-                <tr>
-                  <td className="text-left">{t("平均得点")}</td>
-                  <td>{formatFixed3(x.pointSelf / x.count)}</td>
-                  <td>{formatFixed3(x.pointOpponent / x.count)}</td>
-                </tr>
-                {["一", "二", "三", "四"].slice(0, x.resultSelf.length).map((label, index) => (
-                  <tr key={index}>
-                    <td className="text-left">{t(label + "位")}</td>
-                    <td>
-                      {formatPercent(x.resultSelf[index] / x.count)} ({x.resultSelf[index]})
-                    </td>
-                    <td>
-                      {formatPercent(x.resultOpponent[index] / x.count)} ({x.resultOpponent[index]})
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <dt className="col-8 col-lg-4 font-weight-normal">
-            <Link to={generatePlayerPathById(x.player.accountId)}>{x.player.nickname}</Link>
-            <button
-              className="button-link ml-2"
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{ whiteSpace: "nowrap" }}
+          key={x.player.accountId}
+        >
+          <Typography variant="body2" mr={2}>
+            <Link href={generatePlayerPathById(x.player.accountId)}>{x.player.nickname}</Link>
+            <IconButton
+              size="small"
+              color="info"
               onClick={() => updateModel({ type: "player", searchText: x.player.nickname })}
+              sx={{ margin: "-5px 0", verticalAlign: "text-top" }}
             >
-              <IoIosList />
-            </button>
-          </dt>
-          <dd className="col-4 col-lg-2 text-right">
-            <span
-              data-tip={`##smr-statistic-tip-${currentAccountId}-${x.player.accountId}`}
-              data-html={true}
-              data-place={isMobile() ? "left" : "top"}
-            >
-              {" "}
-              {formatPercent(x.count / numProcessedGames)} ({x.count})
-            </span>
-          </dd>
-        </React.Fragment>
+              <FormatListBulleted fontSize="inherit" />
+            </IconButton>
+          </Typography>
+          <Typography variant="body2" component="div">
+            <StatTooltip title={<TipTable item={x} />} arrow>
+              <Box>
+                {formatPercent(x.count / numProcessedGames)} ({x.count})
+              </Box>
+            </StatTooltip>
+          </Typography>
+        </Box>
       ))}
-    </dl>
+    </StatList>
   );
 }
 
-export default function SameMatchRate({ numDisplay = 10, currentAccountId = 0 }) {
+export default function SameMatchRate({ numDisplay = 12, currentAccountId = 0 }) {
   return (
     <SimpleRoutedSubViews>
       <ViewRoutes>
@@ -179,7 +221,7 @@ export default function SameMatchRate({ numDisplay = 10, currentAccountId = 0 })
           <SameMatchRateTable currentAccountId={currentAccountId} numDisplay={numDisplay} numGames={0x7fffffff} />
         </RouteDef>
       </ViewRoutes>
-      <NavButtons sx={{ mt: -3 }} />
+      <NavButtons sx={{ mt: -1.5 }} />
       <ViewSwitch mutateTitle={false} />
     </SimpleRoutedSubViews>
   );

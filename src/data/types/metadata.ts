@@ -89,6 +89,9 @@ export const FanStatEntry2 = Object.freeze({
 export type FanStatEntryList = FanStatEntry2[];
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FanStatEntryList = Object.freeze({
+  formatFanList(list: FanStatEntryList): string {
+    return list.map((x) => `[${x.count}] ${x.label}`).join("\n");
+  },
   formatFanSummary(list: FanStatEntryList): string {
     const count = sum(list.map((x) => x.count));
     const 役满 = sum(list.map((x) => x.役满));
@@ -314,7 +317,6 @@ export const PlayerMetadata = Object.freeze({
     return this.calculateRankDeltaPoints(metadata, mode, undefined, false, false);
   },
   estimateStableLevel2(metadata: PlayerMetadata, mode: GameMode): string {
-    console.log(metadata, mode);
     if (![GameMode.玉, GameMode.王座].includes(mode)) {
       return this.estimateStableLevel(metadata, mode);
     }
