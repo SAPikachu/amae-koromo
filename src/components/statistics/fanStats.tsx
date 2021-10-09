@@ -57,7 +57,7 @@ export default function FanStatsView() {
                 <Table>
                   <TableHead
                     onClick={() => setSorterIndex((sorterIndex + 1) % SORTERS.length)}
-                    className="cursor-pointer"
+                    sx={{ cursor: "pointer" }}
                   >
                     <TableRow>
                       <TableCell>{t("役")}</TableCell>
