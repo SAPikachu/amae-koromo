@@ -185,6 +185,16 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
       <StatItem label="振听率" description="振听立直局数（不含立直见逃） / 立直局数">
         {formatPercent(stats.振听立直率 || 0)}
       </StatItem>
+      {(stats.立直好型 || stats.立直好型 === 0) && (
+        <StatItem
+          label="立直好型"
+          description={
+            "好型立直局数 / 立直局数\n听牌两种或以上即视为好型，不论残枚数\n（数据从 2021/9/10 前后开始收集）"
+          }
+        >
+          {formatPercent(stats.立直好型 || 0)}
+        </StatItem>
+      )}
     </>
   );
 }

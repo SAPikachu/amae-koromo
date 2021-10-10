@@ -165,6 +165,7 @@ export interface PlayerExtendedStats {
   追立率: number;
   被追率: number;
   振听立直率: number;
+  立直好型?: number;
   最近大铳?: {
     id: string;
     start_time: number;
