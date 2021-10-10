@@ -15,13 +15,11 @@ import { useTranslation } from "react-i18next";
 export const StatTooltip = styled(({ className, ...props }: TooltipProps) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
-  return <Tooltip placement={matches ? "bottom" : "left"} {...props} classes={{ popper: className }} />;
+  return <Tooltip placement={matches ? "bottom" : "bottom-end"} {...props} classes={{ popper: className }} />;
 })(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}.${tooltipClasses.tooltip}.${tooltipClasses.tooltip}.${tooltipClasses.tooltip}`]: {
     textAlign: "center",
-    [theme.breakpoints.up("md")]: {
-      marginTop: theme.spacing(1),
-    },
+    marginTop: theme.spacing(1),
   },
 }));
 
