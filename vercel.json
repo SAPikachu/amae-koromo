@@ -13,6 +13,10 @@
     },
     { "handle": "filesystem" },
     {
+      "src": "/(static|favicon2)/.*",
+      "status": 404
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
