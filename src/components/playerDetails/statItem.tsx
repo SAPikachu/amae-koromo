@@ -71,7 +71,10 @@ export default function StatItem({
       <Typography variant="subtitle2" lineHeight="1.25" mr={2} noWrap textOverflow="initial">
         {t(label)}
       </Typography>
-      <StatTooltip title={description || ""} arrow>
+      <StatTooltip
+        title={description ? (typeof description === "string" ? t(description).toString() : description) : ""}
+        arrow
+      >
         <Typography variant="body2" lineHeight="1.25" noWrap textAlign="right" {...valueProps}>
           {children}
         </Typography>
