@@ -20,6 +20,7 @@ export const StatTooltip = styled(({ className, ...props }: TooltipProps) => {
   [`& .${tooltipClasses.tooltip}.${tooltipClasses.tooltip}.${tooltipClasses.tooltip}.${tooltipClasses.tooltip}`]: {
     textAlign: "center",
     marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
 }));
 
