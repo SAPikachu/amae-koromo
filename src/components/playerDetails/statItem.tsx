@@ -37,10 +37,15 @@ export const StatList = styled(Box)(({ theme }) => ({
       paddingBottom: theme.spacing(0.5),
     },
   },
+  [theme.breakpoints.down("sm") + " and (min-width: 410px)"]: {
+    "&:not(.mobile-1col)": {
+      gridTemplateColumns: "repeat(2, min-content)",
+    },
+  },
   [theme.breakpoints.up("sm")]: {
     gridTemplateColumns: "repeat(2, min-content)",
   },
-  [theme.breakpoints.up("md")]: {
+  "@media (min-width: 767px)": {
     gridTemplateColumns: "repeat(3, min-content)",
     ".lang-en &, .lang-ko &": {
       gridTemplateColumns: "repeat(2, min-content)",

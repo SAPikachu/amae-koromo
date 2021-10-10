@@ -177,7 +177,7 @@ export function SameMatchRateTable({ numGames = 100, numDisplay = 12, currentAcc
     return <Loading />;
   }
   return (
-    <StatList>
+    <StatList className="mobile-1col">
       {rates.slice(0, numDisplay).map((x) => (
         <Box
           display="flex"
