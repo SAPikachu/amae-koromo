@@ -31,9 +31,10 @@ export const StatList = styled(Box)(({ theme }) => ({
   gridGap: theme.spacing(1.5),
   gridTemplateColumns: "1fr",
   [theme.breakpoints.down("sm")]: {
+    gridGap: theme.spacing(0.5),
     "& > div": {
-      borderBottom: `1px dashed ${theme.palette.grey[700]}`,
-      paddingBottom: theme.spacing(1.5),
+      borderBottom: `1px dashed ${theme.palette.grey[500]}`,
+      paddingBottom: theme.spacing(0.5),
     },
   },
   [theme.breakpoints.up("sm")]: {
@@ -66,13 +67,21 @@ export default function StatItem({
   valueProps?: TypographyProps;
 }) {
   const { t } = useTranslation(i18nNamespace);
+  const translatedTip =
+    (description ? (typeof description === "string" ? t(description).toString() : description) : "") || "";
   return (
     <Box display="flex" justifyContent="space-between">
       <Typography variant="subtitle2" lineHeight="1.25" mr={2} noWrap textOverflow="initial">
         {t(label)}
       </Typography>
       <StatTooltip
-        title={description ? (typeof description === "string" ? t(description).toString() : description) : ""}
+        title={
+          translatedTip && typeof translatedTip === "string" ? (
+            <Box whiteSpace="pre-wrap">{translatedTip}</Box>
+          ) : (
+            translatedTip
+          )
+        }
         arrow
       >
         <Typography variant="body2" lineHeight="1.25" noWrap textAlign="right" {...valueProps}>
