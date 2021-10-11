@@ -75,7 +75,7 @@ export default function StatItem({
     (description ? (typeof description === "string" ? t(description).toString() : description) : "") || "";
   return (
     <Box display="flex" justifyContent="space-between">
-      <Typography variant="subtitle2" lineHeight="1.25" mr={2} noWrap textOverflow="initial">
+      <Typography variant="subtitle2" lineHeight="1.25" mr={[1, 2]} noWrap textOverflow="initial">
         {t(label)}
       </Typography>
       <StatTooltip
