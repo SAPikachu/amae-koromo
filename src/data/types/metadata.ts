@@ -90,7 +90,7 @@ export type FanStatEntryList = FanStatEntry2[];
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FanStatEntryList = Object.freeze({
   formatFanList(list: FanStatEntryList): string {
-    return list.map((x) => `[${x.count}] ${x.label}`).join("\n");
+    return list.map((x) => `[${x.count}] ${t(x.label)}`).join("\n");
   },
   formatFanSummary(list: FanStatEntryList): string {
     const count = sum(list.map((x) => x.count));
