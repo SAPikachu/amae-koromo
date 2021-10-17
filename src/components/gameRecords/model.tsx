@@ -20,6 +20,7 @@ export interface PlayerModel {
   selectedModes: GameMode[];
   searchText: string;
   rank: number | null;
+  kontenOnly: boolean;
 }
 export type Model = ListingModel | PlayerModel;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -34,6 +35,7 @@ export const Model = Object.freeze({
         endDate: null,
         searchText: "",
         rank: null,
+        kontenOnly: false,
       };
     }
     return {
@@ -42,6 +44,9 @@ export const Model = Object.freeze({
       selectedMode: null,
       date: null,
     };
+  },
+  hasAdvancedParams(model: Model): boolean {
+    return Boolean("rank" in model && (model.searchText || model.rank || model.kontenOnly));
   },
 });
 type ModelUpdate = Partial<ListingModel> | ({ type: "player" } & Partial<PlayerModel>);
@@ -107,10 +112,10 @@ export function ModelProvider({ children }: { children: ReactChild | ReactChild[
     },
     [model, history]
   );
-  const value = useMemo(() => [model, dispatchModelUpdate] as [Readonly<Model>, DispatchModelUpdate], [
-    model,
-    dispatchModelUpdate,
-  ]);
+  const value = useMemo(
+    () => [model, dispatchModelUpdate] as [Readonly<Model>, DispatchModelUpdate],
+    [model, dispatchModelUpdate]
+  );
   return (
     <ModelContext.Provider value={value}>
       <OnRouteModelUpdatedContext.Provider value={setModel}>{children}</OnRouteModelUpdatedContext.Provider>

@@ -21,6 +21,7 @@ type PlayerRouteParams = {
   mode?: string;
   search?: string;
   rank?: string;
+  kontenOnly?: string;
 };
 
 function parseOptionalDate<T>(s: string | null | undefined, defaultValue: T): dayjs.Dayjs | T {
@@ -43,6 +44,7 @@ const ModelBuilders = {
       selectedModes: parseCombinedMode(params.mode || ""),
       searchText: params.search ? params.search.slice(1) : "",
       rank: parseInt(params.rank || "") || null,
+      kontenOnly: !!params.kontenOnly,
     };
   },
   listing(params: ListingRouteParams): Model | string {
@@ -72,6 +74,7 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
   const query = new URLSearchParams(location.search);
   Object.assign(params, {
     rank: query.get("rank"),
+    kontenOnly: query.get("kontenOnly"),
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const modelResult = ModelBuilders[view](params as any);

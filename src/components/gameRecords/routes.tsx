@@ -10,6 +10,8 @@ import { default as GameRecordTable } from "./table";
 import { COLUMN_GAMEMODE, COLUMN_PLAYERS, COLUMN_FULLTIME } from "./columns";
 import { PageCategory } from "../misc/tracker";
 import Home from "./home";
+import { ExtraFilterPredicateProvider } from "./extraFilterPredicate";
+import { DataAdapterProvider } from "./dataAdapterProvider";
 
 const PlayerDetails = Loadable({
   loader: () => import("../playerDetails/playerDetails"),
@@ -40,8 +42,16 @@ export function generatePath(model: Model): string {
       mode: model.selectedModes.join(".") || undefined,
       search: model.searchText ? "-" + model.searchText : undefined,
     });
+    const params = new URLSearchParams("");
     if (model.rank) {
-      result += `?rank=${model.rank}`;
+      params.set("rank", model.rank.toString());
+    }
+    if (model.kontenOnly) {
+      params.set("kontenOnly", "1");
+    }
+    const paramString = params.toString();
+    if (paramString) {
+      result += "?" + paramString;
     }
     return result;
   }
@@ -67,6 +77,7 @@ export function generatePlayerPathById(playerId: number | string): string {
     selectedModes: [],
     searchText: "",
     rank: null,
+    kontenOnly: false,
   });
 }
 
@@ -93,13 +104,19 @@ function Routes() {
       <Route path={PLAYER_PATH}>
         <RouteSync view="player" />
         <PageCategory category="Player" />
-        <PlayerDetails />
-        <GameRecordTablePlayerView />
+        <ExtraFilterPredicateProvider>
+          <DataAdapterProvider>
+            <PlayerDetails />
+            <GameRecordTablePlayerView />
+          </DataAdapterProvider>
+        </ExtraFilterPredicateProvider>
       </Route>
       <Route exact path={["/", PATH]}>
         <RouteSync view="listing" />
         <PageCategory category="Listing" />
-        <Home />
+        <DataAdapterProvider>
+          <Home />
+        </DataAdapterProvider>
       </Route>
       <Route>
         <Redirect to="/" />

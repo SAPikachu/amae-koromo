@@ -5,11 +5,12 @@ import { CheckboxGroup, DatePicker } from "../form";
 import dayjs from "dayjs";
 import { ModeSelector } from "../gameRecords/modeSelector";
 import Conf from "../../utils/conf";
-import { GameMode, getRankLabelByIndex } from "../../data/types";
+import { GameMode } from "../../data/types";
 import { savePlayerPreference } from "../../utils/preference";
 import { useLocation } from "react-router-dom";
 import { generatePath } from "../gameRecords/routes";
 import { Box, styled } from "@mui/material";
+import ExtraSettings from "./extraSettings";
 
 enum DateRangeOptions {
   All = "全部",
@@ -22,19 +23,6 @@ const DATE_RANGE_ITEMS = Object.keys(DateRangeOptions).map((key: string) => ({
   value: DateRangeOptions[key as keyof typeof DateRangeOptions],
 }));
 
-const RANK_ITEMS = [
-  {
-    key: "All",
-    label: "全部",
-    value: "全部",
-  },
-].concat(
-  Conf.rankColors.map((_, index) => ({
-    key: (index + 1).toString(),
-    label: getRankLabelByIndex(index),
-    value: (index + 1).toString(),
-  }))
-);
 
 const SettingContainer = styled(Box)(({ theme }) => ({
   "& > .MuiFormControl-root": {
@@ -154,14 +142,6 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
     },
     [model, updateModel]
   );
-  const updateSearchTextFromEvent = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ type: "player", searchText: e.currentTarget.value }),
-    [updateModel]
-  );
-  const setRank = useCallback(
-    (rank: string) => updateModel({ type: "player", rank: parseInt(rank) || null }),
-    [updateModel]
-  );
   if (model.type !== "player") {
     return null;
   }
@@ -170,7 +150,6 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
       <Box>
         <CheckboxGroup
           type="radio"
-          label="时间"
           selectedItems={[mode]}
           items={DATE_RANGE_ITEMS}
           onChange={(items) => updateModeFromUi(items[0].value)}
@@ -185,27 +164,13 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
       {showLevel && availableModes.length > 0 && (
         <ModeSelector
           type="checkbox"
-          label="等级"
           mode={model.selectedModes}
           onChange={setSelectedMode}
           availableModes={availableModes}
           i18nNamespace="gameModeShort"
         />
       )}
-      <CheckboxGroup
-        type="radio"
-        label="顺位"
-        selectedItems={[(model.rank || "All").toString()]}
-        items={RANK_ITEMS}
-        onChange={(items) => setRank(items[0].key)}
-      />
-      {model.searchText ? (
-        <div className="setting">
-          <Box title="查找玩家">
-            <input type="text" className="form-control" value={model.searchText} onChange={updateSearchTextFromEvent} />
-          </Box>
-        </div>
-      ) : null}
+      <ExtraSettings />
     </SettingContainer>
   );
 }

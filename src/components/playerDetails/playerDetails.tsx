@@ -22,11 +22,11 @@ import { Level } from "../../data/types/level";
 import { ViewRoutes, RouteDef, SimpleRoutedSubViews, NavButtons, ViewSwitch } from "../routing";
 import SameMatchRate from "./sameMatchRate";
 import { useTranslation } from "react-i18next";
-import { useModel } from "../gameRecords/model";
+import { Model, useModel } from "../gameRecords/model";
 import Conf from "../../utils/conf";
 import { GameMode } from "../../data/types/gameMode";
 import { loadPlayerPreference } from "../../utils/preference";
-import { Box, Grid, Link, Typography } from "@mui/material";
+import { Box, BoxProps, Grid, Link, Typography } from "@mui/material";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -305,6 +305,10 @@ function PlayerStats({ metadata, isChangingSettings }: { metadata: PlayerMetadat
   );
 }
 
+const BlurrableBox = ({ blur, sx, ...props }: { blur: boolean } & BoxProps) => (
+  <Box sx={{ ...(blur ? { opacity: 0.2, pointerEvents: "none" } : {}), ...sx }} {...props} />
+);
+
 export default function PlayerDetails() {
   const { t } = useTranslation();
   const latestDataAdapter = useDataAdapter();
@@ -383,14 +387,14 @@ export default function PlayerDetails() {
   );
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   return (
-    <Box mb={3} position="relative">
+    <Box mb={1} position="relative">
       {isChangingSettings && (
         <Box position="absolute" top="50%" left="50%" sx={{ transform: "translate(-50%, -50%)" }}>
           <Loading />
         </Box>
       )}
       {hasMetadata ? (
-        <Box sx={isChangingSettings ? { opacity: 0.2, pointerEvents: "none" } : {}}>
+        <BlurrableBox blur={isChangingSettings}>
           <Helmet>
             <title>{metadata?.nickname}</title>
           </Helmet>
@@ -399,10 +403,12 @@ export default function PlayerDetails() {
           </Typography>
           <Grid container mt={2} rowSpacing={2} spacing={2}>
             <Grid item xs={12} md={8}>
-              <Typography variant="h5" mb={2} textAlign="center">
-                {t("最近走势")}
-              </Typography>
-              <RecentRankChart dataAdapter={dataAdapter} playerId={metadata!.id} aspect={6} />
+              <BlurrableBox blur={Model.hasAdvancedParams(model)}>
+                <Typography variant="h5" mb={2} textAlign="center">
+                  {t("最近走势")}
+                </Typography>
+                <RecentRankChart dataAdapter={dataAdapter} playerId={metadata!.id} aspect={6} />
+              </BlurrableBox>
               <PlayerStats metadata={metadata!} isChangingSettings={isChangingSettings} />
             </Grid>
             <Grid item xs={12} md={4}>
@@ -414,7 +420,7 @@ export default function PlayerDetails() {
               </Box>
             </Grid>
           </Grid>
-        </Box>
+        </BlurrableBox>
       ) : (
         <Loading />
       )}

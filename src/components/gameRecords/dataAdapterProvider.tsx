@@ -4,11 +4,12 @@ import dayjs from "dayjs";
 
 import { DataProvider, FilterPredicate } from "../../data/source/records/provider";
 import { useModel, Model } from "./model";
-import { Metadata, GameRecord } from "../../data/types";
+import { Metadata, GameRecord, Level } from "../../data/types";
 import { generatePath } from "./routes";
 import notify from "../../utils/notify";
 import { useTranslation } from "react-i18next";
 import { ApiError } from "../../data/source/api";
+import { useExtraFilterPredicate } from "./extraFilterPredicate";
 
 interface ItemLoadingPlaceholder {
   loading: boolean;
@@ -165,27 +166,38 @@ function createProvider(model: Model): DataProvider {
 }
 
 function usePredicate(model: Model): FilterPredicate {
+  const extraPredicate = useExtraFilterPredicate();
   let memoFunc: () => FilterPredicate = () => null;
-  let memoDeps: React.DependencyList = [null, "", false];
   const searchText = (model.searchText || "").trim().toLowerCase() || "";
-  const needPredicate = searchText || ("rank" in model && model.rank);
+  const needPredicate =
+    searchText || ("rank" in model && model.rank) || ("kontenOnly" in model && model.kontenOnly) || extraPredicate;
   memoFunc = () =>
     needPredicate
       ? (game) => {
           if (!game.players.some((player) => player.nickname.toLowerCase().indexOf(searchText) > -1)) {
             return false;
           }
-          if (
-            "rank" in model &&
-            model.rank &&
-            GameRecord.getRankIndexByPlayer(game, model.playerId) !== model.rank - 1
-          ) {
+          if ("rank" in model) {
+            if (model.rank && GameRecord.getRankIndexByPlayer(game, model.playerId) !== model.rank - 1) {
+              return false;
+            }
+            if (model.kontenOnly && !game.players.every((x) => new Level(x.level).isKonten())) {
+              return false;
+            }
+          }
+          if (extraPredicate && !extraPredicate(game)) {
             return false;
           }
           return true;
         }
       : null;
-  memoDeps = [(model.type === undefined && model.selectedMode) || null, searchText, "rank" in model && model.rank];
+  const memoDeps = [
+    (model.type === undefined && model.selectedMode) || null,
+    searchText,
+    "rank" in model && model.rank,
+    "kontenOnly" in model && model.kontenOnly,
+    extraPredicate,
+  ];
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(memoFunc, memoDeps);
 }
@@ -254,8 +266,12 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
     (e) => {
       if (e && "status" in e && e.status === 404) {
         if (model.type === "player" && model.selectedModes.length) {
-          updateModel({ type: "player", playerId: model.playerId, selectedModes: [] });
-          return;
+          const path = generatePath(model);
+          if (path !== sessionStorage.getItem("lastErrorPath")) {
+            sessionStorage.setItem("lastErrorPath", path);
+            updateModel({ type: "player", playerId: model.playerId, selectedModes: [] });
+            return;
+          }
         }
       }
       notify.error(t("加载数据失败"));
