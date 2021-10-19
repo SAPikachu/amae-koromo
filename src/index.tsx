@@ -18,6 +18,8 @@ if (process.env.NODE_ENV === "production") {
   Sentry.init({
     dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31",
     release: process.env.REACT_APP_VERSION || "unknown",
+    ignoreErrors: ["this.hostIndex.push is not a function"],
+    denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i],
   });
 }
 
