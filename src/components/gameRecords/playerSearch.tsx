@@ -7,6 +7,7 @@ import { Redirect } from "react-router-dom";
 import { generatePlayerPathById } from "./routes";
 import { useTranslation } from "react-i18next";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { networkError } from "../../utils/notify";
 
 const playerSearchCache = {} as { [prefix: string]: PlayerMetadataLite[] | Promise<PlayerMetadataLite[]> };
 const NUM_RESULTS_SHOWN = 6;
@@ -81,12 +82,18 @@ export function PlayerSearch() {
       if (playerSearchCache[prefix]) {
         return;
       }
-      playerSearchCache[prefix] = searchPlayer(prefix).then(function (players) {
+      const promise = searchPlayer(prefix).then(function (players) {
         playerSearchCache[prefix] = players;
         if (!cancelled) {
           setVersion(new Date().getTime());
         }
         return players;
+      });
+      playerSearchCache[prefix] = promise;
+      promise.catch((e) => {
+        console.error(e);
+        delete playerSearchCache[prefix];
+        networkError();
       });
     }, 500);
     return () => {

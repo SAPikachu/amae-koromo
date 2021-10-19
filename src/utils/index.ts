@@ -1,9 +1,6 @@
 import { useMediaQuery, useTheme } from "@mui/material";
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import notify from "./notify";
-import i18n from "../i18n";
-
-const t = i18n.t.bind(i18n);
+import { networkError } from "./notify";
 
 export function triggerRelayout() {
   requestAnimationFrame(() => window.dispatchEvent(new UIEvent("resize")));
@@ -77,7 +74,7 @@ export function useAsync<T>(maybePromise: T | Promise<T>, cacheKey?: string): T 
         })
         .catch((e) => {
           console.error(e);
-          notify.error(t("加载数据失败"));
+          networkError();
         });
     } else {
       setFulfilledValue(maybePromise);

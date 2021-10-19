@@ -6,8 +6,7 @@ import { DataProvider, FilterPredicate } from "../../data/source/records/provide
 import { useModel, Model } from "./model";
 import { Metadata, GameRecord, Level } from "../../data/types";
 import { generatePath } from "./routes";
-import notify from "../../utils/notify";
-import { useTranslation } from "react-i18next";
+import { networkError } from "../../utils/notify";
 import { ApiError } from "../../data/source/api";
 import { useExtraFilterPredicate } from "./extraFilterPredicate";
 
@@ -260,7 +259,6 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
     }
     return dataProviders[key];
   }, [model, dataProviders]);
-  const { t } = useTranslation();
   useEffect(() => dataProvider.setFilterPredicate(searchPredicate), [dataProvider, searchPredicate]);
   const onError = useCallback(
     (e) => {
@@ -274,10 +272,10 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
           }
         }
       }
-      notify.error(t("加载数据失败"));
+      networkError();
       // updateModel(Model.removeExtraParams(model));
     },
-    [t, model, updateModel]
+    [model, updateModel]
   );
   const { dataAdapter } = useDataAdapterCommon(dataProvider, onError, [model, searchPredicate]);
   return <DataAdapterContext.Provider value={dataAdapter}>{children}</DataAdapterContext.Provider>;

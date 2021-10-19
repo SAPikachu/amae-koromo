@@ -4,6 +4,10 @@ import { IconButton } from "@mui/material";
 import { useSnackbar, SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { useEffect } from "react";
 
+import i18n from "../i18n";
+
+const t = i18n.t.bind(i18n);
+
 let _enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey = () => "";
 let _closeSnackbar: (key: SnackbarKey) => void = () => {};
 
@@ -20,7 +24,7 @@ export function RegisterSnackbarProvider() {
   return <></>;
 }
 
-export const error = function (message: string) {
+export function error(message: string) {
   return _enqueueSnackbar(message, {
     variant: "error",
     action: (key) => (
@@ -34,6 +38,8 @@ export const error = function (message: string) {
       </IconButton>
     ),
   });
-};
+}
 
-export default { error };
+export function networkError() {
+  return error(t("加载数据失败"));
+}
