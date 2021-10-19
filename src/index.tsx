@@ -14,10 +14,13 @@ import "./styles/styles.scss";
 
 import App from "./components/app";
 
+import preval from "preval.macro";
+
 if (process.env.NODE_ENV === "production") {
+  const buildDate = preval`module.exports = new Date().toISOString()`;
   Sentry.init({
     dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31",
-    release: process.env.REACT_APP_VERSION || "unknown",
+    release: buildDate + (process.env.REACT_APP_VERSION || "unknown"),
     ignoreErrors: ["this.hostIndex.push is not a function"],
     denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i],
   });

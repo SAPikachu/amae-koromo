@@ -33,6 +33,7 @@
   "devDependencies": {
     "@rescripts/cli": "0.0.16",
     "@types/google.analytics": "0.0.41",
+    "@types/preval.macro": "^3.0.0",
     "@types/react": "17.0.0",
     "@types/react-dom": "17.0.0",
     "@types/react-helmet": "^6.1.0",
@@ -46,6 +47,7 @@
     "eslint": "^7.32.0",
     "node-sass": "^4.0.0",
     "prettier": "^2.4.1",
+    "preval.macro": "^5.0.0",
     "typescript": "^4.4"
   },
   "scripts": {
