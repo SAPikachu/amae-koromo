@@ -6,8 +6,6 @@ import { useEffect } from "react";
 
 import i18n from "../i18n";
 
-const t = i18n.t.bind(i18n);
-
 let _enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey = () => "";
 let _closeSnackbar: (key: SnackbarKey) => void = () => {};
 
@@ -41,5 +39,5 @@ export function error(message: string) {
 }
 
 export function networkError() {
-  return error(t("加载数据失败"));
+  return error(i18n.t("加载数据失败"));
 }
