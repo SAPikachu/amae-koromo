@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "production") {
   Sentry.init({
     dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31",
     release: buildDate + (process.env.REACT_APP_VERSION || "unknown"),
-    ignoreErrors: ["this.hostIndex.push is not a function"],
+    ignoreErrors: ["this.hostIndex.push is not a function", "undefined is not an object (evaluating 't.uv')"],
     denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i],
   });
 }
