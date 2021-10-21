@@ -117,7 +117,7 @@ export const FanStatEntryList = Object.freeze({
   },
 });
 
-export interface PlayerExtendedStats {
+export type PlayerExtendedStats = {
   count: number;
   和牌率: number;
   自摸率: number;
@@ -172,6 +172,18 @@ export interface PlayerExtendedStats {
     fans: FanStatEntryList;
   };
 }
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PlayerExtendedStats = Object.freeze({
+  打点效率(stats: PlayerExtendedStats) {
+    return Math.round(stats.和牌率 * stats.平均打点 || 0);
+  },
+  铳点损失(stats: PlayerExtendedStats) {
+    return Math.round(stats.放铳率 * stats.平均铳点 || 0);
+  },
+  净打点效率(stats:  PlayerExtendedStats) {
+    return Math.round(stats.和牌率 * stats.平均打点 || 0) - Math.round(stats.放铳率 * stats.平均铳点 || 0);
+  }
+});
 export interface Metadata {
   count: number;
 }

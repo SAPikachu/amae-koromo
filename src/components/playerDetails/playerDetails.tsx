@@ -139,16 +139,16 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
         {formatPercent(stats.副露后流局率 || 0)}
       </StatItem>
       <StatItem label="打点效率" description={`${t("和牌率")} * ${t("平均打点")}`}>
-        {Math.round(stats.和牌率 * stats.平均打点 || 0)}
+        {PlayerExtendedStats.打点效率(stats)}
       </StatItem>
       <StatItem label="铳点损失" description={`${t("放铳率")} * ${t("平均铳点")}`}>
-        {Math.round(stats.放铳率 * stats.平均铳点 || 0)}
+        {PlayerExtendedStats.铳点损失(stats)}
       </StatItem>
       <StatItem
         label="净打点效率"
         description={`${t("和牌率")} * ${t("平均打点")} - ${t("放铳率")} * ${t("平均铳点")}`}
       >
-        {Math.round(stats.和牌率 * stats.平均打点 || 0) - Math.round(stats.放铳率 * stats.平均铳点 || 0)}
+        {PlayerExtendedStats.净打点效率(stats)}
       </StatItem>
       <StatItem label="总计局数">{stats.count}</StatItem>
     </>

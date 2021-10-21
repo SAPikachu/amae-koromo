@@ -1,4 +1,3 @@
-import React from "react";
 import { useEffect, useState, useCallback } from "react";
 import { useModel } from "../gameRecords/model";
 import { CheckboxGroup, DatePicker } from "../form";
@@ -22,7 +21,6 @@ const DATE_RANGE_ITEMS = Object.keys(DateRangeOptions).map((key: string) => ({
   label: DateRangeOptions[key as keyof typeof DateRangeOptions],
   value: DateRangeOptions[key as keyof typeof DateRangeOptions],
 }));
-
 
 const SettingContainer = styled(Box)(({ theme }) => ({
   "& > .MuiFormControl-root": {

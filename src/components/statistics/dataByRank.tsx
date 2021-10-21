@@ -20,6 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { PlayerExtendedStats } from "../../data/types";
 
 const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四位率"].slice(0, Conf.rankColors.length), [
   "被飞率",
@@ -34,6 +35,7 @@ const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四�
   "对战数",
   "在位记录",
 ]);
+const HEADERS2 = ["等级", "平均打点", "平均铳点", "打点效率", "铳点损失", "净打点效率"];
 
 const TableCell = (props: TableCellProps) => (
   <MuiTableCell {...props} sx={{ textAlign: "center", padding: 1, ...props.sx }} />
@@ -119,6 +121,29 @@ export default function DataByRank() {
                     <TableCell>{formatPercent(levelData.extended.流听率)}</TableCell>
                     <TableCell>{levelData.basic.count}</TableCell>
                     {haveNumPlayers && <TableCell>{levelData.num_players}</TableCell>}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TableContainer sx={{ mt: 2 }}>
+            <Table sx={{ textAlign: "center" }}>
+              <TableHead>
+                <TableRow sx={{ boxShadow: "none" }}>
+                  {HEADERS2.map((x) => (
+                    <TableCell key={x}>{t(x)}</TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {modeData.map(([levelId, levelData]) => (
+                  <TableRow key={levelId}>
+                    <TableCell className="text-nowrap">{new Level(parseInt(levelId)).getTag()}</TableCell>
+                    <TableCell>{levelData.extended.平均打点}</TableCell>
+                    <TableCell>{levelData.extended.平均铳点}</TableCell>
+                    <TableCell>{PlayerExtendedStats.打点效率(levelData.extended)}</TableCell>
+                    <TableCell>{PlayerExtendedStats.铳点损失(levelData.extended)}</TableCell>
+                    <TableCell>{PlayerExtendedStats.净打点效率(levelData.extended)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
