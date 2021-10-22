@@ -3,6 +3,9 @@ const { RetryChunkLoadPlugin } = require("webpack-retry-chunk-load-plugin");
 const isBabelLoader = (inQuestion) => inQuestion && inQuestion.loader && inQuestion.loader.includes("babel-loader");
 
 module.exports = [
+  process.env.RUN_ANALYZER
+    ? (config) => prependWebpackPlugin(new (require("webpack-bundle-analyzer").BundleAnalyzerPlugin)(), config)
+    : (x) => x,
   process.env.NODE_ENV !== "production"
     ? (config) => {
         const babelLoaderPaths = getPaths(isBabelLoader, config);

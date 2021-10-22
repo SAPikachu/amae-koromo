@@ -48,9 +48,11 @@
     "node-sass": "^4.0.0",
     "prettier": "^2.4.1",
     "preval.macro": "^5.0.0",
-    "typescript": "^4.4"
+    "typescript": "^4.4",
+    "webpack-bundle-analyzer": "^4.5.0"
   },
   "scripts": {
+    "analyze": "RUN_ANALYZER=1 npm run build",
     "start": "rescripts start",
     "build": "rescripts build && cp build/index.html build/404.html && node generatePreloadHeaders.js",
     "test": "rescripts test",
