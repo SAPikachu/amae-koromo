@@ -1,13 +1,10 @@
 import { Switch, Route, Redirect, generatePath as genPath } from "react-router-dom";
 
-import { Model, useModel } from "./model";
+import { Model } from "./model";
 import dayjs from "dayjs";
 import { RouteSync } from "./routeSync";
 import Loadable from "../misc/customizedLoadable";
 import Loading from "../misc/loading";
-import { COLUMN_RANK } from "./columns";
-import { default as GameRecordTable } from "./table";
-import { COLUMN_GAMEMODE, COLUMN_PLAYERS, COLUMN_FULLTIME } from "./columns";
 import { PageCategory } from "../misc/tracker";
 import Home from "./home";
 import { ExtraFilterPredicateProvider } from "./extraFilterPredicate";
@@ -16,6 +13,15 @@ import { DataAdapterProvider } from "./dataAdapterProvider";
 const PlayerDetails = Loadable({
   loader: () => import("../playerDetails/playerDetails"),
   loading: () => <Loading />,
+});
+const GameRecordTablePlayerView = Loadable<unknown, typeof import("./tableViews")>({
+  loader: () => import("./tableViews"),
+  loading: () => <Loading />,
+  render(loaded, props) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Component = loaded.GameRecordTablePlayerView as any;
+    return <Component {...props} />;
+  },
 });
 
 const PLAYER_PATH =
@@ -79,23 +85,6 @@ export function generatePlayerPathById(playerId: number | string): string {
     rank: null,
     kontenOnly: false,
   });
-}
-
-function GameRecordTablePlayerView() {
-  const [model] = useModel();
-  if (!("playerId" in model)) {
-    return null;
-  }
-  return (
-    <GameRecordTable
-      columns={[
-        COLUMN_GAMEMODE,
-        COLUMN_RANK(model.playerId),
-        COLUMN_PLAYERS({ activePlayerId: model.playerId }),
-        COLUMN_FULLTIME,
-      ]}
-    />
-  );
 }
 
 function Routes() {
