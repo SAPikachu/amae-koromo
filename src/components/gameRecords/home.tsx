@@ -4,6 +4,7 @@ import { FilterPanel } from "./filterPanel";
 import { PlayerSearch } from "./playerSearch";
 import { Box, Typography } from "@mui/material";
 import Loadable from "../misc/customizedLoadable";
+import { useModel } from "./model";
 
 const GameRecordTableHomeView = Loadable({
   loader: () => import("./tableViews").then((x) => ({ default: x.GameRecordTableHomeView })),
@@ -11,6 +12,7 @@ const GameRecordTableHomeView = Loadable({
 
 export default function Home() {
   const { t } = useTranslation("form");
+  const [model] = useModel();
   return (
     <>
       <Typography variant="h4" mb={3} textAlign="center">
@@ -25,7 +27,7 @@ export default function Home() {
       <Box mb={5}>
         <FilterPanel />
       </Box>
-      <GameRecordTableHomeView />
+      {model.type === undefined && model.selectedMode && <GameRecordTableHomeView />}
     </>
   );
 }
