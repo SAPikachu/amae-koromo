@@ -7,7 +7,6 @@ import { AppHeader } from "./appHeader";
 import { MaintenanceHandler } from "./maintenance";
 import Navbar from "./navbar";
 import CanonicalLink from "../misc/canonicalLink";
-import Loading from "../misc/loading";
 import GameRecords from "../gameRecords";
 import Tracker, { PageCategory } from "../misc/tracker";
 import Conf from "../../utils/conf";
@@ -25,19 +24,15 @@ const Helmet = Loadable({
 });
 const Ranking = Loadable({
   loader: () => import("../ranking"),
-  loading: () => <Loading />,
 });
 const Statistics = Loadable({
   loader: () => import("../statistics"),
-  loading: () => <Loading />,
 });
 const RecentHighlight = Loadable({
   loader: () => import("../recentHighlight"),
-  loading: () => <Loading />,
 });
 const ContestTools = Loadable({
   loader: () => import("../contestTools"),
-  loading: () => <Loading />,
 });
 
 function App() {

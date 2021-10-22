@@ -4,16 +4,9 @@ import { FilterPanel } from "./filterPanel";
 import { PlayerSearch } from "./playerSearch";
 import { Box, Typography } from "@mui/material";
 import Loadable from "../misc/customizedLoadable";
-import Loading from "../misc/loading";
 
-const GameRecordTableHomeView = Loadable<unknown, typeof import("./tableViews")>({
-  loader: () => import("./tableViews"),
-  loading: () => <Loading />,
-  render(loaded, props) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Component = loaded.GameRecordTableHomeView as any;
-    return <Component {...props} />;
-  },
+const GameRecordTableHomeView = Loadable({
+  loader: () => import("./tableViews").then((x) => ({ default: x.GameRecordTableHomeView })),
 });
 
 export default function Home() {

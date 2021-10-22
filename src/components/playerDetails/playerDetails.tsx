@@ -30,15 +30,12 @@ import { Box, BoxProps, Grid, Link, Typography } from "@mui/material";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
-  loading: () => <Loading />,
 });
 const RecentRankChart = Loadable({
   loader: () => import("./charts/recentRank"),
-  loading: () => <Loading />,
 });
 const WinLoseDistribution = Loadable({
   loader: () => import("./charts/winLoseDistribution"),
-  loading: () => <Loading />,
 });
 
 function ExtendedStatsViewAsync({
