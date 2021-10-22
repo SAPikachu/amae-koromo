@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ComponentType, ReactNode, Suspense } from "react";
 import Loading from "./loading";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CustomizedLoadable<T extends ComponentType<any>>({
   loader,
   loading = () => <Loading />,
