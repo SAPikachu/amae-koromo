@@ -2,7 +2,6 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-import resources from "./translations.json";
 import { triggerRelayout } from "./utils";
 
 const DEBUG = process.env.NODE_ENV === "development" && sessionStorage.i18nDebug;
@@ -12,10 +11,25 @@ if (DEBUG) {
 }
 
 i18n
+  .use({
+    type: "backend",
+    read(language: string, namespace: string, callback: (errorValue: unknown, translations: null | unknown) => void) {
+      if (language === "zh-hans") {
+        return callback(null, {});
+      }
+      import(`./locales/${language}.json`)
+        .then((resources) => {
+          resources = resources.default;
+          callback(null, { ...resources["default"], ...resources[namespace] });
+        })
+        .catch((error) => {
+          callback(error, null);
+        });
+    },
+  })
   .use(LanguageDetector)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
-    resources,
     lowerCaseLng: true,
     fallbackLng: "zh-hans",
     defaultNS: "default",

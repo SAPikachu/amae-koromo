@@ -15,6 +15,8 @@ import "./styles/styles.scss";
 import App from "./components/app";
 
 import preval from "preval.macro";
+import { Suspense } from "react";
+import Loading from "./components/misc/loading";
 
 if (process.env.NODE_ENV === "production") {
   const buildDate = preval`const dayjs = require("dayjs"); dayjs.extend(require('dayjs/plugin/utc')); module.exports = dayjs.utc().format("YYYYMMDDHHmm")`;
@@ -29,7 +31,9 @@ if (process.env.NODE_ENV === "production") {
 const rootElement = document.getElementById("root");
 render(
   <Sentry.ErrorBoundary>
-    <App />
+    <Suspense fallback={<Loading />}>
+      <App />
+    </Suspense>
   </Sentry.ErrorBoundary>,
   rootElement
 );
