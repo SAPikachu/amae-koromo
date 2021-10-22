@@ -17,10 +17,10 @@ import App from "./components/app";
 import preval from "preval.macro";
 
 if (process.env.NODE_ENV === "production") {
-  const buildDate = preval`module.exports = new Date().toISOString()`;
+  const buildDate = preval`const dayjs = require("dayjs"); dayjs.extend(require('dayjs/plugin/utc')); module.exports = dayjs.utc().format("YYYYMMDDHHmm")`;
   Sentry.init({
     dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31",
-    release: buildDate + (process.env.REACT_APP_VERSION || "unknown"),
+    release: buildDate + "-" + (process.env.REACT_APP_VERSION || "unknown").slice(0, 7),
     ignoreErrors: ["this.hostIndex.push is not a function", "undefined is not an object (evaluating 't.uv')"],
     denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i],
   });
