@@ -2,16 +2,16 @@ import React from "react";
 import { useContext } from "react";
 import { useRouteMatch, Switch, Route, Redirect, useLocation } from "react-router";
 import { Helmet } from "react-helmet";
-import { useTranslation } from "react-i18next";
+import { TFunction, useTranslation } from "react-i18next";
 import { Stack, StackProps } from "@mui/material";
 import NavButton from "../misc/navButton";
 
 type RouteDefProps = {
   path: string;
   exact?: boolean;
-  title: string;
+  title: string | ((t: TFunction) => string);
   disabled?: boolean;
-  children: React.ReactChild | React.ReactChildren;
+  children: React.ReactNode;
 };
 export const RouteDef: React.FunctionComponent<RouteDefProps> = () => {
   throw new Error("Not intended for rendering");
@@ -53,7 +53,7 @@ export function NavButtons({
             disableElevation
             sx={{ mr: 1 }}
           >
-            {t(route.title)}
+            {typeof route.title === "string" ? t(route.title) : route.title(t)}
           </NavButton>
         ))}
     </Stack>
@@ -82,7 +82,7 @@ export function ViewSwitch({
           <Route exact={route.exact} key={route.path} path={`${urlBase}/${route.path}`}>
             {mutateTitle && (
               <Helmet>
-                <title>{t(route.title)}</title>
+                <title>{typeof route.title === "string" ? t(route.title) : route.title(t)}</title>
               </Helmet>
             )}
             {route.children}

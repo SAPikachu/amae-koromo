@@ -5,8 +5,8 @@ import DeltaRanking from "./deltaRanking";
 import { CareerRanking, CareerRankingColumn, CareerRankingPlain } from "./careerRanking";
 import { ModelModeProvider } from "../modeModel";
 import { CareerRankingType, LevelWithDelta } from "../../data/types";
-import { PlayerMetadata } from "../../data/types/metadata";
-import { formatFixed3, formatIdentity, formatPercent } from "../../utils/index";
+import { PlayerMetadata, PlayerExtendedStats } from "../../data/types/metadata";
+import { formatFixed3, formatIdentity, formatPercent, formatRound } from "../../utils/index";
 import { ViewRoutes, SimpleRoutedSubViews, NavButtons, RouteDef } from "../routing";
 import { ViewSwitch } from "../routing/index";
 import { useTranslation } from "react-i18next";
@@ -75,6 +75,43 @@ const ROUTES = (
           title="对局数"
           formatter={formatIdentity}
           showNumGames={false}
+        />
+      </CareerRanking>
+    </RouteDef>
+    <RouteDef path="career4" title={(t) => `${t("平均打点")}/${t("平均铳点")}`}>
+      <CareerRanking>
+        <CareerRankingColumn type={CareerRankingType.平均打点} title="平均打点" formatter={formatRound} />
+        <CareerRankingColumn type={CareerRankingType.平均铳点} title="平均铳点" formatter={formatRound} />
+      </CareerRanking>
+    </RouteDef>
+    <RouteDef path="career5" title={(t) => `${t("打点效率")}/${t("铳点损失")}`}>
+      <CareerRanking>
+        <CareerRankingColumn type={CareerRankingType.打点效率} title="打点效率" formatter={formatRound} />
+        <CareerRankingColumn type={CareerRankingType.铳点损失} title="铳点损失" formatter={formatRound} />
+      </CareerRanking>
+    </RouteDef>
+    <RouteDef path="netwinefficiency" title="净打点效率">
+      <CareerRanking>
+        <CareerRankingColumn
+          type={CareerRankingType.净打点效率}
+          title="净打点效率"
+          formatter={formatRound}
+          extraColumns={[
+            {
+              label: "打点效率",
+              value: (x) =>
+                x.extended_stats && "count" in x.extended_stats
+                  ? formatRound(PlayerExtendedStats.打点效率(x.extended_stats))
+                  : "",
+            },
+            {
+              label: "铳点损失",
+              value: (x) =>
+                x.extended_stats && "count" in x.extended_stats
+                  ? formatRound(PlayerExtendedStats.铳点损失(x.extended_stats))
+                  : "",
+            },
+          ]}
         />
       </CareerRanking>
     </RouteDef>
