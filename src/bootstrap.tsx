@@ -23,8 +23,12 @@ if (process.env.NODE_ENV === "production") {
   Sentry.init({
     dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31",
     release: buildDate + "-" + (process.env.REACT_APP_VERSION || "unknown").slice(0, 7),
-    ignoreErrors: ["this.hostIndex.push is not a function", "undefined is not an object (evaluating 't.uv')"],
-    denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i],
+    ignoreErrors: [
+      "this.hostIndex.push is not a function",
+      "undefined is not an object (evaluating 't.uv')",
+      "SyntaxError: The string did not match the expected pattern.",
+    ],
+    denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i, /^file:\/\//i],
   });
 }
 
