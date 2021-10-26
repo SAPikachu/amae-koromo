@@ -68,6 +68,7 @@ i18n
   });
 
 i18n.on("languageChanged", function () {
+  document.documentElement.lang = i18n.language;
   triggerRelayout();
 });
 
