@@ -5,6 +5,7 @@ import { PlayerSearch } from "./playerSearch";
 import { Box, Typography } from "@mui/material";
 import Loadable from "../misc/customizedLoadable";
 import { useModel } from "./model";
+import Conf from "../../utils/conf";
 
 const GameRecordTableHomeView = Loadable({
   loader: () => import("./tableViews").then((x) => ({ default: x.GameRecordTableHomeView })),
@@ -27,7 +28,9 @@ export default function Home() {
       <Box mb={5}>
         <FilterPanel />
       </Box>
-      {model.type === undefined && model.selectedMode && <GameRecordTableHomeView />}
+      {(model.type === undefined && model.selectedMode) || Conf.availableModes.length <= 1 ? (
+        <GameRecordTableHomeView />
+      ) : null}
     </>
   );
 }
