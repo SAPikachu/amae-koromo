@@ -90,6 +90,7 @@
     "流满": "Nagashi mangan",
     "平均起手向听": "Avg haipai shanten",
     "立直好型": "Good-hand riichi",
+    "立直多面": "Multi-sided riichi",
     "打点效率": "Win efficiency",
     "铳点损失": "Deal-in loss",
     "净打点效率": "Net win efficiency",
@@ -126,7 +127,9 @@
     "和出的最大番数（不含役满役）": "Highest han (except yakuman yakus)",
     "流满次数": "Mangan-at-draw rounds",
     "两立直次数": "Double riichi rounds",
-    "好型立直局数 / 立直局数\n听牌两种或以上即视为好型，不论残枚数\n（数据从 2021/9/10 前后开始收集）": "Good-hand riichi rounds / Riichi rounds\nTenpai with 2 or more sided waits is considered good hand, regardless of tiles available\n(Data collection of this metric started around 2021/9/10)",
+    "多面立直局数 / 立直局数<br/>听牌两种或以上即视为多面（含对碰）": "Multi-sided wait riichi rounds / Riichi rounds<br/>Tenpai with 2 or more sided waits is considered multi-sided wait, including shanpon",
+    "好型立直局数 / 立直局数<br/>立直时听牌可见剩余 6 枚或以上视为好型": "Good-hand riichi rounds / Riichi rounds<br/>Tenpai with 6 or more available tiles (all visible tiles factored in) at the time of riichi is considered good hand",
+    "（数据从 {{date}} 前后开始收集）": "(Data collection of this metric was started around {{date}})",
 
     "升": "ranking-up",
     "降": "ranking-down",

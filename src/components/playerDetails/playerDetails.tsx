@@ -21,7 +21,7 @@ import EstimatedStableLevel from "./estimatedStableLevel";
 import { Level } from "../../data/types/level";
 import { ViewRoutes, RouteDef, SimpleRoutedSubViews, NavButtons, ViewSwitch } from "../routing";
 import SameMatchRate from "./sameMatchRate";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Model, useModel } from "../gameRecords/model";
 import Conf from "../../utils/conf";
 import { GameMode } from "../../data/types/gameMode";
@@ -197,12 +197,38 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
       </StatItem>
       {(stats.立直好型 || stats.立直好型 === 0) && (
         <StatItem
-          label="立直好型"
+          label="立直多面"
           description={
-            "好型立直局数 / 立直局数\n听牌两种或以上即视为好型，不论残枚数\n（数据从 2021/9/10 前后开始收集）"
+            <Box>
+              <Trans>
+                多面立直局数 / 立直局数
+                <br />
+                听牌两种或以上即视为多面（含对碰）
+              </Trans>
+              <br />
+              <Trans values={{ date: "2021/9/10" }} defaults="（数据从 {{date}} 前后开始收集）" />
+            </Box>
           }
         >
           {formatPercent(stats.立直好型 || 0)}
+        </StatItem>
+      )}
+      {(stats.立直好型2 || stats.立直好型2 === 0) && (
+        <StatItem
+          label="立直好型"
+          description={
+            <Box>
+              <Trans>
+                好型立直局数 / 立直局数
+                <br />
+                立直时听牌可见剩余 6 枚或以上视为好型
+              </Trans>
+              <br />
+              <Trans values={{ date: "2021/11/7" }} defaults="（数据从 {{date}} 前后开始收集）" />
+            </Box>
+          }
+        >
+          {formatPercent(stats.立直好型2 || 0)}
         </StatItem>
       )}
     </>
