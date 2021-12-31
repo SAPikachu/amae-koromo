@@ -1,21 +1,36 @@
 @import "~react-virtualized/styles";
 
 body {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
   font-family: "Roboto", "Microsoft YaHei", "Meiryo", sans-serif;
-  overflow-y: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding-top: 50px;
 }
-.koromo body {
+body::before {
+  content: "";
+  display: block;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  bottom: 0;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+body[style*="overflow"] {
+  --scrollbar-width: 0px !important;
+}
+.koromo body::before {
   background-image: url(../assets/img/koromo.jpg);
 }
-.achiga body {
+.achiga body::before {
   background-image: url(../assets/img/achiga.jpg);
 }
-.yuuki body {
+.yuuki body::before {
   background-image: url(../assets/img/yuuki.jpg);
 }
 #root {
