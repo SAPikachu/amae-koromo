@@ -36,9 +36,23 @@ export const StatList = styled(Box)(({ theme }) => ({
       paddingBottom: theme.spacing(0.5),
     },
   },
-  [theme.breakpoints.down("sm") + " and (min-width: 410px)"]: {
-    "&:not(.mobile-1col)": {
+  "&:not(.mobile-1col)": {
+    [theme.breakpoints.down("sm") + " and (min-width: 410px)"]: {
       gridTemplateColumns: "repeat(2, min-content)",
+
+      ".lang-en &, .lang-ko &": {
+        gridTemplateColumns: "1fr",
+      },
+    },
+    [theme.breakpoints.down("sm") + " and (min-width: 440px)"]: {
+      ".lang-ko &": {
+        gridTemplateColumns: "repeat(2, min-content)",
+      },
+    },
+    [theme.breakpoints.down("sm") + " and (min-width: 480px)"]: {
+      ".lang-en &": {
+        gridTemplateColumns: "repeat(2, min-content)",
+      },
     },
   },
   [theme.breakpoints.up("sm")]: {
