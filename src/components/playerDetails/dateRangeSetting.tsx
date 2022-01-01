@@ -71,6 +71,7 @@ function DatePickerMenuItem({
             renderInput={(params) => <TextField {...params} />}
             value={selectedDate}
             onAccept={(newDate) => void (newDate ? onChange(newDate) : setTimeEnabled(true))}
+            clearable
             onChange={(newDate) => void (newDate ? setSelectedDate(newDate) : setTimeEnabled(true))}
             minDate={dayjs(Conf.dateMin)}
             maxDate={dayjs().endOf("day")}

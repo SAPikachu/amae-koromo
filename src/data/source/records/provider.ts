@@ -225,8 +225,8 @@ export const DataProvider = Object.freeze({
     return new DataProviderImpl(
       new PlayerDataLoader(
         playerId,
-        startDate ? dayjs(startDate).startOf("day") : undefined,
-        endDate ? dayjs(endDate).endOf("day") : undefined,
+        startDate ? dayjs(startDate) : undefined,
+        endDate ? dayjs(endDate) : undefined,
         mode
       )
     );
