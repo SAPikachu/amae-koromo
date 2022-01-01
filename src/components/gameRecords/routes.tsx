@@ -17,7 +17,7 @@ const GameRecordTablePlayerView = Loadable({
 });
 
 const PLAYER_PATH =
-  "/player/:id/:mode([0-9.]+)?/:search(-[^/]+)?/:startDate(\\d{4}-\\d{2}-\\d{2})?/:endDate(\\d{4}-\\d{2}-\\d{2})?";
+  "/player/:id/:mode([0-9.]+)?/:search(-[^/]+)?/:startDate(\\d{4}-\\d{2}-\\d{2}|\\d{6,})?/:endDate(\\d{4}-\\d{2}-\\d{2}|\\d{6,})?";
 const PATH = "/:date(\\d{4}-\\d{2}-\\d{2})/:mode([0-9]+)?/:search?";
 
 function dateToStringSafe(value: dayjs.ConfigType | null | undefined): string | undefined {
@@ -27,6 +27,12 @@ function dateToStringSafe(value: dayjs.ConfigType | null | undefined): string | 
   const dateObj = dayjs(value);
   if (!dateObj.isValid() || dateObj.year() < 2019 || dateObj.year() > 9999) {
     return undefined;
+  }
+  if (
+    dateObj.valueOf() - dateObj.startOf("day").valueOf() > 0 &&
+    dateObj.endOf("day").valueOf() - dateObj.valueOf() > 60000
+  ) {
+    return dateObj.valueOf().toString();
   }
   return dateObj.format("YYYY-MM-DD");
 }

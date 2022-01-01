@@ -24,8 +24,21 @@ type PlayerRouteParams = {
   kontenOnly?: string;
 };
 
-function parseOptionalDate<T>(s: string | null | undefined, defaultValue: T): dayjs.Dayjs | T {
-  return s ? dayjs(s, "YYYY-MM-DD") : defaultValue;
+function parseOptionalDate<T>(
+  s: string | null | undefined,
+  defaultValue: T,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  postprocess = (d: dayjs.Dayjs, isPrecise: boolean) => d
+): dayjs.Dayjs | T {
+  if (!s) {
+    return defaultValue;
+  }
+  const isPrecise = /^\d{6,}$/.test(s);
+  const ret = isPrecise ? dayjs(parseInt(s, 10)) : dayjs(s);
+  if (!ret.isValid()) {
+    return defaultValue;
+  }
+  return postprocess(ret, isPrecise);
 }
 
 const ModelBuilders = {
@@ -40,7 +53,7 @@ const ModelBuilders = {
       type: "player",
       playerId: params.id,
       startDate: parseOptionalDate(params.startDate, null),
-      endDate: parseOptionalDate(params.endDate, null),
+      endDate: parseOptionalDate(params.endDate, null, (d, isPrecise) => (isPrecise ? d : d.endOf("day"))),
       selectedModes: parseCombinedMode(params.mode || ""),
       searchText: params.search ? params.search.slice(1) : "",
       rank: parseInt(params.rank || "") || null,

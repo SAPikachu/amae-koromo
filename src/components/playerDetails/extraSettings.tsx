@@ -114,7 +114,7 @@ export default function ExtraSettings() {
   const [model, updateModel] = useModel();
   const extraSettingsEnabled = Model.hasAdvancedParams(model);
   return (
-    <Box alignSelf="flex-end">
+    <Box alignSelf={[undefined, undefined, "flex-end"]}>
       {extraSettingsEnabled ? (
         <ButtonGroup variant="contained">
           <Button disableElevation startIcon={<FilterAlt />} onClick={() => setOpen(true)}>
