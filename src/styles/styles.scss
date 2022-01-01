@@ -5,33 +5,40 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   padding-top: 50px;
-}
-body::before {
-  content: "";
-  display: block;
-  pointer-events: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  bottom: 0;
-
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  z-index: -1;
+  background-image: var(--background-image);
 }
-body[style*="overflow"] {
-  --scrollbar-width: 0px !important;
+@media (min-width: 1025px) {
+  body {
+    background: transparent;
+  }
+  body::before {
+    content: "";
+    display: block;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    bottom: 0;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    background-image: var(--background-image);
+  }
 }
-.koromo body::before {
-  background-image: url(../assets/img/koromo.jpg);
+.koromo {
+  --background-image: url(../assets/img/koromo.jpg);
 }
-.achiga body::before {
-  background-image: url(../assets/img/achiga.jpg);
+.achiga {
+  --background-image: url(../assets/img/achiga.jpg);
 }
-.yuuki body::before {
-  background-image: url(../assets/img/yuuki.jpg);
+.yuuki {
+  --background-image: url(../assets/img/yuuki.jpg);
 }
 #root {
   overflow: hidden;
