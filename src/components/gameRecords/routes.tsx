@@ -62,7 +62,7 @@ export function generatePath(model: Model): string {
   if (!model.selectedMode && !model.searchText && !model.date) {
     return "/";
   }
-  const dateString = dateToStringSafe(model.date || new Date());
+  const dateString = dateToStringSafe(model.date || dayjs().startOf("day"));
   if (!dateString) {
     return "/";
   }
