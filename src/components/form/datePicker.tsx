@@ -16,7 +16,10 @@ export function DatePicker({
   fullWidth = false,
   size = "medium" as "medium" | "small",
 }) {
-  const handleChange = useCallback((value: dayjs.Dayjs | null) => onChange(value || dayjs(date)), [date, onChange]);
+  const handleChange = useCallback(
+    (value: dayjs.Dayjs | null) => onChange(value || dayjs(date).startOf("day")),
+    [date, onChange]
+  );
   const { t } = useTranslation("form");
   return (
     <MuiDatePicker

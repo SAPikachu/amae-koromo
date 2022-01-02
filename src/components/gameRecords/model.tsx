@@ -59,7 +59,8 @@ export const useModel = () => useContext(ModelContext);
 function normalizeUpdate(newProps: ModelUpdate): ModelUpdate {
   if (newProps.type === undefined) {
     if (newProps.date) {
-      newProps.date = dayjs(newProps.date).valueOf();
+      const isDateOnly = typeof newProps.date === "string" && !/^\d{6,}$/.test(newProps.date);
+      newProps.date = isDateOnly ? dayjs(newProps.date).startOf("date").valueOf() : dayjs(newProps.date).valueOf();
     }
   }
   for (const key of Object.keys(newProps)) {

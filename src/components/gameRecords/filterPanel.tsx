@@ -16,7 +16,10 @@ export function FilterPanel() {
   const { t } = useTranslation();
   const [model, updateModel] = useModel();
   const setMode = useCallback((mode: GameMode[]) => updateModel({ selectedMode: mode[0] || null }), [updateModel]);
-  const setDate = useCallback((date: dayjs.ConfigType) => updateModel({ date }), [updateModel]);
+  const setDate = useCallback(
+    (date: dayjs.ConfigType) => updateModel({ date: date ? dayjs(date).startOf("day") : date }),
+    [updateModel]
+  );
   if (model.type !== undefined) {
     return null;
   }
