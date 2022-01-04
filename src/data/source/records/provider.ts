@@ -2,7 +2,13 @@ import dayjs from "dayjs";
 
 import { GameRecord } from "../../types/record";
 import { Metadata, PlayerMetadata } from "../../types/metadata";
-import { ListingDataLoader, PlayerDataLoader, DataLoader, RecentHighlightDataLoader } from "./loader";
+import {
+  ListingDataLoader,
+  PlayerDataLoader,
+  DataLoader,
+  RecentHighlightDataLoader,
+  FixedNumberPlayerDataLoader,
+} from "./loader";
 import { GameMode } from "../../types";
 
 export type FilterPredicate<TRecord = GameRecord> = ((record: TRecord) => boolean) | null;
@@ -220,8 +226,12 @@ export const DataProvider = Object.freeze({
     playerId: string,
     startDate: dayjs.ConfigType | null,
     endDate: dayjs.ConfigType | null,
+    limit: number | null,
     mode: GameMode[]
   ): PlayerDataProvider {
+    if (limit) {
+      return new DataProviderImpl(new FixedNumberPlayerDataLoader(playerId, limit, mode));
+    }
     return new DataProviderImpl(
       new PlayerDataLoader(
         playerId,

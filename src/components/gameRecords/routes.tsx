@@ -39,6 +39,10 @@ function dateToStringSafe(value: dayjs.ConfigType | null | undefined): string | 
 
 export function generatePath(model: Model): string {
   if (model.type === "player") {
+    if (model.limit) {
+      delete model.startDate;
+      delete model.endDate;
+    }
     let result = genPath(PLAYER_PATH, {
       id: model.playerId,
       startDate: dateToStringSafe(model.startDate),
@@ -52,6 +56,9 @@ export function generatePath(model: Model): string {
     }
     if (model.kontenOnly) {
       params.set("kontenOnly", "1");
+    }
+    if (model.limit) {
+      params.set("limit", model.limit.toString());
     }
     const paramString = params.toString();
     if (paramString) {
@@ -82,6 +89,7 @@ export function generatePlayerPathById(playerId: number | string): string {
     searchText: "",
     rank: null,
     kontenOnly: false,
+    limit: null,
   });
 }
 

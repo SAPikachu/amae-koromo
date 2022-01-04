@@ -42,12 +42,23 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
       <DateRangeSetting
         start={model.startDate || null}
         end={model.endDate || null}
+        limit={model.limit || null}
         onSelectDate={(start, end) =>
           updateModel({
             type: "player",
             playerId: model.playerId,
             startDate: start,
             endDate: end,
+            limit: null,
+          })
+        }
+        onSelectLimit={(limit) =>
+          updateModel({
+            type: "player",
+            playerId: model.playerId,
+            startDate: null,
+            endDate: null,
+            limit,
           })
         }
       />

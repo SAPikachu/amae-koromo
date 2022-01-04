@@ -21,6 +21,7 @@ export interface PlayerModel {
   searchText: string;
   rank: number | null;
   kontenOnly: boolean;
+  limit: number | null;
 }
 export type Model = ListingModel | PlayerModel;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -36,6 +37,7 @@ export const Model = Object.freeze({
         searchText: "",
         rank: null,
         kontenOnly: false,
+        limit: null,
       };
     }
     return {

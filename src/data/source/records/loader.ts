@@ -174,3 +174,40 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     return chunk;
   }
 }
+export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
+  _limit: number;
+  _data: GameRecord[];
+  constructor(playerId: string, limit: number, mode: GameMode[]) {
+    super(playerId, undefined, dayjs().endOf("hour"), mode);
+    if (!mode.length) {
+      throw new Error("No mode specified");
+    }
+    this._limit = limit;
+    this._data = [];
+  }
+  getEstimatedChunkSize() {
+    return this._limit;
+  }
+  async getMetadata(): Promise<PlayerMetadata> {
+    const chunk = await apiGet<GameRecord[]>(
+      `player_records/${this._playerId}/${this._endDate.valueOf()}/${this._startDate.valueOf()}?limit=${
+        this._limit
+      }&mode=${this._mode}&descending=true`
+    );
+    if (!chunk.length) {
+      throw new Error("No data");
+    }
+    this._data = chunk;
+    this._startDate = dayjs(chunk[chunk.length - 1].startTime * 1000);
+    this._initialParams = this._getParams();
+    return super.getMetadata().then((x) => {
+      this._cursor = this._startDate;
+      return x;
+    });
+  }
+  async getNextChunk(): Promise<GameRecord[]> {
+    const chunk = this._data;
+    this._data = [];
+    return chunk;
+  }
+}

@@ -1,11 +1,65 @@
 import { ReactNode, useEffect, useState } from "react";
 
 import dayjs from "dayjs";
-import { Button, Menu, MenuItem, Divider, TextField, Box, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Button,
+  MenuItem,
+  Divider,
+  TextField,
+  Box,
+  useMediaQuery,
+  useTheme,
+  MenuProps,
+  Popover,
+  MenuListProps,
+  MenuList,
+  styled,
+} from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { WatchLater, WatchLaterOutlined } from "@mui/icons-material";
 import { MobileDateTimePicker, MobileDatePicker } from "@mui/lab";
 import Conf from "../../utils/conf";
+
+function ResponsiveMenu({ children, ...params }: MenuProps) {
+  const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
+  return (
+    <Popover
+      anchorOrigin={
+        isMobile ? { vertical: "center", horizontal: "center" } : { vertical: "bottom", horizontal: "left" }
+      }
+      transformOrigin={isMobile ? { vertical: "center", horizontal: "center" } : undefined}
+      {...params}
+      PaperProps={{
+        sx: { maxWidth: "80vw", maxHeight: "90vh", padding: 1 },
+        ...(params.PaperProps || {}),
+      }}
+    >
+      <Box display="flex" flexDirection={["column", "column", "row"]} flexWrap="wrap">
+        {children}
+      </Box>
+    </Popover>
+  );
+}
+const StyledMenuList = styled(MenuList)(({ theme }) => ({
+  padding: 0,
+
+  "&:last-child .MuiDivider-root:last-child": {
+    display: "none",
+  },
+  [theme.breakpoints.up("md")]: {
+    ".MuiDivider-root:last-child": {
+      display: "none",
+    },
+  },
+}));
+function MenuGroup({ children, ...params }: MenuListProps) {
+  return (
+    <StyledMenuList {...params}>
+      {children}
+      <Divider sx={{ my: 1 }} />
+    </StyledMenuList>
+  );
+}
 
 function DatePickerMenuItem({
   onClose,
@@ -91,14 +145,17 @@ function DatePickerMenuItem({
 
 export default function DateRangeSetting({
   onSelectDate,
+  onSelectLimit,
   start,
   end,
+  limit,
 }: {
   onSelectDate: (start: dayjs.ConfigType | null, end: dayjs.ConfigType | null) => void;
+  onSelectLimit: (limit: number) => void;
   start: dayjs.ConfigType | null;
   end: dayjs.ConfigType | null;
+  limit: number | null;
 }) {
-  const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
   const [anchorEl, setAnchorEl] = useState(null as HTMLElement | null);
   const handleClose = () => setAnchorEl(null);
   const selectAll = () => {
@@ -114,11 +171,15 @@ export default function DateRangeSetting({
     );
     handleClose();
   };
+  const selectLimit = (limit: number) => {
+    onSelectLimit(limit);
+    handleClose();
+  };
   const selectRange = (start: dayjs.Dayjs, end: dayjs.Dayjs | null = null) => {
     onSelectDate(start, end);
     handleClose();
   };
-  const haveDateTime = start || end;
+  const haveCustomRange = start || end || limit;
   const shouldRenderTime =
     (start && !dayjs(start).startOf("day").isSame(start, "second")) ||
     (end && !dayjs(end).endOf("day").isSame(end, "second"));
@@ -127,72 +188,80 @@ export default function DateRangeSetting({
     <div>
       <Button
         disableElevation
-        variant={haveDateTime ? "outlined" : "text"}
+        variant={haveCustomRange ? "outlined" : "text"}
         onClick={(e) => setAnchorEl(e.currentTarget)}
-        startIcon={haveDateTime ? <WatchLater /> : <WatchLaterOutlined />}
+        startIcon={haveCustomRange ? <WatchLater /> : <WatchLaterOutlined />}
       >
-        {haveDateTime ? (
-          `${dayjs(start || Conf.dateMin).format(format)} ~ ${dayjs(end || undefined).format(format)}`
+        {haveCustomRange ? (
+          limit ? (
+            <Trans defaults="最近 {{x}} 场" count={limit} values={{ x: limit }} />
+          ) : (
+            `${dayjs(start || Conf.dateMin).format(format)} ~ ${dayjs(end || undefined).format(format)}`
+          )
         ) : (
           <Trans>时间</Trans>
         )}
       </Button>
-      <Menu
-        anchorEl={anchorEl}
-        open={!!anchorEl}
-        onClose={handleClose}
-        keepMounted
-        anchorOrigin={isMobile ? { vertical: "center", horizontal: "center" } : undefined}
-        transformOrigin={isMobile ? { vertical: "center", horizontal: "center" } : undefined}
-      >
-        <MenuItem dense onClick={selectAll}>
-          <Trans>全部</Trans>
-        </MenuItem>
-        <Divider />
-        {[4, 13, 26, 52].map((x) => (
-          <MenuItem dense key={x} onClick={() => selectWeek(x)}>
-            <Trans defaults="最近 {{x}} 周" count={x} values={{ x }} />
+      <ResponsiveMenu anchorEl={anchorEl} open={!!anchorEl} onClose={handleClose} keepMounted>
+        <MenuGroup>
+          <MenuItem dense onClick={selectAll}>
+            <Trans>全部</Trans>
           </MenuItem>
-        ))}
-        <Divider />
-        <MenuItem dense onClick={() => selectRange(dayjs().startOf("month"))}>
-          <Trans>本月</Trans>
-        </MenuItem>
-        <MenuItem
-          dense
-          onClick={() =>
-            selectRange(dayjs().startOf("month").subtract(1, "month"), dayjs().startOf("month").subtract(1, "second"))
-          }
-        >
-          <Trans>上月</Trans>
-        </MenuItem>
-        <MenuItem dense onClick={() => selectRange(dayjs().startOf("year"))}>
-          <Trans>今年</Trans>
-        </MenuItem>
-        <MenuItem
-          dense
-          onClick={() =>
-            selectRange(dayjs().startOf("year").subtract(1, "year"), dayjs().startOf("year").subtract(1, "second"))
-          }
-        >
-          <Trans>去年</Trans>
-        </MenuItem>
-        <Divider />
-        <DatePickerMenuItem
-          onClose={handleClose}
-          value={start || dayjs(Conf.dateMin)}
-          onChange={(date) => onSelectDate(date, end || dayjs().endOf("day"))}
-        >
-          <Trans>自定开始时间...</Trans>
-        </DatePickerMenuItem>
-        <DatePickerMenuItem
-          onClose={handleClose}
-          value={end || dayjs().endOf("day")}
-          onChange={(date) => onSelectDate(start || dayjs(Conf.dateMin), dayjs(date).endOf("minute"))}
-        >
-          <Trans>自定结束时间...</Trans>
-        </DatePickerMenuItem>
-      </Menu>
+          <Divider />
+          <DatePickerMenuItem
+            onClose={handleClose}
+            value={start || dayjs(Conf.dateMin)}
+            onChange={(date) => onSelectDate(date, end || dayjs().endOf("day"))}
+          >
+            <Trans>自定开始时间...</Trans>
+          </DatePickerMenuItem>
+          <DatePickerMenuItem
+            onClose={handleClose}
+            value={end || dayjs().endOf("day")}
+            onChange={(date) => onSelectDate(start || dayjs(Conf.dateMin), dayjs(date).endOf("minute"))}
+          >
+            <Trans>自定结束时间...</Trans>
+          </DatePickerMenuItem>
+        </MenuGroup>
+        <MenuGroup>
+          {[4, 13, 26, 52].map((x) => (
+            <MenuItem dense key={x} onClick={() => selectWeek(x)}>
+              <Trans defaults="最近 {{x}} 周" count={x} values={{ x }} />
+            </MenuItem>
+          ))}
+        </MenuGroup>
+        <MenuGroup>
+          <MenuItem dense onClick={() => selectRange(dayjs().startOf("month"))}>
+            <Trans>本月</Trans>
+          </MenuItem>
+          <MenuItem
+            dense
+            onClick={() =>
+              selectRange(dayjs().startOf("month").subtract(1, "month"), dayjs().startOf("month").subtract(1, "second"))
+            }
+          >
+            <Trans>上月</Trans>
+          </MenuItem>
+          <MenuItem dense onClick={() => selectRange(dayjs().startOf("year"))}>
+            <Trans>今年</Trans>
+          </MenuItem>
+          <MenuItem
+            dense
+            onClick={() =>
+              selectRange(dayjs().startOf("year").subtract(1, "year"), dayjs().startOf("year").subtract(1, "second"))
+            }
+          >
+            <Trans>去年</Trans>
+          </MenuItem>
+        </MenuGroup>
+        <MenuGroup>
+          {[100, 200, 300, 500].map((x) => (
+            <MenuItem dense key={x} onClick={() => selectLimit(x)}>
+              <Trans defaults="最近 {{x}} 场" count={x} values={{ x }} />
+            </MenuItem>
+          ))}
+        </MenuGroup>
+      </ResponsiveMenu>
     </div>
   );
 }

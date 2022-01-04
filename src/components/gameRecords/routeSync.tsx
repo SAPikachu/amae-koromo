@@ -22,6 +22,7 @@ type PlayerRouteParams = {
   search?: string;
   rank?: string;
   kontenOnly?: string;
+  limit?: string;
 };
 
 function parseOptionalDate<T>(
@@ -49,6 +50,10 @@ const ModelBuilders = {
         delete params.rank;
       }
     }
+    if (params.limit) {
+      delete params.startDate;
+      delete params.endDate;
+    }
     return {
       type: "player",
       playerId: params.id,
@@ -58,6 +63,7 @@ const ModelBuilders = {
       searchText: params.search ? params.search.slice(1) : "",
       rank: parseInt(params.rank || "") || null,
       kontenOnly: !!params.kontenOnly,
+      limit: parseInt(params.limit || "", 10) || null,
     };
   },
   listing(params: ListingRouteParams): Model | string {
@@ -88,6 +94,7 @@ export function RouteSync({ view }: { view: keyof typeof ModelBuilders }): React
   Object.assign(params, {
     rank: query.get("rank"),
     kontenOnly: query.get("kontenOnly"),
+    limit: query.get("limit"),
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const modelResult = ModelBuilders[view](params as any);

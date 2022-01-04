@@ -159,7 +159,7 @@ function createProvider(model: Model): DataProvider {
     return DataProvider.createListing(model.date || dayjs().startOf("day"), model.selectedMode || null);
   }
   if (model.type === "player") {
-    return DataProvider.createPlayer(model.playerId, model.startDate, model.endDate, model.selectedModes);
+    return DataProvider.createPlayer(model.playerId, model.startDate, model.endDate, model.limit, model.selectedModes);
   }
   throw new Error("Not implemented");
 }
