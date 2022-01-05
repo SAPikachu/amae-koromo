@@ -28,9 +28,34 @@ module.exports = [
     ? (config) =>
         prependWebpackPlugin(
           new RetryChunkLoadPlugin({
-            cacheBust: `function() { return Date.now(); }`,
+            cacheBust: function () {
+              if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.ready
+                  .then(function (registration) {
+                    return registration.unregister();
+                  })
+                  .catch(function () {});
+              }
+              return Date.now();
+            }.toString(),
             maxRetries: 5,
-            lastResortScript: "window.location.href='?t=' + Date.now();",
+            lastResortScript: `(${function () {
+              if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.ready
+                  .then(function (registration) {
+                    return registration.unregister();
+                  })
+                  .then(function () {
+                    window.location.href = "?t=" + Date.now();
+                  })
+                  .catch(function (error) {
+                    console.error(error.message);
+                    window.location.href = "?t=" + Date.now();
+                  });
+              } else {
+                window.location.href = "?t=" + Date.now();
+              }
+            }.toString()})()`,
           }),
           config
         )
