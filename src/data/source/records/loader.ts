@@ -180,7 +180,12 @@ export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
   constructor(playerId: string, limit: number, mode: GameMode[]) {
     super(playerId, undefined, dayjs().endOf("hour"), mode);
     if (!mode.length) {
-      throw new Error("No mode specified");
+      if (Conf.availableModes.length <= 1) {
+        mode = Conf.availableModes;
+        this._mode = mode;
+      } else {
+        throw new Error("No mode specified");
+      }
     }
     this._limit = limit;
     this._data = [];

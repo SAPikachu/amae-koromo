@@ -6,6 +6,7 @@ import { savePlayerPreference } from "../../utils/preference";
 import { Box, styled } from "@mui/material";
 import ExtraSettings from "./extraSettings";
 import DateRangeSetting from "./dateRangeSetting";
+import Conf from "../../utils/conf";
 
 const SettingContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -38,7 +39,10 @@ export default function PlayerDetailsSettings({ showLevel = false, availableMode
     return null;
   }
   return (
-    <SettingContainer mt={3}>
+    <SettingContainer
+      mt={3}
+      sx={{ visibility: model.selectedModes.length >= 1 || Conf.availableModes.length <= 1 ? "visible" : "hidden" }}
+    >
       <DateRangeSetting
         start={model.startDate || null}
         end={model.endDate || null}
