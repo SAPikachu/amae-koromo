@@ -3,11 +3,12 @@ import { useAsyncFactory } from "../../utils";
 import { getDeltaRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
-import { LevelWithDelta } from "../../data/types";
+import { GameMode, LevelWithDelta } from "../../data/types";
 import { useModel, ModelModeSelector } from "../modeModel";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
 import {
+  Box,
   Grid,
   Table,
   TableBody,
@@ -64,11 +65,19 @@ export default function DeltaRanking() {
   }
   return (
     <>
-      <ModelModeSelector
-        type="checkbox"
-        availableModes={Conf.features.ranking || []}
-        allowedCombinations={Conf.features.rankingGroups}
-      />
+      <Box visibility={data1w ? "visible" : "hidden"}>
+        <ModelModeSelector
+          type="checkbox"
+          availableModes={
+            data1w
+              ? Object.keys(data1w)
+                  .filter((x) => x !== "0")
+                  .map((x) => parseInt(x, 10) as GameMode)
+              : Conf.features.ranking || []
+          }
+          allowedCombinations={Conf.features.rankingGroups}
+        />
+      </Box>
       <GridContainer>
         <Grid item xs={12} lg={6}>
           <Title variant="h4">{t("苦主榜")}</Title>

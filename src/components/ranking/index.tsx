@@ -16,7 +16,7 @@ const SANMA = Conf.rankColors.length === 3;
 
 const ROUTES = (
   <ViewRoutes>
-    <RouteDef path="delta" title="苦主及汪汪" disabled={SANMA}>
+    <RouteDef path="delta" title="苦主及汪汪">
       <DeltaRanking />
     </RouteDef>
     <RouteDef path="career1" title="一位率/四位率" disabled={SANMA}>
