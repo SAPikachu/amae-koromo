@@ -63,11 +63,13 @@ export default function DeltaRanking() {
   if (!data1w || !data4w) {
     return <Loading />;
   }
-  const availableModes = data1w
-    ? Object.keys(data1w)
-        .filter((x) => x !== "0")
-        .map((x) => parseInt(x, 10) as GameMode)
-    : Conf.features.ranking || [];
+  const availableModes = (
+    data1w
+      ? Object.keys(data1w)
+          .filter((x) => x !== "0")
+          .map((x) => parseInt(x, 10) as GameMode)
+      : Conf.features.ranking || []
+  ).sort((a, b) => Conf.availableModes.indexOf(a) - Conf.availableModes.indexOf(b));
   return (
     <>
       <Box visibility={data1w ? "visible" : "hidden"}>
