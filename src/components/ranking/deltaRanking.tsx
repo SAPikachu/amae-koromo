@@ -63,20 +63,15 @@ export default function DeltaRanking() {
   if (!data1w || !data4w) {
     return <Loading />;
   }
+  const availableModes = data1w
+    ? Object.keys(data1w)
+        .filter((x) => x !== "0")
+        .map((x) => parseInt(x, 10) as GameMode)
+    : Conf.features.ranking || [];
   return (
     <>
       <Box visibility={data1w ? "visible" : "hidden"}>
-        <ModelModeSelector
-          type="checkbox"
-          availableModes={
-            data1w
-              ? Object.keys(data1w)
-                  .filter((x) => x !== "0")
-                  .map((x) => parseInt(x, 10) as GameMode)
-              : Conf.features.ranking || []
-          }
-          allowedCombinations={Conf.features.rankingGroups}
-        />
+        <ModelModeSelector type="checkbox" availableModes={availableModes} allowedCombinations={[availableModes]} />
       </Box>
       <GridContainer>
         <Grid item xs={12} lg={6}>
