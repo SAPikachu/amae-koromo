@@ -72,7 +72,7 @@ export default function DeltaRanking() {
   ).sort((a, b) => Conf.availableModes.indexOf(a) - Conf.availableModes.indexOf(b));
   return (
     <>
-      <Box visibility={data1w ? "visible" : "hidden"}>
+      <Box visibility={data1w ? "visible" : "hidden"} mb={2}>
         <ModelModeSelector type="checkbox" availableModes={availableModes} allowedCombinations={[availableModes]} />
       </Box>
       <GridContainer>
@@ -99,6 +99,19 @@ export default function DeltaRanking() {
             <Grid item xs={12} md={6}>
               <Title variant="h5">{t("四周")}</Title>
               <RankingTable rows={data4w[modeKey].top} />
+            </Grid>
+          </GridContainer>
+        </Grid>
+        <Grid item xs={12} lg={6}>
+          <Title variant="h4">{t("劳模榜")}</Title>
+          <GridContainer>
+            <Grid item xs={12} md={6}>
+              <Title variant="h5">{t("一周")}</Title>
+              <RankingTable rows={data1w[modeKey].num_games} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Title variant="h5">{t("四周")}</Title>
+              <RankingTable rows={data4w[modeKey].num_games} />
             </Grid>
           </GridContainer>
         </Grid>

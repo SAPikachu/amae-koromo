@@ -15,6 +15,7 @@ export type DeltaRankingResponse = {
   [modeId: string]: {
     top: DeltaRankingItem[];
     bottom: DeltaRankingItem[];
+    num_games: DeltaRankingItem[];
   };
 };
 export interface CareerRankingItem extends PlayerMetadata {
