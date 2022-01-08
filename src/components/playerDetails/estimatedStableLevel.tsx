@@ -89,7 +89,9 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
       >
         <span>
           {level.isKonten() ? (expectedGamePoint / 100).toFixed(3) : expectedGamePoint.toFixed(1)}
-          {estimatedNumGamesToChangeLevel ? ` (${Math.abs(estimatedNumGamesToChangeLevel).toFixed(0)})` : ""}
+          {estimatedNumGamesToChangeLevel && estimatedNumGamesToChangeLevel < 10000
+            ? ` (${Math.abs(estimatedNumGamesToChangeLevel).toFixed(0)})`
+            : ""}
           {notEnoughData && "?"}
         </span>
       </StatItem>
