@@ -67,9 +67,12 @@ i18n
     },
   });
 
-i18n.on("languageChanged", function () {
-  document.documentElement.lang = i18n.language;
-  triggerRelayout();
-});
+if ("document" in global) {
+  // Fix error in node
+  i18n.on("languageChanged", function () {
+    document.documentElement.lang = i18n.language;
+    triggerRelayout();
+  });
+}
 
 export default i18n;
