@@ -263,10 +263,17 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
   const onError = useCallback(
     (e) => {
       if (e && "status" in e && e.status === 404) {
-        if (model.type === "player" && model.selectedModes.length) {
-          const path = generatePath(model);
-          if (path !== sessionStorage.getItem("lastErrorPath")) {
-            sessionStorage.setItem("lastErrorPath", path);
+        if (model.type === "player") {
+          if (model.startDate || model.endDate || model.limit) {
+            updateModel({
+              type: "player",
+              playerId: model.playerId,
+              limit: null,
+              startDate: null,
+              endDate: null,
+            });
+            return;
+          } else if (model.selectedModes.length) {
             updateModel({
               type: "player",
               playerId: model.playerId,
@@ -277,7 +284,6 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
             });
             return;
           }
-        } else if (model.type === "player") {
           updateModel({ type: undefined, selectedMode: null });
           return;
         }
