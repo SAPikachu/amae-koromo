@@ -267,9 +267,19 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
           const path = generatePath(model);
           if (path !== sessionStorage.getItem("lastErrorPath")) {
             sessionStorage.setItem("lastErrorPath", path);
-            updateModel({ type: "player", playerId: model.playerId, selectedModes: [] });
+            updateModel({
+              type: "player",
+              playerId: model.playerId,
+              selectedModes: [],
+              limit: null,
+              startDate: null,
+              endDate: null,
+            });
             return;
           }
+        } else if (model.type === "player") {
+          updateModel({ type: undefined, selectedMode: null });
+          return;
         }
       }
       networkError();
