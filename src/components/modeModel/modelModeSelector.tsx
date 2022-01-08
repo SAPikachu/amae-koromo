@@ -4,6 +4,7 @@ import { ModeSelector } from "../gameRecords/modeSelector";
 import { useModel } from "./model";
 import Conf from "../../utils/conf";
 import { GameMode } from "../../data/types";
+import { Box } from "@mui/material";
 
 export default function ModelModeSelector({
   type = "radio" as "radio" | "checkbox",
@@ -12,11 +13,10 @@ export default function ModelModeSelector({
   oneOrAll = false,
   allowedCombinations = null as null | GameMode[][],
 }) {
-  allowedCombinations = useMemo(() => allowedCombinations || (oneOrAll ? [availableModes] : null), [
-    allowedCombinations,
-    oneOrAll,
-    availableModes,
-  ]);
+  allowedCombinations = useMemo(
+    () => allowedCombinations || (oneOrAll ? [availableModes] : null),
+    [allowedCombinations, oneOrAll, availableModes]
+  );
   const [model, updateModel] = useModel();
   const uiSetModes = useCallback(
     (modes: GameMode[]) => {
@@ -101,14 +101,23 @@ export default function ModelModeSelector({
     }
     updateModel({ selectedModes });
   }, [autoSelectFirst, availableModes, model.selectedModes, allowedCombinations, type, updateModel]);
-  if (Conf.availableModes.length < 2) {
+  if (availableModes.length < 2) {
     return null;
   }
   return (
-    <div className="row mb-3">
-      <div className="col">
-        <ModeSelector type={type} mode={model.selectedModes} onChange={uiSetModes} availableModes={availableModes} />
-      </div>
-    </div>
+    <Box
+      mb={3}
+      visibility={
+        allowedCombinations &&
+        model.selectedModes.length !== 1 &&
+        !allowedCombinations.some(
+          (x) => x.length === model.selectedModes.length && x.every((mode) => model.selectedModes.includes(mode))
+        )
+          ? "hidden"
+          : "visible"
+      }
+    >
+      <ModeSelector type={type} mode={model.selectedModes} onChange={uiSetModes} availableModes={availableModes} />
+    </Box>
   );
 }

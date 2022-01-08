@@ -4,7 +4,7 @@ import { getDeltaRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
 import { GameMode, LevelWithDelta } from "../../data/types";
-import { useModel, ModelModeSelector } from "../modeModel";
+import { useModel, ModelModeSelector, ModelModeProvider } from "../modeModel";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
 import {
@@ -45,7 +45,7 @@ function RankingTable({ rows = [] as DeltaRankingItem[] }) {
 const Title = (props: TypographyProps) => <Typography mb={1} textAlign="center" {...props} />;
 const GridContainer = (props: GridProps) => <Grid container spacing={2} rowSpacing={3} {...props} />;
 
-export default function DeltaRanking() {
+function DeltaRankingInner() {
   const { t } = useTranslation();
   const data1w = useAsyncFactory(
     () => getDeltaRanking(RankingTimeSpan.OneWeek),
@@ -117,5 +117,13 @@ export default function DeltaRanking() {
         </Grid>
       </GridContainer>
     </>
+  );
+}
+
+export default function DeltaRanking() {
+  return (
+    <ModelModeProvider>
+      <DeltaRankingInner />
+    </ModelModeProvider>
   );
 }

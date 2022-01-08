@@ -8,7 +8,7 @@ import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routes";
 import { LevelWithDelta, GameMode } from "../../data/types";
 import { formatPercent } from "../../utils/index";
-import { ModelModeSelector, useModel } from "../modeModel";
+import { ModelModeProvider, ModelModeSelector, useModel } from "../modeModel";
 import { useTranslation } from "react-i18next";
 import Conf from "../../utils/conf";
 import { CheckboxGroup } from "../form";
@@ -170,7 +170,7 @@ export function CareerRanking({
     children = [children];
   }
   return (
-    <>
+    <ModelModeProvider>
       <CheckboxGroup
         type="radio"
         items={[
@@ -189,6 +189,6 @@ export function CareerRanking({
         allowedCombinations={Conf.features.rankingGroups}
       />
       <CareerRankingPlain>{children}</CareerRankingPlain>
-    </>
+    </ModelModeProvider>
   );
 }

@@ -3,7 +3,6 @@ import React from "react";
 import { Alert } from "../misc/alert";
 import DeltaRanking from "./deltaRanking";
 import { CareerRanking, CareerRankingColumn, CareerRankingPlain } from "./careerRanking";
-import { ModelModeProvider } from "../modeModel";
 import { CareerRankingType, LevelWithDelta } from "../../data/types";
 import { PlayerMetadata, PlayerExtendedStats } from "../../data/types/metadata";
 import { formatFixed3, formatIdentity, formatPercent, formatRound } from "../../utils/index";
@@ -212,13 +211,13 @@ export default function Routes() {
   return (
     <SimpleRoutedSubViews>
       {ROUTES}
-      <ModelModeProvider>
+      <>
         <Alert stateName="rankingNotice20201229" title={t("提示")}>
           {t("排行榜非实时更新，可能会有数小时的延迟。")}
         </Alert>
         <NavButtons />
         <ViewSwitch />
-      </ModelModeProvider>
+      </>
     </SimpleRoutedSubViews>
   );
 }
