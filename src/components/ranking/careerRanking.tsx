@@ -157,7 +157,7 @@ export function CareerRankingPlain({
     </Grid>
   );
 }
-export function CareerRanking({
+function CareerRankingInner({
   children,
 }: {
   children:
@@ -170,7 +170,7 @@ export function CareerRanking({
     children = [children];
   }
   return (
-    <ModelModeProvider>
+    <>
       <CheckboxGroup
         type="radio"
         items={[
@@ -189,6 +189,20 @@ export function CareerRanking({
         allowedCombinations={Conf.features.rankingGroups}
       />
       <CareerRankingPlain>{children}</CareerRankingPlain>
+    </>
+  );
+}
+
+export function CareerRanking({
+  children,
+}: {
+  children:
+    | React.ReactElement<ReturnType<typeof CareerRankingColumn>>
+    | React.ReactElement<ReturnType<typeof CareerRankingColumn>>[];
+}) {
+  return (
+    <ModelModeProvider>
+      <CareerRankingInner>{children}</CareerRankingInner>
     </ModelModeProvider>
   );
 }
