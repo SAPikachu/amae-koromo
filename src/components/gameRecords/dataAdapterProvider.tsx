@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import React, { ReactChild } from "react";
 import dayjs from "dayjs";
 
-import { DataProvider, FilterPredicate } from "../../data/source/records/provider";
+import { DataProvider, DUMMY_DATA_PROVIDER, FilterPredicate } from "../../data/source/records/provider";
 import { useModel, Model } from "./model";
 import { Metadata, GameRecord, Level } from "../../data/types";
 import { generatePath } from "./routes";
@@ -207,17 +207,26 @@ function useDataAdapterCommon(
   deps: React.DependencyList
 ) {
   const [dataAdapter, setDataAdapter] = useState(() => DUMMY_DATA_ADAPTER);
+  const onErrorOnce = useMemo(() => {
+    let called = false;
+    return (error: Error | ApiError | false) => {
+      if (!called) {
+        called = true;
+        onError(error);
+      }
+    };
+  }, [onError]);
   const refreshDataAdapter = useCallback(
     (error?: Error | ApiError | false) => {
       if (error) {
-        onError(error);
+        onErrorOnce(error);
         return;
       }
       const adapter = new DataAdapter(dataProvider);
       setDataAdapter(adapter);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataProvider, onError, ...deps]
+    [dataProvider, onErrorOnce, ...deps]
   );
   useEffect(refreshDataAdapter, [refreshDataAdapter]);
   useEffect(() => {
@@ -237,12 +246,12 @@ function useDataAdapterCommon(
       // Preload metadata
       const result = dataProvider.getCountMaybeSync();
       if (result instanceof Promise) {
-        result.catch((e) => onError(e));
+        result.catch((e) => onErrorOnce(e));
       }
     } catch (e) {
-      onError(e);
+      onErrorOnce(e);
     }
-  }, [dataProvider, onError]);
+  }, [dataProvider, onErrorOnce]);
   return {
     dataAdapter,
   };
@@ -253,6 +262,9 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
   const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
   const searchPredicate = usePredicate(model);
   const dataProvider = useMemo(() => {
+    if (model.type === undefined && !model.selectedMode) {
+      return DUMMY_DATA_PROVIDER;
+    }
     const key = getProviderKey(model);
     if (!dataProviders[key]) {
       dataProviders[key] = createProvider(model);
@@ -265,6 +277,11 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
       if (e && "status" in e && e.status === 404) {
         if (model.type === "player") {
           if (model.startDate || model.endDate || model.limit) {
+            if (Object.keys(dataProviders).length > 1) {
+              // User changing settings, allow to continue
+              networkError();
+              return;
+            }
             updateModel({
               type: "player",
               playerId: model.playerId,
@@ -291,7 +308,7 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
       networkError();
       // updateModel(Model.removeExtraParams(model));
     },
-    [model, updateModel]
+    [model, updateModel, dataProviders]
   );
   const { dataAdapter } = useDataAdapterCommon(dataProvider, onError, [model, searchPredicate]);
   return <DataAdapterContext.Provider value={dataAdapter}>{children}</DataAdapterContext.Provider>;

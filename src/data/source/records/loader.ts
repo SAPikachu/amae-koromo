@@ -14,6 +14,18 @@ export interface DataLoader<T extends Metadata, TRecord = GameRecord> {
   getEstimatedChunkSize(): number;
 }
 
+export class DummyDataLoader implements DataLoader<Metadata> {
+  getMetadata(): Promise<Metadata> {
+    return Promise.resolve({ count: 0 });
+  }
+  getNextChunk(): Promise<GameRecord[]> {
+    return Promise.resolve([]);
+  }
+  getEstimatedChunkSize(): number {
+    return 0;
+  }
+}
+
 export class RecentHighlightDataLoader implements DataLoader<Metadata> {
   _data: Promise<GameRecord[]>;
   _index: number;

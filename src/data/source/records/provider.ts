@@ -8,6 +8,7 @@ import {
   DataLoader,
   RecentHighlightDataLoader,
   FixedNumberPlayerDataLoader,
+  DummyDataLoader,
 } from "./loader";
 import { GameMode } from "../../types";
 
@@ -212,6 +213,7 @@ class DataProviderImpl<TMetadata extends Metadata, TRecord extends { uuid: strin
 
 export type ListingDataProvider = DataProviderImpl<Metadata>;
 export type PlayerDataProvider = DataProviderImpl<PlayerMetadata>;
+export const DUMMY_DATA_PROVIDER = new DataProviderImpl<Metadata>(new DummyDataLoader());
 
 export type DataProvider = ListingDataProvider | PlayerDataProvider;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
