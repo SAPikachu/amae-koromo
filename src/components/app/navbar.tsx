@@ -129,6 +129,13 @@ function MenuButton({
   );
 }
 
+function handleSwitchSite(e: React.MouseEvent<HTMLAnchorElement>) {
+  e.preventDefault();
+  if (e.currentTarget.classList.contains("active") || e.currentTarget.classList.contains("Mui-selected")) {
+    return;
+  }
+  window.location.href = `${e.currentTarget.href.replace(/\/+$/, "")}${location.pathname}`;
+}
 function DesktopItems() {
   const { t, i18n } = useTranslation();
   return (
@@ -145,7 +152,12 @@ function DesktopItems() {
       </ButtonGroup>
       <ButtonGroup>
         {SITE_LINKS.map(({ label, domain, active }) => (
-          <Button className={clsx(active && "active")} key={domain} href={`https://${domain}/`}>
+          <Button
+            className={clsx(active && "active")}
+            key={domain}
+            href={`https://${domain}/`}
+            onClick={handleSwitchSite}
+          >
             {t(label)}
           </Button>
         ))}
@@ -191,7 +203,7 @@ function MobileItems() {
           <List>
             {SITE_LINKS.map(({ label, domain, active }) => (
               <ListItem disablePadding key={domain}>
-                <ListItemButton selected={active} href={`https://${domain}/`}>
+                <ListItemButton selected={active} href={`https://${domain}/`} onClick={handleSwitchSite}>
                   <ListItemIcon></ListItemIcon>
                   <ListItemText>{t(label)}</ListItemText>
                 </ListItemButton>
