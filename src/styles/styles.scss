@@ -9,6 +9,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-image: var(--background-image);
+  background-attachment: fixed;
 }
 @media (min-width: 1025px) {
   body {
