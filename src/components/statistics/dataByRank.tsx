@@ -20,7 +20,6 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { PlayerExtendedStats } from "../../data/types";
 
 const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四位率"].slice(0, Conf.rankColors.length), [
   "被飞率",
@@ -141,9 +140,9 @@ export default function DataByRank() {
                     <TableCell className="text-nowrap">{new Level(parseInt(levelId)).getTag()}</TableCell>
                     <TableCell>{levelData.extended.平均打点}</TableCell>
                     <TableCell>{levelData.extended.平均铳点}</TableCell>
-                    <TableCell>{PlayerExtendedStats.打点效率(levelData.extended)}</TableCell>
-                    <TableCell>{PlayerExtendedStats.铳点损失(levelData.extended)}</TableCell>
-                    <TableCell>{PlayerExtendedStats.净打点效率(levelData.extended)}</TableCell>
+                    <TableCell>{levelData.extended.打点效率}</TableCell>
+                    <TableCell>{levelData.extended.铳点损失}</TableCell>
+                    <TableCell>{levelData.extended.净打点效率}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

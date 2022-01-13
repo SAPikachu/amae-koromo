@@ -4,7 +4,7 @@ import { Alert } from "../misc/alert";
 import DeltaRanking from "./deltaRanking";
 import { CareerRanking, CareerRankingColumn, CareerRankingPlain } from "./careerRanking";
 import { CareerRankingType, LevelWithDelta } from "../../data/types";
-import { PlayerMetadata, PlayerExtendedStats } from "../../data/types/metadata";
+import { PlayerMetadata } from "../../data/types/metadata";
 import { formatFixed3, formatIdentity, formatPercent, formatRound } from "../../utils/index";
 import { ViewRoutes, SimpleRoutedSubViews, NavButtons, RouteDef } from "../routing";
 import { ViewSwitch } from "../routing/index";
@@ -99,16 +99,12 @@ const ROUTES = (
             {
               label: "打点效率",
               value: (x) =>
-                x.extended_stats && "count" in x.extended_stats
-                  ? formatRound(PlayerExtendedStats.打点效率(x.extended_stats))
-                  : "",
+                x.extended_stats && "count" in x.extended_stats ? formatRound(x.extended_stats.打点效率) : "",
             },
             {
               label: "铳点损失",
               value: (x) =>
-                x.extended_stats && "count" in x.extended_stats
-                  ? formatRound(PlayerExtendedStats.铳点损失(x.extended_stats))
-                  : "",
+                x.extended_stats && "count" in x.extended_stats ? formatRound(x.extended_stats.铳点损失) : "",
             },
           ]}
         />

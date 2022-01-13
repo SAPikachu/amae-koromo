@@ -165,26 +165,17 @@ export type PlayerExtendedStats = {
   追立率: number;
   被追率: number;
   振听立直率: number;
-  立直好型?: number;
+  立直多面?: number;
   立直好型2?: number;
+  打点效率: number;
+  铳点损失: number;
+  净打点效率: number;
   最近大铳?: {
     id: string;
     start_time: number;
     fans: FanStatEntryList;
   };
 };
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PlayerExtendedStats = Object.freeze({
-  打点效率(stats: PlayerExtendedStats) {
-    return Math.round(stats.和牌率 * stats.平均打点 || 0);
-  },
-  铳点损失(stats: PlayerExtendedStats) {
-    return Math.round(stats.放铳率 * stats.平均铳点 || 0);
-  },
-  净打点效率(stats: PlayerExtendedStats) {
-    return Math.round(stats.和牌率 * stats.平均打点 || 0) - Math.round(stats.放铳率 * stats.平均铳点 || 0);
-  },
-});
 export interface Metadata {
   count: number;
 }

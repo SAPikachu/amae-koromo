@@ -136,16 +136,16 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
         {formatPercent(stats.副露后流局率 || 0)}
       </StatItem>
       <StatItem label="打点效率" description={`${t("和牌率")} * ${t("平均打点")}`}>
-        {PlayerExtendedStats.打点效率(stats)}
+        {stats.打点效率 || ""}
       </StatItem>
       <StatItem label="铳点损失" description={`${t("放铳率")} * ${t("平均铳点")}`}>
-        {PlayerExtendedStats.铳点损失(stats)}
+        {stats.铳点损失 || ""}
       </StatItem>
       <StatItem
         label="净打点效率"
         description={`${t("和牌率")} * ${t("平均打点")} - ${t("放铳率")} * ${t("平均铳点")}`}
       >
-        {PlayerExtendedStats.净打点效率(stats)}
+        {stats.净打点效率 || ""}
       </StatItem>
       <StatItem label="总计局数">{stats.count}</StatItem>
     </>
@@ -195,7 +195,7 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
       <StatItem label="振听率" description="振听立直局数（不含立直见逃） / 立直局数">
         {formatPercent(stats.振听立直率 || 0)}
       </StatItem>
-      {(stats.立直好型 || stats.立直好型 === 0) && (
+      {(stats.立直多面 || stats.立直多面 === 0) && (
         <StatItem
           label="立直多面"
           description={
@@ -210,7 +210,7 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
             </Box>
           }
         >
-          {formatPercent(stats.立直好型 || 0)}
+          {formatPercent(stats.立直多面 || 0)}
         </StatItem>
       )}
       {(stats.立直好型2 || stats.立直好型2 === 0) && (
