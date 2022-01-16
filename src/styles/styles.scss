@@ -11,27 +11,28 @@ body {
   background-image: var(--background-image);
   background-attachment: fixed;
 }
-@media (min-width: 1025px) {
-  body {
-    background: transparent;
-  }
-  body::before {
-    content: "";
-    display: block;
-    pointer-events: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    bottom: 0;
-
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: -1;
-    background-image: var(--background-image);
-  }
+/* @media (min-width: 1025px) { */
+/* background-attachment breaks on iOS: https://caniuse.com/background-attachment */
+body {
+  background: transparent;
 }
+body::before {
+  content: "";
+  display: block;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  bottom: 0;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+  background-image: var(--background-image);
+}
+/* } */
 .koromo {
   --background-image: url(../assets/img/koromo.jpg);
 }
