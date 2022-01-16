@@ -42,7 +42,7 @@ const Histogram = React.memo(function ({ data, value }: { data?: HistogramGroup;
       viewBox={`0 0 ${histogram.bins.length} ${VIEWBOX_HEIGHT}`}
       preserveAspectRatio="none"
     >
-      <g transform="scale(1, -1)" transform-origin="center">
+      <g style={{ transformOrigin: "center", transform: "scale(1, -1)" }}>
         <path
           d={generatePath(histogram.bins.slice(0, splitPoint), barMax, 0)}
           strokeWidth={1}
