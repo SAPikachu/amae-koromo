@@ -7,8 +7,10 @@ import { HistogramData, HistogramGroup, modeLabelNonTranslated, PlayerExtendedSt
 import { formatPercent, sum, useAsyncFactory } from "../../utils";
 import { useModel } from "../gameRecords/model";
 
+const VIEWBOX_HEIGHT = 40;
+
 function generatePath(bins: number[], barMax: number, start: number) {
-  return `M ${start} 0 ` + bins.map((bin) => `h 1 V ${bin / barMax}`).join(" ") + " V 0 Z";
+  return `M ${start} 0 ` + bins.map((bin) => `h 1 V ${(bin / barMax) * VIEWBOX_HEIGHT}`).join(" ") + " V 0 Z";
 }
 
 function shouldUseClamped(value: number | undefined, data: HistogramGroup) {
@@ -34,14 +36,39 @@ const Histogram = React.memo(function ({ data, value }: { data?: HistogramGroup;
   const splitPoint = value === undefined ? histogram.bins.length : Math.ceil((value - histogram.min) / binStep);
   const meanBin = Math.floor((data.mean - histogram.min) / binStep);
   return (
-    <svg width={120} height={40} viewBox={`0 0 ${histogram.bins.length} 1`} preserveAspectRatio="none">
+    <svg
+      width={120}
+      height={VIEWBOX_HEIGHT}
+      viewBox={`0 0 ${histogram.bins.length} ${VIEWBOX_HEIGHT}`}
+      preserveAspectRatio="none"
+    >
       <g transform="scale(1, -1)" transform-origin="center">
-        <path d={generatePath(histogram.bins.slice(0, splitPoint), barMax, 0)} fill={theme.palette.grey[500]} />
+        <path
+          d={generatePath(histogram.bins.slice(0, splitPoint), barMax, 0)}
+          strokeWidth={1}
+          fillRule="nonzero"
+          stroke={theme.palette.grey[500]}
+          fill={theme.palette.grey[500]}
+        />
         {splitPoint < histogram.bins.length && (
-          <path d={generatePath(histogram.bins.slice(splitPoint), barMax, splitPoint)} fill={theme.palette.grey[800]} />
+          <path
+            d={generatePath(histogram.bins.slice(splitPoint), barMax, splitPoint)}
+            strokeWidth={1}
+            fillRule="nonzero"
+            stroke={theme.palette.grey[800]}
+            fill={theme.palette.grey[800]}
+          />
         )}
         {!Number.isInteger(binStep) && histogram.bins.length > 60 && (
-          <line stroke={theme.palette.grey[50]} x1={meanBin} x2={meanBin} y1={0} y2={1} strokeDasharray={0.1} />
+          <line
+            stroke={theme.palette.grey[50]}
+            x1={meanBin}
+            x2={meanBin}
+            y1={0}
+            y2={VIEWBOX_HEIGHT}
+            strokeWidth={1}
+            strokeDasharray={4}
+          />
         )}
       </g>
     </svg>
