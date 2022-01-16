@@ -71,18 +71,20 @@ export const StatList = styled(Box)(({ theme }) => ({
   },
 }));
 
-export default function StatItem({
+const StatItem = React.memo(function ({
   label,
   description = "",
   i18nNamespace,
   children,
   valueProps = {},
+  extraTip,
 }: {
   label: string;
   description?: ReactNode;
   i18nNamespace?: string[];
   children: React.ReactChild;
   valueProps?: TypographyProps;
+  extraTip?: ReactNode;
 }) {
   const { t } = useTranslation(i18nNamespace);
   const translatedTip =
@@ -94,10 +96,17 @@ export default function StatItem({
       </Typography>
       <StatTooltip
         title={
-          translatedTip && typeof translatedTip === "string" ? (
-            <Box whiteSpace="pre-wrap">{translatedTip}</Box>
+          !translatedTip && !extraTip ? (
+            ""
           ) : (
-            translatedTip
+            <Box padding={1}>
+              {translatedTip && typeof translatedTip === "string" ? (
+                <Box whiteSpace="pre-wrap">{translatedTip}</Box>
+              ) : (
+                translatedTip
+              )}
+              {extraTip}
+            </Box>
           )
         }
         arrow
@@ -108,4 +117,5 @@ export default function StatItem({
       </StatTooltip>
     </Box>
   );
-}
+});
+export default StatItem;

@@ -53,6 +53,9 @@
     "默听": "Dama",
     "门清": "Closed",
 
+    "{{mode}}之间位置：": "Position in {{mode}}: ",
+    "{{mode}}之间平均值：": "Mean in {{mode}}: ",
+
     "记录场数": "Recorded matches",
     "记录等级": "Current rank",
     "记录分数": "Current rk points",
@@ -72,7 +75,8 @@
     "平均打点": "Average win score",
     "平均铳点": "Average deal-in score",
     "立直和了": "Riichi win rate",
-    "立直放铳": "Deal-in after riichi",
+    "立直放铳A": "Deal-in after riichi A",
+    "立直放铳B": "Deal-in after riichi B",
     "立直收支": "Riichi payment",
     "立直收入": "Avg riichi hand value",
     "立直支出": "Avg riichi deal-in",

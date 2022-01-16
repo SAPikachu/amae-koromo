@@ -9,6 +9,7 @@ import { calculateDeltaPoint } from "../../../data/types/metadata";
 import { useIsMobile } from "../../../utils/index";
 import Conf from "../../../utils/conf";
 import { alpha, Box, styled, Typography } from "@mui/material";
+import React from "react";
 
 declare module "recharts" {
   interface DotProps {
@@ -82,7 +83,7 @@ const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
   );
 };
 
-export default function RecentRankChart({
+const RecentRankChart = React.memo(function ({
   dataAdapter,
   playerId,
   aspect = 2,
@@ -171,4 +172,5 @@ export default function RecentRankChart({
       </LineChart>
     </ResponsiveContainer>
   );
-}
+});
+export default RecentRankChart;

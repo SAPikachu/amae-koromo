@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 import Loadable from "../misc/customizedLoadable";
 import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
 import { useEffect } from "react";
-import { triggerRelayout, formatPercent, useAsync, formatFixed3 } from "../../utils/index";
+import { triggerRelayout, formatPercent, useAsync, formatFixed3, formatRound, formatIdentity } from "../../utils/index";
 import {
   LevelWithDelta,
   PlayerExtendedStats,
@@ -27,6 +27,7 @@ import Conf from "../../utils/conf";
 import { GameMode } from "../../data/types/gameMode";
 import { loadPlayerPreference } from "../../utils/preference";
 import { Box, BoxProps, Grid, Link, Typography } from "@mui/material";
+import { StatHistogram } from "./histogram";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -37,6 +38,46 @@ const RecentRankChart = Loadable({
 const WinLoseDistribution = Loadable({
   loader: () => import("./charts/winLoseDistribution"),
 });
+
+function GenericStat({
+  stats,
+  statKey,
+  description,
+  formatter,
+  formatterHistogram,
+  label,
+  defaultValue = 0,
+}: {
+  stats: PlayerExtendedStats;
+  statKey: keyof PlayerExtendedStats;
+  description?: ReactNode;
+  formatter: (value: number) => string;
+  formatterHistogram?: (value: number) => string;
+  label?: string;
+  defaultValue?: number | string;
+}) {
+  const value = stats[statKey] ?? defaultValue;
+  if (typeof value !== "number" && value !== defaultValue) {
+    throw new Error(`${statKey} is not a number`);
+  }
+  return (
+    <StatItem
+      description={description}
+      label={label || statKey}
+      extraTip={
+        stats.count > 100 ? (
+          <StatHistogram
+            statKey={statKey}
+            value={typeof value === "number" ? value : undefined}
+            valueFormatter={formatterHistogram || formatter}
+          />
+        ) : null
+      }
+    >
+      {typeof value === "string" ? value : formatter(value)}
+    </StatItem>
+  );
+}
 
 function ExtendedStatsViewAsync({
   metadata,
@@ -57,33 +98,23 @@ function ExtendedStatsViewAsync({
 function PlayerExtendedStatsView({ stats }: { stats: PlayerExtendedStats }) {
   return (
     <>
-      <StatItem label="和牌率" description="和牌局数 / 总局数">
-        {formatPercent(stats.和牌率 || 0)}
-      </StatItem>
-      <StatItem label="放铳率" description="放铳局数 / 总局数">
-        {formatPercent(stats.放铳率 || 0)}
-      </StatItem>
-      <StatItem label="自摸率" description="自摸局数 / 和牌局数">
-        {formatPercent(stats.自摸率 || 0)}
-      </StatItem>
-      <StatItem label="默胡率" description="门清默听和牌局数 / 和牌局数">
-        {formatPercent(stats.默听率 || 0)}
-      </StatItem>
-      <StatItem label="流局率" description="流局局数 / 总局数">
-        {formatPercent(stats.流局率 || 0)}
-      </StatItem>
-      <StatItem label="流听率" description="流局听牌局数 / 流局局数">
-        {formatPercent(stats.流听率 || 0)}
-      </StatItem>
-      <StatItem label="副露率" description="副露局数 / 总局数">
-        {formatPercent(stats.副露率 || 0)}
-      </StatItem>
-      <StatItem label="立直率" description="立直局数 / 总局数">
-        {formatPercent(stats.立直率 || 0)}
-      </StatItem>
-      <StatItem label="和了巡数">{(stats.和了巡数 || 0).toFixed(3)}</StatItem>
-      <StatItem label="平均打点">{stats.平均打点 || 0}</StatItem>
-      <StatItem label="平均铳点">{stats.平均铳点 || 0}</StatItem>
+      <GenericStat stats={stats} formatter={formatPercent} statKey="和牌率" description="和牌局数 / 总局数" />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="放铳率" description="放铳局数 / 总局数" />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="自摸率" description="自摸局数 / 和牌局数" />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        statKey="默听率"
+        label="默胡率"
+        description="门清默听和牌局数 / 和牌局数"
+      />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="流局率" description="流局局数 / 总局数" />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="流听率" description="流局听牌局数 / 流局局数" />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="副露率" description="副露局数 / 总局数" />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="立直率" description="立直局数 / 总局数" />
+      <GenericStat stats={stats} formatter={formatFixed3} statKey="和了巡数" />
+      <GenericStat stats={stats} formatter={formatRound} statKey="平均打点" />
+      <GenericStat stats={stats} formatter={formatRound} statKey="平均铳点" />
     </>
   );
 }
@@ -110,43 +141,71 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       <StatItem label="最高分数">
         {LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.cross_stats?.max_level || metadata.max_level))}
       </StatItem>
-      <StatItem label="最大连庄">{stats.最大连庄 || 0}</StatItem>
-      <StatItem label="里宝率" description="中里宝局数 / 立直和了局数">
-        {formatPercent(stats.里宝率 || 0)}
-      </StatItem>
-      <StatItem label="被炸率" description="被炸庄（满贯或以上）次数 / 被自摸次数">
-        {formatPercent(stats.被炸率 || 0)}
-      </StatItem>
-      <StatItem label="平均被炸点数" description="被炸庄（满贯或以上）点数 / 次数">
-        {stats.平均被炸点数 || 0}
-      </StatItem>
-      <StatItem label="放铳时立直率" description="放铳时立直次数 / 放铳次数">
-        {formatPercent(stats.放铳时立直率 || 0)}
-      </StatItem>
-      <StatItem label="放铳时副露率" description="放铳时副露次数 / 放铳次数">
-        {formatPercent(stats.放铳时副露率 || 0)}
-      </StatItem>
-      <StatItem label="副露后放铳率" description="放铳时副露次数 / 副露次数">
-        {formatPercent(stats.副露后放铳率 || 0)}
-      </StatItem>
-      <StatItem label="副露后和牌率" description="副露后和牌次数 / 副露次数">
-        {formatPercent(stats.副露后和牌率 || 0)}
-      </StatItem>
-      <StatItem label="副露后流局率" description="副露后流局次数 / 副露次数">
-        {formatPercent(stats.副露后流局率 || 0)}
-      </StatItem>
-      <StatItem label="打点效率" description={`${t("和牌率")} * ${t("平均打点")}`}>
-        {stats.打点效率 || ""}
-      </StatItem>
-      <StatItem label="铳点损失" description={`${t("放铳率")} * ${t("平均铳点")}`}>
-        {stats.铳点损失 || ""}
-      </StatItem>
-      <StatItem
-        label="净打点效率"
+      <GenericStat stats={stats} formatter={formatIdentity} formatterHistogram={formatFixed3} statKey="最大连庄" />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="里宝率" description="中里宝局数 / 立直和了局数" />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        statKey="被炸率"
+        description="被炸庄（满贯或以上）次数 / 被自摸次数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatRound}
+        statKey="平均被炸点数"
+        description="被炸庄（满贯或以上）点数 / 次数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        statKey="放铳时立直率"
+        description="放铳时立直次数 / 放铳次数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        statKey="放铳时副露率"
+        description="放铳时副露次数 / 放铳次数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        statKey="副露后放铳率"
+        description="放铳时副露次数 / 副露次数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        statKey="副露后和牌率"
+        description="副露后和牌次数 / 副露次数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        statKey="副露后流局率"
+        description="副露后流局次数 / 副露次数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatRound}
+        defaultValue=""
+        statKey="打点效率"
+        description={`${t("和牌率")} * ${t("平均打点")}`}
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatRound}
+        defaultValue=""
+        statKey="铳点损失"
+        description={`${t("放铳率")} * ${t("平均铳点")}`}
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatRound}
+        defaultValue=""
+        statKey="净打点效率"
         description={`${t("和牌率")} * ${t("平均打点")} - ${t("放铳率")} * ${t("平均铳点")}`}
-      >
-        {stats.净打点效率 || ""}
-      </StatItem>
+      />
       <StatItem label="总计局数">{stats.count}</StatItem>
     </>
   );
@@ -154,50 +213,70 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
 function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   return (
     <>
-      <StatItem label="立直率" description="立直局数 / 总局数">
-        {formatPercent(stats.立直率 || 0)}
-      </StatItem>
-      <StatItem label="立直和了" description="立直和了局数 / 立直局数">
-        {formatPercent(stats.立直后和牌率 || 0)}
-      </StatItem>
-      <StatItem label="立直放铳" description="立直放铳局数（含立直瞬间 / 不含立直瞬间） / 立直局数">
-        <>
-          {formatPercent(stats.立直后放铳率 || 0)}
-          <br />
-          {formatPercent(stats.立直后非瞬间放铳率 || 0)}
-        </>
-      </StatItem>
-      <StatItem label="立直收支" description="立直总收支（含供托） / 立直局数">
-        {stats.立直收支 || 0}
-      </StatItem>
-      <StatItem label="立直收入" description="立直和了收入（含供托） / 立直和了局数">
-        {stats.立直收入 || 0}
-      </StatItem>
-      <StatItem label="立直支出" description="立直放铳支出（含立直棒） / 立直放铳局数">
-        {stats.立直支出 || 0}
-      </StatItem>
-      <StatItem label="先制率" description="先制立直局数 / 立直局数">
-        {formatPercent(stats.先制率 || 0)}
-      </StatItem>
-      <StatItem label="追立率" description="追立局数 / 立直局数">
-        {formatPercent(stats.追立率 || 0)}
-      </StatItem>
-      <StatItem label="被追率" description="被追立局数 / 立直局数">
-        {formatPercent(stats.被追率 || 0)}
-      </StatItem>
-      <StatItem label="立直巡目">{formatFixed3(stats.立直巡目 || 0)}</StatItem>
-      <StatItem label="立直流局" description="立直流局局数 / 立直局数">
-        {formatPercent(stats.立直后流局率 || 0)}
-      </StatItem>
-      <StatItem label="一发率" description="一发局数 / 立直和了局数">
-        {formatPercent(stats.一发率 || 0)}
-      </StatItem>
-      <StatItem label="振听率" description="振听立直局数（不含立直见逃） / 立直局数">
-        {formatPercent(stats.振听立直率 || 0)}
-      </StatItem>
+      <GenericStat stats={stats} formatter={formatPercent} statKey="立直率" description="立直局数 / 总局数" />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        statKey="立直后和牌率"
+        label="立直和了"
+        description="立直和了局数 / 立直局数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        label="立直放铳A"
+        statKey="立直后放铳率"
+        description="立直放铳局数（含立直瞬间） / 立直局数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        label="立直放铳B"
+        statKey="立直后非瞬间放铳率"
+        description="立直放铳局数（不含立直瞬间） / 立直局数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatRound}
+        statKey="立直收支"
+        description="立直总收支（含供托） / 立直局数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatRound}
+        statKey="立直收入"
+        description="立直和了收入（含供托） / 立直和了局数"
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatRound}
+        statKey="立直支出"
+        description="立直放铳支出（含立直棒） / 立直放铳局数"
+      />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="先制率" description="先制立直局数 / 立直局数" />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="追立率" description="追立局数 / 立直局数" />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="被追率" description="被追立局数 / 立直局数" />
+      <GenericStat stats={stats} formatter={formatFixed3} statKey="立直巡目" />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        label="立直流局"
+        statKey="立直后流局率"
+        description="立直流局局数 / 立直局数"
+      />
+      <GenericStat stats={stats} formatter={formatPercent} statKey="一发率" description="一发局数 / 立直和了局数" />
+      <GenericStat
+        stats={stats}
+        formatter={formatPercent}
+        label="振听率"
+        statKey="振听立直率"
+        description="振听立直局数（不含立直见逃） / 立直局数"
+      />
       {(stats.立直多面 || stats.立直多面 === 0) && (
-        <StatItem
-          label="立直多面"
+        <GenericStat
+          stats={stats}
+          formatter={formatPercent}
+          statKey="立直多面"
           description={
             <Box>
               <Trans>
@@ -209,12 +288,13 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
               <Trans values={{ date: "2021/9/10" }} defaults="（数据从 {{date}} 前后开始收集）" />
             </Box>
           }
-        >
-          {formatPercent(stats.立直多面 || 0)}
-        </StatItem>
+        />
       )}
       {(stats.立直好型2 || stats.立直好型2 === 0) && (
-        <StatItem
+        <GenericStat
+          stats={stats}
+          formatter={formatPercent}
+          statKey="立直好型2"
           label="立直好型"
           description={
             <Box>
@@ -227,9 +307,7 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
               <Trans values={{ date: "2021/11/7" }} defaults="（数据从 {{date}} 前后开始收集）" />
             </Box>
           }
-        >
-          {formatPercent(stats.立直好型2 || 0)}
-        </StatItem>
+        />
       )}
     </>
   );
@@ -267,7 +345,7 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
       <StatItem label="两立直" description="两立直次数">
         {stats.W立直 || 0}
       </StatItem>
-      <StatItem label="平均起手向听">{formatFixed3(stats.平均起手向听)}</StatItem>
+      <GenericStat stats={stats} formatter={formatFixed3} statKey="平均起手向听" />
     </>
   );
 }

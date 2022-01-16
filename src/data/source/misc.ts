@@ -7,7 +7,7 @@ import { PlayerMetadataLite, PlayerExtendedStats, GameMode } from "../types";
 import { RankingTimeSpan, DeltaRankingResponse } from "../types";
 import { RankRateBySeat } from "../types";
 import { CareerRankingItem, CareerRankingType } from "../types/ranking";
-import { GlobalStatistics, FanStats } from "../types/statistics";
+import { GlobalStatistics, FanStats, GlobalHistogram } from "../types/statistics";
 
 export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMetadataLite[]> {
   prefix = prefix.trim();
@@ -49,6 +49,9 @@ export async function getCareerRanking(
 
 export async function getGlobalStatistics(modes: GameMode[]): Promise<GlobalStatistics> {
   return await apiGet<GlobalStatistics>(`global_statistics_2?mode=${modes.join(".")}`);
+}
+export async function getGlobalHistogram(): Promise<GlobalHistogram> {
+  return await apiGet<GlobalHistogram>("global_histogram");
 }
 export async function getFanStats(): Promise<FanStats> {
   return await apiGet<FanStats>("fan_stats");

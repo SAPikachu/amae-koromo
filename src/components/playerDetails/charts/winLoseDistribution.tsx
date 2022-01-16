@@ -2,7 +2,7 @@ import { PlayerExtendedStats, PlayerMetadata } from "../../../data/types";
 import SimplePieChart, { PieChartItem } from "../../charts/simplePieChart";
 import { sum } from "../../../utils";
 import { formatPercent } from "../../../utils/index";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Typography, useTheme } from "@mui/material";
 
@@ -22,7 +22,7 @@ function buildItems(
     .filter((item) => item.value);
 }
 
-export default function WinLoseDistribution({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
+const WinLoseDistribution = React.memo(function ({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const winData = useMemo(
@@ -101,4 +101,5 @@ export default function WinLoseDistribution({ stats }: { stats: PlayerExtendedSt
       </Box>
     </Box>
   );
-}
+});
+export default WinLoseDistribution;

@@ -1,10 +1,11 @@
 import { ReadMore } from "@mui/icons-material";
 import { Link, Typography, TypographyProps, useTheme } from "@mui/material";
+import React from "react";
 
 import { GameRecord, PlayerRecord, getLevelTag } from "../../data/types";
 import { generatePlayerPathById } from "./routes";
 
-export const Player = function ({
+export const Player = React.memo(function ({
   player,
   game,
   hideDetailIcon,
@@ -50,4 +51,4 @@ export const Player = function ({
       )}
     </Typography>
   );
-};
+});

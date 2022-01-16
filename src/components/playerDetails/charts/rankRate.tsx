@@ -20,7 +20,7 @@ const formatLabel = (x: any) => (x.rate > 0 ? x.label : null);
 const createLabelLine = (props: any) =>
   props.payload.payload.rate > 0 ? <Curve {...props} type="linear" className="recharts-pie-label-line" /> : null;
 
-export default function RankRateChart({ metadata, aspect = 1 }: { metadata: PlayerMetadata; aspect?: number }) {
+const RankRateChart = React.memo(function ({ metadata, aspect = 1 }: { metadata: PlayerMetadata; aspect?: number }) {
   const { i18n } = useTranslation();
   const ranks = useMemo(
     () => metadata.rank_rates.map((x, index) => ({ label: getRankLabelByIndex(index), rate: x })),
@@ -47,4 +47,5 @@ export default function RankRateChart({ metadata, aspect = 1 }: { metadata: Play
       </PieChart>
     </ResponsiveContainer>
   );
-}
+});
+export default RankRateChart;

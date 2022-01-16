@@ -54,14 +54,7 @@
     "comma-dangle": 0,
     "computed-property-spacing": [2, "never"],
     "indent": "off",
-    "@typescript-eslint/indent": [
-      2,
-      2,
-      {
-        "SwitchCase": 1,
-        "ignoredNodes": ["ConditionalExpression *", "IntersectionType *"]
-      }
-    ],
+    "@typescript-eslint/indent": "off",
     "key-spacing": [2, { "afterColon": true }],
     "no-mixed-spaces-and-tabs": 2,
     "no-trailing-spaces": 2,
