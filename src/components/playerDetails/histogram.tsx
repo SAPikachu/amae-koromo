@@ -3,7 +3,7 @@ import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { getGlobalHistogram } from "../../data/source/misc";
 
-import { GameMode, HistogramData, HistogramGroup, PlayerExtendedStats } from "../../data/types";
+import { HistogramData, HistogramGroup, modeLabelNonTranslated, PlayerExtendedStats } from "../../data/types";
 import { formatPercent, sum, useAsyncFactory } from "../../utils";
 import { useModel } from "../gameRecords/model";
 
@@ -95,13 +95,13 @@ export const StatHistogram = React.memo(function ({
   return (
     <Box>
       <Typography variant="inherit" mb={2}>
-        <Trans defaults="{{mode}}之间平均值：" values={{ mode: t(GameMode[mode]) }} />
+        <Trans defaults="{{mode}}之间平均值：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />
         {valueFormatter(histogramData.mean)}
       </Typography>
       <Histogram data={histogramData} value={value} />
       {value !== undefined && (
         <Typography variant="inherit">
-          <Trans defaults="{{mode}}之间位置：" values={{ mode: t(GameMode[mode]) }} />
+          <Trans defaults="{{mode}}之间位置：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />
           {formatPercent(numPos / numTotal)}
         </Typography>
       )}
