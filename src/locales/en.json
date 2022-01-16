@@ -120,6 +120,8 @@
     "立直局数 / 总局数": "Riichi rounds / Total rounds",
     "立直和了局数 / 立直局数": "Win after riichi rounds / Riichi rounds",
     "立直放铳局数（含立直瞬间 / 不含立直瞬间） / 立直局数": "Deal-in after riichi rounds (including / not including deal-in at the same round of riichi) / Riichi rounds",
+    "立直放铳局数（含立直瞬间） / 立直局数": "Deal-in after riichi rounds (including deal-in at the same round of riichi) / Riichi rounds",
+    "立直放铳局数（不含立直瞬间） / 立直局数": "Deal-in after riichi rounds (not including deal-in at the same round of riichi) / Riichi rounds",
     "立直总收支（含供托） / 立直局数": "Riichi total balances (with round debts) / Riichi rounds",
     "立直和了收入（含供托） / 立直和了局数": "Riichi winning incomes (with round debts) / Win after riichi rounds",
     "立直放铳支出（含立直棒） / 立直放铳局数": "Riichi deal-in expenses (with round debts) / Deal-in after riichi rounds",
