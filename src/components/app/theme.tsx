@@ -153,7 +153,7 @@ const THEME: ThemeOptions = {
     MuiTooltip: {
       defaultProps: {
         enterTouchDelay: 100,
-        leaveTouchDelay: 3000,
+        leaveTouchDelay: 15000,
       },
     },
     MuiUseMediaQuery: {
