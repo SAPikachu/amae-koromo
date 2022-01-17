@@ -114,7 +114,7 @@ function registerValidSW(swUrl: string, config?: Config) {
         !localStorage.serviceWorkerLastManualUpdate ||
         Date.now() - parseInt(localStorage.serviceWorkerLastManualUpdate, 10) > 1000 * 60 * 60 * 24
       ) {
-        registration.update();
+        registration.update().catch(() => {/* Ignore */});
         localStorage.serviceWorkerLastManualUpdate = Date.now().toString();
       }
     })
