@@ -71,6 +71,11 @@ function registerValidSW(swUrl: string, config?: Config) {
           }
         };
       }
+      if (registration.waiting && registration.waiting !== registration.active) {
+        if (config?.onUpdate) {
+          config.onUpdate(registration);
+        }
+      }
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) {
@@ -105,6 +110,13 @@ function registerValidSW(swUrl: string, config?: Config) {
           }
         };
       };
+      if (
+        !localStorage.serviceWorkerLastManualUpdate ||
+        Date.now() - parseInt(localStorage.serviceWorkerLastManualUpdate, 10) > 1000 * 60 * 60 * 24
+      ) {
+        registration.update();
+        localStorage.serviceWorkerLastManualUpdate = Date.now().toString();
+      }
     })
     .catch((error) => {
       console.error("Error during service worker registration:", error);
