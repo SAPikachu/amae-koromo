@@ -149,7 +149,7 @@ export default function DataByRank() {
             </Table>
           </TableContainer>
           <Typography mt={2} textAlign="right">
-            {t("统计半庄数：")}
+            {t("统计对战数：")}
             {Math.floor(
               modeData.map(([, levelData]) => levelData.basic.count).reduce((a, b) => a + b, 0) / Conf.rankColors.length
             )}

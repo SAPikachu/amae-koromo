@@ -56,7 +56,7 @@ export default function RankBySeats() {
             </Grid>
           </Grid>
           <Typography textAlign="right">
-            {t("统计半庄数：")}
+            {t("统计对战数：")}
             {selectedData.numGames}
           </Typography>
         </>
