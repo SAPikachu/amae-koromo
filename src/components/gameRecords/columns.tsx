@@ -57,7 +57,10 @@ const cellFormatFullTimeMobile = ({ rowData }: TableCellProps) =>
     ""
   ) : (
     <Tooltip title={GameRecord.formatFullStartTime(rowData)} placement="left" arrow>
-      <Box>{GameRecord.formatStartDate(rowData)}</Box>
+      <Box>
+        <Box>{GameRecord.formatStartDate(rowData)}</Box>
+        <Box>{formatTime(GameRecord.getStartTime(rowData))}</Box>
+      </Box>
     </Tooltip>
   );
 const cellFormatRank = ({ rowData, columnData }: TableCellProps) =>
@@ -184,7 +187,7 @@ export const COLUMN_FULLTIME = makeColumn(() => (
     headerClassName="text-right"
     columnData={{
       mobileProps: {
-        width: 40,
+        width: 45,
         cellRenderer: cellFormatFullTimeMobile,
       },
     }}

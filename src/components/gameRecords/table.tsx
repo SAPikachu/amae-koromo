@@ -16,6 +16,13 @@ export { Column } from "react-virtualized/dist/es/Table";
 
 const StyledTableContainer = styled(Box)(({ theme }) => ({
   ...theme.typography.body2,
+
+  [theme.breakpoints.down("sm")]: {
+    ".MuiBox-root, .MuiTypography-root, .ReactVirtualized__Table__rowColumn, .ReactVirtualized__Table__headerColumn": {
+      fontSize: "0.85rem",
+      margin: "0 2px",
+    },
+  },
 }));
 
 export default function GameRecordTable({ columns }: { columns: TableColumnDef[] }) {
