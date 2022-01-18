@@ -110,6 +110,7 @@ export const COLUMN_GAMEMODE = makeColumn(
             width: 20,
             style: {
               writingMode: "vertical-lr",
+              padding: "0.5rem 0",
             },
           },
         }}
