@@ -68,7 +68,9 @@ const cellFormatRank = ({ rowData, columnData }: TableCellProps) =>
     ""
   ) : (
     <Box fontWeight="bold" color={GameRecord.getPlayerRankColor(rowData, columnData.activePlayerId)}>
-      {GameRecord.getPlayerRankLabel(rowData, columnData.activePlayerId).slice(0, 1)}
+      {GameRecord.getPlayerRankLabel(rowData, columnData.activePlayerId)
+        .slice(0, 1)
+        .replace(/[0-9]/g, (s) => String.fromCodePoint(s.charCodeAt(0) + 0xfee0))}
     </Box>
   );
 const cellFormatGameMode = ({ cellData }: TableCellProps) => (cellData ? modeLabel(parseInt(cellData)) : "");
@@ -127,6 +129,10 @@ export const COLUMN_RANK = makeColumn((activePlayerId: number | string) => (
       mobileProps: {
         label: "",
         width: 20,
+        style: {
+          writingMode: "vertical-lr",
+          padding: "0.5rem 0",
+        },
       },
     }}
     cellRenderer={cellFormatRank}
