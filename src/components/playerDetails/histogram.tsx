@@ -1,5 +1,5 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import React from "react";
+import React, { SVGAttributes } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { getGlobalHistogram } from "../../data/source/misc";
 
@@ -19,7 +19,27 @@ function shouldUseClamped(value: number | undefined, data: HistogramGroup) {
     (data.histogramClamped && value >= data.histogramClamped.min && value <= data.histogramClamped.max)
   );
 }
-const Histogram = React.memo(function ({ data, value }: { data?: HistogramGroup; value?: number }) {
+
+function getValuePosition(value: number, data: HistogramData) {
+  const binStep = (data.max - data.min) / data.bins.length;
+  const bin = Math.floor((value - data.min) / binStep);
+  if (bin < 0) {
+    return 0;
+  }
+  if (bin >= data.bins.length) {
+    return sum(data.bins);
+  }
+  return sum(data.bins.slice(0, bin)) + data.bins[bin] * ((value - (data.min + binStep * bin)) / binStep);
+}
+const Histogram = React.memo(function ({
+  data,
+  value,
+  extraMeanLines = [],
+}: {
+  data?: HistogramGroup;
+  value?: number;
+  extraMeanLines?: number[];
+}) {
   const theme = useTheme();
   if (!data) {
     return <></>;
@@ -34,7 +54,24 @@ const Histogram = React.memo(function ({ data, value }: { data?: HistogramGroup;
   const barMax = Math.max(...histogram.bins);
   const binStep = (histogram.max - histogram.min) / histogram.bins.length;
   const splitPoint = value === undefined ? histogram.bins.length : Math.ceil((value - histogram.min) / binStep);
-  const meanBin = Math.floor((data.mean - histogram.min) / binStep);
+  const ValueLine = ({ v, ...props }: { v: number } & SVGAttributes<SVGLineElement>) => {
+    if (v < histogram.min || v > histogram.max) {
+      return <></>;
+    }
+    const bin = Math.floor((v - histogram.min) / binStep);
+    return (
+      <line
+        key={v}
+        x1={bin}
+        x2={bin}
+        y1={0}
+        y2={VIEWBOX_HEIGHT}
+        stroke={theme.palette.grey[50]}
+        strokeWidth={1}
+        {...props}
+      />
+    );
+  };
   return (
     <svg
       width={120}
@@ -60,32 +97,17 @@ const Histogram = React.memo(function ({ data, value }: { data?: HistogramGroup;
           />
         )}
         {!Number.isInteger(binStep) && histogram.bins.length > 60 && (
-          <line
-            stroke={theme.palette.grey[50]}
-            x1={meanBin}
-            x2={meanBin}
-            y1={0}
-            y2={VIEWBOX_HEIGHT}
-            strokeWidth={1}
-            strokeDasharray={4}
-          />
+          <g>
+            <ValueLine v={data.mean} />
+            {extraMeanLines.map((v, index) => (
+              <ValueLine key={index} v={v} strokeDasharray="4 12" strokeDashoffset={index * 3} />
+            ))}
+          </g>
         )}
       </g>
     </svg>
   );
 });
-
-function getValuePosition(value: number, data: HistogramData) {
-  const binStep = (data.max - data.min) / data.bins.length;
-  const bin = Math.floor((value - data.min) / binStep);
-  if (bin < 0) {
-    return 0;
-  }
-  if (bin >= data.bins.length) {
-    return sum(data.bins);
-  }
-  return sum(data.bins.slice(0, bin)) + data.bins[bin] * ((value - (data.min + binStep * bin)) / binStep);
-}
 
 export const StatHistogram = React.memo(function ({
   statKey,
@@ -119,13 +141,23 @@ export const StatHistogram = React.memo(function ({
       ? getValuePosition(value, histogramData.histogramClamped) +
         getValuePosition(histogramData.histogramClamped.min, histogramData.histogramFull)
       : getValuePosition(value, histogramData.histogramFull);
+  const rankMeans = Object.keys(modeHistogram)
+    .map((x) => parseInt(x, 10))
+    .filter((x) => x)
+    .sort((a, b) => a - b)
+    .map((x) => modeHistogram[x][statKey]?.mean)
+    .filter((x) => x !== undefined) as number[];
   return (
     <Box>
-      <Typography variant="inherit" mb={2}>
+      <Typography variant="inherit">
         <Trans defaults="{{mode}}平均值：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />
         {valueFormatter(histogramData.mean)}
       </Typography>
-      <Histogram data={histogramData} value={value} />
+      <Typography variant="inherit" mb={2}>
+        <Trans defaults="{{mode}}各段位平均值：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />
+        {rankMeans.map(valueFormatter).join(" / ")}
+      </Typography>
+      <Histogram data={histogramData} value={value} extraMeanLines={rankMeans} />
       {value !== undefined && (
         <Typography variant="inherit">
           <Trans defaults="{{mode}}位置：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />

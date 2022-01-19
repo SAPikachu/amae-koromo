@@ -55,6 +55,7 @@
 
     "{{mode}}位置：": "Position in {{mode}}: ",
     "{{mode}}平均值：": "Mean in {{mode}}: ",
+    "{{mode}}各段位平均值：": "Mean for ranks in {{mode}}: ",
 
     "记录场数": "Recorded matches",
     "记录等级": "Current rank",
