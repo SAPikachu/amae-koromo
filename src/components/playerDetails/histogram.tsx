@@ -122,13 +122,13 @@ export const StatHistogram = React.memo(function ({
   return (
     <Box>
       <Typography variant="inherit" mb={2}>
-        <Trans defaults="{{mode}}之间平均值：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />
+        <Trans defaults="{{mode}}平均值：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />
         {valueFormatter(histogramData.mean)}
       </Typography>
       <Histogram data={histogramData} value={value} />
       {value !== undefined && (
         <Typography variant="inherit">
-          <Trans defaults="{{mode}}之间位置：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />
+          <Trans defaults="{{mode}}位置：" values={{ mode: t(modeLabelNonTranslated(mode)) }} />
           {formatPercent(numPos / numTotal)}
         </Typography>
       )}

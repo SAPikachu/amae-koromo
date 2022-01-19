@@ -53,8 +53,8 @@
     "默听": "Dama",
     "门清": "Closed",
 
-    "{{mode}}之间位置：": "Position in {{mode}}: ",
-    "{{mode}}之间平均值：": "Mean in {{mode}}: ",
+    "{{mode}}位置：": "Position in {{mode}}: ",
+    "{{mode}}平均值：": "Mean in {{mode}}: ",
 
     "记录场数": "Recorded matches",
     "记录等级": "Current rank",
