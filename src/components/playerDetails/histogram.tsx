@@ -20,7 +20,7 @@ function shouldUseClamped(value: number | undefined, data: HistogramGroup) {
   );
 }
 
-function getValuePosition(value: number, data: HistogramData) {
+function getValueAccumulation(value: number, data: HistogramData) {
   const binStep = (data.max - data.min) / data.bins.length;
   const bin = Math.floor((value - data.min) / binStep);
   if (bin < 0) {
@@ -138,9 +138,9 @@ export const StatHistogram = React.memo(function ({
     value === undefined
       ? 0
       : shouldUseClamped(value, histogramData) && histogramData.histogramClamped
-      ? getValuePosition(value, histogramData.histogramClamped) +
-        getValuePosition(histogramData.histogramClamped.min, histogramData.histogramFull)
-      : getValuePosition(value, histogramData.histogramFull);
+      ? getValueAccumulation(value, histogramData.histogramClamped) +
+        getValueAccumulation(histogramData.histogramClamped.min, histogramData.histogramFull)
+      : getValueAccumulation(value, histogramData.histogramFull);
   const rankMeans = Object.keys(modeHistogram)
     .map((x) => parseInt(x, 10))
     .filter((x) => x)
