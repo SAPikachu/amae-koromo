@@ -59,7 +59,7 @@ const cellFormatFullTimeMobile = ({ rowData }: TableCellProps) =>
     <Tooltip title={GameRecord.formatFullStartTime(rowData)} placement="left" arrow>
       <Box>
         <Box>{GameRecord.formatStartDate(rowData)}</Box>
-        <Box>{formatTime(GameRecord.getStartTime(rowData))}</Box>
+        <Box>{formatTime(rowData.startTime)}</Box>
       </Box>
     </Tooltip>
   );
