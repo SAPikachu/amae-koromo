@@ -59,7 +59,7 @@ function isActive(match: any, location: Location): boolean {
   return !NAV_ITEMS.some(({ path }) => location.pathname.startsWith("/" + path));
 }
 
-function HideOnScroll({ children }: { children: ReactElement | undefined }) {
+function HideOnScroll({ children }: { children: ReactElement }) {
   const trigger = useScrollTrigger();
 
   return (

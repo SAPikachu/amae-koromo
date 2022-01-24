@@ -57,7 +57,12 @@ function InternalRadioGroup<T>({
   return (
     <MuiRadioGroup value={selectedItemKey || null} onChange={handleChange} row>
       {items.map((x) => (
-        <FormControlLabel key={x.key} value={x.key} label={t(x.label)} control={<Radio size="small" />} />
+        <FormControlLabel
+          key={x.key}
+          value={x.key}
+          label={t(x.label || x.label).toString()}
+          control={<Radio size="small" />}
+        />
       ))}
     </MuiRadioGroup>
   );
@@ -129,7 +134,7 @@ function InternalCheckboxGroup<T>({
         <FormControlLabel
           key={x.key}
           value={x.key}
-          label={t(x.label)}
+          label={(t(x.label) || x.label).toString()}
           data-value={x.key}
           onClick={handleClick}
           onMouseOver={handleMouseOver}

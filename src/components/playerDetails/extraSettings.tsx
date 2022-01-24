@@ -70,7 +70,7 @@ function ExtraSettingsBody() {
       </Box>
       <Box mt={2}>
         <FormControlLabel
-          label={t("四魂天对局")}
+          label={t("四魂天对局").toString()}
           control={
             <Checkbox
               disabled={
