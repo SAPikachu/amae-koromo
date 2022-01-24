@@ -21,6 +21,10 @@ export const StatTooltip = styled(({ className, ...props }: TooltipProps) => {
     textAlign: "center",
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+
+    "&, & *": {
+      userSelect: "none",
+    },
   },
 }));
 
@@ -29,6 +33,9 @@ export const StatList = styled(Box)(({ theme }) => ({
   justifyContent: "space-between",
   gridGap: theme.spacing(1.5),
   gridTemplateColumns: "1fr",
+  "&, & *": {
+    userSelect: "none",
+  },
   [theme.breakpoints.down("sm")]: {
     gridGap: theme.spacing(0.5),
     "& > div": {
