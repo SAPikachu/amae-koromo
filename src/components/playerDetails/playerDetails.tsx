@@ -26,6 +26,7 @@ import { Model, useModel } from "../gameRecords/model";
 import Conf from "../../utils/conf";
 import { GameMode } from "../../data/types/gameMode";
 import { loadPlayerPreference } from "../../utils/preference";
+import { Box, BoxProps, Grid, Link, Typography } from "@mui/material";
 import { useStatHistogram } from "./histogram";
 
 const RankRateChart = Loadable({
