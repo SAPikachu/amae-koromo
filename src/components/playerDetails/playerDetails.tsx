@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import Loadable from "../misc/customizedLoadable";
 import { Helmet } from "react-helmet";
 
@@ -60,22 +60,17 @@ function GenericStat({
   if (typeof value !== "number" && value !== defaultValue) {
     throw new Error(`${statKey} is not a number`);
   }
-  return (
-    <StatItem
-      description={description}
-      label={label || statKey}
-      extraTip={
-        stats.count > 100
-          ? () =>
+  const extraTip = useCallback(() => {
               // eslint-disable-next-line react-hooks/rules-of-hooks
-              useStatHistogram({
+    const ret = useStatHistogram({
                 statKey,
                 valueFormatter: formatterHistogram || formatter,
                 value: typeof value === "number" ? value : undefined,
-              })
-          : null
-      }
-    >
+    });
+    return stats.count > 100 ? ret : null;
+  }, [statKey, formatterHistogram, formatter, value, stats]);
+  return (
+    <StatItem description={description} label={label || statKey} extraTip={extraTip}>
       {typeof value === "string" ? value : formatter(value)}
     </StatItem>
   );
