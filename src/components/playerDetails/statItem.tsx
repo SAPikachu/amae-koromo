@@ -91,9 +91,12 @@ const StatItem = React.memo(function ({
   i18nNamespace?: string[];
   children: React.ReactChild;
   valueProps?: TypographyProps;
-  extraTip?: ReactNode;
+  extraTip?: ReactNode | (() => ReactNode);
 }) {
   const { t } = useTranslation(i18nNamespace);
+  if (typeof extraTip === "function") {
+    extraTip = extraTip();
+  }
   const translatedTip =
     (description ? (typeof description === "string" ? t(description).toString() : description) : "") || "";
   return (

@@ -3,7 +3,7 @@ import React, { SVGAttributes } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { getGlobalHistogram } from "../../data/source/misc";
 
-import { HistogramData, HistogramGroup, modeLabelNonTranslated, PlayerExtendedStats } from "../../data/types";
+import { GameMode, HistogramData, HistogramGroup, modeLabelNonTranslated, PlayerExtendedStats } from "../../data/types";
 import { formatPercent, sum, useAsyncFactory } from "../../utils";
 import { useModel } from "../gameRecords/model";
 
@@ -109,30 +109,20 @@ const Histogram = React.memo(function ({
   );
 });
 
-export const StatHistogram = React.memo(function ({
-  statKey,
+const StatHistogramInner = React.memo(function ({
+  mode,
   value,
   valueFormatter,
+  rankMeans,
+  histogramData,
 }: {
-  statKey: keyof PlayerExtendedStats;
+  mode: GameMode;
   value?: number;
   valueFormatter: (value: number) => string;
+  rankMeans: number[];
+  histogramData: Omit<HistogramGroup, "histogramFull"> & Required<Pick<HistogramGroup, "histogramFull">>;
 }) {
   const { t } = useTranslation();
-  const [model] = useModel();
-  const globalHistogram = useAsyncFactory(() => getGlobalHistogram().catch(() => null), [], "globalHistogram");
-  if (!globalHistogram || model.type !== "player" || model.selectedModes.length !== 1) {
-    return <></>;
-  }
-  const mode = model.selectedModes[0];
-  const modeHistogram = globalHistogram[mode];
-  if (!modeHistogram || !(statKey in modeHistogram["0"])) {
-    return <></>;
-  }
-  const histogramData = modeHistogram["0"][statKey];
-  if (!histogramData?.histogramFull) {
-    return <></>;
-  }
   const numTotal = sum(histogramData.histogramFull.bins);
   const numPos =
     value === undefined
@@ -141,12 +131,6 @@ export const StatHistogram = React.memo(function ({
       ? getValueAccumulation(value, histogramData.histogramClamped) +
         getValueAccumulation(histogramData.histogramClamped.min, histogramData.histogramFull)
       : getValueAccumulation(value, histogramData.histogramFull);
-  const rankMeans = Object.keys(modeHistogram)
-    .map((x) => parseInt(x, 10))
-    .filter((x) => x)
-    .sort((a, b) => a - b)
-    .map((x) => modeHistogram[x][statKey]?.mean)
-    .filter((x) => x !== undefined) as number[];
   return (
     <Box>
       <Typography variant="inherit">
@@ -166,6 +150,58 @@ export const StatHistogram = React.memo(function ({
       )}
     </Box>
   );
+});
+
+export function useStatHistogram({
+  statKey,
+  value,
+  valueFormatter,
+}: {
+  statKey: keyof PlayerExtendedStats;
+  value?: number;
+  valueFormatter: (value: number) => string;
+}) {
+  const [model] = useModel();
+  const globalHistogram = useAsyncFactory(() => getGlobalHistogram().catch(() => null), [], "globalHistogram");
+  if (!globalHistogram || model.type !== "player" || model.selectedModes.length !== 1) {
+    return null;
+  }
+  const mode = model.selectedModes[0];
+  const modeHistogram = globalHistogram[mode];
+  if (!modeHistogram || !(statKey in modeHistogram["0"])) {
+    return null;
+  }
+  const histogramData = modeHistogram["0"][statKey];
+  if (!histogramData?.histogramFull) {
+    return null;
+  }
+  const rankMeans = Object.keys(modeHistogram)
+    .map((x) => parseInt(x, 10))
+    .filter((x) => x)
+    .sort((a, b) => a - b)
+    .map((x) => modeHistogram[x][statKey]?.mean)
+    .filter((x) => x !== undefined) as number[];
+  return (
+    <StatHistogramInner
+      mode={mode}
+      value={value}
+      valueFormatter={valueFormatter}
+      rankMeans={rankMeans}
+      histogramData={{ ...histogramData, histogramFull: histogramData.histogramFull }}
+    />
+  );
+}
+
+export const StatHistogram = React.memo(function ({
+  statKey,
+  value,
+  valueFormatter,
+}: {
+  statKey: keyof PlayerExtendedStats;
+  value?: number;
+  valueFormatter: (value: number) => string;
+}) {
+  return useStatHistogram({ statKey, value, valueFormatter });
 });
 
 export default Histogram;

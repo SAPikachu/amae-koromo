@@ -26,8 +26,7 @@ import { Model, useModel } from "../gameRecords/model";
 import Conf from "../../utils/conf";
 import { GameMode } from "../../data/types/gameMode";
 import { loadPlayerPreference } from "../../utils/preference";
-import { Box, BoxProps, Grid, Link, Typography } from "@mui/material";
-import { StatHistogram } from "./histogram";
+import { useStatHistogram } from "./histogram";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -65,13 +64,15 @@ function GenericStat({
       description={description}
       label={label || statKey}
       extraTip={
-        stats.count > 100 ? (
-          <StatHistogram
-            statKey={statKey}
-            value={typeof value === "number" ? value : undefined}
-            valueFormatter={formatterHistogram || formatter}
-          />
-        ) : null
+        stats.count > 100
+          ? () =>
+              // eslint-disable-next-line react-hooks/rules-of-hooks
+              useStatHistogram({
+                statKey,
+                valueFormatter: formatterHistogram || formatter,
+                value: typeof value === "number" ? value : undefined,
+              })
+          : null
       }
     >
       {typeof value === "string" ? value : formatter(value)}
