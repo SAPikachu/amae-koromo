@@ -60,10 +60,6 @@ function AlertEn() {
           finished before then could no longer be retrived.
         </li>
         <li>
-          Number of games in gold room exceeds processing power of the server, some games may not be visible on the
-          site.
-        </li>
-        <li>
           Main mirror of the site collects small amount of anonymous usage data for improving the site. If you wish to
           opt-out from this, please use <a href={Conf.mirrorUrl}>the alternative mirror</a>.
         </li>
@@ -100,7 +96,6 @@ function AlertJa() {
           データの収集は 2019 年 11 月 29 日から（玉南と王座南は 2019 年 8 月 23
           日）です。収集開始以前の対局は検索できません。
         </li>
-        <li>金の間の対局数がサーバーの運算能力を超えました。一部の対局がサイトから抜く可能性があります。</li>
         <li>
           <a href={"https://" + Conf.canonicalDomain}>メインサイト</a>
           はサービス向上のため、少しの匿名化された利用情報を収集しています。希望しない方は、
