@@ -18,6 +18,9 @@
     },
     {
       "src": "/(.*)",
+      "headers": {
+        "Content-Security-Policy-Report-Only": "default-src *; script-src 'self' https;//*.sapk.ch https://*.statuspage.io https://www.google-analytics.com; report-uri https://amaekoromo.report-uri.com/r/d/csp/reportOnly"
+      },
       "dest": "/index.html"
     }
   ]
