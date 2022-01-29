@@ -11,16 +11,22 @@
       "headers": { "Cache-Control": "public, immutable, max-age=604800, s-maxage=604800" },
       "continue": true
     },
-    { "handle": "filesystem" },
+    {
+      "src": "/(.*)",
+      "headers": {
+        "Content-Security-Policy-Report-Only": "default-src *; script-src 'self' https://*.sapk.ch https://www.google-analytics.com https://*.statuspage.io; script-src-elem 'self' https://*.sapk.ch https://www.google-analytics.com https://*.statuspage.io; style-src * 'unsafe-inline'; style-src-elem * 'unsafe-inline'; style-src-attr * 'unsafe-inline'; report-to https://amaekoromo.report-uri.com/r/d/csp/reportOnly"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
     {
       "src": "/(static|favicon2)/.*",
       "status": 404
     },
     {
       "src": "/(.*)",
-      "headers": {
-        "Content-Security-Policy-Report-Only": "default-src *; script-src 'self' https://*.sapk.ch https://www.google-analytics.com https://*.statuspage.io; script-src-elem 'self' https://*.sapk.ch https://www.google-analytics.com https://*.statuspage.io; style-src * 'unsafe-inline'; style-src-elem * 'unsafe-inline'; style-src-attr * 'unsafe-inline'; report-to https://amaekoromo.report-uri.com/r/d/csp/reportOnly"
-      },
       "dest": "/index.html"
     }
   ]
