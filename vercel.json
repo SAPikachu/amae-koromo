@@ -19,7 +19,7 @@
     {
       "src": "/(.*)",
       "headers": {
-        "Content-Security-Policy-Report-Only": "default-src *; script-src 'self' https://*.sapk.ch https://*.statuspage.io https://www.google-analytics.com; report-uri https://amaekoromo.report-uri.com/r/d/csp/reportOnly"
+        "Content-Security-Policy-Report-Only": "default-src *; script-src 'self' 'unsafe-inline' https://*.sapk.ch https://*.statuspage.io https://www.google-analytics.com; script-src-elem 'self' 'unsafe-inline' https://*.sapk.ch https://*.statuspage.io https://www.google-analytics.com; style-src * 'unsafe-inline'; style-src-elem * 'unsafe-inline'; style-src-attr * 'unsafe-inline'; report-to https://amaekoromo.report-uri.com/r/d/csp/reportOnly"
       },
       "dest": "/index.html"
     }
