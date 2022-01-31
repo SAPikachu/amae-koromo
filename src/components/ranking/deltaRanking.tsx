@@ -2,7 +2,7 @@ import { DeltaRankingItem, RankingTimeSpan } from "../../data/types/ranking";
 import { useAsyncFactory } from "../../utils";
 import { getDeltaRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
-import { generatePlayerPathById } from "../gameRecords/routes";
+import { generatePlayerPathById } from "../gameRecords/routeUtils";
 import { GameMode, LevelWithDelta } from "../../data/types";
 import { useModel, ModelModeSelector, ModelModeProvider } from "../modeModel";
 import { useTranslation } from "react-i18next";

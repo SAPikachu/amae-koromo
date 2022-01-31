@@ -28,6 +28,7 @@ import { GameMode } from "../../data/types/gameMode";
 import { loadPlayerPreference } from "../../utils/preference";
 import { Box, BoxProps, Grid, Link, Typography } from "@mui/material";
 import { useStatHistogram } from "./histogram";
+import StarButton from "./star/starButton";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -61,11 +62,11 @@ function GenericStat({
     throw new Error(`${statKey} is not a number`);
   }
   const extraTip = useCallback(() => {
-              // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const ret = useStatHistogram({
-                statKey,
-                valueFormatter: formatterHistogram || formatter,
-                value: typeof value === "number" ? value : undefined,
+      statKey,
+      valueFormatter: formatterHistogram || formatter,
+      value: typeof value === "number" ? value : undefined,
     });
     return stats.count > 100 ? ret : null;
   }, [statKey, formatterHistogram, formatter, value, stats]);
@@ -528,6 +529,9 @@ export default function PlayerDetails() {
               </Typography>
               <Box maxWidth={480} margin="auto">
                 <RankRateChart metadata={metadata!} />
+              </Box>
+              <Box margin="auto" textAlign="center">
+                <StarButton metadata={metadata!} />
               </Box>
             </Grid>
           </Grid>

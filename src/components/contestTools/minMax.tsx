@@ -5,7 +5,7 @@ import Loading from "../misc/loading";
 import dayjs from "dayjs";
 import { ListingDataLoader } from "../../data/source/records/loader";
 import { GameRecord, PlayerRecord } from "../../data/types";
-import { generatePlayerPathById } from "../gameRecords/routes";
+import { generatePlayerPathById } from "../gameRecords/routeUtils";
 
 export default function MinMax() {
   const [dateStart, setDateStart] = useState(() => dayjs());

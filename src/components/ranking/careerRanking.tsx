@@ -5,7 +5,7 @@ import { CareerRankingItem, CareerRankingType } from "../../data/types/ranking";
 import { useAsyncFactory } from "../../utils";
 import { getCareerRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
-import { generatePlayerPathById } from "../gameRecords/routes";
+import { generatePlayerPathById } from "../gameRecords/routeUtils";
 import { LevelWithDelta, GameMode } from "../../data/types";
 import { formatPercent } from "../../utils/index";
 import { ModelModeProvider, ModelModeSelector, useModel } from "../modeModel";

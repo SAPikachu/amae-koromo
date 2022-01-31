@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { Location } from "history";
 import Conf, { CONFIGURATIONS } from "../../utils/conf";
 import { useTranslation } from "react-i18next";
@@ -9,8 +9,6 @@ import {
   Container,
   Toolbar,
   MenuItem,
-  Menu,
-  MenuItemProps,
   ButtonProps,
   Box,
   IconButton,
@@ -30,6 +28,8 @@ import { OverrideTheme } from "./theme";
 import clsx from "clsx";
 import { NavLink, NavLinkProps } from "react-router-dom";
 import NavButton from "../misc/navButton";
+import { MenuButton } from "../misc/menuButton";
+import StarredPlayerMenu from "../playerDetails/star/starredPlayerMenu";
 
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
@@ -77,57 +77,6 @@ const MobileNavButton = ({ href, children, ...props }: ButtonProps & Omit<NavLin
     </ListItemButton>
   </ListItem>
 );
-
-function MenuButton({
-  label,
-  children,
-  ...props
-}: {
-  label: ReactNode;
-  children: ReactElement<MenuItemProps>[];
-} & ButtonProps) {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleItemClick = (item: ReactElement<MenuItemProps>) => {
-    const onClick = item.props.onClick;
-    if (!onClick) {
-      return handleClose;
-    }
-    return (e: React.MouseEvent<HTMLLIElement>) => {
-      handleClose();
-      onClick(e);
-    };
-  };
-  return (
-    <>
-      <Button {...props} onClick={handleClick}>
-        {label}
-      </Button>
-      <Menu
-        open={open}
-        onClose={handleClose}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        disableScrollLock
-      >
-        {React.Children.map(children, (x) => React.cloneElement(x, { onClick: handleItemClick(x) }))}
-      </Menu>
-    </>
-  );
-}
 
 function handleSwitchSite(e: React.MouseEvent<HTMLAnchorElement>) {
   e.preventDefault();
@@ -300,6 +249,7 @@ export default function Navbar() {
                 <Box display={["none", null, "flex"]} alignItems="center">
                   <DesktopItems />
                 </Box>
+                <StarredPlayerMenu />
                 <Box display={["block", null, "none"]}>
                   <MobileItems />
                 </Box>

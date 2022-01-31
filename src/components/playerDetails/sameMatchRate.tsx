@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
 import { PlayerRecord, RankRates, GameRecord, calculateDeltaPoint, Level } from "../../data/types";
 import Loading from "../misc/loading";
-import { generatePlayerPathById } from "../gameRecords/routes";
+import { generatePlayerPathById } from "../gameRecords/routeUtils";
 import { formatPercent, formatFixed3 } from "../../utils";
 import { SimpleRoutedSubViews, ViewRoutes, RouteDef, NavButtons, ViewSwitch } from "../routing";
 import { useModel } from "../gameRecords/model";

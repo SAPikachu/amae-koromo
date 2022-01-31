@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { PlayerMetadataLite, LevelWithDelta } from "../../data/types";
 import { searchPlayer } from "../../data/source/misc";
 import { Redirect } from "react-router-dom";
-import { generatePlayerPathById } from "./routes";
+import { generatePlayerPathById } from "./routeUtils";
 import { useTranslation } from "react-i18next";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { networkError } from "../../utils/notify";

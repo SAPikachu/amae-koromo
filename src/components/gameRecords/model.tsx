@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import React, { useReducer, useContext, ReactChild, useMemo } from "react";
 import { useHistory } from "react-router";
 import { useEventCallback } from "../../utils";
-import { generatePath } from "./routes";
+import { generatePath } from "./routeUtils";
 import { GameMode } from "../../data/types";
 
 export interface ListingModel {

@@ -3,7 +3,7 @@ import { Link, Typography, TypographyProps, useTheme } from "@mui/material";
 import React from "react";
 
 import { GameRecord, PlayerRecord, getLevelTag } from "../../data/types";
-import { generatePlayerPathById } from "./routes";
+import { generatePlayerPathById } from "./routeUtils";
 
 export const Player = React.memo(function ({
   player,

@@ -20,6 +20,7 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { SnackbarProvider } from "notistack";
 import { RegisterSnackbarProvider } from "../../utils/notify";
 import { FC } from "react";
+import StarPlayerProvider from "../playerDetails/star/starPlayerProvider";
 
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
@@ -56,54 +57,60 @@ const LP: FC = ({ children }) => (
   </LocalizationProvider>
 );
 
+const Providers: FC = ({ children }) => (
+  <RootThemeProvider>
+    <SnackbarProvider maxSnack={3}>
+      <LP>
+        <StarPlayerProvider>{children}</StarPlayerProvider>
+      </LP>
+    </SnackbarProvider>
+  </RootThemeProvider>
+);
+
 function App() {
   const { t, i18n } = useTranslation();
   return (
-    <RootThemeProvider>
-      <SnackbarProvider maxSnack={3}>
-        <RegisterSnackbarProvider />
-        <CssBaseline />
-        <LP>
-          <div className={"lang-" + i18n.language}>
-            <Router>
-              <Helmet defaultTitle={t(Conf.siteTitle)} titleTemplate={`%s | ${t(Conf.siteTitle)}`} />
-              <CanonicalLink />
-              <Tracker />
-              <Navbar />
-              <MaintenanceHandler>
-                <Scroller>
-                  {Conf.showTopNotice ? <AppHeader /> : <></>}
-                  <Container>
-                    <Switch>
-                      <Route path="/ranking">
-                        <PageCategory category="Ranking" />
-                        <Ranking />
-                      </Route>
-                      <Route path="/statistics">
-                        <PageCategory category="Statistics" />
-                        <Statistics />
-                      </Route>
-                      <Route path="/highlight">
-                        <PageCategory category="RecentHighlight" />
-                        <RecentHighlight />
-                      </Route>
-                      {Conf.features.contestTools ? (
-                        <Route path="/contest-tools">
-                          <ContestTools />
-                        </Route>
-                      ) : null}
-                      <Route path="/">
-                        <GameRecords />
-                      </Route>
-                    </Switch>
-                  </Container>
-                </Scroller>
-              </MaintenanceHandler>
-            </Router>
-          </div>
-        </LP>
-      </SnackbarProvider>
-    </RootThemeProvider>
+    <Providers>
+      <RegisterSnackbarProvider />
+      <CssBaseline />
+      <div className={"lang-" + i18n.language}>
+        <Router>
+          <Helmet defaultTitle={t(Conf.siteTitle)} titleTemplate={`%s | ${t(Conf.siteTitle)}`} />
+          <CanonicalLink />
+          <Tracker />
+          <Navbar />
+          <MaintenanceHandler>
+            <Scroller>
+              {Conf.showTopNotice ? <AppHeader /> : <></>}
+              <Container>
+                <Switch>
+                  <Route path="/ranking">
+                    <PageCategory category="Ranking" />
+                    <Ranking />
+                  </Route>
+                  <Route path="/statistics">
+                    <PageCategory category="Statistics" />
+                    <Statistics />
+                  </Route>
+                  <Route path="/highlight">
+                    <PageCategory category="RecentHighlight" />
+                    <RecentHighlight />
+                  </Route>
+                  {Conf.features.contestTools ? (
+                    <Route path="/contest-tools">
+                      <ContestTools />
+                    </Route>
+                  ) : null}
+                  <Route path="/">
+                    <GameRecords />
+                  </Route>
+                </Switch>
+              </Container>
+            </Scroller>
+          </MaintenanceHandler>
+        </Router>
+      </div>
+    </Providers>
   );
 }
 export default App;

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import Conf from "../../utils/conf";
+import { loadPreference, savePreference } from "../../utils/preference";
 
 const DATA_MIRRORS = [
   "https://ak-data-1.sapk.ch/",
@@ -9,7 +10,7 @@ const DATA_MIRRORS = [
 ];
 const PROBE_TIMEOUT = 15000;
 
-let selectedMirror = localStorage.getItem("selectedMirror") || DATA_MIRRORS[0];
+let selectedMirror = loadPreference("selectedMirror", DATA_MIRRORS[0]);
 
 let onMaintenance: (msg: string) => void = () => {};
 
@@ -57,7 +58,7 @@ async function fetchData(path: string): Promise<Response> {
             }
             completedResponse = resp;
             selectedMirror = mirror;
-            localStorage.setItem("selectedMirror", selectedMirror);
+            savePreference("selectedMirror", selectedMirror);
             console.log(`Set ${mirror} as preferred`);
             return resp;
           })

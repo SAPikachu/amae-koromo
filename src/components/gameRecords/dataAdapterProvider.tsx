@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { DataProvider, DUMMY_DATA_PROVIDER, FilterPredicate } from "../../data/source/records/provider";
 import { useModel, Model } from "./model";
 import { Metadata, GameRecord, Level } from "../../data/types";
-import { generatePath } from "./routes";
+import { generatePath } from "./routeUtils";
 import { networkError } from "../../utils/notify";
 import { ApiError } from "../../data/source/api";
 import { useExtraFilterPredicate } from "./extraFilterPredicate";

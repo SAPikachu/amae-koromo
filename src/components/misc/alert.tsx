@@ -3,6 +3,7 @@ import React from "react";
 import { ReactComponentLike } from "prop-types";
 import { triggerRelayout } from "../../utils/index";
 import { Alert as MuiAlert, AlertColor, AlertTitle, Fade, AlertProps } from "@mui/material";
+import { loadPreference, savePreference } from "../../utils/preference";
 
 export function Alert({
   type = "info" as AlertColor,
@@ -14,10 +15,10 @@ export function Alert({
   sx = { mb: 2 } as AlertProps["sx"],
 }) {
   const stateKey = `alertState_${stateName}`;
-  const [closed, setClosed] = useState(() => stateName && !!localStorage.getItem(stateKey));
+  const [closed, setClosed] = useState(() => stateName && loadPreference(stateKey, false));
   useEffect(() => {
     if (stateName && closed) {
-      localStorage.setItem(stateKey, "true");
+      savePreference(stateKey, true);
     }
   }, [closed, stateName, stateKey]);
   if (closed && closable) {

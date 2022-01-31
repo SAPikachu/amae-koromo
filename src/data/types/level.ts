@@ -65,6 +65,9 @@ export class Level {
     this._minorRank = realId % 100;
     this._numPlayerId = Math.floor(levelId / 10000);
   }
+  toLevelId() {
+    return this._numPlayerId * 10000 + this._majorRank * 100 + this._minorRank;
+  }
   isSameMajorRank(other: Level): boolean {
     return this._majorRank === other._majorRank;
   }

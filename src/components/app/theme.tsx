@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import {
   alpha,
   createTheme,
@@ -8,21 +8,9 @@ import {
   ThemeProvider as MaterialThemeProvider,
 } from "@mui/material";
 import { enUS, jaJP, koKR, Localization, zhCN } from "@mui/material/locale";
-import { Link, LinkProps } from "react-router-dom";
 import { deepmerge } from "@mui/utils";
 import { useTranslation } from "react-i18next";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const LinkBehavior = React.forwardRef<any, Omit<LinkProps, "to"> & { href: LinkProps["to"] }>((props, ref) => {
-  const { href, ...other } = props;
-  if (!href) {
-    return <span ref={ref} {...other} />;
-  }
-  if (typeof href === "string" && /^https?:\/\//i.test(href)) {
-    return <a ref={ref} href={href} {...other} />;
-  }
-  return <Link ref={ref} to={href} {...other} />;
-});
+import { LinkBehavior } from "../misc/linkBehavior";
 
 const LOCALES: { [key: string]: Localization } = {
   en: enUS,
