@@ -27,8 +27,23 @@ if (process.env.NODE_ENV === "production") {
       "this.hostIndex.push is not a function",
       "undefined is not an object (evaluating 't.uv')",
       "SyntaxError: The string did not match the expected pattern.",
+      "instantSearchSDKJSBridgeClearHighlight",
+      "window.bannerNight",
+      "window.ucbrowser",
+      "webkitExitFullScreen",
+      "close_cache_key",
     ],
     denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i, /^file:\/\//i],
+    beforeSend: (event, hint) => {
+      if (
+        hint?.originalException &&
+        typeof hint.originalException !== "string" &&
+        /Loading chunk \d+ failed after \d+ retries/.test(hint.originalException.message)
+      ) {
+        event.fingerprint = ["ChunkLoadError"];
+      }
+      return event;
+    },
   });
 }
 
