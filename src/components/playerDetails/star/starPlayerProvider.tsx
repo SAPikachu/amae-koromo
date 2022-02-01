@@ -50,7 +50,6 @@ export default function StarPlayerProvider({ children }: { children: React.React
     }
     const handler = function handler(e: MessageEvent) {
       if (e.data === "refresh") {
-        console.log("StarPlayerProvider:", e.data);
         setDebouceCounter((c) => c + 1);
       }
     };
@@ -76,7 +75,9 @@ export default function StarPlayerProvider({ children }: { children: React.React
         return;
       }
       starredPlayers.map.set(newStarredPlayer.id, newStarredPlayer);
-      starredPlayers.list.splice(index, 1);
+      if (index >= 0) {
+        starredPlayers.list.splice(index, 1);
+      }
       starredPlayers.list.unshift(newStarredPlayer);
       saveStarredPlayers(starredPlayers.list);
       setDebouceCounter((c) => c + 1);
