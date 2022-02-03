@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { networkError } from "../../utils/notify";
 
-const playerSearchCache = {} as { [prefix: string]: PlayerMetadataLite[] | Promise<PlayerMetadataLite[]> };
+const playerSearchCache = new Map<string, PlayerMetadataLite[] | Promise<PlayerMetadataLite[]>>();
 const NUM_RESULTS_SHOWN = 6;
 const NUM_FETCH = 20;
 
@@ -19,7 +19,7 @@ function findRawResultFromCache(prefix: string): { result: PlayerMetadataLite[];
   const normalizedPrefix = normalizeName(prefix);
   prefix = normalizedPrefix;
   while (prefix) {
-    const players = playerSearchCache[prefix];
+    const players = playerSearchCache.get(prefix);
     if (!players || players instanceof Promise) {
       prefix = prefix.slice(0, prefix.length - 1);
       continue;
@@ -67,7 +67,7 @@ export function PlayerSearch() {
       return;
     }
     const prefix = normalizeName(searchText);
-    if (playerSearchCache[prefix]) {
+    if (playerSearchCache.has(prefix)) {
       return;
     }
     if (!isLoading) {
@@ -79,20 +79,20 @@ export function PlayerSearch() {
       if (cancelled) {
         return;
       }
-      if (playerSearchCache[prefix]) {
+      if (playerSearchCache.has(prefix)) {
         return;
       }
       const promise = searchPlayer(prefix).then(function (players) {
-        playerSearchCache[prefix] = players;
+        playerSearchCache.set(prefix, players);
         if (!cancelled) {
           setVersion(new Date().getTime());
         }
         return players;
       });
-      playerSearchCache[prefix] = promise;
+      playerSearchCache.set(prefix, promise);
       promise.catch((e) => {
         console.error(e);
-        delete playerSearchCache[prefix];
+        playerSearchCache.delete(prefix);
         networkError();
       });
     }, 500);

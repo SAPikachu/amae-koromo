@@ -32,8 +32,14 @@ if (process.env.NODE_ENV === "production") {
       "window.ucbrowser",
       "webkitExitFullScreen",
       "close_cache_key",
+      "UCShellJava",
+      "file:///",
+      "hw-upgrade-client",
+      "is_mark_able_element",
+      "QK_middlewareReadModePageDetect",
     ],
     denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i, /^file:\/\//i],
+    autoSessionTracking: true,
     beforeSend: (event, hint) => {
       if (
         hint?.originalException &&

@@ -14,7 +14,8 @@ export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMe
   if (!prefix) {
     return [];
   }
-  return apiGet<PlayerMetadataLite[]>(`search_player/${encodeURIComponent(prefix)}?limit=${limit}`);
+  const result = await apiGet<PlayerMetadataLite[]>(`search_player/${encodeURIComponent(prefix)}?limit=${limit}`);
+  return result || [];
 }
 
 export async function getExtendedStats(
