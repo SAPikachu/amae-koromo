@@ -34,15 +34,18 @@ async function fetchWithTimeout(
 
 let mirrorProbePromise = null as null | Promise<Response>;
 
-async function fetchData(path: string): Promise<Response> {
+async function fetchData(path: string, retry = true): Promise<Response> {
   try {
     return await fetchWithTimeout(selectedMirror + path);
   } catch (e) {
     console.warn(e);
+    if (!retry) {
+      throw e;
+    }
     if (mirrorProbePromise) {
       console.warn(`Failed to fetch data from mirror ${selectedMirror}, waiting for probe in progress...`);
       await mirrorProbePromise.then(() => {});
-      return fetchData(path);
+      return fetchData(path, false);
     }
     console.warn(`Failed to fetch data from mirror ${selectedMirror}, trying other mirror...`);
   }
@@ -106,7 +109,11 @@ export async function apiGet<T>(path: string): Promise<T> {
       statusText: resp.statusText,
       headers: resp.headers,
       url: resp.url,
-      json: resp.json.bind(resp),
+      json:
+        resp.json?.bind(resp) ||
+        (async () => {
+          throw resp;
+        }),
     });
     throw error;
   }

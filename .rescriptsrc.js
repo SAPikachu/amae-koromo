@@ -2,7 +2,34 @@ const { prependWebpackPlugin, getPaths, edit } = require("@rescripts/utilities")
 const { RetryChunkLoadPlugin } = require("webpack-retry-chunk-load-plugin");
 const isBabelLoader = (inQuestion) => inQuestion && inQuestion.loader && inQuestion.loader.includes("babel-loader");
 
+if (process.env.NODE_ENV === "production") {
+  const dayjs = require("dayjs");
+  dayjs.extend(require("dayjs/plugin/utc"));
+  const timestamp = dayjs.utc().format("YYYYMMDDHHmm");
+  process.env.REACT_APP_RELEASE = `${timestamp}-${(process.env.COMMIT_REF || "unknown").slice(0, 7)}`;
+} else {
+  process.env.REACT_APP_RELEASE = "devel";
+}
+
 module.exports = [
+  process.env.NODE_ENV === "production" && process.env.SENTRY_AUTH_TOKEN
+    ? (config) =>
+        prependWebpackPlugin(
+          new (require("@sentry/webpack-plugin"))({
+            validate: true,
+            include: ".",
+            ignore: ["node_modules", ".rescriptsrc.js", "generatePreloadHeaders.js"],
+            ext: ["js", "jsx", "ts", "tsx", "map", "jsbundle", "bundle"],
+            release: process.env.REACT_APP_RELEASE,
+            ...(process.env.SENTRY_URL ? { url: process.env.SENTRY_URL } : {}),
+            setCommits: {
+              auto: true,
+              ignoreMissing: true,
+            },
+          }),
+          config
+        )
+    : (x) => x,
   process.env.RUN_ANALYZER
     ? (config) => prependWebpackPlugin(new (require("webpack-bundle-analyzer").BundleAnalyzerPlugin)(), config)
     : (x) => x,

@@ -14,15 +14,20 @@ import "./styles/styles.scss";
 
 import App from "./components/app";
 
-import preval from "preval.macro";
 import { Suspense } from "react";
 import Loading from "./components/misc/loading";
 
 if (process.env.NODE_ENV === "production") {
-  const buildDate = preval`const dayjs = require("dayjs"); dayjs.extend(require('dayjs/plugin/utc')); module.exports = dayjs.utc().format("YYYYMMDDHHmm")`;
+  const ignoredFunctions = new Set([
+    "is_mark_able_element",
+    "findParentClickTag",
+    "close_cache_key",
+    "check_swipe_element",
+    "eval",
+  ]);
   Sentry.init({
     dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31",
-    release: buildDate + "-" + (process.env.REACT_APP_VERSION || "unknown").slice(0, 7),
+    release: process.env.REACT_APP_RELEASE || "unknown",
     ignoreErrors: [
       "this.hostIndex.push is not a function",
       "undefined is not an object (evaluating 't.uv')",
@@ -37,10 +42,16 @@ if (process.env.NODE_ENV === "production") {
       "hw-upgrade-client",
       "is_mark_able_element",
       "QK_middlewareReadModePageDetect",
+      "window.webkit.messageHandlers",
+      "Timeout to initialize runtime",
+      "this.excludedTags.length",
     ],
-    denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i, /^file:\/\//i],
+    denyUrls: [/^chrome-extension:\/\//i, /^moz-extension:\/\//i, /^safari-extension:\/\//i, /^file:\/\//i],
     autoSessionTracking: true,
     beforeSend: (event, hint) => {
+      if (event?.exception?.values?.[0]?.stacktrace?.frames?.some((x) => ignoredFunctions.has(x?.function || ""))) {
+        return null;
+      }
       if (
         hint?.originalException &&
         typeof hint.originalException !== "string" &&
