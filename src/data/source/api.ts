@@ -44,7 +44,7 @@ async function fetchData(path: string, retry = true): Promise<Response> {
     }
     if (mirrorProbePromise) {
       console.warn(`Failed to fetch data from mirror ${selectedMirror}, waiting for probe in progress...`);
-      await mirrorProbePromise.then(() => {});
+      await mirrorProbePromise.then(() => {}).catch(() => {});
       return fetchData(path, false);
     }
     console.warn(`Failed to fetch data from mirror ${selectedMirror}, trying other mirror...`);
