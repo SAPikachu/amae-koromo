@@ -143,6 +143,9 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
       stats.extended_stats = apiGet<PlayerExtendedStats>(
         `player_extended_stats/${this._initialParams}&tag=${timeTag}`
       ).then((extendedStats) => (stats.extended_stats = extendedStats));
+      stats.extended_stats.catch((e) => {
+        console.error("Failed to get extended stats:", e);
+      });
     }
     if (!this._mode.length && Conf.availableModes.length) {
       stats.count = 0;
