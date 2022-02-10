@@ -145,4 +145,8 @@ const Conf = mergeDeep<Configuration>(CONFIGURATIONS.DEFAULT, ConfBase);
 
 document.documentElement.className += " " + Conf.rootClassName;
 
+export function canTrackUser() {
+  return window.location.host === Conf.canonicalDomain;
+}
+
 export default Conf;

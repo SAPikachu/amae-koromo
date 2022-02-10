@@ -1,5 +1,6 @@
 import { render } from "react-dom";
 import * as Sentry from "@sentry/react";
+import { v4 as uuidv4 } from "uuid";
 
 import * as serviceWorker from "./serviceWorkerRegistration";
 import "./i18n";
@@ -62,6 +63,20 @@ if (process.env.NODE_ENV === "production") {
       return event;
     },
   });
+  let sentryUserId;
+  try {
+    sentryUserId = localStorage.getItem("sentryUserId") || sessionStorage.getItem("sentryUserId");
+    if (!sentryUserId) {
+      sentryUserId = uuidv4();
+      sessionStorage.setItem("sentryUserId", sentryUserId);
+      localStorage.setItem("sentryUserId", sentryUserId);
+    }
+  } catch (e) {
+    // Ignore
+  }
+  if (sentryUserId) {
+    Sentry.setUser({ id: sentryUserId });
+  }
 }
 
 const rootElement = document.getElementById("root");

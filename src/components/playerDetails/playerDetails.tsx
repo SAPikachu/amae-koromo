@@ -29,6 +29,7 @@ import { loadPlayerPreference } from "../../utils/preference";
 import { Box, BoxProps, Grid, Link, Typography } from "@mui/material";
 import { useStatHistogram } from "./histogram";
 import StarButton from "./star/starButton";
+import { networkError } from "../../utils/notify";
 
 const RankRateChart = Loadable({
   loader: () => import("./charts/rankRate"),
@@ -444,13 +445,18 @@ export default function PlayerDetails() {
     }
     if (metadata.extended_stats instanceof Promise) {
       let changed = false;
-      metadata.extended_stats.then(() => {
-        if (changed) {
-          return;
-        } else {
-          setDataAdapter(latestDataAdapter);
-        }
-      });
+      metadata.extended_stats
+        .then(() => {
+          if (changed) {
+            return;
+          } else {
+            setDataAdapter(latestDataAdapter);
+          }
+        })
+        .catch((e) => {
+          console.error("PlayerDetails: Failed to fetch extended stats", e);
+          networkError();
+        });
       return () => {
         changed = true;
       };

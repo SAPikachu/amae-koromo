@@ -1,7 +1,7 @@
 import { useLocation } from "react-router";
-import React, { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import Helmet from "react-helmet";
-import Conf from "../../utils/conf";
+import { canTrackUser } from "../../utils/conf";
 
 let currentCategory = "Home";
 
@@ -38,7 +38,7 @@ function TrackerImpl() {
         hitType: "pageview",
         page: loc.pathname,
         title: `${currentCategory} ${title}`,
-        contentGroup1: currentCategory
+        contentGroup1: currentCategory,
       });
     });
     return () => {
@@ -52,7 +52,7 @@ export default function Tracker() {
   if (process.env.NODE_ENV !== "production") {
     return null;
   }
-  if (window.location.host !== Conf.canonicalDomain) {
+  if (!canTrackUser()) {
     return null;
   }
   if (!window.__loadGa) {

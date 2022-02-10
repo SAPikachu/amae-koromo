@@ -22,7 +22,7 @@ export function RegisterSnackbarProvider() {
   return <></>;
 }
 
-export function error(message: string) {
+export function error(message: string, options: Partial<OptionsObject> = {}) {
   return _enqueueSnackbar(message, {
     variant: "error",
     action: (key) => (
@@ -35,9 +35,16 @@ export function error(message: string) {
         <Close />
       </IconButton>
     ),
+    ...options,
   });
 }
 
+let networkErrorActive = "" as SnackbarKey;
+
 export function networkError() {
-  return error(i18n.t("加载数据失败"));
+  if (networkErrorActive) {
+    return networkErrorActive;
+  }
+  networkErrorActive = error(i18n.t("加载数据失败"), { onClose: () => (networkErrorActive = "") });
+  return networkErrorActive;
 }
