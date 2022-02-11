@@ -6,10 +6,12 @@ if (process.env.NODE_ENV === "production") {
   const dayjs = require("dayjs");
   dayjs.extend(require("dayjs/plugin/utc"));
   const timestamp = dayjs.utc().format("YYYYMMDDHHmm");
-  process.env.REACT_APP_RELEASE = `${timestamp}-${(process.env.COMMIT_REF || "unknown").slice(0, 7)}`;
+  process.env.SENTRY_RELEASE = `${timestamp}-${(process.env.COMMIT_REF || "unknown").slice(0, 7)}`;
 } else {
-  process.env.REACT_APP_RELEASE = "devel";
+  process.env.SENTRY_RELEASE = "devel";
 }
+process.env.REACT_APP_RELEASE = process.env.SENTRY_RELEASE || process.env.REACT_APP_RELEASE;
+process.env.REACT_APP_SENTRY_DSN = process.env.SENTRY_DSN || process.env.REACT_APP_SENTRY_DSN;
 
 module.exports = [
   process.env.NODE_ENV === "production" && process.env.SENTRY_AUTH_TOKEN

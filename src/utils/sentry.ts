@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/react";
 import { v4 as uuidv4 } from "uuid";
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.REACT_APP_SENTRY_DSN) {
   const ignoredFunctions = new Set([
     "is_mark_able_element",
     "findParentClickTag",
@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === "production") {
     "eval",
   ]);
   Sentry.init({
-    dsn: "https://876acfa224b8425c92f9553b9c6676be@sentry.sapikachu.net/31",
+    dsn: process.env.REACT_APP_SENTRY_DSN,
     release: process.env.REACT_APP_RELEASE || "unknown",
     ignoreErrors: [
       "this.hostIndex.push is not a function",
