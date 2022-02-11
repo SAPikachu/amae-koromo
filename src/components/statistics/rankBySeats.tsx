@@ -1,5 +1,5 @@
 import React from "react";
-import { useAsyncFactory } from "../../utils/index";
+import { useAsyncFactory } from "../../utils/async";
 import { getRankRateBySeat } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { useMemo } from "react";

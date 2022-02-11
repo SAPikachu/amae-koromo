@@ -2,7 +2,7 @@
 import React from "react";
 
 import { CareerRankingItem, CareerRankingType } from "../../data/types/ranking";
-import { useAsyncFactory } from "../../utils";
+import { useAsyncFactory } from "../../utils/async";
 import { getCareerRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routeUtils";

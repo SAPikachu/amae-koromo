@@ -4,7 +4,8 @@ import { Trans, useTranslation } from "react-i18next";
 import { getGlobalHistogram } from "../../data/source/misc";
 
 import { GameMode, HistogramData, HistogramGroup, modeLabelNonTranslated, PlayerExtendedStats } from "../../data/types";
-import { formatPercent, sum, useAsyncFactory } from "../../utils";
+import { formatPercent, sum } from "../../utils";
+import { useAsyncFactory } from "../../utils/async";
 import { useModel } from "../gameRecords/model";
 
 const VIEWBOX_HEIGHT = 40;

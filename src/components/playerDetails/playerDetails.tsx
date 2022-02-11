@@ -4,7 +4,8 @@ import { Helmet } from "react-helmet";
 
 import { useDataAdapter } from "../gameRecords/dataAdapterProvider";
 import { useEffect } from "react";
-import { triggerRelayout, formatPercent, useAsync, formatFixed3, formatRound, formatIdentity } from "../../utils/index";
+import { triggerRelayout, formatPercent, formatFixed3, formatRound, formatIdentity } from "../../utils/index";
+import { useAsync } from "../../utils/async";
 import {
   LevelWithDelta,
   PlayerExtendedStats,

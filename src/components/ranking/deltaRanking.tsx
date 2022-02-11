@@ -1,5 +1,5 @@
 import { DeltaRankingItem, RankingTimeSpan } from "../../data/types/ranking";
-import { useAsyncFactory } from "../../utils";
+import { useAsyncFactory } from "../../utils/async";
 import { getDeltaRanking } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { generatePlayerPathById } from "../gameRecords/routeUtils";

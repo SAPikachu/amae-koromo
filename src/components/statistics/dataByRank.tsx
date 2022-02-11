@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
-import { useAsyncFactory, formatPercent, formatFixed3 } from "../../utils/index";
+import { formatPercent, formatFixed3 } from "../../utils/index";
+import { useAsyncFactory } from "../../utils/async";
 import { getGlobalStatistics } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { useModel } from "../modeModel/model";

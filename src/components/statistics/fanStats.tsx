@@ -1,6 +1,7 @@
 import React from "react";
 
-import { useAsyncFactory, formatPercent } from "../../utils/index";
+import { formatPercent } from "../../utils/index";
+import { useAsyncFactory } from "../../utils/async";
 import { getFanStats } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { FanStatEntry, FanStats, GameMode, modeLabelNonTranslated } from "../../data/types";
