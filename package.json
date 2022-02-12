@@ -13,7 +13,6 @@
     "@mui/lab": "^5.0.0-alpha.65",
     "@mui/material": "^5.3.0",
     "@sentry/react": "^6.17.4",
-    "bootstrap": "4.4.1",
     "clsx": "1.1.1",
     "dayjs": "^1.10.7",
     "i18next": "^19.8.4",
