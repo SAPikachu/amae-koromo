@@ -14,7 +14,7 @@
     {
       "src": "/(.*)",
       "headers": {
-        "Content-Security-Policy-Report-Only": "default-src *; script-src 'self' https://*.sapk.ch https://www.google-analytics.com https://*.statuspage.io; script-src-elem 'self' https://*.sapk.ch https://www.google-analytics.com https://*.statuspage.io; style-src * 'unsafe-inline'; style-src-elem * 'unsafe-inline'; style-src-attr * 'unsafe-inline'; report-uri https://sentry.sapikachu.net/api/31/security/?sentry_key=876acfa224b8425c92f9553b9c6676be"
+        "Content-Security-Policy-Report-Only": "default-src * data:; script-src 'report-sample' 'self' https://*.sapk.ch https://www.google-analytics.com https://*.statuspage.io; script-src-elem 'report-sample' 'self' https://*.sapk.ch https://www.google-analytics.com https://*.statuspage.io; style-src * 'unsafe-inline' 'report-sample'; style-src-elem * 'unsafe-inline' 'report-sample'; style-src-attr * 'unsafe-inline' 'report-sample'; report-uri https://sentry.sapikachu.net/api/31/security/?sentry_key=876acfa224b8425c92f9553b9c6676be"
       },
       "continue": true
     },
