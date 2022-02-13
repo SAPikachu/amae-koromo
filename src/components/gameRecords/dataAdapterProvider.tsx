@@ -9,6 +9,7 @@ import { generatePath } from "./routeUtils";
 import { networkError } from "../../utils/notify";
 import { ApiError } from "../../data/source/api";
 import { useExtraFilterPredicate } from "./extraFilterPredicate";
+import Conf from "../../utils/conf";
 
 interface ItemLoadingPlaceholder {
   loading: boolean;
@@ -262,7 +263,7 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
   const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
   const searchPredicate = usePredicate(model);
   const dataProvider = useMemo(() => {
-    if (model.type === undefined && !model.selectedMode) {
+    if (model.type === undefined && !model.selectedMode && Conf.availableModes.length > 1) {
       return DUMMY_DATA_PROVIDER;
     }
     const key = getProviderKey(model);
