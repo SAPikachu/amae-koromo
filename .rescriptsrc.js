@@ -20,7 +20,6 @@ module.exports = [
           new (require("@sentry/webpack-plugin"))({
             validate: true,
             include: "build",
-            ignore: ["node_modules", ".rescriptsrc.js"],
             ext: ["js", "jsx", "ts", "tsx", "map", "jsbundle", "bundle"],
             release: process.env.REACT_APP_RELEASE,
             ...(process.env.SENTRY_URL ? { url: process.env.SENTRY_URL } : {}),
