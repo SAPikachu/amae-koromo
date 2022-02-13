@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/indent */
-import React from "react";
 import {
   ResponsiveContainer,
   PieChart,
@@ -7,9 +6,9 @@ import {
   Cell,
   LabelList,
   LabelProps,
-  PolarViewBox,
   ResponsiveContainerProps,
 } from "recharts";
+import { PolarViewBox } from "recharts/src/util/types";
 import { useMemo } from "react";
 
 const DEFAULT_COLORS = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];

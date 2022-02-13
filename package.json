@@ -5,6 +5,10 @@
   "description": "",
   "keywords": [],
   "main": "src/index.tsx",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=8.0.0"
+  },
   "dependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
@@ -22,39 +26,42 @@
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
     "react-i18next": "^11.8.3",
-    "react-router-dom": "5.2.0",
-    "react-scripts": "^4.0.3",
-    "react-virtualized": "9.22.2",
-    "recharts": "^2.1.5",
-    "uuid": "^8.3.2",
-    "webpack-retry-chunk-load-plugin": "^1.4.0"
+    "react-router-dom": "5.3.0",
+    "react-scripts": "^5.0.0",
+    "react-virtualized": "9.22.3",
+    "recharts": "^2.1.9",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@rescripts/cli": "0.0.16",
+    "@rescripts/cli": "git+https://github.com/SAPikachu/rescripts.git#cli",
+    "@rescripts/utilities": "git+https://github.com/SAPikachu/rescripts.git#utilities",
     "@sentry/webpack-plugin": "^1.18.5",
     "@types/google.analytics": "0.0.41",
-    "@types/preval.macro": "^3.0.0",
+    "@types/history": "^5.0.0",
+    "@types/lodash": "^4.14.178",
     "@types/react": "17.0.0",
     "@types/react-dom": "17.0.0",
     "@types/react-helmet": "^6.1.0",
     "@types/react-loadable": "^5.5.4",
-    "@types/react-router-dom": "5.1.6",
+    "@types/react-router-dom": "5.3.3",
     "@types/react-virtualized": "9.21.10",
-    "@types/recharts": "^1.8.23",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
     "babel-plugin-direct-import": "^0.9.2",
-    "eslint": "^7.32.0",
     "node-sass": "^6.0.0",
-    "prettier": "^2.4.1",
+    "prettier": "^2.5.1",
     "typescript": "^4.5.4",
-    "webpack-bundle-analyzer": "^4.5.0"
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-retry-chunk-load-plugin": "^3.0.0"
+  },
+  "overrides": {
+    "@rescripts/utilities": "git+https://github.com/SAPikachu/rescripts.git#utilities"
   },
   "scripts": {
     "analyze": "RUN_ANALYZER=1 npm run build",
     "start": "rescripts start",
-    "build": "rescripts build && cp build/index.html build/404.html && node generatePreloadHeaders.js",
+    "build": "rescripts build && cp build/index.html build/404.html",
     "test": "rescripts test",
     "eject": "react-scripts eject"
   },

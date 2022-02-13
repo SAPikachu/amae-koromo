@@ -35,7 +35,7 @@ const RankRateChart = React.memo(function ({ metadata, aspect = 1 }: { metadata:
           isAnimationActive={false}
           data={ranks}
           label={formatLabel}
-          labelLine={createLabelLine}
+          labelLine={createLabelLine as any} // eslint-disable-line @typescript-eslint/no-explicit-any
           nameKey="label"
           dataKey="rate"
           startAngle={startAngle}

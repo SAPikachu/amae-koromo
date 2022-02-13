@@ -36,7 +36,9 @@ const createDot = (isMobile: boolean) => (props: { payload: DotPayload }, active
     <Dot
       {...props}
       stroke={Conf.rankColors[props.payload.rank]}
-      onClick={() => window.open(GameRecord.getRecordLink(props.payload.game, props.payload.playerId), "_blank")}
+      {...{
+        onClick: () => window.open(GameRecord.getRecordLink(props.payload.game, props.payload.playerId), "_blank"),
+      }}
       {...(active ? { fill: Conf.rankColors[props.payload.rank], r: 5 * scale } : { r: 2.5 * scale })}
     />
   );
@@ -55,7 +57,7 @@ const TooltipBox = styled(Box)(({ theme }) => ({
   fontWeight: theme.typography.fontWeightMedium,
 }));
 
-const RankChartTooltip = ({ active, payload }: TooltipProps = {}) => {
+const RankChartTooltip = ({ active, payload }: TooltipProps<number, string> = {}) => {
   if (!active || !payload || !payload.length) {
     return null;
   }

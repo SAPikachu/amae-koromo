@@ -10,8 +10,8 @@ if (process.env.NODE_ENV === "production") {
 } else {
   process.env.SENTRY_RELEASE = "devel";
 }
-process.env.REACT_APP_RELEASE = process.env.SENTRY_RELEASE || process.env.REACT_APP_RELEASE;
-process.env.REACT_APP_SENTRY_DSN = process.env.SENTRY_DSN || process.env.REACT_APP_SENTRY_DSN;
+process.env.REACT_APP_RELEASE = process.env.SENTRY_RELEASE || process.env.REACT_APP_RELEASE || "";
+process.env.REACT_APP_SENTRY_DSN = process.env.SENTRY_DSN || process.env.REACT_APP_SENTRY_DSN || "";
 
 module.exports = [
   process.env.NODE_ENV === "production" && process.env.SENTRY_AUTH_TOKEN
@@ -20,7 +20,7 @@ module.exports = [
           new (require("@sentry/webpack-plugin"))({
             validate: true,
             include: ".",
-            ignore: ["node_modules", ".rescriptsrc.js", "generatePreloadHeaders.js"],
+            ignore: ["node_modules", ".rescriptsrc.js"],
             ext: ["js", "jsx", "ts", "tsx", "map", "jsbundle", "bundle"],
             release: process.env.REACT_APP_RELEASE,
             ...(process.env.SENTRY_URL ? { url: process.env.SENTRY_URL } : {}),
@@ -68,6 +68,7 @@ module.exports = [
               return Date.now();
             }.toString(),
             maxRetries: 5,
+            retryDelay: 100,
             lastResortScript: `(${function () {
               if ("serviceWorker" in navigator) {
                 navigator.serviceWorker.ready
