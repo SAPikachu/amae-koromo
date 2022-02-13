@@ -19,7 +19,7 @@ module.exports = [
         prependWebpackPlugin(
           new (require("@sentry/webpack-plugin"))({
             validate: true,
-            include: ".",
+            include: "build",
             ignore: ["node_modules", ".rescriptsrc.js"],
             ext: ["js", "jsx", "ts", "tsx", "map", "jsbundle", "bundle"],
             release: process.env.REACT_APP_RELEASE,
