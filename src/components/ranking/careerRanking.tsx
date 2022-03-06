@@ -177,6 +177,8 @@ function CareerRankingInner({
           { key: "300", value: 300, label: "300 " + t("局") },
           { key: "600", value: 600, label: "600 " + t("局") },
           { key: "1000", value: 1000, label: "1000 " + t("局") },
+          { key: "2500", value: 2500, label: "2500 " + t("局") },
+          { key: "5000", value: 5000, label: "5000 " + t("局") },
         ]}
         selectedItems={[(model.careerRankingMinGames || 300).toString()]}
         onChange={(newItems) => {
