@@ -74,6 +74,13 @@ export function ViewSwitch({
   const match = useRouteMatch() || { url: "" };
   const loc = useLocation();
   const urlBase = match.url.replace(/\/+$/, "");
+  if (loc.pathname.indexOf("%") !== -1) {
+    try {
+      decodeURI(loc.pathname);
+    } catch (e) {
+      return <Redirect to={`${urlBase.replace(/%/g, "")}/`} />;
+    }
+  }
   return (
     <Switch>
       {routes
