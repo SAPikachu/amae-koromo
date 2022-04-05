@@ -23,7 +23,7 @@ import {
   ListItem,
   ThemeOptions,
 } from "@mui/material";
-import { ArrowDropDown, Language, Twitter, Menu as MenuIcon } from "@mui/icons-material";
+import { ArrowDropDown, Language, GitHub, Twitter, Menu as MenuIcon } from "@mui/icons-material";
 import { OverrideTheme } from "./theme";
 import clsx from "clsx";
 import { NavLink, NavLinkProps } from "react-router-dom";
@@ -125,6 +125,9 @@ function DesktopItems() {
       <IconButton href="https://twitter.com/AmaeKoromo_MajS">
         <Twitter />
       </IconButton>
+      <IconButton href="https://github.com/SAPikachu/amae-koromo">
+        <GitHub />
+      </IconButton>
     </>
   );
 }
@@ -178,6 +181,14 @@ function MobileItems() {
                   <Twitter />
                 </ListItemIcon>
                 <ListItemText>{t("Twitter")}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton href="https://github.com/SAPikachu/amae-koromo">
+                <ListItemIcon>
+                  <GitHub />
+                </ListItemIcon>
+                <ListItemText>{t("GitHub")}</ListItemText>
               </ListItemButton>
             </ListItem>
           </List>
