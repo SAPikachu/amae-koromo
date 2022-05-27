@@ -24,13 +24,16 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
   if (!Conf.features.estimatedStableLevel) {
     return null;
   }
-  const level = LevelWithDelta.getAdjustedLevel(metadata.level);
+  let level = LevelWithDelta.getAdjustedLevel(metadata.cross_stats?.level || metadata.level);
   if (!("selectedModes" in model) || model.selectedModes.length !== 1) {
     return null;
   }
   const mode = model.selectedModes[0];
   if (!ENABLED_MODES.includes(mode)) {
     return null;
+  }
+  if (!level.isAllowedMode(mode)) {
+    level = LevelWithDelta.getAdjustedLevel(metadata.level);
   }
   const notEnoughData = metadata.count < 100;
   const expectedGamePoint = PlayerMetadata.calculateExpectedGamePoint(metadata, mode);
