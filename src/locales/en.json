@@ -211,6 +211,8 @@
     "二位平均 Pt": "2nd average Pt",
     "三位平均 Pt": "3rd average Pt",
     "四位平均得点 Pt": "4th average Pt",
+    "按服务器": "By server",
+    "按等级": "By rank",
 
     "初士杰豪圣魂": "NoAdExMsStCl",
 
@@ -325,6 +327,7 @@
     "坐席顺位": "Seat ranking",
     "等级数据": "Player ranks",
     "和出役种统计": "Winning yakus",
+    "记录玩家数": "Number of players in record",
 
     "苦主及汪汪": "Up/Down",
     "一位率/四位率": "1st rate/4th rate",

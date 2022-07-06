@@ -7,6 +7,7 @@ import {
   LabelList,
   LabelProps,
   ResponsiveContainerProps,
+  PieProps,
 } from "recharts";
 import { PolarViewBox } from "recharts/src/util/types";
 import { useMemo } from "react";
@@ -72,6 +73,12 @@ function defaultInnerLabel<T extends PieChartItem>(item: T) {
 function defaultOuterLabel<T extends PieChartItem>(item: T) {
   return item.outerLabel || "";
 }
+function labelLine<T extends PieChartItem>(item: T) {
+  if (!item.outerLabel) {
+    return null;
+  }
+  return Pie.renderLabelLineItem(true, item);
+}
 
 export default function SimplePieChart<T extends PieChartItem>({
   items,
@@ -83,6 +90,7 @@ export default function SimplePieChart<T extends PieChartItem>({
   colors = DEFAULT_COLORS,
   innerLabelFontSize = "1rem",
   aspect = 1,
+  pieProps = {},
   ...props
 }: {
   items: T[];
@@ -94,6 +102,7 @@ export default function SimplePieChart<T extends PieChartItem>({
   colors?: string[];
   innerLabelFontSize?: string;
   aspect?: number;
+  pieProps?: Partial<PieProps>;
 } & Partial<ResponsiveContainerProps>) {
   const cells = useMemo(
     () =>
@@ -122,8 +131,12 @@ export default function SimplePieChart<T extends PieChartItem>({
           dataKey="value"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           label={wrappedOuterLabel as (x: any) => string}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          labelLine={labelLine as any}
           startAngle={startAngle}
           endAngle={startAngle + 360}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...(pieProps as any)}
         >
           {cells}
           <LabelList

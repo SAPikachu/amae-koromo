@@ -8,6 +8,7 @@ import RankBySeats from "./rankBySeats";
 import DataByRank from "./dataByRank";
 import FanStats from "./fanStats";
 import Conf from "../../utils/conf";
+import NumPlayerStats from "./numPlayerStats";
 
 const ROUTES = (
   <ViewRoutes>
@@ -19,6 +20,9 @@ const ROUTES = (
     </RouteDef>
     <RouteDef path="fan-stats" title="和出役种统计" disabled={!Conf.features.statisticsSubPages.fanStats}>
       <FanStats />
+    </RouteDef>
+    <RouteDef path="num-player-stats" title="记录玩家数" disabled={!Conf.features.statisticsSubPages.numPlayerStats}>
+      <NumPlayerStats />
     </RouteDef>
   </ViewRoutes>
 );

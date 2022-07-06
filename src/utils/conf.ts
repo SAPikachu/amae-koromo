@@ -17,6 +17,7 @@ export const CONFIGURATIONS = {
         rankBySeat: true,
         dataByRank: [GameMode.王座, GameMode.玉, GameMode.王座东, GameMode.玉东] as GameMode[] | false,
         fanStats: true,
+        numPlayerStats: true,
       },
     },
     table: {
@@ -54,6 +55,7 @@ export const CONFIGURATIONS = {
           GameMode.三金东,
         ],
         fanStats: true,
+        numPlayerStats: true,
       },
     },
     availableModes: [
@@ -91,6 +93,7 @@ export const CONFIGURATIONS = {
         rankBySeat: true,
         dataByRank: false as const,
         fanStats: true,
+        numPlayerStats: false,
       },
     },
     table: {

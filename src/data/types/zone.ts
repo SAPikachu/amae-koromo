@@ -22,8 +22,8 @@ export function getAccountZone(accountId: number): AccountZone {
   return AccountZone.Unknown;
 }
 
-export function getAccountZoneTag(accountId: number): string {
-  switch (getAccountZone(accountId)) {
+export function getZoneTag(zone: AccountZone): string {
+  switch (zone) {
     case AccountZone.China:
       return "Ⓒ";
     case AccountZone.Japan:
@@ -33,4 +33,8 @@ export function getAccountZoneTag(accountId: number): string {
     default:
       return "";
   }
+}
+
+export function getAccountZoneTag(accountId: number): string {
+  return getZoneTag(getAccountZone(accountId));
 }

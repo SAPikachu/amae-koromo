@@ -1,4 +1,4 @@
-import { GameMode } from ".";
+import { AccountZone, GameMode } from ".";
 import { PlayerMetadataLite2, PlayerExtendedStats, RankRates } from "./metadata";
 export type RankRateBySeat = {
   [modeId: string]: {
@@ -14,6 +14,8 @@ export type GlobalStatistics = {
     };
   };
 };
+export type LevelStatisticsItem = [AccountZone, number, number];
+export type LevelStatistics = LevelStatisticsItem[];
 export type HistogramData = {
   min: number;
   max: number;
