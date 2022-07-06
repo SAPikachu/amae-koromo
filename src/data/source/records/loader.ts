@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 import { GameRecord, GameRecordWithEvent } from "../../types/record";
-import { Metadata, PlayerMetadata, PlayerExtendedStats } from "../../types/metadata";
+import { Metadata, PlayerMetadata, PlayerExtendedStats, MODE_BASE_POINT } from "../../types/metadata";
 import { apiGet } from "../api";
 import { GameMode } from "../../types";
 import Conf from "../../../utils/conf";
@@ -142,7 +142,17 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     if (this._mode.length || !Conf.availableModes.length) {
       stats.extended_stats = apiGet<PlayerExtendedStats>(
         `player_extended_stats/${this._initialParams}&tag=${timeTag}`
-      ).then((extendedStats) => (stats.extended_stats = extendedStats));
+      ).then((extendedStats) => {
+        const gameBasePoint = MODE_BASE_POINT[Conf.availableModes[0]];
+        if (gameBasePoint) {
+          extendedStats.局收支 =
+            ((stats.rank_rates.reduce((acc, x, index) => acc + x * stats.rank_avg_score[index], 0) - gameBasePoint) *
+              stats.count) /
+            extendedStats.count;
+        }
+        stats.extended_stats = extendedStats;
+        return extendedStats;
+      });
       stats.extended_stats.catch((e) => {
         console.error("Failed to get extended stats:", e);
       });

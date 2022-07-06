@@ -42,7 +42,7 @@ const KONTEN_DELTA: { [mode in GameMode]?: number[] } = {
   [GameMode.三王座]: [50, 0, -50],
   [GameMode.三王座东]: [30, 0, -30],
 };
-const MODE_BASE_POINT = {
+export const MODE_BASE_POINT = {
   [GameMode.金]: 25000,
   [GameMode.玉]: 25000,
   [GameMode.王座]: 25000,
@@ -170,6 +170,7 @@ export type PlayerExtendedStats = {
   打点效率: number;
   铳点损失: number;
   净打点效率: number;
+  局收支?: number;
   最近大铳?: {
     id: string;
     start_time: number;

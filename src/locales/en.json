@@ -113,6 +113,9 @@
     "打点效率": "Win efficiency",
     "铳点损失": "Deal-in loss",
     "净打点效率": "Net win efficiency",
+    "局收支": "G/L per round",
+    "场平均素点": "Avg match points",
+    "场起始素点": "Starting points",
 
     "和牌局数 / 总局数": "Win rounds / Total rounds",
     "放铳局数 / 总局数": "Deal-in rounds / Total rounds",
