@@ -91,7 +91,9 @@ export default function EstimatedStableLevel({ metadata }: { metadata: PlayerMet
         valueProps={notEnoughData ? { fontStyle: "italic", fontWeight: 300, sx: { opacity: 0.5 } } : {}}
       >
         <span>
-          {level.isKonten() ? (expectedGamePoint / 100).toFixed(3) : expectedGamePoint.toFixed(1)}
+          {level.isKonten() && level.isAllowedMode(mode)
+            ? (expectedGamePoint / 100).toFixed(3)
+            : expectedGamePoint.toFixed(1)}
           {estimatedNumGamesToChangeLevel && estimatedNumGamesToChangeLevel < 10000
             ? ` (${Math.abs(estimatedNumGamesToChangeLevel).toFixed(0)})`
             : ""}
