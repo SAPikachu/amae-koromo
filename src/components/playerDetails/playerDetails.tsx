@@ -208,7 +208,7 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
       />
       <GenericStat
         stats={stats}
-        formatter={formatFixed3}
+        formatter={formatRound}
         defaultValue=""
         statKey="局收支"
         description={`(${t("场平均素点")} - ${t("场起始素点")}) * ${t("记录场数")} / ${t("总计局数")}`}
