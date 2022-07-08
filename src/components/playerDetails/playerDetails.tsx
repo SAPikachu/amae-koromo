@@ -14,6 +14,7 @@ import {
   FanStatEntry2,
   FanStatEntryList,
   getAccountZoneTag,
+  MODE_BASE_POINT,
 } from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
@@ -49,6 +50,7 @@ function GenericStat({
   formatter,
   formatterHistogram,
   label,
+  disableHistogram,
   defaultValue = 0,
 }: {
   stats: PlayerExtendedStats;
@@ -57,6 +59,7 @@ function GenericStat({
   formatter: (value: number) => string;
   formatterHistogram?: (value: number) => string;
   label?: string;
+  disableHistogram?: boolean;
   defaultValue?: number | string;
 }) {
   const value = stats[statKey] ?? defaultValue;
@@ -70,8 +73,11 @@ function GenericStat({
       valueFormatter: formatterHistogram || formatter,
       value: typeof value === "number" ? value : undefined,
     });
+    if (disableHistogram) {
+      return null;
+    }
     return stats.count > 100 ? ret : null;
-  }, [statKey, formatterHistogram, formatter, value, stats]);
+  }, [statKey, formatterHistogram, formatter, value, disableHistogram, stats.count]);
   return (
     <StatItem description={description} label={label || statKey} extraTip={extraTip}>
       {typeof value === "string" ? value : formatter(value)}
@@ -211,6 +217,7 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
         formatter={formatRound}
         defaultValue=""
         statKey="局收支"
+        disableHistogram={MODE_BASE_POINT[Conf.availableModes[0]] === 35000}
         description={`(${t("场平均素点")} - ${t("场起始素点")}) * ${t("记录场数")} / ${t("总计局数")}`}
       />
       <StatItem label="总计局数">{stats.count}</StatItem>
