@@ -217,7 +217,6 @@ function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: 
         formatter={formatRound}
         defaultValue=""
         statKey="局收支"
-        disableHistogram={MODE_BASE_POINT[Conf.availableModes[0]] === 35000}
         description={`(${t("场平均素点")} - ${t("场起始素点")}) * ${t("记录场数")} / ${t("总计局数")}`}
       />
       <StatItem label="总计局数">{stats.count}</StatItem>
