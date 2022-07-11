@@ -14,7 +14,6 @@ import {
   FanStatEntry2,
   FanStatEntryList,
   getAccountZoneTag,
-  MODE_BASE_POINT,
 } from "../../data/types";
 import Loading from "../misc/loading";
 import PlayerDetailsSettings from "./playerDetailsSettings";
