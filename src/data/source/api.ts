@@ -3,11 +3,11 @@ import Conf from "../../utils/conf";
 import { savePreference } from "../../utils/preference";
 
 const DATA_MIRRORS = [
-  "https://ak-data-6.pikapika.me/",
-  "https://ak-data-1.sapk.ch/",
-  "https://ak-data-2.sapk.ch/",
-  "https://ak-data-3.sapk.ch/",
-  "https://ak-data-5.sapk.ch/",
+  "https://5-data.amae-koromo.com/",
+  "https://1.data.amae-koromo.com/",
+  "https://2.data.amae-koromo.com/",
+  "https://3.data.amae-koromo.com/",
+  "https://4.data.amae-koromo.com/",
 ];
 const PROBE_TIMEOUT = 15000;
 
