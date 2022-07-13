@@ -182,6 +182,11 @@ const ROUTES = (
         />
       </CareerRanking>
     </RouteDef>
+    <RouteDef path="career6" title="局收支">
+      <CareerRanking>
+        <CareerRankingColumn type={CareerRankingType.局收支} title="局收支" formatter={formatRound} disableMixedMode />
+      </CareerRanking>
+    </RouteDef>
     <RouteDef path="lucky" title="欧洲人">
       <CareerRanking>
         <CareerRankingColumn showNumGames={false} type={CareerRankingType.被炸率} title="被炸率" />
