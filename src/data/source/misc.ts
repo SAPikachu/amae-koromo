@@ -52,7 +52,10 @@ export async function getGlobalStatistics(modes: GameMode[]): Promise<GlobalStat
   return await apiGet<GlobalStatistics>(`global_statistics_2?mode=${modes.join(".")}`);
 }
 export async function getLevelStatistics(): Promise<LevelStatistics> {
-  return await apiGet<LevelStatistics>("level_statistics");
+  return await apiGet<LevelStatistics>("level_statistics").then(data => {
+    data.sort((a, b) => a[1] - b[1]);
+    return data;
+  });
 }
 export async function getGlobalHistogram(): Promise<GlobalHistogram> {
   return await apiGet<GlobalHistogram>("global_histogram");
