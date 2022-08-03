@@ -34,12 +34,14 @@ function TrackerImpl() {
       }
       const helmet = Helmet.peek();
       const title = (helmet.title || document.title).toString();
-      window.ga("send", {
-        hitType: "pageview",
-        page: loc.pathname,
-        title: `${currentCategory} ${title}`,
-        contentGroup1: currentCategory,
-      });
+      if (window.ga) {
+        window.ga("send", {
+          hitType: "pageview",
+          page: loc.pathname,
+          title: `${currentCategory} ${title}`,
+          contentGroup1: currentCategory,
+        });
+      }
     });
     return () => {
       cancelled = true;

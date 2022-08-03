@@ -4,6 +4,17 @@ window.__loadGa = function () {
   if (window.ga) {
     return ga;
   }
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", "G-3M94EBS8XE");
+  const gtagElement = document.createElement("script");
+  gtagElement.src = "https://www.googletagmanager.com/gtag/js?id=G-3M94EBS8XE";
+  gtagElement.async = true;
+  document.head.appendChild(gtagElement);
+
   (function (i, s, o, g, r, a, m) {
     i["GoogleAnalyticsObject"] = r;
     (i[r] =
