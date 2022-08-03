@@ -260,19 +260,47 @@ function useDataAdapterCommon(
 
 export function DataAdapterProvider({ children }: { children: ReactChild | ReactChild[] }) {
   const [model, updateModel] = useModel();
-  const [dataProviders] = useState(() => ({} as { [key: string]: DataProvider }));
+  const [dataProviders] = useState(() => new Map<string, DataProvider>());
   const searchPredicate = usePredicate(model);
-  const dataProvider = useMemo(() => {
+  const dataProviderVanilla = useMemo(() => {
     if (model.type === undefined && !model.selectedMode && Conf.availableModes.length > 1) {
       return DUMMY_DATA_PROVIDER;
     }
     const key = getProviderKey(model);
-    if (!dataProviders[key]) {
-      dataProviders[key] = createProvider(model);
+    if (!dataProviders.has(key)) {
+      dataProviders.set(key, createProvider(model));
     }
-    return dataProviders[key];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return dataProviders.get(key)!;
   }, [model, dataProviders]);
-  useEffect(() => dataProvider.setFilterPredicate(searchPredicate), [dataProvider, searchPredicate]);
+  useEffect(() => dataProviderVanilla.setFilterPredicate(searchPredicate), [dataProviderVanilla, searchPredicate]);
+  const dataProvider = useMemo(() => {
+    if (!searchPredicate) {
+      return dataProviderVanilla;
+    }
+    if (model.type !== "player") {
+      return dataProviderVanilla;
+    }
+    if (!model.selectedModes?.length) {
+      return dataProviderVanilla;
+    }
+    return DataProvider.createFilteredPlayer(
+      model.playerId,
+      async () => {
+        await dataProviderVanilla.getCount();
+        const ret = [];
+        for (let i = 0; ; i++) {
+          const item = await dataProviderVanilla.getItem(i);
+          if (!item) {
+            break;
+          }
+          ret.push(item);
+        }
+        return ret;
+      },
+      model.selectedModes
+    );
+  }, [searchPredicate, model, dataProviderVanilla]);
   const onError = useCallback(
     (e) => {
       if (e && "status" in e && e.status === 404) {

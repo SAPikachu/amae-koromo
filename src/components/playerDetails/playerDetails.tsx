@@ -87,9 +87,11 @@ function GenericStat({
 function ExtendedStatsViewAsync({
   metadata,
   view,
+  hasAdvancedParams,
 }: {
   metadata: PlayerMetadata;
-  view: React.ComponentType<{ stats: PlayerExtendedStats; metadata: PlayerMetadata }>;
+  view: React.ComponentType<{ stats: PlayerExtendedStats; metadata: PlayerMetadata; hasAdvancedParams?: boolean }>;
+  hasAdvancedParams: boolean;
 }) {
   const stats = useAsync(metadata.extended_stats);
   useEffect(triggerRelayout, [!!stats]);
@@ -97,7 +99,7 @@ function ExtendedStatsViewAsync({
     return null;
   }
   const View = view;
-  return <View stats={stats} metadata={metadata} />;
+  return <View stats={stats} metadata={metadata} hasAdvancedParams={hasAdvancedParams} />;
 }
 
 function PlayerExtendedStatsView({ stats }: { stats: PlayerExtendedStats }) {
@@ -136,16 +138,28 @@ function fixMaxLevel(level: LevelWithDelta): LevelWithDelta {
   return level;
 }
 
-function MoreStats({ stats, metadata }: { stats: PlayerExtendedStats; metadata: PlayerMetadata }) {
+function MoreStats({
+  stats,
+  metadata,
+  hasAdvancedParams,
+}: {
+  stats: PlayerExtendedStats;
+  metadata: PlayerMetadata;
+  hasAdvancedParams?: boolean;
+}) {
   const { t } = useTranslation();
   return (
     <>
-      <StatItem label="最高等级">
-        {LevelWithDelta.getTag(metadata.cross_stats?.max_level || metadata.max_level)}
-      </StatItem>
-      <StatItem label="最高分数">
-        {LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.cross_stats?.max_level || metadata.max_level))}
-      </StatItem>
+      {!hasAdvancedParams && (
+        <>
+          <StatItem label="最高等级">
+            {LevelWithDelta.getTag(metadata.cross_stats?.max_level || metadata.max_level)}
+          </StatItem>
+          <StatItem label="最高分数">
+            {LevelWithDelta.formatAdjustedScore(fixMaxLevel(metadata.cross_stats?.max_level || metadata.max_level))}
+          </StatItem>
+        </>
+      )}
       <GenericStat stats={stats} formatter={formatIdentity} formatterHistogram={formatFixed3} statKey="最大连庄" />
       <GenericStat stats={stats} formatter={formatPercent} statKey="里宝率" description="中里宝局数 / 立直和了局数" />
       <GenericStat
@@ -324,7 +338,7 @@ function RiichiStats({ stats }: { stats: PlayerExtendedStats; metadata: PlayerMe
     </>
   );
 }
-function BasicStats({ metadata }: { metadata: PlayerMetadata }) {
+function BasicStats({ metadata, hasAdvancedParams }: { metadata: PlayerMetadata; hasAdvancedParams: boolean }) {
   return (
     <>
       <StatItem label="记录场数">{metadata.count}</StatItem>
@@ -332,10 +346,14 @@ function BasicStats({ metadata }: { metadata: PlayerMetadata }) {
       <StatItem label="记录分数">
         {LevelWithDelta.formatAdjustedScore(metadata.cross_stats?.level || metadata.level)}
       </StatItem>
-      <ExtendedStatsViewAsync metadata={metadata} view={PlayerExtendedStatsView} />
+      <ExtendedStatsViewAsync
+        metadata={metadata}
+        view={PlayerExtendedStatsView}
+        hasAdvancedParams={hasAdvancedParams}
+      />
       <StatItem label="平均顺位">{metadata.avg_rank.toFixed(3)}</StatItem>
       <StatItem label="被飞率">{formatPercent(metadata.negative_rate)}</StatItem>
-      <EstimatedStableLevel metadata={metadata} />
+      {!hasAdvancedParams && <EstimatedStableLevel metadata={metadata} />}
     </>
   );
 }
@@ -391,35 +409,47 @@ function LargestLost({ stats, metadata }: { stats: PlayerExtendedStats; metadata
     </Box>
   );
 }
-function PlayerStats({ metadata, isChangingSettings }: { metadata: PlayerMetadata; isChangingSettings: boolean }) {
+function PlayerStats({
+  metadata,
+  isChangingSettings,
+  hasAdvancedParams,
+}: {
+  metadata: PlayerMetadata;
+  isChangingSettings: boolean;
+  hasAdvancedParams: boolean;
+}) {
   return (
     <SimpleRoutedSubViews>
       <ViewRoutes>
         <RouteDef path="" exact title="基本">
           <StatList>
-            <BasicStats metadata={metadata} />
+            <BasicStats metadata={metadata} hasAdvancedParams={hasAdvancedParams} />
           </StatList>
         </RouteDef>
         <RouteDef path="riichi" title="立直">
           <StatList>
-            <ExtendedStatsViewAsync metadata={metadata} view={RiichiStats} />
+            <ExtendedStatsViewAsync metadata={metadata} view={RiichiStats} hasAdvancedParams={hasAdvancedParams} />
           </StatList>
         </RouteDef>
         <RouteDef path="extended" title="更多">
           <StatList>
-            <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} />
+            <ExtendedStatsViewAsync metadata={metadata} view={MoreStats} hasAdvancedParams={hasAdvancedParams} />
           </StatList>
         </RouteDef>
         <RouteDef path="win-lose" title="和铳分布">
-          <ExtendedStatsViewAsync metadata={metadata} view={WinLoseDistribution} />
+          <ExtendedStatsViewAsync
+            metadata={metadata}
+            view={WinLoseDistribution}
+            hasAdvancedParams={hasAdvancedParams}
+          />
         </RouteDef>
         <RouteDef path="luck" title="血统">
           <StatList>
-            <ExtendedStatsViewAsync metadata={metadata} view={LuckStats} />
+            <ExtendedStatsViewAsync metadata={metadata} view={LuckStats} hasAdvancedParams={hasAdvancedParams} />
           </StatList>
         </RouteDef>
         <RouteDef path="largest-lost" title="最近大铳">
-          <ExtendedStatsViewAsync metadata={metadata} view={LargestLost} />
+          <ExtendedStatsViewAsync metadata={metadata} view={LargestLost} hasAdvancedParams={hasAdvancedParams} />
         </RouteDef>
         <RouteDef path="same-match" title="最常同桌">
           {!isChangingSettings ? <SameMatchRate currentAccountId={metadata.id} /> : <></>}
@@ -534,13 +564,15 @@ export default function PlayerDetails() {
           </Typography>
           <Grid container mt={2} rowSpacing={2} spacing={2}>
             <Grid item xs={12} md={8}>
-              <BlurrableBox blur={Model.hasAdvancedParams(model)}>
-                <Typography variant="h5" mb={2} textAlign="center">
-                  {t("最近走势")}
-                </Typography>
-                <RecentRankChart dataAdapter={dataAdapter} playerId={metadata!.id} aspect={6} />
-              </BlurrableBox>
-              <PlayerStats metadata={metadata!} isChangingSettings={isChangingSettings} />
+              <Typography variant="h5" mb={2} textAlign="center">
+                {t("最近走势")}
+              </Typography>
+              <RecentRankChart dataAdapter={dataAdapter} playerId={metadata!.id} aspect={6} />
+              <PlayerStats
+                metadata={metadata!}
+                isChangingSettings={isChangingSettings}
+                hasAdvancedParams={Model.hasAdvancedParams(model)}
+              />
             </Grid>
             <Grid item xs={12} md={4}>
               <Typography variant="h5" textAlign="center">

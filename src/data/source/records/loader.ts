@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 import { GameRecord, GameRecordWithEvent } from "../../types/record";
 import { Metadata, PlayerMetadata, PlayerExtendedStats, MODE_BASE_POINT } from "../../types/metadata";
-import { apiGet } from "../api";
+import { apiCacheablePost, apiGet } from "../api";
 import { GameMode } from "../../types";
 import Conf from "../../../utils/conf";
 
@@ -103,6 +103,20 @@ export class ListingDataLoader implements DataLoader<Metadata> {
   }
 }
 
+function processExtendedStats(stats: PlayerMetadata): (value: PlayerExtendedStats) => PlayerExtendedStats {
+  return (extendedStats) => {
+    const gameBasePoint = MODE_BASE_POINT[Conf.availableModes[0]];
+    if (gameBasePoint) {
+      extendedStats.局收支 =
+        ((stats.rank_rates.reduce((acc, x, index) => acc + x * stats.rank_avg_score[index], 0) - gameBasePoint) *
+          stats.count) /
+        extendedStats.count;
+    }
+    stats.extended_stats = extendedStats;
+    return extendedStats;
+  };
+}
+
 export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
   _playerId: string;
   _startDate: dayjs.Dayjs;
@@ -142,17 +156,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     if (this._mode.length || !Conf.availableModes.length) {
       stats.extended_stats = apiGet<PlayerExtendedStats>(
         `player_extended_stats/${this._initialParams}&tag=${timeTag}`
-      ).then((extendedStats) => {
-        const gameBasePoint = MODE_BASE_POINT[Conf.availableModes[0]];
-        if (gameBasePoint) {
-          extendedStats.局收支 =
-            ((stats.rank_rates.reduce((acc, x, index) => acc + x * stats.rank_avg_score[index], 0) - gameBasePoint) *
-              stats.count) /
-            extendedStats.count;
-        }
-        stats.extended_stats = extendedStats;
-        return extendedStats;
-      });
+      ).then(processExtendedStats(stats));
       stats.extended_stats.catch((e) => {
         console.error("Failed to get extended stats:", e);
       });
@@ -196,6 +200,67 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
       this._cursor = this._startDate;
     }
     this._tag = "";
+    return chunk;
+  }
+}
+export class FilteredPlayerDataLoader implements DataLoader<PlayerMetadata> {
+  private _recordPromise: Promise<GameRecord[]> | GameRecord[] | null = null;
+  private _chunkReturned = false;
+  constructor(private _playerId: string, private _loadRecord: () => Promise<GameRecord[]>, private _mode: GameMode[]) {
+    if (!_mode.length) {
+      throw new Error("No mode");
+    }
+    _mode.sort((a, b) => Conf.availableModes.indexOf(a) - Conf.availableModes.indexOf(b));
+  }
+  getEstimatedChunkSize() {
+    return CHUNK_SIZE;
+  }
+  private async getRecords(): Promise<GameRecord[]> {
+    if (!this._recordPromise) {
+      this._recordPromise = this._loadRecord().then((records) => {
+        this._recordPromise = records;
+        return records;
+      });
+    }
+    return this._recordPromise;
+  }
+  async getMetadata(): Promise<PlayerMetadata> {
+    const records = await this.getRecords();
+    if (!records.length) {
+      throw new Error("No records");
+    }
+    const keys = records.map((x) => x.startTime);
+    keys.sort((a, b) => b - a);
+    const stats = await apiCacheablePost<PlayerMetadata>(`player_stats/${this._playerId}`, { keys, modes: this._mode });
+    if (this._mode.length || !Conf.availableModes.length) {
+      stats.extended_stats = apiCacheablePost<PlayerExtendedStats>(`player_extended_stats/${this._playerId}`, {
+        keys,
+        modes: this._mode,
+      }).then(processExtendedStats(stats));
+      stats.extended_stats.catch((e) => {
+        console.error("Failed to get extended stats:", e);
+      });
+    }
+    const crossStats = stats;
+    stats.cross_stats = {
+      id: crossStats.id,
+      level: crossStats.level,
+      max_level: crossStats.max_level,
+      played_modes:
+        crossStats.played_modes
+          ?.map((x) => (typeof x === "string" ? (parseInt(x, 10) as GameMode) : x))
+          ?.sort((a, b) => Conf.availableModes.indexOf(a) - Conf.availableModes.indexOf(b)) || [],
+      nickname: crossStats.nickname,
+      count: crossStats.count,
+    };
+    return stats;
+  }
+  async getNextChunk(): Promise<GameRecord[]> {
+    if (this._chunkReturned) {
+      return [];
+    }
+    const chunk = await this.getRecords();
+    this._chunkReturned = true;
     return chunk;
   }
 }

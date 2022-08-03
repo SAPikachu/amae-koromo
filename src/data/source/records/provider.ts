@@ -9,6 +9,7 @@ import {
   RecentHighlightDataLoader,
   FixedNumberPlayerDataLoader,
   DummyDataLoader,
+  FilteredPlayerDataLoader,
 } from "./loader";
 import { GameMode } from "../../types";
 
@@ -242,5 +243,8 @@ export const DataProvider = Object.freeze({
         mode
       )
     );
+  },
+  createFilteredPlayer(playerId: string, loadRecord: () => Promise<GameRecord[]>, mode: GameMode[]): PlayerDataProvider {
+    return new DataProviderImpl(new FilteredPlayerDataLoader(playerId, loadRecord, mode));
   },
 });
