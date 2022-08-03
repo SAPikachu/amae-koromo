@@ -12,7 +12,7 @@ import {
   IconButton,
   TextField,
 } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { GameMode, getRankLabelByIndexRaw } from "../../data/types";
 import Conf from "../../utils/conf";
@@ -33,9 +33,8 @@ const RANK_ITEMS = [
   }))
 );
 
-function ExtraSettingsBody() {
+function ExtraSettingsBody({ model, updateModel }: { model: Model; updateModel: (model: Partial<Model>) => void }) {
   const { t } = useTranslation("form");
-  const [model, updateModel] = useModel();
   const updateSearchTextFromEvent = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => updateModel({ type: "player", searchText: e.currentTarget.value }),
     [updateModel]
@@ -90,17 +89,30 @@ function ExtraSettingsBody() {
 
 function ExtraSettingsDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation();
-  const handleClose = useCallback(() => {
+  const [globalModel, globalUpdateModel] = useModel();
+  const [modelChanges, setModelChanges] = useState<Partial<Model>>({});
+  useEffect(() => {
+    setModelChanges({});
+  }, [globalModel]);
+  const mergedModel = useMemo<Model>(() => ({ ...globalModel, ...modelChanges } as Model), [globalModel, modelChanges]);
+  const onSubmit = useCallback(() => {
+    if (modelChanges.type === "player") {
+      globalUpdateModel(modelChanges);
+    }
     onClose();
-  }, [onClose]);
+  }, [globalUpdateModel, modelChanges, onClose]);
+  const onUpdateModel = useCallback(
+    (changes: Partial<Model>) => setModelChanges((prev) => ({ ...prev, ...changes })),
+    [setModelChanges]
+  );
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} disableEscapeKeyDown>
       <DialogTitle>{t("筛选")}</DialogTitle>
       <DialogContent>
-        <ExtraSettingsBody />
+        <ExtraSettingsBody model={mergedModel} updateModel={onUpdateModel} />
       </DialogContent>
       <DialogActions>
-        <IconButton size="large" onClick={handleClose}>
+        <IconButton size="large" onClick={onSubmit}>
           <Done />
         </IconButton>
       </DialogActions>
