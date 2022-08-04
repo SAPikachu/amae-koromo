@@ -50,6 +50,10 @@ const ModelBuilders = {
         delete params.rank;
       }
     }
+    const selectedModes = parseCombinedMode(params.mode || "");
+    if (!selectedModes.length && Conf.availableModes.length > 1) {
+      delete params.limit;
+    }
     if (params.limit) {
       delete params.startDate;
       delete params.endDate;
@@ -59,7 +63,7 @@ const ModelBuilders = {
       playerId: params.id,
       startDate: parseOptionalDate(params.startDate, null),
       endDate: parseOptionalDate(params.endDate, null, (d, isPrecise) => (isPrecise ? d : d.endOf("day"))),
-      selectedModes: parseCombinedMode(params.mode || ""),
+      selectedModes,
       searchText: params.search ? params.search.slice(1) : "",
       rank: parseInt(params.rank || "") || null,
       kontenOnly: !!params.kontenOnly,
