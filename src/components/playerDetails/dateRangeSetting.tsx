@@ -20,6 +20,8 @@ import { WatchLater, WatchLaterOutlined } from "@mui/icons-material";
 import { MobileDateTimePicker, MobileDatePicker } from "@mui/lab";
 import Conf from "../../utils/conf";
 
+const NEW_THRONE_TS = dayjs("2021-08-26T02:00:00.000Z");
+
 function ResponsiveMenu({ children, ...params }: MenuProps) {
   const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
   return (
@@ -149,12 +151,14 @@ export default function DateRangeSetting({
   start,
   end,
   limit,
+  isThrone,
 }: {
   onSelectDate: (start: dayjs.ConfigType | null, end: dayjs.ConfigType | null) => void;
   onSelectLimit: (limit: number) => void;
   start: dayjs.ConfigType | null;
   end: dayjs.ConfigType | null;
   limit: number | null;
+  isThrone: boolean;
 }) {
   const [anchorEl, setAnchorEl] = useState(null as HTMLElement | null);
   const handleClose = () => setAnchorEl(null);
@@ -184,6 +188,9 @@ export default function DateRangeSetting({
     (start && !dayjs(start).startOf("day").isSame(start, "second")) ||
     (end && !dayjs(end).endOf("day").isSame(end, "second"));
   const format = shouldRenderTime ? "YYYY-MM-DD HH:mm" : "YYYY-MM-DD";
+  const isNewThrone = isThrone && !end && start && dayjs(start).isSame(NEW_THRONE_TS);
+  const isOldThrone =
+    isThrone && end && (!start || !dayjs(start).isAfter(Conf.dateMin)) && dayjs(end).isSame(NEW_THRONE_TS);
   return (
     <div>
       <Button
@@ -193,7 +200,11 @@ export default function DateRangeSetting({
         startIcon={haveCustomRange ? <WatchLater /> : <WatchLaterOutlined />}
       >
         {haveCustomRange ? (
-          limit ? (
+          isNewThrone ? (
+            <Trans>新王座</Trans>
+          ) : isOldThrone ? (
+            <Trans>旧王座</Trans>
+          ) : limit ? (
             <Trans defaults="最近 {{x}} 场" count={limit} values={{ x: limit }} />
           ) : (
             `${dayjs(start || Conf.dateMin).format(format)} ~ ${dayjs(end || undefined).format(format)}`
@@ -261,6 +272,16 @@ export default function DateRangeSetting({
             </MenuItem>
           ))}
         </MenuGroup>
+        {isThrone && (
+          <MenuGroup>
+            <MenuItem dense onClick={() => selectRange(NEW_THRONE_TS)}>
+              <Trans>新王座</Trans>
+            </MenuItem>
+            <MenuItem dense onClick={() => selectRange(dayjs(Conf.dateMin), NEW_THRONE_TS)}>
+              <Trans>旧王座</Trans>
+            </MenuItem>
+          </MenuGroup>
+        )}
       </ResponsiveMenu>
     </div>
   );
