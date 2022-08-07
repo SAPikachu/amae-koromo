@@ -1,16 +1,17 @@
 import React from "react";
 import { useEffect, useState, useMemo } from "react";
 
-import { PlayerMetadataLite, LevelWithDelta } from "../../data/types";
+import { PlayerMetadataLite, LevelWithDelta, Level } from "../../data/types";
 import { searchPlayer } from "../../data/source/misc";
 import { Redirect } from "react-router-dom";
 import { generatePlayerPathById } from "./routeUtils";
 import { useTranslation } from "react-i18next";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { networkError } from "../../utils/notify";
+import Conf, { CONFIGURATIONS } from "../../utils/conf";
+import Loading from "../misc/loading";
 
 const playerSearchCache = new Map<string, PlayerMetadataLite[] | Promise<PlayerMetadataLite[]>>();
-const NUM_RESULTS_SHOWN = 6;
 const NUM_FETCH = 20;
 
 const normalizeName = (s: string) => s.toLowerCase().trim();
@@ -32,6 +33,23 @@ function findRawResultFromCache(prefix: string): { result: PlayerMetadataLite[];
   return null;
 }
 
+function getCrossSiteConf(x: PlayerMetadataLite) {
+  if (Conf.availableModes.length > 1) {
+    const level = new Level(x.level.id);
+    if (!Conf.availableModes.some((mode) => level.isAllowedMode(mode))) {
+      return level.getNumPlayerId() === 2 ? CONFIGURATIONS.ikeda : CONFIGURATIONS.DEFAULT;
+    }
+  }
+  return null;
+}
+function getOptionLabel(x: PlayerMetadataLite, t: (x: string) => string): string {
+  let ret = `[${LevelWithDelta.getTag(x.level)}] ${x.nickname}`;
+  const conf = getCrossSiteConf(x);
+  if (conf) {
+    ret = `[${conf.rankColors.length === 3 ? t("三麻") : t("四麻")}] ${ret}`;
+  }
+  return ret;
+}
 export function PlayerSearch() {
   const { t } = useTranslation("form");
   const [selectedItem, setSelectedItem] = useState(null as PlayerMetadataLite | null);
@@ -60,7 +78,7 @@ export function PlayerSearch() {
         mayHaveMore = false;
       }
     });
-    return [filteredPlayers, mayHaveMore && filteredPlayers.length < NUM_RESULTS_SHOWN, mayHaveMore];
+    return [filteredPlayers, mayHaveMore];
   }, [searchText, version]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!searchText.trim()) {
@@ -82,7 +100,7 @@ export function PlayerSearch() {
       if (playerSearchCache.has(prefix)) {
         return;
       }
-      const promise = searchPlayer(prefix).then(function (players) {
+      const promise = searchPlayer(prefix, NUM_FETCH).then(function (players) {
         playerSearchCache.set(prefix, players);
         if (!cancelled) {
           setVersion(new Date().getTime());
@@ -104,6 +122,11 @@ export function PlayerSearch() {
     };
   }, [searchText, isLoading]);
   if (selectedItem) {
+    const crossSiteConf = getCrossSiteConf(selectedItem);
+    if (crossSiteConf) {
+      location.href = `https://${crossSiteConf.canonicalDomain}${generatePlayerPathById(selectedItem.id)}`;
+      return <Loading />;
+    }
     return <Redirect to={generatePlayerPathById(selectedItem.id)} push />;
   }
   return (
@@ -121,7 +144,7 @@ export function PlayerSearch() {
       onInputChange={(_, value, reason) => setSearchText(reason === "reset" ? "" : value)}
       onChange={(_, value, reason) => reason === "selectOption" && setSelectedItem(value)}
       options={players}
-      getOptionLabel={(x) => `[${LevelWithDelta.getTag(x.level)}] ${x.nickname}`}
+      getOptionLabel={(x) => getOptionLabel(x, t)}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       loading={isLoading}
       filterOptions={(x) => x}

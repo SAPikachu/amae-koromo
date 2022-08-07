@@ -14,7 +14,9 @@ export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMe
   if (!prefix) {
     return [];
   }
-  const result = await apiGet<PlayerMetadataLite[]>(`search_player/${encodeURIComponent(prefix)}?limit=${limit}`);
+  const result = await apiGet<PlayerMetadataLite[]>(
+    `search_player/${encodeURIComponent(prefix)}?limit=${limit}&tag=all`
+  );
   return result || [];
 }
 
@@ -52,7 +54,7 @@ export async function getGlobalStatistics(modes: GameMode[]): Promise<GlobalStat
   return await apiGet<GlobalStatistics>(`global_statistics_2?mode=${modes.join(".")}`);
 }
 export async function getLevelStatistics(): Promise<LevelStatistics> {
-  return await apiGet<LevelStatistics>("level_statistics").then(data => {
+  return await apiGet<LevelStatistics>("level_statistics").then((data) => {
     data.sort((a, b) => a[1] - b[1]);
     return data;
   });
