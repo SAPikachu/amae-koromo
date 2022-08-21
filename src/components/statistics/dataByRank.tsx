@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import { forwardRef, useMemo, useState, VFC } from "react";
 
 import { formatPercent, formatFixed3 } from "../../utils/index";
 import { useAsyncFactory } from "../../utils/async";
-import { getGlobalStatistics } from "../../data/source/misc";
+import { getGlobalStatistics, getGlobalStatisticsYear } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { useModel } from "../modeModel/model";
 import { Level } from "../../data/types/level";
@@ -19,6 +19,12 @@ import {
   TableCellProps,
   TableBody,
   Typography,
+  ToggleButtonGroup,
+  ToggleButton,
+  Tooltip,
+  ToggleButtonProps,
+  TooltipProps,
+  tooltipClasses,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -52,9 +58,34 @@ const HeaderBox = styled(Box)({
   },
 });
 
+type TooltipToggleButtonProps = ToggleButtonProps & {
+  TooltipProps: Omit<TooltipProps, "children">;
+};
+
+export const StyledTooltip = styled(({ className, ...props }: TooltipProps) => {
+  return <Tooltip {...props} classes={{ popper: className }} />;
+})(() => ({
+  [`& .${tooltipClasses.tooltip}.${tooltipClasses.tooltip}.${tooltipClasses.tooltip}.${tooltipClasses.tooltip}`]: {
+    textAlign: "center",
+  },
+}));
+const TooltipToggleButton: VFC<TooltipToggleButtonProps> = forwardRef(({ TooltipProps, ...props }, ref) => {
+  return (
+    <StyledTooltip {...TooltipProps}>
+      <ToggleButton ref={ref} {...props} />
+    </StyledTooltip>
+  );
+});
+
+const dataLoaders = {
+  overall: getGlobalStatistics,
+  year: getGlobalStatisticsYear,
+};
+
 export default function DataByRank() {
   const { t } = useTranslation();
   const [model] = useModel();
+  const [dataRange, setDataRange] = useState("overall" as keyof typeof dataLoaders);
   const modes = useMemo(
     () =>
       model.selectedModes
@@ -63,9 +94,9 @@ export default function DataByRank() {
     [model]
   );
   const data = useAsyncFactory(
-    () => (modes && modes.length ? getGlobalStatistics(modes) : Promise.resolve(null)),
-    [modes],
-    "getGlobalStatistics_" + modes.join(".")
+    () => (modes && modes.length ? dataLoaders[dataRange](modes) : Promise.resolve(null)),
+    [modes, dataRange],
+    "getGlobalStatistics_" + dataRange + modes.join(".")
   );
   const modeData = useMemo(() => {
     if (!data) {
@@ -90,6 +121,18 @@ export default function DataByRank() {
   return (
     <>
       <ModelModeSelector type="checkbox" availableModes={Conf.features.statisticsSubPages.dataByRank} autoSelectFirst />
+      <ToggleButtonGroup
+        exclusive
+        color="primary"
+        onChange={(e, value) => value && setDataRange(value)}
+        value={dataRange}
+        size="small"
+      >
+        <ToggleButton value="overall">{t("全体")}</ToggleButton>
+        <TooltipToggleButton value="year" TooltipProps={{ title: t("一年内对局过的玩家的一年对局数据") || "" }}>
+          {t("活跃玩家")}
+        </TooltipToggleButton>
+      </ToggleButtonGroup>
       {modeData ? (
         <>
           <TableContainer sx={{ mt: 2 }}>
