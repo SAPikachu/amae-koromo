@@ -83,7 +83,9 @@ function handleSwitchSite(e: React.MouseEvent<HTMLAnchorElement>) {
   if (e.currentTarget.classList.contains("active") || e.currentTarget.classList.contains("Mui-selected")) {
     return;
   }
-  window.location.href = `${e.currentTarget.href.replace(/\/+$/, "")}${location.pathname}`;
+  const url = new URL(e.currentTarget.href);
+  url.pathname = location.pathname;
+  window.location.href = url.toString();
 }
 function DesktopItems() {
   const { t, i18n } = useTranslation();
