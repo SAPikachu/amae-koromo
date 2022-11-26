@@ -100,6 +100,9 @@ export class Level {
   }
   getMaxPoint(): number {
     if (this.isKonten()) {
+      if (this._minorRank === 20) {
+        return 0;
+      }
       return LEVEL_MAX_POINT_KONTEN;
     }
     return LEVEL_MAX_POINTS[(this._majorRank - 1) * 3 + this._minorRank - 1];
