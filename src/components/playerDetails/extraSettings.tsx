@@ -69,7 +69,7 @@ function ExtraSettingsBody({ model, updateModel }: { model: Model; updateModel: 
       </Box>
       <Box mt={2}>
         <FormControlLabel
-          label={t("四魂天对局").toString()}
+          label={t("巅峰对决").toString()}
           control={
             <Checkbox
               disabled={
