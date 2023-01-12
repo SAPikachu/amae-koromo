@@ -51,6 +51,7 @@ function GenericStat({
   label,
   disableHistogram,
   defaultValue = 0,
+  hideValue = false,
 }: {
   stats: PlayerExtendedStats;
   statKey: keyof PlayerExtendedStats;
@@ -60,6 +61,7 @@ function GenericStat({
   label?: string;
   disableHistogram?: boolean;
   defaultValue?: number | string;
+  hideValue?: boolean;
 }) {
   const value = stats[statKey] ?? defaultValue;
   if (typeof value !== "number" && value !== defaultValue) {
@@ -79,7 +81,7 @@ function GenericStat({
   }, [statKey, formatterHistogram, formatter, value, disableHistogram, stats.count]);
   return (
     <StatItem description={description} label={label || statKey} extraTip={extraTip}>
-      {typeof value === "string" ? value : formatter(value)}
+      {hideValue ? "" : typeof value === "string" ? value : formatter(value)}
     </StatItem>
   );
 }
@@ -386,6 +388,7 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
             <Trans values={{ date: "2022/6/27" }} defaults="（数据从 {{date}} 前后开始收集）" />
           </Box>
         }
+        hideValue={!stats?.平均起手向听亲}
       />
       <GenericStat
         stats={stats}
@@ -397,6 +400,7 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
             <Trans values={{ date: "2022/6/27" }} defaults="（数据从 {{date}} 前后开始收集）" />
           </Box>
         }
+        hideValue={!stats?.平均起手向听子}
       />
     </>
   );
