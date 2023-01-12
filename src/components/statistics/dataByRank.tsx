@@ -1,8 +1,8 @@
-import { forwardRef, useMemo, useState, VFC } from "react";
+import { forwardRef, ReactElement, useMemo, useState, VFC } from "react";
 
 import { formatPercent, formatFixed3 } from "../../utils/index";
 import { useAsyncFactory } from "../../utils/async";
-import { getGlobalStatistics, getGlobalStatisticsYear } from "../../data/source/misc";
+import { getGlobalStatistics, getGlobalStatisticsSnapshot, getGlobalStatisticsYear } from "../../data/source/misc";
 import Loading from "../misc/loading";
 import { useModel } from "../modeModel/model";
 import { Level } from "../../data/types/level";
@@ -27,6 +27,10 @@ import {
   tooltipClasses,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { DatePicker } from "../form";
+import dayjs from "dayjs";
+import { CalendarToday } from "@mui/icons-material";
+import { GameMode } from "../../data/types";
 
 const HEADERS = ["等级"].concat(["一位率", "二位率", "三位率", "四位率"].slice(0, Conf.rankColors.length), [
   "被飞率",
@@ -85,7 +89,20 @@ const dataLoaders = {
 export default function DataByRank() {
   const { t } = useTranslation();
   const [model] = useModel();
-  const [dataRange, setDataRange] = useState("overall" as keyof typeof dataLoaders);
+  const [dataRange, setDataRange] = useState("overall" as keyof typeof dataLoaders | "date");
+  const [cutoff] = useState(() => dayjs().startOf("day").add(-1, "day"));
+  const [selectedDate, setSelectedDate] = useState(() => cutoff);
+  const effectiveDataRange = useMemo(
+    () => (dataRange === "overall" && selectedDate.isBefore(cutoff) ? "date" : dataRange),
+    [dataRange, selectedDate, cutoff]
+  );
+  const factory = useMemo(
+    () =>
+      effectiveDataRange !== "date"
+        ? dataLoaders[effectiveDataRange]
+        : (modes: GameMode[]) => getGlobalStatisticsSnapshot(selectedDate, modes),
+    [effectiveDataRange, selectedDate]
+  );
   const modes = useMemo(
     () =>
       model.selectedModes
@@ -94,9 +111,12 @@ export default function DataByRank() {
     [model]
   );
   const data = useAsyncFactory(
-    () => (modes && modes.length ? dataLoaders[dataRange](modes) : Promise.resolve(null)),
-    [modes, dataRange],
-    "getGlobalStatistics_" + dataRange + modes.join(".")
+    () => (modes && modes.length ? factory(modes) : Promise.resolve(null)),
+    [modes, effectiveDataRange, selectedDate, factory],
+    "getGlobalStatistics_" +
+      effectiveDataRange +
+      (effectiveDataRange === "date" ? selectedDate.format("YYYYMMDD") : "") +
+      modes.join(".")
   );
   const modeData = useMemo(() => {
     if (!data) {
@@ -124,14 +144,35 @@ export default function DataByRank() {
       <ToggleButtonGroup
         exclusive
         color="primary"
-        onChange={(e, value) => value && setDataRange(value)}
-        value={dataRange}
+        onChange={(e, value) => value && value !== "date" && (setDataRange(value), setSelectedDate(cutoff))}
+        value={effectiveDataRange}
         size="small"
       >
         <ToggleButton value="overall">{t("全体")}</ToggleButton>
         <TooltipToggleButton value="year" TooltipProps={{ title: t("一年内对局过的玩家的一年对局数据") || "" }}>
           {t("活跃玩家")}
         </TooltipToggleButton>
+        <ToggleButton value="date">
+          <DatePicker
+            min="2020-10-13"
+            max={cutoff}
+            date={selectedDate}
+            onChange={(date) => {
+              setSelectedDate(date);
+              setDataRange("overall");
+            }}
+            renderInput={({ inputRef, inputProps, InputProps }) => (
+              <Box
+                ref={inputRef}
+                onClick={(InputProps?.endAdornment as ReactElement).props?.children?.props?.onClick}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                <CalendarToday />
+                <Box ml={1}>{effectiveDataRange === "date" ? inputProps?.value : t("日期", { ns: "form" })}</Box>
+              </Box>
+            )}
+          />
+        </ToggleButton>
       </ToggleButtonGroup>
       {modeData ? (
         <>

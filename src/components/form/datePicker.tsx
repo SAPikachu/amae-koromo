@@ -3,7 +3,7 @@
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
-import { DatePicker as MuiDatePicker } from "@mui/lab";
+import { DatePicker as MuiDatePicker, DatePickerProps } from "@mui/lab";
 import { TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -15,6 +15,7 @@ export function DatePicker({
   label = "",
   fullWidth = false,
   size = "medium" as "medium" | "small",
+  renderInput = null as null | DatePickerProps["renderInput"],
 }) {
   const handleChange = useCallback(
     (value: dayjs.Dayjs | null) => onChange(value || dayjs(date).startOf("day")),
@@ -31,7 +32,7 @@ export function DatePicker({
       toolbarFormat=" "
       toolbarTitle=""
       mask="____-__-__"
-      renderInput={(params: any) => <TextField fullWidth={fullWidth} size={size} {...params} />} // eslint-disable-line @typescript-eslint/no-explicit-any
+      renderInput={renderInput || ((params: any) => <TextField fullWidth={fullWidth} size={size} {...params} />)} // eslint-disable-line @typescript-eslint/no-explicit-any
       minDate={dayjs(min)}
       maxDate={dayjs(max)}
     />

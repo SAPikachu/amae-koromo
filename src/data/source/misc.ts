@@ -56,6 +56,14 @@ export async function getGlobalStatistics(modes: GameMode[]): Promise<GlobalStat
 export async function getGlobalStatisticsYear(modes: GameMode[]): Promise<GlobalStatistics> {
   return await apiGet<GlobalStatistics>(`global_statistics_year?mode=${modes.join(".")}`);
 }
+export async function getGlobalStatisticsSnapshot(
+  date: dayjs.ConfigType,
+  modes: GameMode[]
+): Promise<GlobalStatistics> {
+  return await apiGet<GlobalStatistics>(
+    `global_statistics_snapshot/${dayjs(date).format("YYYY-MM-DD")}?mode=${modes.join(".")}`
+  );
+}
 export async function getLevelStatistics(): Promise<LevelStatistics> {
   return await apiGet<LevelStatistics>("level_statistics").then((data) => {
     data.sort((a, b) => a[1] - b[1]);
