@@ -164,7 +164,7 @@ export default function DataByRank() {
             renderInput={({ inputRef, inputProps, InputProps }) => (
               <Box
                 ref={inputRef}
-                onClick={(InputProps?.endAdornment as ReactElement).props?.children?.props?.onClick}
+                onClick={(InputProps?.endAdornment as ReactElement)?.props?.children?.props?.onClick}
                 sx={{ display: "flex", alignItems: "center" }}
               >
                 <CalendarToday />
