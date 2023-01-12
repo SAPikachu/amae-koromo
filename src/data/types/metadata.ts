@@ -150,6 +150,8 @@ export type PlayerExtendedStats = {
   W立直?: number;
   流满?: number;
   平均起手向听: number;
+  平均起手向听亲: number;
+  平均起手向听子: number;
   放铳至立直: number;
   放铳至副露: number;
   放铳至默听: number;

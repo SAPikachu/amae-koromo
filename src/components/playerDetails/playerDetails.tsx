@@ -375,7 +375,29 @@ function LuckStats({ stats }: { stats: PlayerExtendedStats }) {
       <StatItem label="两立直" description="两立直次数">
         {stats.W立直 || 0}
       </StatItem>
-      <GenericStat stats={stats} formatter={formatFixed3} statKey="平均起手向听" />
+      <GenericStat stats={stats} formatter={formatFixed3} statKey="平均起手向听" label="起手向听" />
+      <GenericStat
+        stats={stats}
+        formatter={formatFixed3}
+        statKey="平均起手向听亲"
+        label="亲起手向听"
+        description={
+          <Box>
+            <Trans values={{ date: "2022/6/27" }} defaults="（数据从 {{date}} 前后开始收集）" />
+          </Box>
+        }
+      />
+      <GenericStat
+        stats={stats}
+        formatter={formatFixed3}
+        statKey="平均起手向听子"
+        label="子起手向听"
+        description={
+          <Box>
+            <Trans values={{ date: "2022/6/27" }} defaults="（数据从 {{date}} 前后开始收集）" />
+          </Box>
+        }
+      />
     </>
   );
 }
