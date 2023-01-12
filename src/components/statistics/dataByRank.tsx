@@ -161,14 +161,18 @@ export default function DataByRank() {
               setSelectedDate(date);
               setDataRange("overall");
             }}
-            renderInput={({ inputRef, inputProps, InputProps }) => (
+            renderInput={({ inputRef, InputProps }) => (
               <Box
                 ref={inputRef}
                 onClick={(InputProps?.endAdornment as ReactElement)?.props?.children?.props?.onClick}
                 sx={{ display: "flex", alignItems: "center" }}
               >
                 <CalendarToday />
-                <Box ml={1}>{effectiveDataRange === "date" ? inputProps?.value : t("日期", { ns: "form" })}</Box>
+                <Box ml={1}>
+                  {effectiveDataRange === "date"
+                    ? data?._lastModified?.format("YYYY-MM-DD") || "..."
+                    : t("日期", { ns: "form" })}
+                </Box>
               </Box>
             )}
           />

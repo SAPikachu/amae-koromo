@@ -1,11 +1,12 @@
 import { AccountZone, GameMode } from ".";
+import { WithLastModified } from "../source/api";
 import { PlayerMetadataLite2, PlayerExtendedStats, RankRates } from "./metadata";
 export type RankRateBySeat = {
   [modeId: string]: {
     [rankId: number]: RankRates;
   } & { numGames: number; length: number };
 };
-export type GlobalStatistics = {
+export type GlobalStatistics = WithLastModified & {
   [modeId: string]: {
     [levelId: string]: {
       num_players: number;

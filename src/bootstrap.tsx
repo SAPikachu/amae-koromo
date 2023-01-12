@@ -17,6 +17,9 @@ import { Suspense } from "react";
 import Loading from "./components/misc/loading";
 import { SentryErrorBoundary } from "./utils/sentry";
 
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 const rootElement = document.getElementById("root");
 render(

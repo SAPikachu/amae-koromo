@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import dayjs from "dayjs";
 import Conf from "../../utils/conf";
 import { savePreference } from "../../utils/preference";
 
@@ -97,7 +98,11 @@ export type ApiError = Error & {
   url: string;
 };
 
-async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T> {
+export type WithLastModified = {
+  readonly _lastModified?: dayjs.Dayjs;
+};
+
+async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T & WithLastModified> {
   if (!resp.ok) {
     const error = new Error("Failed API call");
     Object.assign(error, {
@@ -114,7 +119,7 @@ async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T> {
     });
     throw error;
   }
-  const data = await resp.json();
+  let data = await resp.json();
   if (data.maintenance) {
     onMaintenance(data.maintenance);
     return new Promise(() => {}) as Promise<T>; // Freeze all other components
@@ -128,6 +133,13 @@ async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T> {
     });
     return handleResponse(cacheKey, resultResp);
   }
+  const lastModified = resp.headers.get("last-modified");
+  if (lastModified) {
+    const parsed = dayjs.utc(lastModified.slice(lastModified.indexOf(" ") + 1), "DD MMM YYYY HH:mm:ss");
+    if (parsed.isValid()) {
+      data = Object.defineProperty(data, "_lastModified", { value: parsed, writable: false });
+    }
+  }
   if (Object.keys(apiCache).length > 500) {
     apiCache = {};
   }
@@ -135,7 +147,7 @@ async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T> {
   return data as T;
 }
 
-export async function apiGet<T>(path: string): Promise<T> {
+export async function apiGet<T>(path: string): Promise<T & { _lastModified?: dayjs.ConfigType }> {
   if (path in apiCache) {
     return apiCache[path] as T;
   }
