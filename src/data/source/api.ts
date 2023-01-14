@@ -134,7 +134,7 @@ async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T & 
     return handleResponse(cacheKey, resultResp);
   }
   const lastModified = resp.headers.get("last-modified");
-  if (lastModified) {
+  if (lastModified && typeof data === "object") {
     const parsed = dayjs.utc(lastModified.slice(lastModified.indexOf(" ") + 1), "DD MMM YYYY HH:mm:ss");
     if (parsed.isValid()) {
       data = Object.defineProperty(data, "_lastModified", { value: parsed, writable: false });
