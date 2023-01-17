@@ -120,11 +120,11 @@ async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T & 
     throw error;
   }
   let data = await resp.json();
-  if (data.maintenance) {
+  if (data?.maintenance) {
     onMaintenance(data.maintenance);
     return new Promise(() => {}) as Promise<T>; // Freeze all other components
   }
-  if (data.result_key) {
+  if (data?.result_key) {
     await new Promise((res) => setTimeout(res, 1000));
     const resultResp = await fetchData(`${Conf.apiSuffix}result/${data.result_key}`, {
       headers: {
