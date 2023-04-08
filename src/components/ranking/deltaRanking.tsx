@@ -20,6 +20,8 @@ import {
   TypographyProps,
   GridProps,
 } from "@mui/material";
+import { useState } from "react";
+import { CheckboxGroup } from "../form";
 
 function RankingTable({ rows = [] as DeltaRankingItem[] }) {
   return (
@@ -47,75 +49,58 @@ const GridContainer = (props: GridProps) => <Grid container spacing={2} rowSpaci
 
 function DeltaRankingInner() {
   const { t } = useTranslation();
-  const data1w = useAsyncFactory(
-    () => getDeltaRanking(RankingTimeSpan.OneWeek),
-    [],
-    "getDeltaRanking(RankingTimeSpan.OneWeek)"
-  );
-  const data4w = useAsyncFactory(
-    () => getDeltaRanking(RankingTimeSpan.FourWeeks),
-    [],
-    "getDeltaRanking(RankingTimeSpan.FourWeeks)"
+  const [selectedTimeSpan, setSelectedTimeSpan] = useState(RankingTimeSpan.FourWeeks);
+  const data = useAsyncFactory(
+    () => getDeltaRanking(selectedTimeSpan),
+    [selectedTimeSpan],
+    "getDeltaRanking_" + selectedTimeSpan
   );
   const [model] = useModel();
   const modes = model.selectedModes;
   const modeKey = modes.length !== 1 ? 0 : modes[0];
-  if (!data1w || !data4w) {
-    return <Loading />;
-  }
   const availableModes = (
-    data1w
-      ? Object.keys(data1w)
+    data
+      ? Object.keys(data)
           .filter((x) => x !== "0")
           .map((x) => parseInt(x, 10) as GameMode)
-      : Conf.features.ranking || []
+      : []
   ).sort((a, b) => Conf.availableModes.indexOf(a) - Conf.availableModes.indexOf(b));
   return (
     <>
-      <Box visibility={data1w ? "visible" : "hidden"} mb={2}>
+      <CheckboxGroup
+        type="radio"
+        items={[
+          { key: RankingTimeSpan.FourWeeks, value: RankingTimeSpan.FourWeeks, label: t("四周") },
+          { key: RankingTimeSpan.OneWeek, value: RankingTimeSpan.OneWeek, label: t("一周") },
+          { key: RankingTimeSpan.ThreeDays, value: RankingTimeSpan.ThreeDays, label: t("三天") },
+          { key: RankingTimeSpan.OneDay, value: RankingTimeSpan.OneDay, label: t("一天") },
+        ]}
+        selectedItems={[selectedTimeSpan]}
+        onChange={(newItems) => {
+          setSelectedTimeSpan(newItems[0].value);
+        }}
+      />
+      <Box visibility={data ? "visible" : "hidden"} mb={2}>
         <ModelModeSelector type="checkbox" availableModes={availableModes} allowedCombinations={[availableModes]} />
       </Box>
-      <GridContainer>
-        <Grid item xs={12} lg={6}>
-          <Title variant="h4">{t("苦主榜")}</Title>
-          <GridContainer>
-            <Grid item xs={12} md={6}>
-              <Title variant="h5">{t("一周")}</Title>
-              <RankingTable rows={data1w[modeKey].bottom} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Title variant="h5">{t("四周")}</Title>
-              <RankingTable rows={data4w[modeKey].bottom} />
-            </Grid>
-          </GridContainer>
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <Title variant="h4">{t("汪汪榜")}</Title>
-          <GridContainer>
-            <Grid item xs={12} md={6}>
-              <Title variant="h5">{t("一周")}</Title>
-              <RankingTable rows={data1w[modeKey].top} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Title variant="h5">{t("四周")}</Title>
-              <RankingTable rows={data4w[modeKey].top} />
-            </Grid>
-          </GridContainer>
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <Title variant="h4">{t("劳模榜")}</Title>
-          <GridContainer>
-            <Grid item xs={12} md={6}>
-              <Title variant="h5">{t("一周")}</Title>
-              <RankingTable rows={data1w[modeKey].num_games} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Title variant="h5">{t("四周")}</Title>
-              <RankingTable rows={data4w[modeKey].num_games} />
-            </Grid>
-          </GridContainer>
-        </Grid>
-      </GridContainer>
+      {data ? (
+        <GridContainer>
+          <Grid item xs={12} md={4}>
+            <Title variant="h4">{t("苦主榜")}</Title>
+            <RankingTable rows={data[modeKey].bottom} />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Title variant="h4">{t("汪汪榜")}</Title>
+            <RankingTable rows={data[modeKey].top} />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Title variant="h4">{t("劳模榜")}</Title>
+            <RankingTable rows={data[modeKey].num_games} />
+          </Grid>
+        </GridContainer>
+      ) : (
+        <Loading />
+      )}
     </>
   );
 }

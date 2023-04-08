@@ -2,8 +2,10 @@ import { LevelWithDelta } from "./level";
 import { PlayerMetadata } from "./metadata";
 
 export enum RankingTimeSpan {
+  OneDay = "1d",
+  ThreeDays = "3d",
   OneWeek = "1w",
-  FourWeeks = "4w"
+  FourWeeks = "4w",
 }
 export type DeltaRankingItem = {
   id: number;
