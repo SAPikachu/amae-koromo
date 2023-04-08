@@ -44,7 +44,7 @@ function RankingTable({ rows = [] as DeltaRankingItem[] }) {
   );
 }
 
-const Title = (props: TypographyProps) => <Typography mb={1} textAlign="center" {...props} />;
+const Title = (props: TypographyProps) => <Typography mb={1} textAlign="center" {...props} sx={{}} />;
 const GridContainer = (props: GridProps) => <Grid container spacing={2} rowSpacing={3} {...props} />;
 
 function DeltaRankingInner() {
@@ -86,15 +86,15 @@ function DeltaRankingInner() {
       {data ? (
         <GridContainer>
           <Grid item xs={12} md={4}>
-            <Title variant="h4">{t("苦主榜")}</Title>
+            <Title variant="h5">{t("苦主榜")}</Title>
             <RankingTable rows={data[modeKey].bottom} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <Title variant="h4">{t("汪汪榜")}</Title>
+            <Title variant="h5">{t("汪汪榜")}</Title>
             <RankingTable rows={data[modeKey].top} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <Title variant="h4">{t("劳模榜")}</Title>
+            <Title variant="h5">{t("劳模榜")}</Title>
             <RankingTable rows={data[modeKey].num_games} />
           </Grid>
         </GridContainer>
