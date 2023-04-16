@@ -111,7 +111,8 @@ export function CareerRankingColumn({
   const modes = forceMode === undefined ? model.selectedModes.sort((a, b) => a - b) : [forceMode];
   const isMixedMode = modes.length !== 1;
   const data = useAsyncFactory(
-    () => getCareerRanking(type, modes.join("."), model.careerRankingMinGames),
+    () =>
+      modes.length > 0 ? getCareerRanking(type, modes.join("."), model.careerRankingMinGames) : Promise.resolve([]),
     [type, model],
     `getCareerRanking-${modes.join(".")}-${model.careerRankingMinGames || 300}`
   );
