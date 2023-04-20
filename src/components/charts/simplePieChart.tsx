@@ -10,7 +10,7 @@ import {
   PieProps,
 } from "recharts";
 import { PolarViewBox } from "recharts/src/util/types";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const DEFAULT_COLORS = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
 
@@ -91,6 +91,7 @@ export default function SimplePieChart<T extends PieChartItem>({
   innerLabelFontSize = "1rem",
   aspect = 1,
   pieProps = {},
+  onSelect = undefined,
   ...props
 }: {
   items: T[];
@@ -103,13 +104,32 @@ export default function SimplePieChart<T extends PieChartItem>({
   innerLabelFontSize?: string;
   aspect?: number;
   pieProps?: Partial<PieProps>;
+  onSelect?: ((item: T | null) => void) | undefined;
 } & Partial<ResponsiveContainerProps>) {
+  const [activeIndex, setActiveIndex] = useState(null as number | null);
+  useEffect(() => {
+    setActiveIndex(null);
+  }, [items]);
+  useEffect(() => {
+    if (!onSelect) {
+      return;
+    }
+    onSelect(activeIndex === null ? null : items[activeIndex]);
+  }, [onSelect, activeIndex, items]);
   const cells = useMemo(
     () =>
       Array(items.length)
         .fill(0)
-        .map((_, index) => <Cell fill={colors[index % colors.length]} fillOpacity={1} key={`cell-${index}`} />),
-    [items.length, colors]
+        .map((_, index) => (
+          <Cell
+            {...(activeIndex === index ? { className: "selectable active" } : {})}
+            fill={colors[index % colors.length]}
+            fillOpacity={1}
+            key={`cell-${index}`}
+            onClick={onSelect ? () => setActiveIndex(index === activeIndex ? null : index) : undefined}
+          />
+        )),
+    [items.length, colors, activeIndex, onSelect]
   );
   const renderCustomizedLabel = useMemo(
     () => renderCustomizedLabelFactory({ lineHeight: innerLabelLineHeight, innerLabelFontSize }),
@@ -125,6 +145,7 @@ export default function SimplePieChart<T extends PieChartItem>({
     <ResponsiveContainer width="100%" aspect={aspect} height="auto" {...props}>
       <PieChart>
         <Pie
+          className={onSelect ? "selectable" + (activeIndex !== null ? " with-active" : "") : ""}
           isAnimationActive={false}
           data={items}
           nameKey="outerLabel"

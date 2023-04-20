@@ -82,8 +82,10 @@ body::before {
 svg.recharts-surface {
   overflow: visible;
 }
-.recharts-label {
+.recharts-label,
+.recharts-label-list {
   pointer-events: none;
+  user-select: none;
 }
 .recharts-pie-label-text {
   font-weight: bold;
@@ -91,4 +93,26 @@ svg.recharts-surface {
 }
 .recharts-tooltip-wrapper {
   z-index: 1;
+}
+.recharts-pie.selectable {
+  transition: transform 0.3s;
+  transform: scale(0.95);
+  transform-origin: center;
+}
+.recharts-pie.selectable.with-active,
+.recharts-pie.selectable:hover {
+  transform: scale(1);
+}
+.recharts-pie-sector .recharts-sector.selectable {
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.recharts-pie.with-active .recharts-pie-sector .recharts-sector {
+  opacity: 0.1;
+}
+.recharts-pie.with-active .recharts-pie-sector .recharts-sector.active {
+  opacity: 1;
+}
+.recharts-pie-sector .recharts-sector.selectable:hover {
+  opacity: 0.8;
 }

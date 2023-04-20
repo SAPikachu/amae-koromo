@@ -1,4 +1,5 @@
 import { Box, Grid, Table, TableBody, TableCell, TableRow, Typography } from "@mui/material";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getLevelStatistics } from "../../data/source/misc";
 import { getZoneTag, Level, LevelStatistics, LevelStatisticsItem } from "../../data/types";
@@ -9,12 +10,13 @@ import Loading from "../misc/loading";
 
 function groupData(
   raw: LevelStatistics,
-  getLabel: (x: LevelStatisticsItem) => string
-): (PieChartItem & { percent: string })[] {
+  getLabel: (x: LevelStatisticsItem) => string,
+  getKey = getLabel
+): (PieChartItem & { percent: string; key: string })[] {
   const map = new Map<string, LevelStatisticsItem[]>();
   const labels: string[] = [];
   for (const item of raw) {
-    const key = getLabel(item);
+    const key = getKey(item);
     const list = map.get(key) || [];
     list.push(item);
     if (!map.has(key)) {
@@ -22,16 +24,19 @@ function groupData(
       labels.push(key);
     }
   }
-  const items = labels.map((label) => ({
+  const items = labels.map((key) => ({
     value:
       map
-        .get(label)
+        .get(key)
         ?.map((x) => x[2])
         .reduce((a, b) => a + b, 0) || 0,
-    label,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    label: getLabel(map.get(key)![0]!),
+    key,
   }));
   const total = items.reduce((a, b) => a + b.value, 0);
   return items.map((x) => ({
+    key: x.key,
     value: x.value,
     percent: formatPercent(x.value / total),
     innerLabel: x.label.replace(
@@ -44,25 +49,43 @@ function groupData(
 export default function NumPlayerStats() {
   const { t } = useTranslation();
   const data = useAsyncFactory(getLevelStatistics, [], "getLevelStatistics");
+  const serverStats = useMemo(
+    () =>
+      data
+        ? groupData(
+            data,
+            (x) => `${getZoneTag(x[0])} {{value}} / {{percentage}}`,
+            (x) => x[0].toString()
+          )
+        : [],
+    [data]
+  );
+  const [selectedServer, setSelectedServer] = useState(null as null | typeof serverStats[0]);
+  const levelStats = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+    const filteredData = selectedServer ? data.filter((x) => x[0].toString() === selectedServer.key) : data;
+    const majorLevelHandled = new Map<string, { count: number; entries: number }>();
+    return groupData(filteredData, (x) => new Level(x[1]).getTag()).map(
+      (x: ReturnType<typeof groupData>[0] & { majorLevel?: { count: number; entries: number } }) => {
+        const majorLevel = x.innerLabel?.replace(/\d+$/, "");
+        if (majorLevel) {
+          const record = majorLevelHandled.get(majorLevel) || { count: 0, entries: 0 };
+          if (!record.count) {
+            x.majorLevel = record;
+            majorLevelHandled.set(majorLevel, record);
+          }
+          record.count += x.value;
+          record.entries++;
+        }
+        return x;
+      }
+    );
+  }, [data, selectedServer]);
   if (!data) {
     return <Loading />;
   }
-  const majorLevelHandled = new Map<string, { count: number; entries: number }>();
-  const levelStats = groupData(data, (x) => new Level(x[1]).getTag()).map(
-    (x: ReturnType<typeof groupData>[0] & { majorLevel?: { count: number; entries: number } }) => {
-      const majorLevel = x.innerLabel?.replace(/\d+$/, "");
-      if (majorLevel) {
-        const record = majorLevelHandled.get(majorLevel) || { count: 0, entries: 0 };
-        if (!record.count) {
-          x.majorLevel = record;
-          majorLevelHandled.set(majorLevel, record);
-        }
-        record.count += x.value;
-        record.entries++;
-      }
-      return x;
-    }
-  );
   const total = levelStats.reduce((a, b) => a + b.value, 0);
   return (
     <Grid container mt={4}>
@@ -71,10 +94,7 @@ export default function NumPlayerStats() {
           {t("按服务器")}
         </Typography>
         <Box maxWidth={576} marginX="auto" my={3}>
-          <SimplePieChart
-            pieProps={{ outerRadius: "95%" }}
-            items={groupData(data, (x) => `${getZoneTag(x[0])} {{value}} / {{percentage}}`)}
-          />
+          <SimplePieChart onSelect={setSelectedServer} pieProps={{ outerRadius: "95%" }} items={serverStats} />
         </Box>
       </Grid>
       <Grid item xs={12} lg overflow="hidden">
