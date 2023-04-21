@@ -186,11 +186,7 @@ function CareerRankingInner({
           updateModel({ careerRankingMinGames: newItems[0].value });
         }}
       />
-      <ModelModeSelector
-        type="checkbox"
-        availableModes={Conf.features.ranking || []}
-        allowedCombinations={Conf.features.rankingGroups}
-      />
+      <ModelModeSelector type="radio" availableModes={Conf.features.ranking || []} autoSelectFirst />
       <CareerRankingPlain>{children}</CareerRankingPlain>
     </>
   );
