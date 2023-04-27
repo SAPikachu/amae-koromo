@@ -15,7 +15,7 @@ export const CONFIGURATIONS = {
       contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
-        dataByRank: [GameMode.王座, GameMode.玉, GameMode.王座东, GameMode.玉东] as GameMode[] | false,
+        dataByRank: [GameMode.王座, GameMode.玉, GameMode.金, GameMode.王座东, GameMode.玉东] as GameMode[] | false,
         fanStats: true,
         numPlayerStats: true,
       },
