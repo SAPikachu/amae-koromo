@@ -28,5 +28,9 @@ export function GameRecordTablePlayerView() {
 }
 
 export function GameRecordTableHomeView() {
-  return <GameRecordTable columns={[COLUMN_GAMEMODE, COLUMN_PLAYERS(), COLUMN_STARTTIME, COLUMN_ENDTIME]} />;
+  return (
+    <GameRecordTable
+      columns={[COLUMN_GAMEMODE, COLUMN_PLAYERS({ maskedGameLink: true }), COLUMN_STARTTIME, COLUMN_ENDTIME]}
+    />
+  );
 }

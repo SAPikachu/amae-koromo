@@ -32,6 +32,7 @@ export const CONFIGURATIONS = {
     mirrorUrl: "https://saki.sapk.ch/",
     rootClassName: "koromo",
     rankColors: ["#28a745", "#17a2b8", "#6c757d", "#dc3545"],
+    maskedGameLink: true,
   },
   ikeda: {
     apiSuffix: "api/v2/pl3/",
@@ -102,6 +103,7 @@ export const CONFIGURATIONS = {
     availableModes: [],
     canonicalDomain: domain,
     showTopNotice: false,
+    maskedGameLink: false,
   },
 };
 

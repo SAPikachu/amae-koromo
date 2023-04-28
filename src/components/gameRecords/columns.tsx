@@ -18,9 +18,10 @@ type PlayersProps = {
   activeProps?: TypographyProps;
   inactiveProps?: TypographyProps;
   alwaysShowDetailLink?: boolean;
+  maskedGameLink?: boolean;
 };
 const Players = React.memo(
-  ({ game, activePlayerId, alwaysShowDetailLink, activeProps, inactiveProps }: PlayersProps) => {
+  ({ game, activePlayerId, alwaysShowDetailLink, activeProps, inactiveProps, maskedGameLink }: PlayersProps) => {
     const theme = useTheme();
     if (typeof activePlayerId === "function") {
       activePlayerId = activePlayerId(game);
@@ -40,6 +41,7 @@ const Players = React.memo(
             key={x.accountId}
             game={game}
             player={x}
+            maskedGameLink={maskedGameLink}
             {...(x.accountId.toString() === activePlayerId
               ? { hideDetailIcon: !alwaysShowDetailLink, ...activeProps }
               : inactiveProps)}

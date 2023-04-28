@@ -5,6 +5,16 @@ export enum AccountZone {
   Unknown = -1,
 }
 
+export function getZoneFromLocale(locale: string): AccountZone {
+  if (/^ja/i.test(locale)) {
+    return AccountZone.Japan;
+  }
+  if (/^zh/i.test(locale)) {
+    return AccountZone.China;
+  }
+  return AccountZone.International;
+}
+
 export function getAccountZone(accountId: number): AccountZone {
   if (!accountId) {
     return AccountZone.Unknown;

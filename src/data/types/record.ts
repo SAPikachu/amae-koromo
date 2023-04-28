@@ -6,6 +6,8 @@ import Conf from "../../utils/conf";
 
 import i18n from "../../i18n";
 import { FanStatEntryList } from "./metadata";
+import { getApiPrefix } from "../source/api";
+import { getZoneFromLocale } from "./zone";
 
 export interface PlayerRecord {
   accountId: number;
@@ -60,5 +62,15 @@ export const GameRecord = Object.freeze({
       : "";
     const uuid = typeof rec === "string" ? rec : rec.uuid;
     return `${i18n.t("https://game.maj-soul.com/1/")}?paipu=${uuid}${trailer}`;
+  },
+  getMaskedRecordLink(rec: GameRecord, player?: PlayerRecord | number | string) {
+    if (!Conf.maskedGameLink) {
+      return this.getRecordLink(rec, player);
+    }
+    const playerId = typeof player === "object" ? player.accountId : player;
+    const trailer = playerId
+      ? `/${GameRecord.encodeAccountId(typeof playerId === "number" ? playerId : parseInt(playerId))}`
+      : "";
+    return `${getApiPrefix()}view_game/${getZoneFromLocale(i18n.language)}/${rec.modeId}/${rec._id}${trailer}`;
   },
 });

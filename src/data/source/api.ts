@@ -20,6 +20,8 @@ export function setMaintenanceHandler(handler: (msg: string) => void) {
   onMaintenance = handler;
 }
 
+export const getApiPrefix = () => selectedMirror + Conf.apiSuffix;
+
 async function fetchWithTimeout(
   url: string,
   opts: Parameters<typeof fetch>[1] = {},
