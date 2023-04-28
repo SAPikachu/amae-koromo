@@ -18,6 +18,7 @@ export interface PlayerRecord {
 }
 export interface GameRecord {
   _id?: string;
+  _masked?: boolean;
   modeId: GameMode;
   uuid: string;
   startTime: number;

@@ -31,7 +31,9 @@ export const Player = React.memo(function ({
       {...props}
     >
       <Link
-        href={(maskedGameLink || !game.uuid ? GameRecord.getMaskedRecordLink : GameRecord.getRecordLink)(game, player)}
+        href={(maskedGameLink || !game.uuid || game._masked
+          ? GameRecord.getMaskedRecordLink
+          : GameRecord.getRecordLink)(game, player)}
         title="查看牌谱"
         target="_blank"
         rel="noopener noreferrer"
