@@ -583,10 +583,10 @@ export default function PlayerDetails() {
       {hasMetadata ? (
         <BlurrableBox blur={isChangingSettings}>
           <Helmet>
-            <title>{metadata?.nickname}</title>
+            <title>{metadata?.cross_stats?.nickname || metadata?.nickname}</title>
           </Helmet>
           <Typography variant="h4" textAlign="center">
-            {getAccountZoneTag(metadata!.id)} {metadata?.nickname}
+            {getAccountZoneTag(metadata!.id)} {metadata?.cross_stats?.nickname || metadata?.nickname}
           </Typography>
           <Grid container mt={2} rowSpacing={2} spacing={2}>
             <Grid item xs={12} md={8}>
