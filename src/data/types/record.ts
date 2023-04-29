@@ -66,7 +66,7 @@ export const GameRecord = Object.freeze({
   },
   getMaskedRecordLink(rec: GameRecord, player?: PlayerRecord | number | string) {
     if (!Conf.maskedGameLink) {
-      return this.getRecordLink(rec, player);
+      return GameRecord.getRecordLink(rec, player);
     }
     const playerId = typeof player === "object" ? player.accountId : player;
     const trailer = playerId
