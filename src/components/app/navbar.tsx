@@ -22,14 +22,21 @@ import {
   ListItemIcon,
   ListItem,
   ThemeOptions,
+  SvgIcon,
 } from "@mui/material";
 import { ArrowDropDown, Language, GitHub, Twitter, Menu as MenuIcon } from "@mui/icons-material";
 import { OverrideTheme } from "./theme";
 import clsx from "clsx";
 import { NavLink, NavLinkProps } from "react-router-dom";
+import Loadable from "../misc/customizedLoadable";
 import NavButton from "../misc/navButton";
 import { MenuButton } from "../misc/menuButton";
 import StarredPlayerMenu from "../playerDetails/star/starredPlayerMenu";
+
+const RmjIcon = Loadable({
+  loader: () => import("./rmjIconLazy"),
+  loading: () => <SvgIcon />,
+});
 
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
@@ -130,6 +137,11 @@ function DesktopItems() {
       <IconButton href="https://github.com/SAPikachu/amae-koromo">
         <GitHub />
       </IconButton>
+      {i18n.language === "zh-hans" && (
+        <IconButton href="https://r-mj.com/" title="麻将地图【雀士远征踢馆指南】" sx={{ ml: 2 }}>
+          <RmjIcon />
+        </IconButton>
+      )}
     </>
   );
 }
@@ -194,6 +206,21 @@ function MobileItems() {
               </ListItemButton>
             </ListItem>
           </List>
+          {i18n.language === "zh-hans" && (
+            <>
+              <Divider />
+              <List>
+                <ListItem disablePadding>
+                  <ListItemButton href="https://r-mj.com/">
+                    <ListItemIcon>
+                      <RmjIcon />
+                    </ListItemIcon>
+                    <ListItemText>麻将地图【雀士远征踢馆指南】</ListItemText>
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </>
+          )}
         </Box>
       </Drawer>
     </>
