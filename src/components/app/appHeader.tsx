@@ -38,6 +38,11 @@ function AlertDefault() {
         <li>
           感谢 <a href="https://github.com/kamicloud/">Kamicloud</a> 提供部分数据。
         </li>
+        <li>
+          友情链接： <a href="https://000.mk">线上团体赛网站【大凤林】</a>{" "}
+          <a href="https://rate.r-mj.com">线下段位场【雀庄公式战】</a>{" "}
+          <a href="https://r-mj.com/">麻将地图【雀士远征踢馆指南】</a>
+        </li>
       </StyledUl>
     </>
   );
