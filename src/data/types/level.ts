@@ -18,16 +18,16 @@ const LEVEL_ALLOWED_MODES: { [key: number]: GameMode[] } = {
   102: [],
   103: [GameMode.金, GameMode.金东],
   104: [GameMode.金, GameMode.玉, GameMode.金东, GameMode.玉东],
-  105: [GameMode.玉, GameMode.王座, GameMode.玉东, GameMode.王座东],
-  106: [GameMode.王座, GameMode.王座东],
-  107: [GameMode.王座, GameMode.王座东],
+  105: [GameMode.玉, GameMode.王座, GameMode.玉东, GameMode.王东],
+  106: [GameMode.王座, GameMode.王东],
+  107: [GameMode.王座, GameMode.王东],
   201: [],
   202: [],
   203: [GameMode.三金, GameMode.三金东],
   204: [GameMode.三金, GameMode.三玉, GameMode.三金东, GameMode.三玉东],
-  205: [GameMode.三玉, GameMode.三王座, GameMode.三玉东, GameMode.三王座东],
-  206: [GameMode.三王座, GameMode.三王座东],
-  207: [GameMode.三王座, GameMode.三王座东],
+  205: [GameMode.三玉, GameMode.三王座, GameMode.三玉东, GameMode.三王东],
+  206: [GameMode.三王座, GameMode.三王东],
+  207: [GameMode.三王座, GameMode.三王东],
 };
 
 const MODE_PENALTY: { [mode in GameMode]: typeof LEVEL_PENALTY } = {
@@ -36,13 +36,13 @@ const MODE_PENALTY: { [mode in GameMode]: typeof LEVEL_PENALTY } = {
   [GameMode.王座]: LEVEL_PENALTY,
   [GameMode.金东]: LEVEL_PENALTY_E,
   [GameMode.玉东]: LEVEL_PENALTY_E,
-  [GameMode.王座东]: LEVEL_PENALTY_E,
+  [GameMode.王东]: LEVEL_PENALTY_E,
   [GameMode.三金]: LEVEL_PENALTY_3,
   [GameMode.三玉]: LEVEL_PENALTY_3,
   [GameMode.三王座]: LEVEL_PENALTY_3,
   [GameMode.三金东]: LEVEL_PENALTY_E_3,
   [GameMode.三玉东]: LEVEL_PENALTY_E_3,
-  [GameMode.三王座东]: LEVEL_PENALTY_E_3,
+  [GameMode.三王东]: LEVEL_PENALTY_E_3,
 };
 
 export function getTranslatedLevelTags(): string[] {

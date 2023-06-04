@@ -6,7 +6,7 @@ export enum GameMode {
   王座 = 16,
   玉 = 12,
   金 = 9,
-  王座东 = 15,
+  王东 = 15,
   玉东 = 11,
   金东 = 8,
   三金 = 22,
@@ -14,7 +14,7 @@ export enum GameMode {
   三王座 = 26,
   三金东 = 21,
   三玉东 = 23,
-  三王座东 = 25,
+  三王东 = 25,
 }
 export function modeLabelNonTranslated(mode: GameMode) {
   if (!mode) {

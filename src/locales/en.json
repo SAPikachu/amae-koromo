@@ -25,7 +25,7 @@
     "王座": "Throne",
     "玉": "Jade",
     "金": "Gold",
-    "王座东": "Throne East",
+    "王东": "Throne East",
     "玉东": "Jade East",
     "金东": "Gold East",
 
@@ -362,7 +362,7 @@
     "金": "Gld",
     "玉": "Jad",
     "王座": "Thr",
-    "王座东": "Thr E",
+    "王东": "Thr E",
     "玉东": "Jad E",
     "金东": "Gld E",
 

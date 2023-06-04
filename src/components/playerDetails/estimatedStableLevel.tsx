@@ -12,9 +12,9 @@ const ENABLED_MODES = [
   GameMode.王座,
   GameMode.三玉,
   GameMode.三王座,
-  GameMode.王座东,
+  GameMode.王东,
   GameMode.玉东,
-  GameMode.三王座东,
+  GameMode.三王东,
   GameMode.三玉东,
 ];
 

@@ -14,7 +14,7 @@ export const CONFIGURATIONS = {
       contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
-        dataByRank: [GameMode.王座, GameMode.玉, GameMode.金, GameMode.王座东, GameMode.玉东, GameMode.金东] as
+        dataByRank: [GameMode.王座, GameMode.玉, GameMode.金, GameMode.王东, GameMode.玉东, GameMode.金东] as
           | GameMode[]
           | false,
         fanStats: true,
@@ -24,8 +24,8 @@ export const CONFIGURATIONS = {
     table: {
       showGameMode: true,
     },
-    availableModes: [GameMode.王座, GameMode.玉, GameMode.金, GameMode.王座东, GameMode.玉东, GameMode.金东],
-    modePreference: [GameMode.王座, GameMode.玉, GameMode.王座东, GameMode.玉东, GameMode.金, GameMode.金东],
+    availableModes: [GameMode.王座, GameMode.玉, GameMode.金, GameMode.王东, GameMode.玉东, GameMode.金东],
+    modePreference: [GameMode.王座, GameMode.玉, GameMode.王东, GameMode.玉东, GameMode.金, GameMode.金东],
     dateMin: dayjs("2019-08-23", "YYYY-MM-DD"),
     siteTitle: "雀魂牌谱屋",
     canonicalDomain: "amae-koromo.sapk.ch",
@@ -38,40 +38,19 @@ export const CONFIGURATIONS = {
   ikeda: {
     apiSuffix: "api/v2/pl3/",
     features: {
-      ranking: [GameMode.三王座, GameMode.三玉, GameMode.三金, GameMode.三王座东, GameMode.三玉东, GameMode.三金东],
+      ranking: [GameMode.三王座, GameMode.三玉, GameMode.三金, GameMode.三王东, GameMode.三玉东, GameMode.三金东],
       statistics: true,
       estimatedStableLevel: true,
       contestTools: false,
       statisticsSubPages: {
         rankBySeat: true,
-        dataByRank: [
-          GameMode.三王座,
-          GameMode.三玉,
-          GameMode.三金,
-          GameMode.三王座东,
-          GameMode.三玉东,
-          GameMode.三金东,
-        ],
+        dataByRank: [GameMode.三王座, GameMode.三玉, GameMode.三金, GameMode.三王东, GameMode.三玉东, GameMode.三金东],
         fanStats: true,
         numPlayerStats: true,
       },
     },
-    availableModes: [
-      GameMode.三王座,
-      GameMode.三玉,
-      GameMode.三金,
-      GameMode.三王座东,
-      GameMode.三玉东,
-      GameMode.三金东,
-    ],
-    modePreference: [
-      GameMode.三王座,
-      GameMode.三玉,
-      GameMode.三王座东,
-      GameMode.三玉东,
-      GameMode.三金,
-      GameMode.三金东,
-    ],
+    availableModes: [GameMode.三王座, GameMode.三玉, GameMode.三金, GameMode.三王东, GameMode.三玉东, GameMode.三金东],
+    modePreference: [GameMode.三王座, GameMode.三玉, GameMode.三王东, GameMode.三玉东, GameMode.三金, GameMode.三金东],
     dateMin: dayjs("2019-11-29", "YYYY-MM-DD"),
     siteTitle: "雀魂牌谱屋·三麻",
     canonicalDomain: "ikeda.sapk.ch",

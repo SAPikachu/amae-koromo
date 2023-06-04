@@ -74,7 +74,7 @@ function ExtraSettingsBody({ model, updateModel }: { model: Model; updateModel: 
             <Checkbox
               disabled={
                 !model.selectedModes.every((x) =>
-                  [GameMode.王座, GameMode.王座东, GameMode.三王座, GameMode.三王座东].includes(x)
+                  [GameMode.王座, GameMode.王东, GameMode.三王座, GameMode.三王东].includes(x)
                 )
               }
               checked={model.kontenOnly || false}

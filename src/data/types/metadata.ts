@@ -14,13 +14,13 @@ const RANK_DELTA = {
   [GameMode.王座]: RANK_DELTA_4,
   [GameMode.金东]: RANK_DELTA_4,
   [GameMode.玉东]: RANK_DELTA_4,
-  [GameMode.王座东]: RANK_DELTA_4,
+  [GameMode.王东]: RANK_DELTA_4,
   [GameMode.三金]: RANK_DELTA_3,
   [GameMode.三玉]: RANK_DELTA_3,
   [GameMode.三王座]: RANK_DELTA_3,
   [GameMode.三金东]: RANK_DELTA_3,
   [GameMode.三玉东]: RANK_DELTA_3,
-  [GameMode.三王座东]: RANK_DELTA_3,
+  [GameMode.三王东]: RANK_DELTA_3,
 };
 const MODE_DELTA = {
   [GameMode.金]: [80, 40, 0, 0],
@@ -28,19 +28,19 @@ const MODE_DELTA = {
   [GameMode.王座]: [120, 60, 0, 0],
   [GameMode.金东]: [40, 20, 0, 0],
   [GameMode.玉东]: [55, 30, 0, 0],
-  [GameMode.王座东]: [60, 30, 0, 0],
+  [GameMode.王东]: [60, 30, 0, 0],
   [GameMode.三金]: [105, 0, 0],
   [GameMode.三玉]: [160, 0, 0],
   [GameMode.三王座]: [240, 0, 0],
   [GameMode.三金东]: [55, 0, 0],
   [GameMode.三玉东]: [75, 0, 0],
-  [GameMode.三王座东]: [120, 0, 0],
+  [GameMode.三王东]: [120, 0, 0],
 };
 const KONTEN_DELTA: { [mode in GameMode]?: number[] } = {
   [GameMode.王座]: [50, 20, -20, -50],
-  [GameMode.王座东]: [30, 10, -10, -30],
+  [GameMode.王东]: [30, 10, -10, -30],
   [GameMode.三王座]: [50, 0, -50],
-  [GameMode.三王座东]: [30, 0, -30],
+  [GameMode.三王东]: [30, 0, -30],
 };
 export const MODE_BASE_POINT = {
   [GameMode.金]: 25000,
@@ -48,13 +48,13 @@ export const MODE_BASE_POINT = {
   [GameMode.王座]: 25000,
   [GameMode.金东]: 25000,
   [GameMode.玉东]: 25000,
-  [GameMode.王座东]: 25000,
+  [GameMode.王东]: 25000,
   [GameMode.三金]: 35000,
   [GameMode.三玉]: 35000,
   [GameMode.三王座]: 35000,
   [GameMode.三金东]: 35000,
   [GameMode.三玉东]: 35000,
-  [GameMode.三王座东]: 35000,
+  [GameMode.三王东]: 35000,
 };
 
 const KONTEN_FALLBACK_LEVEL_ID = 503;
