@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import Loadable from "../misc/customizedLoadable";
 import Scroller from "../misc/scroller";
 
@@ -7,8 +7,7 @@ import { AppHeader } from "./appHeader";
 import { MaintenanceHandler } from "./maintenance";
 import Navbar from "./navbar";
 import CanonicalLink from "../misc/canonicalLink";
-import GameRecords from "../gameRecords";
-import Tracker, { PageCategory } from "../misc/tracker";
+import Tracker from "../misc/tracker";
 import Conf from "../../utils/conf";
 import { useTranslation } from "react-i18next";
 
@@ -21,24 +20,12 @@ import { SnackbarProvider } from "notistack";
 import { RegisterSnackbarProvider } from "../../utils/notify";
 import { FC } from "react";
 import StarPlayerProvider from "../playerDetails/star/starPlayerProvider";
+import { Routes } from "./routes";
 
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
   loading: () => <></>,
 });
-const Ranking = Loadable({
-  loader: () => import("../ranking"),
-});
-const Statistics = Loadable({
-  loader: () => import("../statistics"),
-});
-const RecentHighlight = Loadable({
-  loader: () => import("../recentHighlight"),
-});
-const ContestTools = Loadable({
-  loader: () => import("../contestTools"),
-});
-
 const LP: FC = ({ children }) => (
   <LocalizationProvider
     dateAdapter={AdapterDayJs}
@@ -83,28 +70,7 @@ function App() {
             <Scroller>
               {Conf.showTopNotice ? <AppHeader /> : <></>}
               <Container>
-                <Switch>
-                  <Route path="/ranking">
-                    <PageCategory category="Ranking" />
-                    <Ranking />
-                  </Route>
-                  <Route path="/statistics">
-                    <PageCategory category="Statistics" />
-                    <Statistics />
-                  </Route>
-                  <Route path="/highlight">
-                    <PageCategory category="RecentHighlight" />
-                    <RecentHighlight />
-                  </Route>
-                  {Conf.features.contestTools ? (
-                    <Route path="/contest-tools">
-                      <ContestTools />
-                    </Route>
-                  ) : null}
-                  <Route path="/">
-                    <GameRecords />
-                  </Route>
-                </Switch>
+                <Routes />
               </Container>
             </Scroller>
           </MaintenanceHandler>
