@@ -27,12 +27,13 @@
     "react-helmet": "^6.1.0",
     "react-i18next": "^11.8.3",
     "react-router-dom": "5.3.0",
-    "react-scripts": "^5.0.0",
+    "react-scripts": "^5.0.1",
     "react-virtualized": "9.22.2",
     "recharts": "^2.1.9",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.13",
     "@rescripts/cli": "git+https://github.com/SAPikachu/rescripts.git#cli",
     "@rescripts/utilities": "git+https://github.com/SAPikachu/rescripts.git#utilities",
     "@sentry/webpack-plugin": "^1.18.5",
@@ -64,7 +65,7 @@
   },
   "scripts": {
     "analyze": "RUN_ANALYZER=1 npm run build",
-    "start": "rescripts start",
+    "start": "unset BROWSER; rescripts start",
     "build": "rescripts build && cp build/index.html build/404.html",
     "test": "rescripts test",
     "eject": "react-scripts eject"

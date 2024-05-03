@@ -28,7 +28,11 @@ export function Alert({
   return (
     <Cont>
       <Fade in={!closed} onEntering={() => triggerRelayout()} onExited={() => triggerRelayout()}>
-        <MuiAlert severity={type} onClose={closable ? () => setClosed(true) : undefined} sx={sx}>
+        <MuiAlert
+          severity={type}
+          onClose={closable ? () => setClosed(true) : undefined}
+          sx={{ "& .MuiAlert-message": { overflow: "unset" }, ...sx }}
+        >
           {title && <AlertTitle>{title} </AlertTitle>}
           {children}
         </MuiAlert>
