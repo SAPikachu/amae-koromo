@@ -7,8 +7,8 @@ import {
   tooltipClasses,
   TypographyProps,
   useTheme,
-  useMediaQuery,
 } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 

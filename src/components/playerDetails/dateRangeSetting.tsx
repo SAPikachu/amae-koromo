@@ -7,7 +7,6 @@ import {
   Divider,
   TextField,
   Box,
-  useMediaQuery,
   useTheme,
   MenuProps,
   Popover,
@@ -15,6 +14,7 @@ import {
   MenuList,
   styled,
 } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { Trans, useTranslation } from "react-i18next";
 import { WatchLater, WatchLaterOutlined } from "@mui/icons-material";
 import { MobileDateTimePicker, MobileDatePicker } from "@mui/lab";

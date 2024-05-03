@@ -10,7 +10,8 @@ import { triggerRelayout, useIsMobile } from "../../utils/index";
 import Loading from "../misc/loading";
 import { useTranslation } from "react-i18next";
 import { TableColumnDef } from "./columns";
-import { Box, styled, useMediaQuery, useTheme } from "@mui/material";
+import { Box, styled, useTheme } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export { Column } from "react-virtualized/dist/es/Table";
 

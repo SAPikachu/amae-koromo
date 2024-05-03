@@ -1,4 +1,5 @@
-import { useMediaQuery, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { useEffect, useRef, useCallback } from "react";
 
 export function triggerRelayout() {
