@@ -124,7 +124,7 @@ async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T & 
   let data = await resp.json();
   if (data?.maintenance) {
     onMaintenance(data.maintenance);
-    return new Promise(() => {}) as Promise<T>; // Freeze all other components
+    return new Promise(() => {}) as Promise<T & WithLastModified>; // Freeze all other components
   }
   if (data?.result_key) {
     await new Promise((res) => setTimeout(res, 1000));
@@ -146,12 +146,12 @@ async function handleResponse<T>(cacheKey: string, resp: Response): Promise<T & 
     apiCache = {};
   }
   apiCache[cacheKey] = data;
-  return data as T;
+  return data as T & WithLastModified;
 }
 
 export async function apiGet<T>(path: string): Promise<T & { _lastModified?: dayjs.ConfigType }> {
   if (path in apiCache) {
-    return apiCache[path] as T;
+    return apiCache[path] as T & WithLastModified;
   }
   const resp = await fetchData(Conf.apiSuffix + path);
   return await handleResponse(path, resp);
