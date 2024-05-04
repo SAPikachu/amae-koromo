@@ -4,6 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { GameRecord, PlayerRecord, getLevelTag } from "../../data/types";
+import Conf from "../../utils/conf";
 import { generatePlayerPathById } from "./routeUtils";
 
 export const Player = React.memo(function ({
@@ -57,7 +58,7 @@ export const Player = React.memo(function ({
           <ReadMore fontSize="small" sx={{ ml: 1, display: "block" }} />
         </Link>
       )}
-      {game.uuid && showAiReviewIcon && (
+      {Conf.features.aiReview && game.uuid && showAiReviewIcon && (
         <Link
           className="detail-link"
           title={t("AI 检讨")}

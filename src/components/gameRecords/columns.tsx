@@ -43,7 +43,7 @@ const Players = React.memo(
             player={x}
             maskedGameLink={maskedGameLink}
             {...(x.accountId.toString() === activePlayerId
-              ? { hideDetailIcon: !alwaysShowDetailLink, showAiReviewIcon: true, ...activeProps }
+              ? { hideDetailIcon: !alwaysShowDetailLink, showAiReviewIcon: !alwaysShowDetailLink, ...activeProps }
               : inactiveProps)}
           />
         ))}

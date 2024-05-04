@@ -20,6 +20,7 @@ export const CONFIGURATIONS = {
         fanStats: true,
         numPlayerStats: true,
       },
+      aiReview: true,
     },
     table: {
       showGameMode: true,
@@ -48,6 +49,7 @@ export const CONFIGURATIONS = {
         fanStats: true,
         numPlayerStats: true,
       },
+      aiReview: false,
     },
     availableModes: [GameMode.三王座, GameMode.三玉, GameMode.三金, GameMode.三王东, GameMode.三玉东, GameMode.三金东],
     modePreference: [GameMode.三王座, GameMode.三玉, GameMode.三王东, GameMode.三玉东, GameMode.三金, GameMode.三金东],
@@ -72,6 +74,7 @@ export const CONFIGURATIONS = {
         fanStats: true,
         numPlayerStats: false,
       },
+      aiReview: false,
     },
     table: {
       showGameMode: true,
