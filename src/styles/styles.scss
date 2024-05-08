@@ -10,6 +10,7 @@ body {
   background-repeat: no-repeat;
   background-image: var(--background-image);
   background-attachment: fixed;
+  color-scheme: only light;
 }
 /* @media (min-width: 1025px) { */
 /* background-attachment breaks on iOS: https://caniuse.com/background-attachment */
