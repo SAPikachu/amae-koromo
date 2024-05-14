@@ -18,6 +18,7 @@
     "@mui/material": "^5.15.16",
     "@sentry/react": "^6.17.4",
     "clsx": "^1.1.1",
+    "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.11",
     "i18next": "^19.9.2",
     "i18next-browser-languagedetector": "^6.1.8",

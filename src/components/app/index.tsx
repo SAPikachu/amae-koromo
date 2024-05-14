@@ -21,6 +21,7 @@ import { RegisterSnackbarProvider } from "../../utils/notify";
 import { FC } from "react";
 import StarPlayerProvider from "../playerDetails/star/starPlayerProvider";
 import { Routes } from "./routes";
+import GameLinkActionsProvider from "../gameRecords/gameLinkActions";
 
 const Helmet = Loadable({
   loader: () => import("react-helmet"),
@@ -70,7 +71,9 @@ function App() {
             <Scroller>
               {Conf.showTopNotice ? <AppHeader /> : <></>}
               <Container>
-                <Routes />
+                <GameLinkActionsProvider>
+                  <Routes />
+                </GameLinkActionsProvider>
               </Container>
             </Scroller>
           </MaintenanceHandler>

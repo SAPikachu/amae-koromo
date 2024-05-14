@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { GameRecord, PlayerRecord, getLevelTag } from "../../data/types";
 import Conf from "../../utils/conf";
+import { useGameLinkActions } from "./gameLinkActions";
 import { generatePlayerPathById } from "./routeUtils";
 
 export const Player = React.memo(function ({
@@ -23,6 +24,7 @@ export const Player = React.memo(function ({
 } & TypographyProps) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { open } = useGameLinkActions();
   const { nickname, level, score, accountId } = player;
   const isTop = GameRecord.getRankIndexByPlayer(game, player) === 0;
   return (
@@ -36,9 +38,11 @@ export const Player = React.memo(function ({
       {...props}
     >
       <Link
-        href={(maskedGameLink || !game.uuid || game._masked
-          ? GameRecord.getMaskedRecordLink
-          : GameRecord.getRecordLink)(game, player)}
+        href={maskedGameLink || !game.uuid || game._masked ? "#" : GameRecord.getRecordLink(game, player)}
+        onClick={(e) => {
+          e.preventDefault();
+          open(player, game);
+        }}
         title={t("查看牌谱")}
         target="_blank"
         rel="noopener noreferrer"
