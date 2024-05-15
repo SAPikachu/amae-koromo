@@ -19,7 +19,12 @@ import { SentryErrorBoundary } from "./utils/sentry";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import Conf from "./utils/conf";
 dayjs.extend(utc);
+
+if (location.host === "amae-koromo.vercel.app") {
+  location.href = "https://" + Conf.canonicalDomain;
+}
 
 const rootElement = document.getElementById("root");
 render(
