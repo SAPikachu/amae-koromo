@@ -30,6 +30,8 @@ import { NavLink, NavLinkProps } from "react-router-dom";
 import NavButton from "../misc/navButton";
 import { MenuButton } from "../misc/menuButton";
 import StarredPlayerMenu from "../playerDetails/star/starredPlayerMenu";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 const NAV_ITEMS = [
   ["最近役满", "highlight"],
@@ -146,6 +148,25 @@ function DesktopItems() {
     </>
   );
 }
+
+function DarkModeListItem() {
+  const { t } = useTranslation();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
+
+  return (
+      <ListItem disablePadding>
+        <ListItemButton onClick={toggleDarkMode}>
+          <ListItemIcon>
+            {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+          </ListItemIcon>
+          <ListItemText
+              primary={t(isDarkMode ? "亮色模式" : "暗色模式")}
+          />
+        </ListItemButton>
+      </ListItem>
+  );
+}
+
 function MobileItems() {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -206,6 +227,10 @@ function MobileItems() {
                 <ListItemText>{t("GitHub")}</ListItemText>
               </ListItemButton>
             </ListItem>
+          </List>
+          <Divider />
+          <List>
+            <DarkModeListItem />
           </List>
         </Box>
       </Drawer>
