@@ -93,10 +93,14 @@ function handleSwitchSite(e: React.MouseEvent<HTMLAnchorElement>) {
 import { useDarkMode } from "./theme";
 
 function DarkModeToggle() {
+  const { t } = useTranslation();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   return (
-      <Button onClick={toggleDarkMode}>
-        {isDarkMode ? "Light" : "Dark"}
+      <Button
+          onClick={toggleDarkMode}
+          startIcon={isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+      >
+        {t(isDarkMode ? "亮色模式" : "暗色模式")}
       </Button>
   );
 }
