@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from "react";
+import {ReactNode, useMemo, createContext, useContext, useState, useEffect} from "react";
 import {
   alpha,
   createTheme,
@@ -177,27 +177,84 @@ export function OverrideTheme({ theme, children }: { theme: ThemeOptions; childr
   const themeFunc = useMemo(() => (outerTheme: Theme) => deepmerge(outerTheme, theme), [theme]);
   return <MaterialThemeProvider theme={themeFunc}>{children}</MaterialThemeProvider>;
 }
+
+const DarkModeContext = createContext({
+  isDarkMode: false,
+  toggleDarkMode: () => {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("toggleDarkMode called without provider");
+    }
+  },
+});
+
+export const useDarkMode = () => useContext(DarkModeContext);
+
 export default function RootThemeProvider({ children }: { children: ReactNode }) {
   const { i18n } = useTranslation();
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "true";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
   const theme = useMemo(
-    () =>
-      responsiveFontSizes(
-        createTheme(
-          {
-            ...THEME,
-            typography: {
-              ...THEME.typography,
-              fontFamily: FONTS[i18n.language] || DEFAULT_FONT,
-              fontWeightMedium: i18n.language === "en" ? 500 : 700,
+      () =>
+          responsiveFontSizes(
+              createTheme(
+                  {
+                    ...THEME,
+                    palette: {
+                      ...THEME.palette,
+                      mode: isDarkMode ? "dark" : "light",
+                    },
+                    typography: {
+                      ...THEME.typography,
+                      fontFamily: FONTS[i18n.language] || DEFAULT_FONT,
+                      fontWeightMedium: i18n.language === "en" ? 500 : 700,
+                    },
+                  },
+                  LOCALES[i18n.language] || DEFAULT_LOCALE
+              ),
+              {
+                variants: ["h1", "h2", "h3", "h4", "h5", "h6"],
+              }
+          ),
+      [i18n.language, isDarkMode]
+  );
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    localStorage.setItem("darkMode", String(newMode));
+    setIsDarkMode(newMode);
+  };
+
+  return (
+      <DarkModeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
+        <MaterialThemeProvider theme={theme}>
+          {children}
+        </MaterialThemeProvider>
+      </DarkModeContext.Provider>
+  );
+}
+
+export const getTheme = (isDarkMode: boolean) =>
+    createTheme({
+      palette: {
+        mode: isDarkMode ? "dark" : "light",
+        background: {
+          default: isDarkMode ? "#121212" : "#f5f5f5",
+        }
+      },
+      components: {
+        MuiAlert: {
+          styleOverrides: {
+            root: {
+              border: "1px solid",
+              borderColor: "divider",
             },
           },
-          LOCALES[i18n.language] || DEFAULT_LOCALE
-        ),
-        {
-          variants: ["h1", "h2", "h3", "h4", "h5", "h6"],
-        }
-      ),
-    [i18n.language]
-  );
-  return <MaterialThemeProvider theme={theme}>{children}</MaterialThemeProvider>;
-}
+        },
+      },
+    });

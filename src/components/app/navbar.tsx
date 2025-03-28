@@ -87,6 +87,18 @@ function handleSwitchSite(e: React.MouseEvent<HTMLAnchorElement>) {
   url.pathname = location.pathname;
   window.location.href = url.toString();
 }
+
+import { useDarkMode } from "./theme";
+
+function DarkModeToggle() {
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
+  return (
+      <Button onClick={toggleDarkMode}>
+        {isDarkMode ? "Light" : "Dark"}
+      </Button>
+  );
+}
+
 function DesktopItems() {
   const { t, i18n } = useTranslation();
   return (
@@ -130,6 +142,7 @@ function DesktopItems() {
       <IconButton href="https://github.com/SAPikachu/amae-koromo">
         <GitHub />
       </IconButton>
+      <DarkModeToggle />
     </>
   );
 }
