@@ -33,6 +33,22 @@ body::before {
   z-index: -1;
   background-image: var(--background-image);
 }
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+[data-theme="dark"] body::after {
+  opacity: 1;
+}
 /* } */
 .koromo {
   --background-image: url(../assets/img/koromo.jpg);

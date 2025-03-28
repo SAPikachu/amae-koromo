@@ -19,6 +19,7 @@
     "@sentry/react": "^6.17.4",
     "clsx": "^1.1.1",
     "copy-to-clipboard": "^3.3.3",
+    "cross-env": "^7.0.3",
     "dayjs": "^1.11.11",
     "i18next": "^19.9.2",
     "i18next-browser-languagedetector": "^6.1.8",
@@ -66,7 +67,7 @@
   },
   "scripts": {
     "analyze": "RUN_ANALYZER=1 npm run build",
-    "start": "unset BROWSER; rescripts start",
+    "start": "cross-env BROWSER= rescripts start",
     "build": "rescripts build && cp build/index.html build/404.html",
     "test": "rescripts test",
     "eject": "react-scripts eject"
