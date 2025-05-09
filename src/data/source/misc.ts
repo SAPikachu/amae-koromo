@@ -9,12 +9,16 @@ import { RankRateBySeat } from "../types";
 import { CareerRankingItem, CareerRankingType } from "../types/ranking";
 import { GlobalStatistics, FanStats, GlobalHistogram, LevelStatistics } from "../types/statistics";
 
-export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerMetadataLite[]> {
+
+export type PlayerSearchResult = Pick<PlayerMetadataLite, "id" | "nickname" | "level"> & {
+  latest_timestamp: number;
+};
+export async function searchPlayer(prefix: string, limit = 20): Promise<PlayerSearchResult[]> {
   prefix = prefix.trim();
   if (!prefix) {
     return [];
   }
-  const result = await apiGet<PlayerMetadataLite[]>(
+  const result = await apiGet<PlayerSearchResult[]>(
     `search_player/${encodeURIComponent(prefix)}?limit=${limit}&tag=all`
   );
   return result || [];
