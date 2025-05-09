@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState, useMemo } from "react";
 
-import { LevelWithDelta, Level } from "../../data/types";
+import { LevelWithDelta, Level, getAccountZone } from "../../data/types";
 import { searchPlayer, PlayerSearchResult } from "../../data/source/misc";
 import { Redirect } from "react-router-dom";
 import { generatePlayerPathById } from "./routeUtils";
@@ -106,7 +106,12 @@ export function PlayerSearch() {
       }
       const promise = searchPlayer(prefix, NUM_FETCH).then(function (players: PlayerSearchResultExt[]) {
         players.forEach((x) => {
-          x.isDeleted = players.some((y) => x.nickname === y.nickname && x.latest_timestamp < y.latest_timestamp);
+          x.isDeleted = players.some(
+            (y) =>
+              x.nickname === y.nickname &&
+              getAccountZone(x.id) === getAccountZone(y.id) &&
+              x.latest_timestamp < y.latest_timestamp
+          );
         });
         playerSearchCache.set(prefix, players);
         if (!cancelled) {
