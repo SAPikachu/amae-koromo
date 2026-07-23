@@ -17,6 +17,7 @@
     "@mui/lab": "5.0.0-alpha.65",
     "@mui/material": "^5.15.16",
     "@sentry/react": "^6.17.4",
+    "cap-widget": "^0.1.56",
     "clsx": "^1.1.1",
     "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.11",

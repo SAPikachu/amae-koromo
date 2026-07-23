@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import dayjs from "dayjs";
 import Conf from "../../utils/conf";
-import { savePreference } from "../../utils/preference";
+import { savePreference, loadPreference } from "../../utils/preference";
+import Cap from "cap-widget";
 
 const DATA_MIRRORS = [
   "https://5-data.amae-koromo.com/",
@@ -21,10 +22,30 @@ export function setMaintenanceHandler(handler: (msg: string) => void) {
 
 export const getApiPrefix = () => selectedMirror + Conf.apiSuffix;
 
+const cap = new Cap({
+  apiEndpoint: process.env.REACT_APP_CAP_API_ENDPOINT || "https://example.com/cap",
+});
+const CAP_ENABLED = !!process.env.REACT_APP_CAP_API_ENDPOINT;
+
+const getCachedCapToken = () => {
+  const token = loadPreference("capToken", "");
+  return token as string;
+};
+async function refreshCapToken(): Promise<string> {
+  savePreference("capToken", "");
+  try {
+    const { token } = await cap.solve();
+    savePreference("capToken", token);
+    return token;
+  } catch (e) {
+    console.error("Failed to refresh CAP token", e);
+    throw e;
+  }
+}
 async function fetchWithTimeout(
   url: string,
   opts: Parameters<typeof fetch>[1] = {},
-  timeout = 5000
+  timeout = 5000,
 ): Promise<Response> {
   const abortController = window.AbortController ? new AbortController() : { signal: undefined, abort: () => {} };
   const timeoutToken = setTimeout(function () {
@@ -37,10 +58,34 @@ async function fetchWithTimeout(
 
 let mirrorProbePromise = null as null | Promise<Response>;
 
-async function fetchData(path: string, opts: Parameters<typeof fetch>[1] = {}, retry = true): Promise<Response> {
+async function fetchData(
+  path: string,
+  opts: Parameters<typeof fetch>[1] = {},
+  retry = true,
+  refreshedCapToken = false,
+): Promise<Response> {
   try {
+    opts = Object.assign({}, opts || {});
+    opts.headers = Object.assign({}, opts.headers || {});
+    if (CAP_ENABLED) {
+      const token = getCachedCapToken();
+      if (token) {
+        (opts.headers as Record<string, string>)["x-cap-token"] = token;
+      }
+    }
     return await fetchWithTimeout(selectedMirror + path, opts);
   } catch (e) {
+    if (
+      CAP_ENABLED &&
+      !refreshedCapToken &&
+      "ok" in (e as Response) &&
+      (e as Response).status === 429 &&
+      (e as Response).headers.get("x-cap-token-required") === "true"
+    ) {
+      console.warn("CAP token required, refreshing...");
+      await refreshCapToken();
+      return await fetchData(path, opts, retry, true);
+    }
     console.warn(e);
     if (!retry) {
       throw e;
@@ -48,7 +93,7 @@ async function fetchData(path: string, opts: Parameters<typeof fetch>[1] = {}, r
     if (mirrorProbePromise) {
       console.warn(`Failed to fetch data from mirror ${selectedMirror}, waiting for probe in progress...`);
       await mirrorProbePromise.then(() => {}).catch(() => {});
-      return fetchData(path, opts, false);
+      return fetchData(path, opts, false, refreshedCapToken);
     }
     console.warn(`Failed to fetch data from mirror ${selectedMirror}, trying other mirror...`);
   }
@@ -76,10 +121,10 @@ async function fetchData(path: string, opts: Parameters<typeof fetch>[1] = {}, r
                     return resolve(completedResponse);
                   }
                   resolve(e); // Do not reject here, may cause unhandled promise rejection
-                }, PROBE_TIMEOUT)
-              )
-          )
-      )
+                }, PROBE_TIMEOUT),
+              ),
+          ),
+      ),
     ).then((result) => {
       if ("ok" in (result as Response | Error)) {
         return result;
