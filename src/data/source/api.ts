@@ -73,22 +73,22 @@ async function fetchData(
     if (CAP_ENABLED) {
       const token = getCachedCapToken();
       if (token) {
-        (opts.headers as Record<string, string>)["x-cap-token"] = token;
+        (opts.headers as Record<string, string>)["authorization"] = `Bearer ${token}`;
       }
     }
-    return await fetchWithTimeout(selectedMirror + path, opts);
-  } catch (e) {
+    const resp = await fetchWithTimeout(selectedMirror + path, opts);
     if (
       CAP_ENABLED &&
       !refreshedCapToken &&
-      "ok" in (e as Response) &&
-      (e as Response).status === 429 &&
-      (e as Response).headers.get("x-cap-token-required") === "true"
+      resp.status === 429 &&
+      (await resp.text()).includes("x-cap-token-required")
     ) {
       console.warn("CAP token required, refreshing...");
       await refreshCapToken();
       return await fetchData(path, opts, retry, true);
     }
+    return resp;
+  } catch (e) {
     console.warn(e);
     if (!retry) {
       throw e;
