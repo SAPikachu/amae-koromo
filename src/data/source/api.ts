@@ -33,6 +33,9 @@ const getCachedCapToken = () => {
 };
 async function refreshCapToken(): Promise<string> {
   savePreference("capToken", "");
+  if (!CAP_ENABLED) {
+    return "";
+  }
   try {
     const { token } = await cap.solve();
     savePreference("capToken", token);
