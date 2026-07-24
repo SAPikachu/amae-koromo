@@ -91,7 +91,7 @@ async function fetchData(
         (opts.headers as Record<string, string>)["authorization"] = `Bearer ${token}`;
         if (refreshedCapToken) {
           (opts.headers as Record<string, string>)["cache-control"] = "no-cache";
-          path += (path.includes("?") ? "&" : "?") + "cap_token_refreshed=1";
+          path += (path.includes("?") ? "&" : "?") + "cap_token_refreshed=" + Date.now().toString(); // Prevent caching of the request when CAP token is refreshed
         }
       }
     }
