@@ -35,6 +35,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@cap.js/wasm": "^0.0.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.13",
     "@rescripts/cli": "git+https://github.com/SAPikachu/rescripts.git#cli",
     "@rescripts/utilities": "git+https://github.com/SAPikachu/rescripts.git#utilities",

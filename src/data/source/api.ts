@@ -2,7 +2,9 @@
 import dayjs from "dayjs";
 import Conf from "../../utils/conf";
 import { savePreference } from "../../utils/preference";
-import Cap from "cap-widget";
+import capWasm from "@cap.js/wasm/browser/cap_wasm_bg.wasm";
+
+import type Cap from "cap-widget";
 
 const DATA_MIRRORS = [
   "https://5-data.amae-koromo.com/",
@@ -22,10 +24,11 @@ export function setMaintenanceHandler(handler: (msg: string) => void) {
 
 export const getApiPrefix = () => selectedMirror + Conf.apiSuffix;
 
-const cap = new Cap({
-  apiEndpoint: process.env.REACT_APP_CAP_API_ENDPOINT || "https://example.com/cap",
-});
+let cap = null as null | Cap;
 const CAP_ENABLED = !!process.env.REACT_APP_CAP_API_ENDPOINT;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(window as any).CAP_CUSTOM_WASM_URL = capWasm;
 
 let capToken = "";
 
@@ -36,6 +39,13 @@ async function _refreshCapToken(): Promise<string> {
   capToken = "";
   if (!CAP_ENABLED) {
     return "";
+  }
+  if (!cap) {
+    cap = new (await (
+      await import("cap-widget")
+    ).default)({
+      apiEndpoint: process.env.REACT_APP_CAP_API_ENDPOINT || "https://example.com/cap",
+    });
   }
   try {
     const { token } = await cap.solve();
