@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import dayjs from "dayjs";
 import Conf from "../../utils/conf";
-import { savePreference, loadPreference } from "../../utils/preference";
+import { savePreference } from "../../utils/preference";
 import Cap from "cap-widget";
 
 const DATA_MIRRORS = [
@@ -27,18 +27,19 @@ const cap = new Cap({
 });
 const CAP_ENABLED = !!process.env.REACT_APP_CAP_API_ENDPOINT;
 
+let capToken = "";
+
 const getCachedCapToken = () => {
-  const token = loadPreference("capToken", "");
-  return token as string;
+  return capToken;
 };
 async function _refreshCapToken(): Promise<string> {
-  savePreference("capToken", "");
+  capToken = "";
   if (!CAP_ENABLED) {
     return "";
   }
   try {
     const { token } = await cap.solve();
-    savePreference("capToken", token);
+    capToken = token;
     return token;
   } catch (e) {
     console.error("Failed to refresh CAP token", e);
