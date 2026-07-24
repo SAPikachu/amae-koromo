@@ -88,6 +88,10 @@ async function fetchData(
       const token = getCachedCapToken();
       if (token) {
         (opts.headers as Record<string, string>)["authorization"] = `Bearer ${token}`;
+        if (refreshedCapToken) {
+          (opts.headers as Record<string, string>)["cache-control"] = "no-cache";
+          path += (path.includes("?") ? "&" : "?") + "cap_token_refreshed=1";
+        }
       }
     }
     const resp = await fetchWithTimeout(selectedMirror + path, opts);
