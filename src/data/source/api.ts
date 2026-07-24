@@ -31,7 +31,7 @@ const getCachedCapToken = () => {
   const token = loadPreference("capToken", "");
   return token as string;
 };
-async function refreshCapToken(): Promise<string> {
+async function _refreshCapToken(): Promise<string> {
   savePreference("capToken", "");
   if (!CAP_ENABLED) {
     return "";
@@ -45,6 +45,20 @@ async function refreshCapToken(): Promise<string> {
     throw e;
   }
 }
+const refreshCapToken = (() => {
+  let refreshing = null as null | Promise<string>;
+  return async () => {
+    if (refreshing) {
+      return refreshing;
+    }
+    refreshing = _refreshCapToken();
+    try {
+      return await refreshing;
+    } finally {
+      refreshing = null;
+    }
+  };
+})();
 async function fetchWithTimeout(
   url: string,
   opts: Parameters<typeof fetch>[1] = {},
