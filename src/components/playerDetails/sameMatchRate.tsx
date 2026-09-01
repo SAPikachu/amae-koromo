@@ -214,11 +214,11 @@ export default function SameMatchRate({ numDisplay = 12, currentAccountId = 0 })
   return (
     <SimpleRoutedSubViews>
       <ViewRoutes>
-        <RouteDef path="latest" title="最近 100 局">
-          <SameMatchRateTable currentAccountId={currentAccountId} numDisplay={numDisplay} />
+        <RouteDef path="latest" title={(t) => t("最近 {{x}} 场", { x: 100 })}>
+          <SameMatchRateTable currentAccountId={currentAccountId} numDisplay={numDisplay} numGames={100} />
         </RouteDef>
-        <RouteDef path="all" title="全部">
-          <SameMatchRateTable currentAccountId={currentAccountId} numDisplay={numDisplay} numGames={0x7fffffff} />
+        <RouteDef path="latest1000" title={(t) => t("最近 {{x}} 场", { x: 1000 })}>
+          <SameMatchRateTable currentAccountId={currentAccountId} numDisplay={numDisplay} numGames={1000} />
         </RouteDef>
       </ViewRoutes>
       <NavButtons sx={{ mt: -1.5 }} />
