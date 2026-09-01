@@ -24,7 +24,6 @@ export function setMaintenanceHandler(handler: (msg: string) => void) {
 
 export const getApiPrefix = () => selectedMirror + Conf.apiSuffix;
 
-let cap = null as null | Cap;
 const CAP_ENABLED = !!process.env.REACT_APP_CAP_API_ENDPOINT;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,27 +34,43 @@ let capToken = "";
 const getCachedCapToken = () => {
   return capToken;
 };
-async function _refreshCapToken(): Promise<string> {
-  capToken = "";
-  if (!CAP_ENABLED) {
-    return "";
-  }
-  if (!cap) {
-    cap = new (await (
-      await import("cap-widget")
-    ).default)({
-      apiEndpoint: process.env.REACT_APP_CAP_API_ENDPOINT || "https://example.com/cap",
-    });
-  }
-  try {
-    const { token } = await cap.solve();
-    capToken = token;
-    return token;
-  } catch (e) {
-    console.error("Failed to refresh CAP token", e);
-    throw e;
-  }
-}
+const _refreshCapToken: () => Promise<string> = (() => {
+  let cap = null as null | Cap;
+  let lastCapEndpoint = "";
+  return async () => {
+    capToken = "";
+    if (!CAP_ENABLED) {
+      return "";
+    }
+    const capEndpoint = new URL(
+      process.env.REACT_APP_CAP_API_ENDPOINT || "https://example.com/cap",
+      selectedMirror || location.href,
+    ).toString();
+    if (capEndpoint !== lastCapEndpoint) {
+      cap?.reset();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (cap?.widget as any)?.cleanup?.();
+      cap?.widget?.remove?.();
+      cap = null;
+      lastCapEndpoint = capEndpoint;
+    }
+    if (!cap) {
+      cap = new (await (
+        await import("cap-widget")
+      ).default)({
+        apiEndpoint: capEndpoint,
+      });
+    }
+    try {
+      const { token } = await cap.solve();
+      capToken = token;
+      return token;
+    } catch (e) {
+      console.error("Failed to refresh CAP token", e);
+      throw e;
+    }
+  };
+})();
 const refreshCapToken = (() => {
   let refreshing = null as null | Promise<string>;
   return async () => {
