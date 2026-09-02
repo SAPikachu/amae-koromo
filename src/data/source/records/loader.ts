@@ -6,7 +6,7 @@ import { apiCacheablePost, apiGet } from "../api";
 import { GameMode } from "../../types";
 import Conf from "../../../utils/conf";
 
-const CHUNK_SIZE = 100;
+const CHUNK_SIZE = 50;
 
 export interface DataLoader<T extends Metadata, TRecord = GameRecord> {
   getMetadata(): Promise<T>;
@@ -92,7 +92,7 @@ export class ListingDataLoader implements DataLoader<Metadata> {
     const chunk = await apiGet<GameRecord[]>(
       `games/${this._cursor.valueOf()}/${this._date.valueOf()}?limit=${CHUNK_SIZE}&descending=true&mode=${
         this._modeString
-      }`
+      }`,
     );
     if (chunk.length) {
       this._cursor = dayjs(chunk[chunk.length - 1].startTime * 1000 - 1);
@@ -155,7 +155,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     const stats = await apiGet<PlayerMetadata>(`player_stats/${this._initialParams}&tag=${timeTag}`);
     if (this._mode.length || !Conf.availableModes.length) {
       stats.extended_stats = apiGet<PlayerExtendedStats>(
-        `player_extended_stats/${this._initialParams}&tag=${timeTag}`
+        `player_extended_stats/${this._initialParams}&tag=${timeTag}`,
       ).then(processExtendedStats(stats));
       stats.extended_stats.catch((e) => {
         console.error("Failed to get extended stats:", e);
@@ -192,7 +192,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     const chunk = await apiGet<GameRecord[]>(
       `player_records/${this._playerId}/${this._cursor.valueOf()}/${this._startDate.valueOf()}?limit=${
         CHUNK_SIZE + ((parseInt(this._tag, 10) || 0) % CHUNK_SIZE)
-      }&mode=${this._mode}&descending=true&tag=${this._tag}`
+      }&mode=${this._mode}&descending=true&tag=${this._tag}`,
     );
     if (chunk.length) {
       this._cursor = dayjs(chunk[chunk.length - 1].startTime * 1000 - 1);
@@ -287,7 +287,7 @@ export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
     const chunk = await apiGet<GameRecord[]>(
       `player_records/${this._playerId}/${this._endDate.valueOf()}/${this._startDate.valueOf()}?limit=${
         this._limit
-      }&mode=${this._mode}&descending=true`
+      }&mode=${this._mode}&descending=true`,
     );
     if (!chunk.length) {
       throw new Error("No data");
