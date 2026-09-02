@@ -6,7 +6,7 @@ import { apiCacheablePost, apiGet } from "../api";
 import { GameMode } from "../../types";
 import Conf from "../../../utils/conf";
 
-const CHUNK_SIZE = 50;
+const CHUNK_SIZE = 100;
 
 export interface DataLoader<T extends Metadata, TRecord = GameRecord> {
   getMetadata(): Promise<T>;
@@ -284,14 +284,24 @@ export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
     return this._limit;
   }
   async getMetadata(): Promise<PlayerMetadata> {
-    const chunk = await apiGet<GameRecord[]>(
-      `player_records/${this._playerId}/${this._endDate.valueOf()}/${this._startDate.valueOf()}?limit=${
-        this._limit
-      }&mode=${this._mode}&descending=true`,
-    );
+    let chunk: GameRecord[] = [];
+    let cursor = this._endDate.valueOf();
+    while (chunk.length < this._limit) {
+      const nextChunk = await apiGet<GameRecord[]>(
+        `player_records/${this._playerId}/${cursor}/${this._startDate.valueOf()}?limit=${CHUNK_SIZE}&mode=${
+          this._mode
+        }&descending=true`,
+      );
+      if (!nextChunk.length) {
+        break;
+      }
+      chunk.push(...nextChunk);
+      cursor = nextChunk[nextChunk.length - 1].startTime * 1000 - 1;
+    }
     if (!chunk.length) {
       throw new Error("No data");
     }
+    chunk = chunk.slice(0, this._limit);
     this._data = chunk;
     this._startDate = dayjs(chunk[chunk.length - 1].startTime * 1000);
     this._initialParams = this._getParams();

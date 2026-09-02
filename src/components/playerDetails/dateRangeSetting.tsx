@@ -171,7 +171,7 @@ export default function DateRangeSetting({
       dayjs()
         .subtract(week * 7 - 1, "day")
         .startOf("day"),
-      null
+      null,
     );
     handleClose();
   };
@@ -267,6 +267,13 @@ export default function DateRangeSetting({
         </MenuGroup>
         <MenuGroup>
           {[100, 200, 300, 500].map((x) => (
+            <MenuItem dense key={x} onClick={() => selectLimit(x)}>
+              <Trans defaults="最近 {{x}} 场" count={x} values={{ x }} />
+            </MenuItem>
+          ))}
+        </MenuGroup>
+        <MenuGroup>
+          {[1000, 2000, 3000, 5000].map((x) => (
             <MenuItem dense key={x} onClick={() => selectLimit(x)}>
               <Trans defaults="最近 {{x}} 场" count={x} values={{ x }} />
             </MenuItem>
