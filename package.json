@@ -17,7 +17,7 @@
     "@mui/lab": "5.0.0-alpha.65",
     "@mui/material": "^5.15.16",
     "@sentry/react": "^6.17.4",
-    "cap-widget": "^0.1.56",
+    "cap-widget": "^0.1.58",
     "clsx": "^1.1.1",
     "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.11",
@@ -35,7 +35,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@cap.js/wasm": "^0.0.7",
+    "@cap.js/wasm": "^0.0.8",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.13",
     "@rescripts/cli": "git+https://github.com/SAPikachu/rescripts.git#cli",
     "@rescripts/utilities": "git+https://github.com/SAPikachu/rescripts.git#utilities",
