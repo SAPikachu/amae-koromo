@@ -2,7 +2,7 @@
   "name": "amae-koromo",
   "version": "1.0.0",
   "homepage": "https://amae-koromo.sapk.ch",
-  "description": "",
+  "description": "Mahjong Soul data and statistics visualizer.",
   "keywords": [],
   "main": "src/index.tsx",
   "engines": {
