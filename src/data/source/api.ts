@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import Conf from "../../utils/conf";
 import { savePreference } from "../../utils/preference";
 import capWasm from "@cap.js/wasm/browser/cap_wasm_bg.wasm";
+import capHashWx from "@cap.js/wasm/browser/hashwx.wasm";
 
 import type Cap from "cap-widget";
 
@@ -28,6 +29,8 @@ const CAP_ENABLED = !!process.env.REACT_APP_CAP_API_ENDPOINT;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).CAP_CUSTOM_WASM_URL = capWasm;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(window as any).CAP_CUSTOM_HASHWX_URL = capHashWx;
 
 let capToken = "";
 
