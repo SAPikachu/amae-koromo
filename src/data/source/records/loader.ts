@@ -192,7 +192,7 @@ export class PlayerDataLoader implements DataLoader<PlayerMetadata> {
     const chunk = await apiGet<GameRecord[]>(
       `player_records/${this._playerId}/${this._cursor.valueOf()}/${this._startDate.valueOf()}?limit=${
         CHUNK_SIZE + ((parseInt(this._tag, 10) || 0) % CHUNK_SIZE)
-      }&mode=${this._mode}&descending=true&tag=${this._tag}`,
+      }&mode=${this._mode.join(".")}&descending=true&tag=${this._tag}`,
     );
     if (chunk.length) {
       this._cursor = dayjs(chunk[chunk.length - 1].startTime * 1000 - 1);
@@ -289,7 +289,7 @@ export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
     while (chunk.length < this._limit) {
       const nextChunk = await apiGet<GameRecord[]>(
         `player_records/${this._playerId}/${cursor}/${this._startDate.valueOf()}?limit=${CHUNK_SIZE}&mode=${
-          this._mode
+          this._mode.join(".")
         }&descending=true`,
       );
       if (!nextChunk.length) {
