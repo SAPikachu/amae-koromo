@@ -306,7 +306,7 @@ export function DataAdapterProvider({ children }: { children: ReactChild | React
       if (e && "status" in e && e.status === 404) {
         if (model.type === "player") {
           if (model.startDate || model.endDate || model.limit) {
-            if (Object.keys(dataProviders).length > 1) {
+            if (dataProviders.size > 1) {
               // User changing settings, allow to continue
               networkError();
               return;
