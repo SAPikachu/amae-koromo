@@ -267,6 +267,7 @@ export class FilteredPlayerDataLoader implements DataLoader<PlayerMetadata> {
 export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
   _limit: number;
   _data: GameRecord[];
+  _withNativeCursor: boolean | undefined;
   constructor(playerId: string, limit: number, mode: GameMode[]) {
     super(playerId, undefined, dayjs().endOf("hour"), mode);
     if (!mode.length) {
@@ -280,17 +281,34 @@ export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
     this._limit = limit;
     this._data = [];
   }
-  getEstimatedChunkSize() {
-    return this._limit;
-  }
   async getMetadata(): Promise<PlayerMetadata> {
+    if (this._withNativeCursor) {
+      return super.getMetadata();
+    }
+    if (this._withNativeCursor === undefined) {
+      const nativeCursor = await apiGet<{ cursor: number }>(
+        `find_cursor/${this._playerId}?limit=${this._limit}&mode=${this._mode}`,
+      ).catch((e) => {
+        if (e.status === 404) {
+          return null;
+        }
+        console.error("Failed to get native cursor:", e);
+        return null;
+      });
+      if (nativeCursor?.cursor) {
+        this._startDate = dayjs.unix(nativeCursor.cursor);
+        this._initialParams = this._getParams();
+        this._withNativeCursor = true;
+        return super.getMetadata();
+      }
+    }
     let chunk: GameRecord[] = [];
     let cursor = this._endDate.valueOf();
     while (chunk.length < this._limit) {
       const nextChunk = await apiGet<GameRecord[]>(
-        `player_records/${this._playerId}/${cursor}/${this._startDate.valueOf()}?limit=${CHUNK_SIZE}&mode=${
-          this._mode.join(".")
-        }&descending=true`,
+        `player_records/${
+          this._playerId
+        }/${cursor}/${this._startDate.valueOf()}?limit=${CHUNK_SIZE}&mode=${this._mode.join(".")}&descending=true`,
       );
       if (!nextChunk.length) {
         break;
@@ -311,6 +329,9 @@ export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
     });
   }
   async getNextChunk(): Promise<GameRecord[]> {
+    if (this._withNativeCursor) {
+      return super.getNextChunk();
+    }
     const chunk = this._data;
     this._data = [];
     return chunk;
