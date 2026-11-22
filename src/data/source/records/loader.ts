@@ -286,8 +286,9 @@ export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
       return super.getMetadata();
     }
     if (this._withNativeCursor === undefined) {
+      this._withNativeCursor = false;
       const nativeCursor = await apiGet<{ cursor: number }>(
-        `find_cursor/${this._playerId}?limit=${this._limit}&mode=${this._mode}`,
+        `find_cursor/${this._playerId}?limit=${this._limit}&mode=${this._mode}&tag=X`,
       ).catch((e) => {
         if (e.status === 404) {
           return null;
@@ -296,7 +297,7 @@ export class FixedNumberPlayerDataLoader extends PlayerDataLoader {
         return null;
       });
       if (nativeCursor?.cursor) {
-        this._startDate = dayjs.unix(nativeCursor.cursor);
+        this._startDate = dayjs(nativeCursor.cursor);
         this._initialParams = this._getParams();
         this._withNativeCursor = true;
         return super.getMetadata();
